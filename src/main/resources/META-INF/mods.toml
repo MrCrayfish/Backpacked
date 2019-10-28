@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+
+[[mods]]
+modId="${mod.id}"
+version="${mod.version}"
+displayName="${mod.name}"
+updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/${mod.repo_name}/master/update.json"
+displayURL="https://mrcrayfish.com/minimods"
+logoFile=""
+credits=""
+authors="${mod.author}"
+description="${mod.description}"
+
+[[dependencies.${mod.id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[28,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod.id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.14.4]"
+    ordering="NONE"
+    side="BOTH"

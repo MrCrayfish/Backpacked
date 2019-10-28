@@ -1,0 +1,121 @@
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'maven-publish'
+
+version = project.property('mod.version')
+group = 'com.mrcrayfish'
+archivesBaseName = project.property('mod.id')
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+minecraft {
+    mappings channel: 'snapshot', version: '20190719-1.14.3'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                modid {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            mods {
+                modid {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.70'
+}
+
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": project.property('mod.name'),
+            "Specification-Vendor": project.property('mod.author'),
+            "Specification-Version": "1",
+            "Implementation-Title": project.property('mod.name'),
+            "Implementation-Version": project.property('mod.version'),
+            "Implementation-Vendor" : project.property('mod.author'),
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+void patchResource(String filePath) {
+    File modInfo = file(filePath)
+    String contents = modInfo.getText('UTF-8')
+    contents = replaceProperty('id', contents)
+    contents = replaceProperty('name', contents)
+    contents = replaceProperty('author', contents)
+    contents = replaceProperty('version', contents)
+    contents = replaceProperty('description', contents)
+    contents = replaceProperty('repo_name', contents)
+    modInfo.write(contents, 'UTF-8')
+}
+
+task patchResources {
+    patchResource("$buildDir/resources/main/META-INF/mods.toml")
+    patchResource("$buildDir/resources/main/pack.mcmeta")
+}
+
+processResources {
+    patchResources
+}
+
+String replaceProperty(id, contents) {
+    id = 'mod.' + id
+    def key = '${' + id + '}'
+    return contents.replace(key, project.property(id))
+}
+
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact reobfArtifact
+        }
+    }
+    repositories {
+        maven {
+            url "file://C:/dev/maven/mcmodsrepo"
+        }
+    }
+}
