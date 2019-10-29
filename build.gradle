@@ -75,33 +75,6 @@ jar {
     }
 }
 
-void patchResource(String filePath) {
-    File modInfo = file(filePath)
-    String contents = modInfo.getText('UTF-8')
-    contents = replaceProperty('id', contents)
-    contents = replaceProperty('name', contents)
-    contents = replaceProperty('author', contents)
-    contents = replaceProperty('version', contents)
-    contents = replaceProperty('description', contents)
-    contents = replaceProperty('repo_name', contents)
-    modInfo.write(contents, 'UTF-8')
-}
-
-task patchResources {
-    patchResource("$buildDir/resources/main/META-INF/mods.toml")
-    patchResource("$buildDir/resources/main/pack.mcmeta")
-}
-
-processResources {
-    patchResources
-}
-
-String replaceProperty(id, contents) {
-    id = 'mod.' + id
-    def key = '${' + id + '}'
-    return contents.replace(key, project.property(id))
-}
-
 def reobfFile = file("$buildDir/reobfJar/output.jar")
 def reobfArtifact = artifacts.add('default', reobfFile) {
     type 'jar'
