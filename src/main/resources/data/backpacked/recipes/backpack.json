@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "backpack",
+    "pattern": [
+        "LLL",
+        "L L",
+        "LLL"
+    ],
+    "key": {
+        "L": {
+            "item": "minecraft:leather"
+        }
+    },
+    "result": {
+        "item": "backpacked:backpack"
+    }
+}

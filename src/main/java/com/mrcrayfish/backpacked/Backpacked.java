@@ -2,6 +2,8 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
+import com.mrcrayfish.backpacked.proxy.ClientProxy;
+import com.mrcrayfish.backpacked.proxy.CommonProxy;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -13,8 +15,10 @@ import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,13 +34,21 @@ public class Backpacked
 {
     public static final Logger LOGGER = LogManager.getLogger(Reference.MOD_ID);
 
+    public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+
     private static Field inventoryField;
     private static Field containerField;
 
     public Backpacked()
     {
         MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onTextureStitch);
+    }
+
+    private void onClientSetup(FMLClientSetupEvent event)
+    {
+        PROXY.setupClient();
     }
 
     /* Hooks into PlayerEntity constructor to allow manipulation of fields. Linked via ASM, do not remove! */

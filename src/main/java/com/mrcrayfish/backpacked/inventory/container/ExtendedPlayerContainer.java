@@ -1,9 +1,11 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,6 +27,12 @@ public class ExtendedPlayerContainer extends PlayerContainer
             public String getSlotTexture()
             {
                 return "backpacked:item/empty_backpack_slot";
+            }
+
+            @Override
+            public boolean isItemValid(ItemStack stack)
+            {
+                return stack.getItem() == ModItems.BACKPACK;
             }
         });
     }

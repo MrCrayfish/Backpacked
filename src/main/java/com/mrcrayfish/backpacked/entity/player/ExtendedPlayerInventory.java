@@ -25,6 +25,11 @@ public class ExtendedPlayerInventory extends PlayerInventory
         super(player);
     }
 
+    public NonNullList<ItemStack> getBackpackInventory()
+    {
+        return backpackInventory;
+    }
+
     @Override
     public ItemStack decrStackSize(int index, int count)
     {
