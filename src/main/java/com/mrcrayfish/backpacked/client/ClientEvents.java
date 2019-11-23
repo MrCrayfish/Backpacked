@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Author: MrCrayfish
@@ -18,7 +19,14 @@ public class ClientEvents
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.player != null)
+        if(minecraft.currentScreen instanceof ChestScreen)
+        {
+            if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientProxy.KEY_BACKPACK.getKey().getKeyCode())
+            {
+                minecraft.displayGuiScreen(null);
+            }
+        }
+        else if(minecraft.player != null && minecraft.currentScreen == null)
         {
             ClientPlayerEntity player = minecraft.player;
             if(ClientProxy.KEY_BACKPACK.isPressed())
