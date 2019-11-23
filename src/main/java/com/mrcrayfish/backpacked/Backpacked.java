@@ -1,0 +1,111 @@
+package com.mrcrayfish.backpacked;
+
+import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
+/**
+ * Author: MrCrayfish
+ */
+@Mod(Reference.MOD_ID)
+public class Backpacked
+{
+    public static final Logger LOGGER = LogManager.getLogger(Reference.MOD_ID);
+
+    private static Field inventoryField;
+    private static Field containerField;
+
+    public Backpacked()
+    {
+        MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onTextureStitch);
+    }
+
+    /* Hooks into PlayerEntity constructor to allow manipulation of fields. Linked via ASM, do not remove! */
+    public static void onPlayerInit(PlayerEntity player)
+    {
+        Backpacked.patchInventory(player);
+    }
+
+    private static void patchInventory(PlayerEntity player)
+    {
+        if(inventoryField == null)
+        {
+            inventoryField = getFieldAndSetAccessible(PlayerEntity.class, "field_71071_by");
+        }
+        if(containerField == null)
+        {
+            containerField = getFieldAndSetAccessible(PlayerEntity.class, "field_71069_bz");
+        }
+        try
+        {
+            ExtendedPlayerInventory inventory = new ExtendedPlayerInventory(player);
+            inventoryField.set(player, inventory);
+
+            ExtendedPlayerContainer container = new ExtendedPlayerContainer(inventory, !player.world.isRemote, player);
+            containerField.set(player, container);
+            player.openContainer = container;
+        }
+        catch(IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static Field getFieldAndSetAccessible(Class clazz, String obfName)
+    {
+        Field field = ObfuscationReflectionHelper.findField(clazz, obfName);
+        field.setAccessible(true);
+
+        try
+        {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        }
+        catch(IllegalAccessException | NoSuchFieldException e)
+        {
+            e.printStackTrace();
+        }
+
+        return field;
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
+    {
+        ContainerScreen screen = event.getGuiContainer();
+        if(screen instanceof InventoryScreen)
+        {
+            InventoryScreen inventoryScreen = (InventoryScreen) screen;
+            int left = inventoryScreen.getGuiLeft();
+            int top = inventoryScreen.getGuiTop();
+            inventoryScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
+            Screen.blit(left + 76, top + 43, 18, 18, 76, 61, 18, 18, 256, 256);
+        }
+    }
+
+    private void onTextureStitch(TextureStitchEvent.Pre event)
+    {
+        event.addSprite(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot"));
+    }
+}
