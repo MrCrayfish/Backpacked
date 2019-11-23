@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.entity.player;
 
 import com.google.common.collect.ImmutableList;
+import com.mrcrayfish.backpacked.inventory.container.BackpackInventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -19,15 +20,26 @@ public class ExtendedPlayerInventory extends PlayerInventory
 {
     public final NonNullList<ItemStack> backpackInventory = NonNullList.withSize(1, ItemStack.EMPTY);
     private final List<NonNullList<ItemStack>> allInventories = ImmutableList.of(this.mainInventory, this.armorInventory, this.offHandInventory, this.backpackInventory);
+    private BackpackInventory inventory = new BackpackInventory();
 
     public ExtendedPlayerInventory(PlayerEntity player)
     {
         super(player);
     }
 
-    public NonNullList<ItemStack> getBackpackInventory()
+    public NonNullList<ItemStack> getBackpackItems()
     {
         return backpackInventory;
+    }
+
+    public BackpackInventory getBackpackInventory()
+    {
+        return inventory;
+    }
+
+    public void copyBackpack(ExtendedPlayerInventory inventory)
+    {
+        this.backpackInventory.set(0, inventory.backpackInventory.get(0));
     }
 
     @Override

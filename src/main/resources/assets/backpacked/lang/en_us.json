@@ -1,3 +1,5 @@
 {
-    "item.backpacked.backpack": "Backpack"
+    "item.backpacked.backpack": "Backpack",
+    "key.backpack": "Open Backpack",
+    "container.backpack": "Backpack"
 }

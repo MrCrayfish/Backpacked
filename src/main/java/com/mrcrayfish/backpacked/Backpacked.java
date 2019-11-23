@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
+import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import com.mrcrayfish.backpacked.proxy.CommonProxy;
 import net.minecraft.client.gui.screen.Screen;
@@ -14,11 +15,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,8 +45,14 @@ public class Backpacked
     public Backpacked()
     {
         MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onTextureStitch);
+    }
+
+    private void onCommonSetup(FMLCommonSetupEvent event)
+    {
+        PacketHandler.init();
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
@@ -119,5 +128,15 @@ public class Backpacked
     private void onTextureStitch(TextureStitchEvent.Pre event)
     {
         event.addSprite(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot"));
+    }
+
+    @SubscribeEvent
+    public void onPlayerClone(PlayerEvent.Clone event)
+    {
+        PlayerEntity oldPlayer = event.getOriginal();
+        if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getPlayer().inventory instanceof ExtendedPlayerInventory)
+        {
+            ((ExtendedPlayerInventory) event.getPlayer().inventory).copyBackpack((ExtendedPlayerInventory) oldPlayer.inventory);
+        }
     }
 }

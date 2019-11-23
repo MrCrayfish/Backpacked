@@ -31,7 +31,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
-            if(!inventory.getBackpackInventory().get(0).isEmpty())
+            if(!inventory.getBackpackItems().get(0).isEmpty())
             {
                 GlStateManager.pushMatrix();
                 this.bindTexture(TEXTURE);
