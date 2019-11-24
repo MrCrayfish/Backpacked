@@ -96,6 +96,13 @@ public class ExtendedPlayerContainer extends PlayerContainer
                     return ItemStack.EMPTY;
                 }
             }
+            else if(index == 46)
+            {
+                if(!this.mergeItemStack(slotStack, 9, 45, false))
+                {
+                    return ItemStack.EMPTY;
+                }
+            }
             else if(index >= 9 && index < 36)
             {
                 if(!this.mergeItemStack(slotStack, 36, 45, false))
