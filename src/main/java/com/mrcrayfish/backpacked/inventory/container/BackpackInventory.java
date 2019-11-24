@@ -58,7 +58,8 @@ public class BackpackInventory extends Inventory
             ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
             if(!backpack.isEmpty())
             {
-                CompoundNBT compound = backpack.getTag();
+                ItemStack copy = backpack.copy();
+                CompoundNBT compound = copy.getTag();
                 if(compound == null)
                 {
                     compound = new CompoundNBT();
@@ -66,7 +67,8 @@ public class BackpackInventory extends Inventory
                 ListNBT list = new ListNBT();
                 InventoryHelper.saveAllItems(list, this);
                 compound.put("Items", list);
-                backpack.setTag(compound);
+                copy.setTag(compound);
+                player.inventory.setInventorySlotContents(41, copy);
             }
         }
     }
