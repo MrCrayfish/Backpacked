@@ -174,7 +174,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     @Override
     public int getSizeInventory()
     {
-        return super.getSizeInventory() + this.backpackInventory.size() + 1;
+        return super.getSizeInventory() + this.backpackInventory.size();
     }
 
     @Override
@@ -211,5 +211,14 @@ public class ExtendedPlayerInventory extends PlayerInventory
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void clear()
+    {
+        for(List<ItemStack> list : this.allInventories)
+        {
+            list.clear();
+        }
     }
 }
