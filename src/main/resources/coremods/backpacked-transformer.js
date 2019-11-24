@@ -61,7 +61,7 @@ function patch_PlayerEntity_Init(method) {
     var length = instructions.length;
     for (var i = 0; i < length; i++) {
         var node = instructions[i];
-        if(node.getOpcode() == Opcodes.PUTFIELD && node.name.equals("unused180")) {
+        if(node.getOpcode() == Opcodes.PUTFIELD && (node.name.equals("unused180") || node.name.equals("field_70741_aB"))) {
             foundNode = node;
             break;
         }
