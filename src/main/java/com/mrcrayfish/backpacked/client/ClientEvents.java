@@ -26,7 +26,7 @@ public class ClientEvents
         {
             if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientProxy.KEY_BACKPACK.getKey().getKeyCode())
             {
-                minecraft.displayGuiScreen(null);
+                minecraft.player.closeScreen();
             }
         }
         else if(minecraft.player != null && minecraft.currentScreen == null)
