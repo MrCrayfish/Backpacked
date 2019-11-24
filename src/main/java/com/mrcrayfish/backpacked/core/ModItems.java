@@ -22,6 +22,6 @@ public class ModItems
     @SuppressWarnings("unused")
     public static void register(final RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new BackpackItem(new Item.Properties().group(ItemGroup.MISC)));
+        event.getRegistry().register(new BackpackItem(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC)));
     }
 }
