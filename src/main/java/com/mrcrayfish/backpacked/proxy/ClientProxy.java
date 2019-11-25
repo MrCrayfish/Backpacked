@@ -3,6 +3,8 @@ package com.mrcrayfish.backpacked.proxy;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.LivingRenderer;
@@ -10,6 +12,9 @@ import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -41,6 +46,23 @@ public class ClientProxy extends CommonProxy
         if(layers != null)
         {
             layers.add(new BackpackLayer<>(renderer, new ModelBackpack<>()));
+        }
+    }
+
+    public static void setPlayerBackpack(int entityId, boolean wearing)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.world != null)
+        {
+            Entity entity = minecraft.world.getEntityByID(entityId);
+            if(entity instanceof PlayerEntity)
+            {
+                PlayerEntity player = (PlayerEntity) entity;
+                if(player.inventory instanceof ExtendedPlayerInventory)
+                {
+                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, wearing ? new ItemStack(ModItems.BACKPACK) : ItemStack.EMPTY);
+                }
+            }
         }
     }
 }

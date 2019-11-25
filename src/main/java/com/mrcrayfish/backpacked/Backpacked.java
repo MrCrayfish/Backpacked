@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import com.mrcrayfish.backpacked.proxy.CommonProxy;
 import net.minecraft.client.gui.screen.Screen;
@@ -15,6 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -23,6 +25,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -137,6 +140,37 @@ public class Backpacked
         if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getPlayer().inventory instanceof ExtendedPlayerInventory)
         {
             ((ExtendedPlayerInventory) event.getPlayer().inventory).copyBackpack((ExtendedPlayerInventory) oldPlayer.inventory);
+        }
+    }
+
+    @SubscribeEvent
+    public void onStartTracking(PlayerEvent.StartTracking event)
+    {
+        PlayerEntity player = event.getPlayer();
+        if(player.inventory instanceof ExtendedPlayerInventory)
+        {
+            if(!((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0).isEmpty())
+            {
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), true));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent event)
+    {
+        if(event.phase != TickEvent.Phase.START)
+            return;
+
+        PlayerEntity player = event.player;
+        if(!player.world.isRemote && player.inventory instanceof ExtendedPlayerInventory)
+        {
+            ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
+            if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
+            {
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), !inventory.backpackInventory.get(0).isEmpty()));
+                inventory.backpackArray.set( 0, inventory.backpackInventory.get(0));
+            }
         }
     }
 }
