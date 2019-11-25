@@ -4,7 +4,7 @@ import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.core.ModItems;
-import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.LivingRenderer;

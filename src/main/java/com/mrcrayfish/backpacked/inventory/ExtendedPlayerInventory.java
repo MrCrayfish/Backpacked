@@ -1,7 +1,6 @@
-package com.mrcrayfish.backpacked.entity.player;
+package com.mrcrayfish.backpacked.inventory;
 
 import com.google.common.collect.ImmutableList;
-import com.mrcrayfish.backpacked.inventory.container.BackpackInventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ItemStackHelper;

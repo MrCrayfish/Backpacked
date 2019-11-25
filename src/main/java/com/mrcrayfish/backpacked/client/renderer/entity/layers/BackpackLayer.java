@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
-import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;

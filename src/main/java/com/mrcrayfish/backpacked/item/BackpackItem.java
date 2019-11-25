@@ -1,10 +1,8 @@
 package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
-import net.minecraft.entity.MobEntity;
+import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;

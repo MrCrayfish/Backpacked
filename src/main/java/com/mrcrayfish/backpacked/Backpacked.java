@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked;
 
-import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;

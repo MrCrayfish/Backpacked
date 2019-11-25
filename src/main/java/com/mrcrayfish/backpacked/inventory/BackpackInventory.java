@@ -1,6 +1,5 @@
-package com.mrcrayfish.backpacked.inventory.container;
+package com.mrcrayfish.backpacked.inventory;
 
-import com.mrcrayfish.backpacked.entity.player.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
