@@ -32,6 +32,7 @@ public class BackpackInventory extends Inventory
     @Override
     public void openInventory(PlayerEntity player)
     {
+        this.clear();
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
