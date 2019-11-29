@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
@@ -22,7 +23,7 @@ public class ClientEvents
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.currentScreen instanceof ChestScreen)
+        if(minecraft.currentScreen instanceof BackpackScreen)
         {
             if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientProxy.KEY_BACKPACK.getKey().getKeyCode())
             {

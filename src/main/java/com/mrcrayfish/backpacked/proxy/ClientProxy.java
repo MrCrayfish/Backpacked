@@ -1,12 +1,15 @@
 package com.mrcrayfish.backpacked.proxy;
 
 import com.mrcrayfish.backpacked.client.ClientEvents;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -38,6 +41,7 @@ public class ClientProxy extends CommonProxy
         this.addBackpackLayer(skinMap.get("slim"));
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
+        ScreenManager.registerFactory(ModContainers.BACKPACK, BackpackScreen::new);
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)
