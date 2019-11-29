@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory;
 
 import com.google.common.collect.ImmutableList;
+import com.mrcrayfish.backpacked.Config;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -219,6 +220,30 @@ public class ExtendedPlayerInventory extends PlayerInventory
         for(List<ItemStack> list : this.allInventories)
         {
             list.clear();
+        }
+    }
+
+    @Override
+    public void dropAllItems()
+    {
+        if(Config.COMMON.keepBackpackOnDeath.get())
+        {
+            super.dropAllItems();
+        }
+        else
+        {
+            for(List<ItemStack> list : this.allInventories)
+            {
+                for(int i = 0; i < list.size(); ++i)
+                {
+                    ItemStack itemstack = list.get(i);
+                    if(!itemstack.isEmpty())
+                    {
+                        this.player.dropItem(itemstack, true, false);
+                        list.set(i, ItemStack.EMPTY);
+                    }
+                }
+            }
         }
     }
 }
