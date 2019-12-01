@@ -6,7 +6,7 @@ function initializeCoreMod() {
 				'name': 'net.minecraft.entity.player.PlayerEntity'
 			},
 			'transformer': function(classNode) {
-			    print("Patching PlayerEntity...");
+			    log("Patching PlayerEntity...");
                 patch({
                     obfName: "",
                     name: "<init>",
@@ -16,13 +16,13 @@ function initializeCoreMod() {
 				return classNode;
 			}
 		},
-		'creative_inventory_hook': {
+		'creative_inventory_slot_hook': {
 		    'target': {
                 'type': 'CLASS',
                 'name': 'net.minecraft.client.gui.screen.inventory.CreativeScreen'
             },
             'transformer': function(classNode) {
-                print("Patching CreativeScreen...");
+                log("Patching CreativeScreen...");
                 patch({
                     obfName: "func_147050_b",
                     name: "setCurrentCreativeTab",
@@ -31,6 +31,22 @@ function initializeCoreMod() {
                 }, classNode);
                 return classNode;
             }
+		},
+		'creative_inventory_action_fix': {
+		    'target': {
+		        'type': 'CLASS',
+		        'name': 'net.minecraft.network.play.ServerPlayNetHandler'
+		    },
+		    'transformer': function(classNode) {
+		        log("Patching ServerPlayerNetHandler...");
+		        patch({
+                    obfName: "func_147344_a",
+                    name: "processCreativeInventoryAction",
+                    desc: "(Lnet/minecraft/network/play/client/CCreativeInventoryActionPacket;)V",
+                    patch: patch_ServerPlayerNetHandler_processCreativeInventoryAction
+                }, classNode);
+                return classNode;
+		    }
 		}
 	};
 }
@@ -66,6 +82,7 @@ var Opcodes = Java.type('org.objectweb.asm.Opcodes');
 var MethodInsnNode = Java.type('org.objectweb.asm.tree.MethodInsnNode');
 var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode');
 var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode');
+var IntInsnNode = Java.type('org.objectweb.asm.tree.IntInsnNode');
 var LabelNode = Java.type('org.objectweb.asm.tree.LabelNode');
 var FieldInsnNode = Java.type('org.objectweb.asm.tree.FieldInsnNode');
 var TypeInsnNode = Java.type('org.objectweb.asm.tree.TypeInsnNode');
@@ -108,8 +125,32 @@ function patch_CreativeScreen_setCurrentCreativeTab(method) {
     }
     if(foundNode !== null) {
         method.instructions.insert(foundNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mrcrayfish/backpacked/Backpacked", "patchCreativeSlots", "(Lnet/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer;)V", false));
-        method.instructions.insert(foundNode, new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer"))
+        method.instructions.insert(foundNode, new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer"));
         method.instructions.insert(foundNode, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", ASMAPI.mapField("field_147002_h"), "Lnet/minecraft/inventory/container/Container;"));
+        method.instructions.insert(foundNode, new VarInsnNode(Opcodes.ALOAD, 0));
+        return true;
+    }
+    return false;
+}
+
+function patch_ServerPlayerNetHandler_processCreativeInventoryAction(method) {
+    var foundNode = null;
+    var instructions = method.instructions.toArray();
+    var length = instructions.length;
+    for (var i = 0; i < length; i++) {
+        var node = instructions[i];
+        if(node.getOpcode() == Opcodes.INVOKEVIRTUAL && (node.name.equals("getSlotId") || node.name.equals("func_149627_c"))) {
+            var nextNode = node.getNext();
+            if(nextNode.getOpcode() == Opcodes.BIPUSH && nextNode.operand == 45) {
+                foundNode = node;
+                break;
+            }
+        }
+    }
+    if(foundNode !== null) {
+        method.instructions.remove(foundNode.getNext());
+        method.instructions.insert(foundNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mrcrayfish/backpacked/Backpacked", "getCreativeSlotMax", "(Lnet/minecraft/entity/player/ServerPlayerEntity;)I", false));
+        method.instructions.insert(foundNode, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/play/ServerPlayNetHandler", ASMAPI.mapField("field_147369_b"), "Lnet/minecraft/entity/player/ServerPlayerEntity;"));
         method.instructions.insert(foundNode, new VarInsnNode(Opcodes.ALOAD, 0));
         return true;
     }

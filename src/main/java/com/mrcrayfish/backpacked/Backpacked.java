@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
@@ -145,7 +146,10 @@ public class Backpacked
         }
     }
 
-    /* Hooks into PlayerEntity constructor to allow manipulation of fields. Linked via ASM, do not remove! */
+    /*
+     * Hooks into PlayerEntity constructor to allow manipulation of fields.
+     * Linked via ASM, do not remove!
+     */
     public static void onPlayerInit(PlayerEntity player)
     {
         Backpacked.patchInventory(player);
@@ -195,6 +199,10 @@ public class Backpacked
         return field;
     }
 
+    /*
+     * Fixes the backpack slot in the creative inventory to be positioned correctly.
+     * Linked via ASM, do not remove!
+     */
     public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
     {
         creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
@@ -202,5 +210,18 @@ public class Backpacked
             slot.xPos = 127;
             slot.yPos = 20;
         });
+    }
+
+    /*
+     * Fixes an issue in net.minecraft.network.play.client.CCreativeInventoryActionPacket where a
+     * slot index flag excludes the backpack slot. Linked via ASM, do not remove!
+     */
+    public static int getCreativeSlotMax(ServerPlayerEntity player)
+    {
+        if(player.inventory instanceof ExtendedPlayerInventory)
+        {
+            return 46;
+        }
+        return 45;
     }
 }
