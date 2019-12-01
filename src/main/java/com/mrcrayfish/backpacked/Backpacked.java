@@ -203,6 +203,7 @@ public class Backpacked
      * Fixes the backpack slot in the creative inventory to be positioned correctly.
      * Linked via ASM, do not remove!
      */
+    @OnlyIn(Dist.CLIENT)
     public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
     {
         creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
