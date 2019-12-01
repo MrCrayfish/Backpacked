@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import com.mrcrayfish.backpacked.proxy.CommonProxy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -49,10 +50,10 @@ public class Backpacked
     public Backpacked()
     {
         MinecraftForge.EVENT_BUS.register(this);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        FMLJavaModLoadingContext.get().getModEventBus().register(this);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onTextureStitch);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event)
@@ -130,9 +131,14 @@ public class Backpacked
         }
     }
 
-    private void onTextureStitch(TextureStitchEvent.Pre event)
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        event.addSprite(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot"));
+        if(event.getMap() == Minecraft.getInstance().getTextureMap())
+        {
+            event.addSprite(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot"));
+        }
     }
 
     @SubscribeEvent
