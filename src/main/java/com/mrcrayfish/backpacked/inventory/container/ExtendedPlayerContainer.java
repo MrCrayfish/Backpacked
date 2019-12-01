@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -33,7 +33,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
             @Override
             public boolean isItemValid(ItemStack stack)
             {
-                return stack.getItem() == ModItems.BACKPACK;
+                return stack.getItem() instanceof BackpackItem;
             }
         });
     }
@@ -48,7 +48,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
             ItemStack slotStack = slot.getStack();
             copy = slotStack.copy();
             EquipmentSlotType equipmentslottype = MobEntity.getSlotForItemStack(copy);
-            if(index != 46 && copy.getItem() == ModItems.BACKPACK)
+            if(index != 46 && copy.getItem() instanceof BackpackItem)
             {
                 if(!this.inventorySlots.get(46).getHasStack())
                 {
@@ -67,14 +67,14 @@ public class ExtendedPlayerContainer extends PlayerContainer
 
                 slot.onSlotChange(slotStack, copy);
             }
-            else if(index >= 1 && index < 5)
+            else if(index < 5)
             {
                 if(!this.mergeItemStack(slotStack, 9, 45, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(index >= 5 && index < 9)
+            else if(index < 9)
             {
                 if(!this.mergeItemStack(slotStack, 9, 45, false))
                 {
@@ -103,14 +103,14 @@ public class ExtendedPlayerContainer extends PlayerContainer
                     return ItemStack.EMPTY;
                 }
             }
-            else if(index >= 9 && index < 36)
+            else if(index < 36)
             {
                 if(!this.mergeItemStack(slotStack, 36, 45, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(index >= 36 && index < 45)
+            else if(index < 45)
             {
                 if(!this.mergeItemStack(slotStack, 9, 36, false))
                 {

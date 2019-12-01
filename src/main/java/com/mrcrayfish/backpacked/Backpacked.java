@@ -9,8 +9,10 @@ import com.mrcrayfish.backpacked.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.api.distmarker.Dist;
@@ -66,56 +68,6 @@ public class Backpacked
         PROXY.setupClient();
     }
 
-    /* Hooks into PlayerEntity constructor to allow manipulation of fields. Linked via ASM, do not remove! */
-    public static void onPlayerInit(PlayerEntity player)
-    {
-        Backpacked.patchInventory(player);
-    }
-
-    private static void patchInventory(PlayerEntity player)
-    {
-        if(inventoryField == null)
-        {
-            inventoryField = getFieldAndSetAccessible(PlayerEntity.class, "field_71071_by");
-        }
-        if(containerField == null)
-        {
-            containerField = getFieldAndSetAccessible(PlayerEntity.class, "field_71069_bz");
-        }
-        try
-        {
-            ExtendedPlayerInventory inventory = new ExtendedPlayerInventory(player);
-            inventoryField.set(player, inventory);
-
-            ExtendedPlayerContainer container = new ExtendedPlayerContainer(inventory, !player.world.isRemote, player);
-            containerField.set(player, container);
-            player.openContainer = container;
-        }
-        catch(IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private static Field getFieldAndSetAccessible(Class clazz, String obfName)
-    {
-        Field field = ObfuscationReflectionHelper.findField(clazz, obfName);
-        field.setAccessible(true);
-
-        try
-        {
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        }
-        catch(IllegalAccessException | NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        }
-
-        return field;
-    }
-
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
@@ -128,6 +80,17 @@ public class Backpacked
             int top = inventoryScreen.getGuiTop();
             inventoryScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
             Screen.blit(left + 76, top + 43, 18, 18, 76, 61, 18, 18, 256, 256);
+        }
+        else if(screen instanceof CreativeScreen)
+        {
+            CreativeScreen creativeScreen = (CreativeScreen) screen;
+            if(creativeScreen.getSelectedTabIndex() == ItemGroup.INVENTORY.getIndex())
+            {
+                int left = creativeScreen.getGuiLeft();
+                int top = creativeScreen.getGuiTop();
+                creativeScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
+                Screen.blit(left + 126, top + 19, 18, 18, 76, 61, 18, 18, 256, 256);
+            }
         }
     }
 
@@ -180,5 +143,64 @@ public class Backpacked
                 inventory.backpackArray.set( 0, inventory.backpackInventory.get(0));
             }
         }
+    }
+
+    /* Hooks into PlayerEntity constructor to allow manipulation of fields. Linked via ASM, do not remove! */
+    public static void onPlayerInit(PlayerEntity player)
+    {
+        Backpacked.patchInventory(player);
+    }
+
+    private static void patchInventory(PlayerEntity player)
+    {
+        if(inventoryField == null)
+        {
+            inventoryField = getFieldAndSetAccessible(PlayerEntity.class, "field_71071_by");
+        }
+        if(containerField == null)
+        {
+            containerField = getFieldAndSetAccessible(PlayerEntity.class, "field_71069_bz");
+        }
+        try
+        {
+            ExtendedPlayerInventory inventory = new ExtendedPlayerInventory(player);
+            inventoryField.set(player, inventory);
+
+            ExtendedPlayerContainer container = new ExtendedPlayerContainer(inventory, !player.world.isRemote, player);
+            containerField.set(player, container);
+            player.openContainer = container;
+        }
+        catch(IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static Field getFieldAndSetAccessible(Class clazz, String obfName)
+    {
+        Field field = ObfuscationReflectionHelper.findField(clazz, obfName);
+        field.setAccessible(true);
+
+        try
+        {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        }
+        catch(IllegalAccessException | NoSuchFieldException e)
+        {
+            e.printStackTrace();
+        }
+
+        return field;
+    }
+
+    public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
+    {
+        creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
+        {
+            slot.xPos = 127;
+            slot.yPos = 20;
+        });
     }
 }

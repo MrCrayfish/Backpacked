@@ -1,6 +1,6 @@
 function initializeCoreMod() {
 	return {
-		'coremodone': {
+		'player_init_hook': {
 			'target': {
 				'type': 'CLASS',
 				'name': 'net.minecraft.entity.player.PlayerEntity'
@@ -15,6 +15,22 @@ function initializeCoreMod() {
                 }, classNode);
 				return classNode;
 			}
+		},
+		'creative_inventory_hook': {
+		    'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.client.gui.screen.inventory.CreativeScreen'
+            },
+            'transformer': function(classNode) {
+                print("Patching CreativeScreen...");
+                patch({
+                    obfName: "func_147050_b",
+                    name: "setCurrentCreativeTab",
+                    desc: "(Lnet/minecraft/item/ItemGroup;)V",
+                    patch: patch_CreativeScreen_setCurrentCreativeTab
+                }, classNode);
+                return classNode;
+            }
 		}
 	};
 }
@@ -45,6 +61,7 @@ function patch(entry, classNode) {
     }
 }
 
+var ASMAPI = Java.type('net.minecraftforge.coremod.api.ASMAPI');
 var Opcodes = Java.type('org.objectweb.asm.Opcodes');
 var MethodInsnNode = Java.type('org.objectweb.asm.tree.MethodInsnNode');
 var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode');
@@ -68,6 +85,31 @@ function patch_PlayerEntity_Init(method) {
     }
     if(foundNode !== null) {
         method.instructions.insert(foundNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mrcrayfish/backpacked/Backpacked", "onPlayerInit", "(Lnet/minecraft/entity/player/PlayerEntity;)V", false));
+        method.instructions.insert(foundNode, new VarInsnNode(Opcodes.ALOAD, 0));
+        return true;
+    }
+    return false;
+}
+
+function patch_CreativeScreen_setCurrentCreativeTab(method) {
+    var foundNode = null;
+    var instructions = method.instructions.toArray();
+    var length = instructions.length;
+    for (var i = 0; i < length; i++) {
+        var node = instructions[i];
+        if(node.getOpcode() != Opcodes.GETFIELD || !(node.name.equals("destroyItemSlot") || node.name.equals("field_147064_C")))
+            continue;
+        if(node.getNext() === null || node.getNext().getOpcode() != Opcodes.INVOKEINTERFACE)
+            continue;
+        if(node.getNext().getNext() === null || node.getNext().getNext().getOpcode() != Opcodes.POP)
+            continue;
+        foundNode = node.getNext().getNext();
+        break;
+    }
+    if(foundNode !== null) {
+        method.instructions.insert(foundNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mrcrayfish/backpacked/Backpacked", "patchCreativeSlots", "(Lnet/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer;)V", false));
+        method.instructions.insert(foundNode, new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/client/gui/screen/inventory/CreativeScreen$CreativeContainer"))
+        method.instructions.insert(foundNode, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/screen/inventory/CreativeScreen", ASMAPI.mapField("field_147002_h"), "Lnet/minecraft/inventory/container/Container;"));
         method.instructions.insert(foundNode, new VarInsnNode(Opcodes.ALOAD, 0));
         return true;
     }
