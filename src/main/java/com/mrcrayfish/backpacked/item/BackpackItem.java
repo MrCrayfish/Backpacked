@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.item;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,38 +56,6 @@ public class BackpackItem extends Item
         {
             return null;
         }
-        return CapCurioItem.createProvider(new ICurio()
-        {
-            @Override
-            public void onEquipped(String identifier, LivingEntity livingEntity)
-            {
-                System.out.println("YO");
-            }
-
-            @Override
-            public void playEquipSound(LivingEntity entity)
-            {
-                entity.world.playSound((PlayerEntity)null, entity.posX, entity.posY, entity.posZ, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
-            }
-
-            @Override
-            public boolean canRightClickEquip()
-            {
-                return true;
-            }
-
-            @Override
-            public boolean shouldSyncToTracking(String identifier, LivingEntity livingEntity)
-            {
-                return true;
-            }
-
-            @Nonnull
-            @Override
-            public DropRule getDropRule(LivingEntity livingEntity)
-            {
-                return Config.COMMON.keepBackpackOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
-            }
-        });
+        return Curios.createBackpackProvider();
     }
 }

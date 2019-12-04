@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked;
 
+import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.network.PacketHandler;
@@ -22,7 +23,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,7 +39,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.capability.ICurioItemHandler;
 import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
 import java.lang.reflect.Field;
@@ -272,8 +271,7 @@ public class Backpacked
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         if(Backpacked.isCuriosLoaded())
         {
-            LazyOptional<ICurioItemHandler> optional = CuriosAPI.getCuriosHandler(player);
-            optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("backpacked", 0)));
+            backpack.set(Curios.getBackpackStack(player));
         }
         else if(player.inventory instanceof ExtendedPlayerInventory)
         {

@@ -43,18 +43,7 @@ public class MessageOpenBackpack implements IMessage<MessageOpenBackpack>
             ServerPlayerEntity player = supplier.get().getSender();
             if(player != null)
             {
-                AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-                if(Backpacked.isCuriosLoaded())
-                {
-                    LazyOptional<ICurioItemHandler> optional = CuriosAPI.getCuriosHandler(player);
-                    optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("backpacked", 0)));
-                }
-                else if(player.inventory instanceof ExtendedPlayerInventory)
-                {
-                    ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
-                    backpack.set(inventory.getBackpackItems().get(0));
-                }
-                if(!backpack.get().isEmpty())
+                if(!Backpacked.getBackpackStack(player).isEmpty())
                 {
                     player.openContainer(new SimpleNamedContainerProvider((id, playerInventory, entity) ->
                         new BackpackContainer(id, player.inventory, new BackpackInventory()), BACKPACK_TRANSLATION));
