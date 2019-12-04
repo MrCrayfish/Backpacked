@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.inventory;
 
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -21,30 +22,22 @@ public class BackpackInventory extends Inventory
     @Override
     public boolean isUsableByPlayer(PlayerEntity player)
     {
-        if(player.inventory instanceof ExtendedPlayerInventory)
-        {
-            ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
-            return !backpack.isEmpty();
-        }
-        return false;
+        return !Backpacked.getBackpackStack(player).isEmpty();
     }
 
     @Override
     public void openInventory(PlayerEntity player)
     {
         this.clear();
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        ItemStack backpack = Backpacked.getBackpackStack(player);
+        if(!backpack.isEmpty())
         {
-            ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
-            if(!backpack.isEmpty())
+            CompoundNBT compound = backpack.getTag();
+            if(compound != null)
             {
-                CompoundNBT compound = backpack.getTag();
-                if(compound != null)
+                if(compound.contains("Items", Constants.NBT.TAG_LIST))
                 {
-                    if(compound.contains("Items", Constants.NBT.TAG_LIST))
-                    {
-                        InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this);
-                    }
+                    InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this);
                 }
             }
         }
@@ -53,23 +46,18 @@ public class BackpackInventory extends Inventory
     @Override
     public void closeInventory(PlayerEntity player)
     {
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        ItemStack backpack = Backpacked.getBackpackStack(player);
+        if(!backpack.isEmpty())
         {
-            ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
-            if(!backpack.isEmpty())
+            CompoundNBT compound = backpack.getTag();
+            if(compound == null)
             {
-                ItemStack copy = backpack.copy();
-                CompoundNBT compound = copy.getTag();
-                if(compound == null)
-                {
-                    compound = new CompoundNBT();
-                }
-                ListNBT list = new ListNBT();
-                InventoryHelper.saveAllItems(list, this);
-                compound.put("Items", list);
-                copy.setTag(compound);
-                player.inventory.setInventorySlotContents(41, copy);
+                compound = new CompoundNBT();
             }
+            ListNBT list = new ListNBT();
+            InventoryHelper.saveAllItems(list, this);
+            compound.put("Items", list);
+            backpack.setTag(compound);
         }
     }
 }

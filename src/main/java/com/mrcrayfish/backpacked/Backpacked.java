@@ -14,30 +14,37 @@ import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.GameRules;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import top.theillusivec4.curios.api.CuriosAPI;
+import top.theillusivec4.curios.api.capability.ICurioItemHandler;
+import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Author: MrCrayfish
@@ -46,6 +53,7 @@ import java.lang.reflect.Modifier;
 public class Backpacked
 {
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+    private static boolean curiosLoaded = false;
 
     private static Field inventoryField;
     private static Field containerField;
@@ -56,7 +64,9 @@ public class Backpacked
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        curiosLoaded = ModList.get().isLoaded("curios");
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event)
@@ -69,10 +79,22 @@ public class Backpacked
         PROXY.setupClient();
     }
 
+    private void onEnqueueIMC(InterModEnqueueEvent event)
+    {
+        if(!curiosLoaded)
+            return;
+
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "textures/item/empty_backpack_slot.png")));
+    }
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
     {
+        if(curiosLoaded)
+            return;
+
         ContainerScreen screen = event.getGuiContainer();
         if(screen instanceof InventoryScreen)
         {
@@ -108,6 +130,9 @@ public class Backpacked
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event)
     {
+        if(curiosLoaded)
+            return;
+
         PlayerEntity oldPlayer = event.getOriginal();
         if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getPlayer().inventory instanceof ExtendedPlayerInventory)
         {
@@ -118,6 +143,9 @@ public class Backpacked
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event)
     {
+        if(curiosLoaded)
+            return;
+
         PlayerEntity player = event.getPlayer();
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
@@ -131,6 +159,9 @@ public class Backpacked
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event)
     {
+        if(curiosLoaded)
+            return;
+
         if(event.phase != TickEvent.Phase.START)
             return;
 
@@ -152,6 +183,8 @@ public class Backpacked
      */
     public static void onPlayerInit(PlayerEntity player)
     {
+        if(curiosLoaded)
+            return;
         Backpacked.patchInventory(player);
     }
 
@@ -206,6 +239,9 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
     {
+        if(curiosLoaded)
+            return;
+
         creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
         {
             slot.xPos = 127;
@@ -219,10 +255,31 @@ public class Backpacked
      */
     public static int getCreativeSlotMax(ServerPlayerEntity player)
     {
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        if(!curiosLoaded && player.inventory instanceof ExtendedPlayerInventory)
         {
             return 46;
         }
         return 45;
+    }
+
+    public static boolean isCuriosLoaded()
+    {
+        return curiosLoaded;
+    }
+
+    public static ItemStack getBackpackStack(PlayerEntity player)
+    {
+        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
+        if(Backpacked.isCuriosLoaded())
+        {
+            LazyOptional<ICurioItemHandler> optional = CuriosAPI.getCuriosHandler(player);
+            optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("backpacked", 0)));
+        }
+        else if(player.inventory instanceof ExtendedPlayerInventory)
+        {
+            ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
+            backpack.set(inventory.getBackpackItems().get(0));
+        }
+        return backpack.get();
     }
 }

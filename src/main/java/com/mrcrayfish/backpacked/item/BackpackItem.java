@@ -1,12 +1,22 @@
 package com.mrcrayfish.backpacked.item;
 
+import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import top.theillusivec4.curios.api.capability.ICurio;
+import top.theillusivec4.curios.common.capability.CapCurioItem;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -35,5 +45,48 @@ public class BackpackItem extends Item
             }
         }
         return new ActionResult<>(ActionResultType.FAIL, heldItem);
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt)
+    {
+        if(!Backpacked.isCuriosLoaded())
+        {
+            return null;
+        }
+        return CapCurioItem.createProvider(new ICurio()
+        {
+            @Override
+            public void onEquipped(String identifier, LivingEntity livingEntity)
+            {
+                System.out.println("YO");
+            }
+
+            @Override
+            public void playEquipSound(LivingEntity entity)
+            {
+                entity.world.playSound((PlayerEntity)null, entity.posX, entity.posY, entity.posZ, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            }
+
+            @Override
+            public boolean canRightClickEquip()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean shouldSyncToTracking(String identifier, LivingEntity livingEntity)
+            {
+                return true;
+            }
+
+            @Nonnull
+            @Override
+            public DropRule getDropRule(LivingEntity livingEntity)
+            {
+                return Config.COMMON.keepBackpackOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
+            }
+        });
     }
 }
