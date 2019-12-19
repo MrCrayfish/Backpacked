@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
-import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 

@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
-version = project.property('mod.version') + "-1.14.4"
+version = project.property('mod.version') + "-1.15.1"
 group = 'com.mrcrayfish'
 archivesBaseName = project.property('mod.id')
 
@@ -65,8 +65,8 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.70'
-    compile "curios:curios-FORGE-1.14.4:1.0.6:deobf"
+    minecraft 'net.minecraftforge:forge:1.15.1-30.0.7'
+    //compile "curios:curios-FORGE-1.14.4:1.0.6:deobf" //TODO add back once I can
 }
 
 jar {

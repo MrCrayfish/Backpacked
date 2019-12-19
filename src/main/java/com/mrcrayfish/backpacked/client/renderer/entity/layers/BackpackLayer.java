@@ -1,21 +1,19 @@
 package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.LazyOptional;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.capability.ICurioItemHandler;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Author: MrCrayfish
@@ -33,21 +31,17 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
     }
 
     @Override
-    public void render(T player, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scaleIn)
+    public void func_225628_a_(MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, T player, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_)
     {
-        if(!Backpacked.getBackpackStack(player).isEmpty())
+        ItemStack backpackStack = Backpacked.getBackpackStack(player);
+        if(!backpackStack.isEmpty())
         {
-            GlStateManager.pushMatrix();
-            this.bindTexture(TEXTURE);
+            stack.func_227860_a_();
+            this.getEntityModel().setModelAttributes(this.model);
             this.model.setupAngles(this.getEntityModel());
-            this.model.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleIn);
-            GlStateManager.popMatrix();
+            IVertexBuilder builder = ItemRenderer.func_229113_a_(renderTypeBuffer, this.model.func_228282_a_(TEXTURE), false, backpackStack.hasEffect());
+            this.model.func_225598_a_(stack, builder, p_225628_3_, OverlayTexture.field_229196_a_, 1.0F, 2.0F, 2.0F, 2.0F);
+            stack.func_227865_b_();
         }
-    }
-
-    @Override
-    public boolean shouldCombineTextures()
-    {
-        return false;
     }
 }

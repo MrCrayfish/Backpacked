@@ -1,23 +1,22 @@
 package com.mrcrayfish.backpacked;
 
-import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import com.mrcrayfish.backpacked.proxy.CommonProxy;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
@@ -27,7 +26,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -38,8 +36,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -53,6 +49,8 @@ public class Backpacked
 {
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
     private static boolean curiosLoaded = false;
+    private static Field xPosField;
+    private static Field yPosField;
 
     private static Field inventoryField;
     private static Field containerField;
@@ -83,8 +81,9 @@ public class Backpacked
         if(!curiosLoaded)
             return;
 
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "textures/item/empty_backpack_slot.png")));
+        //TODO add back once possible
+        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
+        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "textures/item/empty_backpack_slot.png")));
     }
 
     @SubscribeEvent
@@ -120,7 +119,7 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap() == Minecraft.getInstance().getTextureMap())
+        if(event.getMap().func_229223_g_().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
         {
             event.addSprite(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot"));
         }
@@ -243,8 +242,7 @@ public class Backpacked
 
         creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
         {
-            slot.xPos = 127;
-            slot.yPos = 20;
+            Backpacked.setSlotPosition(slot, 127, 20);
         });
     }
 
@@ -269,15 +267,46 @@ public class Backpacked
     public static ItemStack getBackpackStack(PlayerEntity player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        if(Backpacked.isCuriosLoaded())
+       /* if(Backpacked.isCuriosLoaded())
         {
-            backpack.set(Curios.getBackpackStack(player));
-        }
-        else if(player.inventory instanceof ExtendedPlayerInventory)
+            backpack.set(Curios.getBackpackStack(player)); //TODO reimplement when possible
+        }*/
+        if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             backpack.set(inventory.getBackpackItems().get(0));
         }
         return backpack.get();
+    }
+
+    private static void setSlotPosition(Slot slot, int x, int y)
+    {
+        try
+        {
+            if(xPosField == null)
+            {
+                Field xPos = ObfuscationReflectionHelper.findField(Slot.class, "field_75223_e");
+                xPos.setAccessible(true);
+                Field xPosModifiers = Field.class.getDeclaredField("modifiers");
+                xPosModifiers.setAccessible(true);
+                xPosModifiers.setInt(xPos, xPos.getModifiers() & ~Modifier.FINAL);
+                xPosField = xPos;
+            }
+            if(yPosField == null)
+            {
+                Field yPos = ObfuscationReflectionHelper.findField(Slot.class, "field_75221_f");
+                yPos.setAccessible(true);
+                Field yPosModifiers = Field.class.getDeclaredField("modifiers");
+                yPosModifiers.setAccessible(true);
+                yPosModifiers.setInt(yPos, yPos.getModifiers() & ~Modifier.FINAL);
+                yPosField = yPos;
+            }
+            xPosField.set(slot, x);
+            yPosField.set(slot, y);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

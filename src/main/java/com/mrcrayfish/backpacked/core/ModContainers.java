@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.ResourceLocation;
