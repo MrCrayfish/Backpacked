@@ -1,6 +1,9 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mojang.datafixers.util.Pair;
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -8,6 +11,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,10 +28,11 @@ public class ExtendedPlayerContainer extends PlayerContainer
         this.addSlot(new Slot(playerInventory, 41, 77, 44)
         {
             @Nullable
+            @Override
             @OnlyIn(Dist.CLIENT)
-            public String getSlotTexture()
+            public Pair<ResourceLocation, ResourceLocation> func_225517_c_()
             {
-                return "backpacked:item/empty_backpack_slot";
+                return Pair.of(AtlasTexture.LOCATION_BLOCKS_TEXTURE, Backpacked.EMPTY_BACKPACK_SLOT);
             }
 
             @Override

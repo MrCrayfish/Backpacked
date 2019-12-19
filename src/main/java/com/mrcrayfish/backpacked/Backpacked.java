@@ -47,11 +47,14 @@ import java.util.concurrent.atomic.AtomicReference;
 @Mod(Reference.MOD_ID)
 public class Backpacked
 {
+    public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
+
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+
     private static boolean curiosLoaded = false;
+
     private static Field xPosField;
     private static Field yPosField;
-
     private static Field inventoryField;
     private static Field containerField;
 
@@ -121,7 +124,7 @@ public class Backpacked
     {
         if(event.getMap().func_229223_g_().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
         {
-            event.addSprite(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot"));
+            event.addSprite(EMPTY_BACKPACK_SLOT);
         }
     }
 
