@@ -14,3 +14,7 @@ Backpacked adds a very simple backpack into the game. It allows you to store add
 
 ### Crafting:
 ![Crafting](https://i.imgur.com/GMpieGQ.png)
+
+### Screenshots:
+![Inventory](https://i.imgur.com/C6e7EmZ.jpg)
+![Backpack](https://i.imgur.com/ItDukvn.jpg)
