@@ -66,7 +66,7 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.1-30.0.7'
-    //compile "curios:curios-FORGE-1.14.4:1.0.6:deobf" //TODO add back once I can
+    compile "curios:curios-FORGE-1.15.1-2.0:beta:deobf"
 }
 
 jar {

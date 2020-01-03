@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -50,7 +51,6 @@ public class BackpackItem extends Item
         {
             return null;
         }
-        //return Curios.createBackpackProvider(); //TODO reimplement when possible
-        return null;
+        return Curios.createBackpackProvider();
     }
 }

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked;
 
+import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.network.PacketHandler;
@@ -17,6 +18,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
@@ -26,6 +28,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -36,6 +39,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
+import top.theillusivec4.curios.api.CuriosAPI;
+import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -84,9 +89,8 @@ public class Backpacked
         if(!curiosLoaded)
             return;
 
-        //TODO add back once possible
-        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
-        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "textures/item/empty_backpack_slot.png")));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")));
     }
 
     @SubscribeEvent
@@ -270,10 +274,10 @@ public class Backpacked
     public static ItemStack getBackpackStack(PlayerEntity player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-       /* if(Backpacked.isCuriosLoaded())
+        if(Backpacked.isCuriosLoaded())
         {
-            backpack.set(Curios.getBackpackStack(player)); //TODO reimplement when possible
-        }*/
+            backpack.set(Curios.getBackpackStack(player));
+        }
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
