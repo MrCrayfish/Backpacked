@@ -14,9 +14,9 @@ import net.minecraftforge.common.util.Constants;
  */
 public class BackpackInventory extends Inventory
 {
-    public BackpackInventory()
+    public BackpackInventory(int rows)
     {
-        super(9);
+        super(9 * rows);
     }
 
     @Override

@@ -4,6 +4,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Author: MrCrayfish
@@ -28,13 +29,13 @@ public class InventoryHelper
 
     public static void loadAllItems(ListNBT list, Inventory inventory)
     {
-        for(int i = 0; i < list.size(); ++i)
+        for(int i = 0; i < list.size(); i++)
         {
-            CompoundNBT compoundnbt = list.getCompound(i);
-            int slot = compoundnbt.getByte("Slot") & 255;
+            CompoundNBT compound = list.getCompound(i);
+            int slot = compound.getByte("Slot") & 255;
             if(slot < inventory.getSizeInventory())
             {
-                inventory.setInventorySlotContents(slot, ItemStack.read(compoundnbt));
+                inventory.setInventorySlotContents(slot, ItemStack.read(compound));
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,12 +15,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class BackpackScreen extends ContainerScreen<BackpackContainer>
 {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/backpack.png");
+    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+
+    private final int rows;
 
     public BackpackScreen(BackpackContainer backpackContainer, PlayerInventory playerInventory, ITextComponent titleIn)
     {
         super(backpackContainer, playerInventory, titleIn);
-        this.ySize = 132;
+        this.rows = backpackContainer.getRows();
+        this.ySize = 114 + this.rows * 18;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
         int startX = (this.width - this.xSize) / 2;
         int startY = (this.height - this.ySize) / 2;
-        this.blit(startX, startY, 0, 0, this.xSize, this.ySize);
+        this.blit(startX, startY, 0, 0, this.xSize, this.rows * 18 + 17);
+        this.blit(startX, startY + this.rows * 18 + 17, 0, 126, this.xSize, 96);
     }
 }

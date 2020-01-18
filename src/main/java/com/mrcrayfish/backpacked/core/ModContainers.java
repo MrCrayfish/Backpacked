@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.IContainerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ModContainers
 {
     private static final List<ContainerType<?>> CONTAINER_TYPES = new ArrayList<>();
 
-    public static final ContainerType<BackpackContainer> BACKPACK = register(new ResourceLocation(Reference.MOD_ID, "backpack"), BackpackContainer::new);
+    public static final ContainerType<BackpackContainer> BACKPACK = register(new ResourceLocation(Reference.MOD_ID, "backpack"), (IContainerFactory<BackpackContainer>) (windowId, playerInventory, data) -> new BackpackContainer(windowId, playerInventory, data.readVarInt()));
 
     private static <T extends Container> ContainerType<T> register(ResourceLocation name, ContainerType.IFactory<T> factory)
     {

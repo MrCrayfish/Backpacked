@@ -11,6 +11,7 @@ public class Config
     public static class Common
     {
         public final ForgeConfigSpec.BooleanValue keepBackpackOnDeath;
+        public final ForgeConfigSpec.IntValue backpackInventorySize;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -19,6 +20,10 @@ public class Config
                     .comment("Determines whether or not the backpack should be dropped on death")
                     .translation("backpacked.configgui.keepBackpackOnDeath")
                     .define("keepBackpackOnDeath", true);
+            this.backpackInventorySize = builder
+                    .comment("The amount of rows the backpack has. Each row is nine slots of storage.")
+                    .translation("backpacked.configgui.backpackInventorySize")
+                    .defineInRange("backpackInventorySize", 1, 1, 6);
             builder.pop();
         }
     }
