@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.network.message;
 
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -10,39 +11,35 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 /**
  * Author: MrCrayfish
  */
-public class MessageUpdateBackpack implements IMessage, IMessageHandler<MessageUpdateBackpack, IMessage>
+public class MessageBackpackWindow implements IMessage, IMessageHandler<MessageBackpackWindow, IMessage>
 {
-    private int entityId;
-    private boolean wearing;
+    private int windowId;
 
-    public MessageUpdateBackpack() {}
+    public MessageBackpackWindow() {}
 
-    public MessageUpdateBackpack(int entityId, boolean wearing)
+    public MessageBackpackWindow(int windowId)
     {
-        this.entityId = entityId;
-        this.wearing = wearing;
+        this.windowId = windowId;
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeInt(this.entityId);
-        buf.writeBoolean(this.wearing);
+        buf.writeInt(this.windowId);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        this.entityId = buf.readInt();
-        this.wearing = buf.readBoolean();
+        this.windowId = buf.readInt();
     }
 
     @Override
-    public IMessage onMessage(MessageUpdateBackpack message, MessageContext ctx)
+    public IMessage onMessage(MessageBackpackWindow message, MessageContext ctx)
     {
         FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() ->
         {
-            ClientProxy.setPlayerBackpack(message.entityId, message.wearing);
+            ClientProxy.openBackpackWindow(message.windowId);
         });
         return null;
     }

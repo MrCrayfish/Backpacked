@@ -3,45 +3,44 @@ package com.mrcrayfish.backpacked.network.message;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import com.mrcrayfish.backpacked.network.PacketHandler;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * Author: MrCrayfish
  */
-public class MessageOpenBackpack implements IMessage<MessageOpenBackpack>
+public class MessageOpenBackpack implements IMessage, IMessageHandler<MessageOpenBackpack, IMessage>
 {
-    public static final TranslationTextComponent BACKPACK_TRANSLATION = new TranslationTextComponent("container.backpack");
+    @Override
+    public void toBytes(ByteBuf buf) {}
 
     @Override
-    public void encode(MessageOpenBackpack message, PacketBuffer buffer) {}
+    public void fromBytes(ByteBuf buf) {}
 
     @Override
-    public MessageOpenBackpack decode(PacketBuffer buffer)
+    public IMessage onMessage(MessageOpenBackpack message, MessageContext ctx)
     {
-        return new MessageOpenBackpack();
-    }
-
-    @Override
-    public void handle(MessageOpenBackpack message, Supplier<NetworkEvent.Context> supplier)
-    {
-        supplier.get().enqueueWork(() ->
+        FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() ->
         {
-            ServerPlayerEntity player = supplier.get().getSender();
+            EntityPlayerMP player = ctx.getServerHandler().player;
             if(player != null)
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {
-                    player.openContainer(new SimpleNamedContainerProvider((id, playerInventory, entity) ->
-                        new BackpackContainer(id, player.inventory, new BackpackInventory()), BACKPACK_TRANSLATION));
+                    player.getNextWindowId();
+                    PacketHandler.INSTANCE.sendTo(new MessageBackpackWindow(player.currentWindowId), player);
+                    player.openContainer = new BackpackContainer(player.inventory, new BackpackInventory());
+                    player.openContainer.windowId = player.currentWindowId;
+                    player.openContainer.addListener(player);
+                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(player, player.openContainer));
                 }
             }
         });
-        supplier.get().setPacketHandled(true);
+        return null;
     }
 }

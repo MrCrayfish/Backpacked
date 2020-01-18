@@ -1,47 +1,45 @@
 package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> extends LayerRenderer<T, M>
+public class BackpackLayer implements LayerRenderer<EntityPlayer>
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
 
-    private ModelBackpack<T> model;
+    private RenderPlayer renderer;
+    private ModelBackpack model = new ModelBackpack();
 
-    public BackpackLayer(IEntityRenderer<T, M> renderer, ModelBackpack<T> model)
+    public BackpackLayer(RenderPlayer renderer)
     {
-        super(renderer);
-        this.model = model;
+        this.renderer = renderer;
     }
 
     @Override
-    public void func_225628_a_(MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, T player, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_)
+    public void doRenderLayer(EntityPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale)
     {
-        ItemStack backpackStack = Backpacked.getBackpackStack(player);
+        ItemStack backpackStack = Backpacked.getBackpackStack(entity);
         if(!backpackStack.isEmpty())
         {
-            stack.func_227860_a_();
-            this.getEntityModel().setModelAttributes(this.model);
-            this.model.setupAngles(this.getEntityModel());
-            IVertexBuilder builder = ItemRenderer.func_229113_a_(renderTypeBuffer, this.model.func_228282_a_(TEXTURE), false, backpackStack.hasEffect());
-            this.model.func_225598_a_(stack, builder, p_225628_3_, OverlayTexture.field_229196_a_, 1.0F, 2.0F, 2.0F, 2.0F);
-            stack.func_227865_b_();
+            this.renderer.bindTexture(TEXTURE);
+            this.model.setModelAttributes(this.renderer.getMainModel());
+            this.model.setupAngles(this.renderer.getMainModel());
+            this.model.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         }
+    }
+
+    @Override
+    public boolean shouldCombineTextures()
+    {
+        return false;
     }
 }

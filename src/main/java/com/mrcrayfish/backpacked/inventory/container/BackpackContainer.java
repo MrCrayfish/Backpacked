@@ -1,15 +1,14 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import net.minecraft.block.Block;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.block.BlockShulkerBox;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -19,25 +18,24 @@ public class BackpackContainer extends Container
 {
     private final IInventory backpackInventory;
 
-    public BackpackContainer(int id, PlayerInventory playerInventory)
+    public BackpackContainer(InventoryPlayer playerInventory)
     {
-        this(id, playerInventory, new Inventory(9));
+        this(playerInventory, new BackpackInventory());
     }
 
-    public BackpackContainer(int id, PlayerInventory playerInventory, IInventory backpackInventory)
+    public BackpackContainer(InventoryPlayer playerInventory, IInventory backpackInventory)
     {
-        super(ModContainers.BACKPACK, id);
         this.backpackInventory = backpackInventory;
         backpackInventory.openInventory(playerInventory.player);
 
         for(int i = 0; i < 9; ++i)
         {
-            this.addSlot(new Slot(backpackInventory, i, 8 + i * 18, 18)
+            this.addSlotToContainer(new Slot(backpackInventory, i, 8 + i * 18, 18)
             {
                 @Override
                 public boolean isItemValid(ItemStack stack)
                 {
-                    return stack.getItem() != ModItems.BACKPACK && !(Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock);
+                    return stack.getItem() != ModItems.BACKPACK && !(Block.getBlockFromItem(stack.getItem()) instanceof BlockShulkerBox);
                 }
             });
         }
@@ -46,24 +44,24 @@ public class BackpackContainer extends Container
         {
             for(int j = 0; j < 9; j++)
             {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 50 + i * 18));
+                this.addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 50 + i * 18));
             }
         }
 
         for(int i = 0; i < 9; i++)
         {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 108));
+            this.addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 108));
         }
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn)
+    public boolean canInteractWith(EntityPlayer playerIn)
     {
         return this.backpackInventory.isUsableByPlayer(playerIn);
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index)
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
         ItemStack copy = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
@@ -96,9 +94,14 @@ public class BackpackContainer extends Container
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity playerIn)
+    public void onContainerClosed(EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);
         this.backpackInventory.closeInventory(playerIn);
+    }
+
+    public IInventory getBackpackInventory()
+    {
+        return backpackInventory;
     }
 }

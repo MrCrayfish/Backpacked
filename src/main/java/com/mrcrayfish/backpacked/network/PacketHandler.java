@@ -1,36 +1,32 @@
 package com.mrcrayfish.backpacked.network;
 
 import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.network.message.IMessage;
+import com.mrcrayfish.backpacked.network.message.MessageBackpackWindow;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Author: MrCrayfish
  */
 public class PacketHandler
 {
-    private static final String PROTOCOL_VERSION = "1";
-    private static int nextId = 0;
-    public static SimpleChannel instance;
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MOD_ID);
+    private static int messageId = 0;
 
     public static void init()
     {
-        instance = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(Reference.MOD_ID, "network"))
-                .networkProtocolVersion(() -> PROTOCOL_VERSION)
-                .clientAcceptedVersions(PROTOCOL_VERSION::equals)
-                .serverAcceptedVersions(PROTOCOL_VERSION::equals)
-                .simpleChannel();
-        register(MessageOpenBackpack.class, new MessageOpenBackpack());
-        register(MessageUpdateBackpack.class, new MessageUpdateBackpack());
+        registerMessage(MessageOpenBackpack.class, MessageOpenBackpack.class, Side.SERVER);
+        registerMessage(MessageUpdateBackpack.class, MessageUpdateBackpack.class, Side.CLIENT);
+        registerMessage(MessageBackpackWindow.class, MessageBackpackWindow.class, Side.CLIENT);
     }
 
-    private static <T> void register(Class<T> clazz, IMessage<T> message)
+    private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side)
     {
-        instance.registerMessage(nextId++, clazz, message::encode, message::decode, message::handle);
+        INSTANCE.registerMessage(messageHandler, requestMessageType, messageId++, side);
     }
 }

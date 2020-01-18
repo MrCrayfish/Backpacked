@@ -1,38 +1,32 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
  */
-public class ExtendedPlayerContainer extends PlayerContainer
+public class ExtendedPlayerContainer extends ContainerPlayer
 {
-    public ExtendedPlayerContainer(PlayerInventory playerInventory, boolean localWorld, PlayerEntity playerIn)
+    public ExtendedPlayerContainer(InventoryPlayer inventoryPlayer, boolean localWorld, EntityPlayer playerIn)
     {
-        super(playerInventory, localWorld, playerIn);
-        this.addSlot(new Slot(playerInventory, 41, 77, 44)
+        super(inventoryPlayer, localWorld, playerIn);
+        this.addSlotToContainer(new Slot(inventoryPlayer, 41, 77, 44)
         {
             @Nullable
             @Override
-            @OnlyIn(Dist.CLIENT)
-            public Pair<ResourceLocation, ResourceLocation> func_225517_c_()
+            public String getSlotTexture()
             {
-                return Pair.of(AtlasTexture.LOCATION_BLOCKS_TEXTURE, Backpacked.EMPTY_BACKPACK_SLOT);
+                return Backpacked.EMPTY_BACKPACK_SLOT.toString();
             }
 
             @Override
@@ -44,7 +38,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index)
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
         ItemStack copy = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
@@ -52,7 +46,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
         {
             ItemStack slotStack = slot.getStack();
             copy = slotStack.copy();
-            EquipmentSlotType equipmentslottype = MobEntity.getSlotForItemStack(copy);
+            EntityEquipmentSlot equipmentSlot = EntityLiving.getSlotForItemStack(copy);
             if(index != 46 && copy.getItem() instanceof BackpackItem)
             {
                 if(!this.inventorySlots.get(46).getHasStack())
@@ -86,15 +80,15 @@ public class ExtendedPlayerContainer extends PlayerContainer
                     return ItemStack.EMPTY;
                 }
             }
-            else if(equipmentslottype.getSlotType() == EquipmentSlotType.Group.ARMOR && !this.inventorySlots.get(8 - equipmentslottype.getIndex()).getHasStack())
+            else if(equipmentSlot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !this.inventorySlots.get(8 - equipmentSlot.getIndex()).getHasStack())
             {
-                int i = 8 - equipmentslottype.getIndex();
+                int i = 8 - equipmentSlot.getIndex();
                 if(!this.mergeItemStack(slotStack, i, i + 1, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(equipmentslottype == EquipmentSlotType.OFFHAND && !this.inventorySlots.get(45).getHasStack())
+            else if(equipmentSlot == EntityEquipmentSlot.OFFHAND && !this.inventorySlots.get(45).getHasStack())
             {
                 if(!this.mergeItemStack(slotStack, 45, 46, false))
                 {

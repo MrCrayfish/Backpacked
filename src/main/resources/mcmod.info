@@ -1,0 +1,16 @@
+[
+    {
+        "modid": "backpacked",
+        "name": "Backpacked",
+        "description": "Adds a simple backpack to store more items",
+        "version": "1.3.0",
+        "mcversion": "1.12.2",
+        "url": "https://mrcrayfish.com/mods?id=backpacked",
+        "updateUrl": "",
+        "authorList": [ "MrCrayfish" ],
+        "credits": "",
+        "logoFile": "",
+        "screenshots": [ ],
+        "dependencies": [ ]
+    }
+]

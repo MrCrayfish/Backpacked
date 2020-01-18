@@ -1,40 +1,40 @@
 package com.mrcrayfish.backpacked.util;
 
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 /**
  * Author: MrCrayfish
  */
 public class InventoryHelper
 {
-    public static ListNBT saveAllItems(ListNBT list, Inventory inventory)
+    public static NBTTagList saveAllItems(NBTTagList list, IInventory inventory)
     {
         for(int i = 0; i < inventory.getSizeInventory(); ++i)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
             if(!itemstack.isEmpty())
             {
-                CompoundNBT compound = new CompoundNBT();
-                compound.putByte("Slot", (byte) i);
-                itemstack.write(compound);
-                list.add(compound);
+                NBTTagCompound compound = new NBTTagCompound();
+                compound.setByte("Slot", (byte) i);
+                itemstack.writeToNBT(compound);
+                list.appendTag(compound);
             }
         }
         return list;
     }
 
-    public static void loadAllItems(ListNBT list, Inventory inventory)
+    public static void loadAllItems(NBTTagList list, IInventory inventory)
     {
-        for(int i = 0; i < list.size(); ++i)
+        for(int i = 0; i < list.tagCount(); ++i)
         {
-            CompoundNBT compoundnbt = list.getCompound(i);
-            int slot = compoundnbt.getByte("Slot") & 255;
+            NBTTagCompound compound = list.getCompoundTagAt(i);
+            int slot = compound.getByte("Slot") & 255;
             if(slot < inventory.getSizeInventory())
             {
-                inventory.setInventorySlotContents(slot, ItemStack.read(compoundnbt));
+                inventory.setInventorySlotContents(slot, new ItemStack(compound));
             }
         }
     }
