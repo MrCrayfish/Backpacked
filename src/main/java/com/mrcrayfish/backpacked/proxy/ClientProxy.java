@@ -45,9 +45,10 @@ public class ClientProxy extends CommonProxy
             if(entity instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer) entity;
+
                 if(player.inventory instanceof ExtendedPlayerInventory)
                 {
-                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, wearing ? new ItemStack(ModItems.BACKPACK) : ItemStack.EMPTY);
+                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, wearing ? new ItemStack(ModItems.backpack) : ItemStack.EMPTY);
                 }
             }
         }

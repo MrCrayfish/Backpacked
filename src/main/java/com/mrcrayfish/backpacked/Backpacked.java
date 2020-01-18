@@ -6,8 +6,10 @@ import com.mrcrayfish.backpacked.asm.BackpackedPlugin;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModModels;
+import com.mrcrayfish.backpacked.integration.Baubles;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
+import com.mrcrayfish.backpacked.item.BaubleBackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.CommonProxy;
@@ -57,6 +59,7 @@ public class Backpacked extends DummyModContainer
     public static final Logger LOGGER = LogManager.getLogger(Reference.MOD_NAME);
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "items/empty_backpack_slot");
 
+    private static boolean baublesLoaded;
     public static Backpacked instance;
     public static CommonProxy proxy;
 
@@ -127,7 +130,13 @@ public class Backpacked extends DummyModContainer
             MinecraftForge.EVENT_BUS.register(new ClientEvents());
         }
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new BackpackConfig());
+        baublesLoaded = Loader.isModLoaded("baubles");
+        ModItems.init();
+
+        if(baublesLoaded)
+        {
+            MinecraftForge.EVENT_BUS.register(new Baubles());
+        }
     }
 
     @Subscribe
@@ -141,7 +150,7 @@ public class Backpacked extends DummyModContainer
     @SideOnly(Side.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap() == Minecraft.getMinecraft().getTextureMapBlocks())
+        if(!baublesLoaded && event.getMap() == Minecraft.getMinecraft().getTextureMapBlocks())
         {
             event.getMap().registerSprite(EMPTY_BACKPACK_SLOT);
         }
@@ -151,7 +160,11 @@ public class Backpacked extends DummyModContainer
     public void onPlayerClone(PlayerEvent.Clone event)
     {
         EntityPlayer oldPlayer = event.getOriginal();
-        if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getEntityPlayer().inventory instanceof ExtendedPlayerInventory)
+        if(baublesLoaded)
+        {
+            Baubles.setBackpackStack(event.getEntityPlayer(), Baubles.getBackpackStack(oldPlayer));
+        }
+        else if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getEntityPlayer().inventory instanceof ExtendedPlayerInventory)
         {
             ((ExtendedPlayerInventory) event.getEntityPlayer().inventory).copyBackpack((ExtendedPlayerInventory) oldPlayer.inventory);
         }
@@ -160,6 +173,9 @@ public class Backpacked extends DummyModContainer
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event)
     {
+        if(baublesLoaded)
+            return;
+
         EntityPlayer player = event.getEntityPlayer();
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
@@ -173,6 +189,9 @@ public class Backpacked extends DummyModContainer
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event)
     {
+        if(baublesLoaded)
+            return;
+
         if(event.phase != TickEvent.Phase.START)
             return;
 
@@ -183,7 +202,7 @@ public class Backpacked extends DummyModContainer
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
                 PacketHandler.INSTANCE.sendToAllTracking(new MessageUpdateBackpack(player.getEntityId(), true), player);
-                inventory.backpackArray.set( 0, inventory.backpackInventory.get(0));
+                inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }
     }
@@ -195,6 +214,8 @@ public class Backpacked extends DummyModContainer
     @SuppressWarnings("unused")
     public static void onPlayerInit(EntityPlayer player)
     {
+        if(baublesLoaded)
+            return;
         Backpacked.patchInventory(player);
     }
 
@@ -213,6 +234,9 @@ public class Backpacked extends DummyModContainer
     @SuppressWarnings("unused")
     public static void patchCreativeSlots(GuiContainerCreative.ContainerCreative creativeContainer)
     {
+        if(baublesLoaded)
+            return;
+
         creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
         {
             slot.xPos = 127;
@@ -227,7 +251,7 @@ public class Backpacked extends DummyModContainer
     @SuppressWarnings("unused")
     public static int getCreativeSlotMax(EntityPlayerMP player)
     {
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        if(!baublesLoaded && player.inventory instanceof ExtendedPlayerInventory)
         {
             return 46;
         }
@@ -244,6 +268,9 @@ public class Backpacked extends DummyModContainer
     @SuppressWarnings("unused")
     public static void drawBackgroundLayer(GuiContainer screen)
     {
+        if(baublesLoaded)
+            return;
+
         if(screen instanceof GuiInventory)
         {
             GuiInventory guiInventory = (GuiInventory) screen;
@@ -270,11 +297,20 @@ public class Backpacked extends DummyModContainer
     public static ItemStack getBackpackStack(EntityPlayer player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        if(baublesLoaded)
+        {
+            backpack.set(Baubles.getBackpackStack(player));
+        }
+        else if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             backpack.set(inventory.getBackpackItems().get(0));
         }
         return backpack.get();
+    }
+
+    public static boolean isBaublesLoaded()
+    {
+        return baublesLoaded;
     }
 }

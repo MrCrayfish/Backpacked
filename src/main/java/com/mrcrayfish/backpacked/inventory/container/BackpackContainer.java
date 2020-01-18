@@ -35,7 +35,7 @@ public class BackpackContainer extends Container
                 @Override
                 public boolean isItemValid(ItemStack stack)
                 {
-                    return stack.getItem() != ModItems.BACKPACK && !(Block.getBlockFromItem(stack.getItem()) instanceof BlockShulkerBox);
+                    return stack.getItem() != ModItems.backpack && !(Block.getBlockFromItem(stack.getItem()) instanceof BlockShulkerBox);
                 }
             });
         }

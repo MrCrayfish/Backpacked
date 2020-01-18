@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.3.0"
+version = "1.3.0-1.12.2"
 group = "com.mrcrayfish"
 archivesBaseName = "backpacked"
 
@@ -24,13 +24,20 @@ minecraft {
     mappings = "snapshot_20171003"
 }
 
-dependencies {
+repositories {
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+}
 
+dependencies {
+    compileOnly 'baubles:Baubles:1.12:1.5.2'
 }
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'com.mrcrayfish.backpacked.asm.ControllablePlugin'
+        attributes 'FMLCorePlugin': 'com.mrcrayfish.backpacked.asm.BackpackedPlugin'
     }
 }
 

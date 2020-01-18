@@ -1,12 +1,12 @@
 package com.mrcrayfish.backpacked.core;
 
-import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.integration.Baubles;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.item.BaubleBackpackItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,24 @@ public class ModItems
 {
     public static final List<Item> ITEMS = new ArrayList<>();
 
-    public static final Item BACKPACK = register(new BackpackItem());
+    public static Item backpack;
 
-    private static Item register(Item item)
+    public static void init()
     {
+        backpack = registerBackpack();
+    }
+
+    private static Item registerBackpack()
+    {
+        Item item;
+        if(Backpacked.isBaublesLoaded())
+        {
+            item = Baubles.getBaubleBackpackItem();
+        }
+        else
+        {
+            item = new BackpackItem();
+        }
         ITEMS.add(item);
         return item;
     }
