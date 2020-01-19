@@ -21,7 +21,6 @@ public class ExtendedPlayerInventory extends InventoryPlayer
     public final NonNullList<ItemStack> backpackArray = NonNullList.withSize(1, ItemStack.EMPTY);
     public final NonNullList<ItemStack> backpackInventory = NonNullList.withSize(1, ItemStack.EMPTY);
     private final List<NonNullList<ItemStack>> allInventories = ImmutableList.of(this.mainInventory, this.armorInventory, this.offHandInventory, this.backpackInventory);
-    private BackpackInventory inventory = new BackpackInventory();
 
     public ExtendedPlayerInventory(EntityPlayer player)
     {
@@ -31,11 +30,6 @@ public class ExtendedPlayerInventory extends InventoryPlayer
     public NonNullList<ItemStack> getBackpackItems()
     {
         return backpackInventory;
-    }
-
-    public BackpackInventory getBackpackInventory()
-    {
-        return inventory;
     }
 
     public void copyBackpack(ExtendedPlayerInventory inventory)

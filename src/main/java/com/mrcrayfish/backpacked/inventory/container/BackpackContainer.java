@@ -1,9 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockShulkerBox;
+import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -17,40 +15,40 @@ import net.minecraft.item.ItemStack;
 public class BackpackContainer extends Container
 {
     private final IInventory backpackInventory;
+    private final int rows;
 
-    public BackpackContainer(InventoryPlayer playerInventory)
+    public BackpackContainer(InventoryPlayer playerInventory, int rows)
     {
-        this(playerInventory, new BackpackInventory());
+        this(playerInventory, new BackpackInventory(rows), rows);
     }
 
-    public BackpackContainer(InventoryPlayer playerInventory, IInventory backpackInventory)
+    public BackpackContainer(InventoryPlayer playerInventory, IInventory backpackInventory, int rows)
     {
+        assert backpackInventory.getSizeInventory() == rows * 9;
         this.backpackInventory = backpackInventory;
+        this.rows = rows;
         backpackInventory.openInventory(playerInventory.player);
+        int offset = (this.rows - 4) * 18;
 
-        for(int i = 0; i < 9; ++i)
+        for(int j = 0; j < rows; j++)
         {
-            this.addSlotToContainer(new Slot(backpackInventory, i, 8 + i * 18, 18)
+            for(int i = 0; i < 9; ++i)
             {
-                @Override
-                public boolean isItemValid(ItemStack stack)
-                {
-                    return stack.getItem() != ModItems.backpack && !(Block.getBlockFromItem(stack.getItem()) instanceof BlockShulkerBox);
-                }
-            });
+                this.addSlotToContainer(new BackpackSlot(backpackInventory, i + j * 9, 8 + i * 18, 18 + j * 18));
+            }
         }
 
         for(int i = 0; i < 3; i++)
         {
             for(int j = 0; j < 9; j++)
             {
-                this.addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 50 + i * 18));
+                this.addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 103 + i * 18 + offset));
             }
         }
 
         for(int i = 0; i < 9; i++)
         {
-            this.addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 108));
+            this.addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 161 + offset));
         }
     }
 
@@ -69,14 +67,14 @@ public class BackpackContainer extends Container
         {
             ItemStack slotStack = slot.getStack();
             copy = slotStack.copy();
-            if(index < 9)
+            if(index < this.rows * 9)
             {
-                if(!this.mergeItemStack(slotStack, 9, this.inventorySlots.size(), true))
+                if(!this.mergeItemStack(slotStack, this.rows * 9, this.inventorySlots.size(), true))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(!this.mergeItemStack(slotStack, 0, 9, false))
+            else if(!this.mergeItemStack(slotStack, 0, this.rows * 9, false))
             {
                 return ItemStack.EMPTY;
             }
@@ -98,10 +96,5 @@ public class BackpackContainer extends Container
     {
         super.onContainerClosed(playerIn);
         this.backpackInventory.closeInventory(playerIn);
-    }
-
-    public IInventory getBackpackInventory()
-    {
-        return backpackInventory;
     }
 }

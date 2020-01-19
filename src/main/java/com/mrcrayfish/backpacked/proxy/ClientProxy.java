@@ -54,12 +54,12 @@ public class ClientProxy extends CommonProxy
         }
     }
 
-    public static void openBackpackWindow(int windowId)
+    public static void openBackpackWindow(int windowId, int rows)
     {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if(player != null)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new BackpackScreen(player.inventory));
+            Minecraft.getMinecraft().displayGuiScreen(new BackpackScreen(player.inventory, rows));
             player.openContainer.windowId = windowId;
         }
     }

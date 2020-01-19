@@ -14,24 +14,28 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageBackpackWindow implements IMessage, IMessageHandler<MessageBackpackWindow, IMessage>
 {
     private int windowId;
+    private int rows;
 
     public MessageBackpackWindow() {}
 
-    public MessageBackpackWindow(int windowId)
+    public MessageBackpackWindow(int windowId, int rows)
     {
         this.windowId = windowId;
+        this.rows = rows;
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(this.windowId);
+        buf.writeInt(this.rows);
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         this.windowId = buf.readInt();
+        this.rows = buf.readInt();
     }
 
     @Override
@@ -39,7 +43,7 @@ public class MessageBackpackWindow implements IMessage, IMessageHandler<MessageB
     {
         FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() ->
         {
-            ClientProxy.openBackpackWindow(message.windowId);
+            ClientProxy.openBackpackWindow(message.windowId, message.rows);
         });
         return null;
     }

@@ -16,15 +16,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BackpackScreen extends GuiContainer
 {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/backpack.png");
+    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
     private final InventoryPlayer playerInventory;
+    private final int rows;
 
-    public BackpackScreen(InventoryPlayer playerInventory)
+    public BackpackScreen(InventoryPlayer playerInventory, int rows)
     {
-        super(new BackpackContainer(playerInventory));
+        super(new BackpackContainer(playerInventory, rows));
         this.playerInventory = playerInventory;
-        this.ySize = 132;
+        this.rows = rows;
+        this.ySize = 114 + this.rows * 18;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class BackpackScreen extends GuiContainer
         this.mc.getTextureManager().bindTexture(GUI_TEXTURE);
         int startX = (this.width - this.xSize) / 2;
         int startY = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(startX, startY, 0, 0, this.xSize, this.ySize);
+        this.drawTexturedModalRect(startX, startY, 0, 0, this.xSize, this.rows * 18 + 17);
+        this.drawTexturedModalRect(startX, startY + this.rows * 18 + 17, 0, 126, this.xSize, 96);
     }
 }

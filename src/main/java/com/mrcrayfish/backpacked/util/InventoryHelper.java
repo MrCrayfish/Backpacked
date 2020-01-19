@@ -12,7 +12,7 @@ public class InventoryHelper
 {
     public static NBTTagList saveAllItems(NBTTagList list, IInventory inventory)
     {
-        for(int i = 0; i < inventory.getSizeInventory(); ++i)
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
             if(!itemstack.isEmpty())
@@ -28,7 +28,7 @@ public class InventoryHelper
 
     public static void loadAllItems(NBTTagList list, IInventory inventory)
     {
-        for(int i = 0; i < list.tagCount(); ++i)
+        for(int i = 0; i < list.tagCount(); i++)
         {
             NBTTagCompound compound = list.getCompoundTagAt(i);
             int slot = compound.getByte("Slot") & 255;
