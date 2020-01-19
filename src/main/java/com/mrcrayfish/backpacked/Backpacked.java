@@ -39,6 +39,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
@@ -46,8 +48,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -94,12 +95,6 @@ public class Backpacked extends DummyModContainer
         return this.getSource().isDirectory() ? FMLFolderResourcePack.class : FMLFileResourcePack.class;
     }
 
-    @Override
-    public Map<String, String> getCustomModProperties()
-    {
-        return super.getCustomModProperties();
-    }
-
     @Subscribe
     public void onModConstruct(FMLConstructionEvent event)
     {
@@ -122,21 +117,24 @@ public class Backpacked extends DummyModContainer
         {
             e.printStackTrace();
         }
+    }
 
+    @Subscribe
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        baublesLoaded = Loader.isModLoaded("baubles");
+        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModItems());
+        if(baublesLoaded)
+        {
+            MinecraftForge.EVENT_BUS.register(new Baubles());
+        }
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             MinecraftForge.EVENT_BUS.register(new ModModels());
             MinecraftForge.EVENT_BUS.register(new ClientEvents());
         }
-        MinecraftForge.EVENT_BUS.register(this);
-        baublesLoaded = Loader.isModLoaded("baubles");
         ModItems.init();
-
-        if(baublesLoaded)
-        {
-            MinecraftForge.EVENT_BUS.register(new Baubles());
-        }
     }
 
     @Subscribe
