@@ -3,7 +3,7 @@ loaderVersion="[30,)"
 
 [[mods]]
 modId="backpacked"
-version="1.3.0"
+version="1.4.0"
 displayName="Backpacked"
 updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/MiniMods/backpack/update.json"
 displayURL="https://mrcrayfish.com/minimods"
