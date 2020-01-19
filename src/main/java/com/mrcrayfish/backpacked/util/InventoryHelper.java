@@ -12,7 +12,7 @@ public class InventoryHelper
 {
     public static ListNBT saveAllItems(ListNBT list, Inventory inventory)
     {
-        for(int i = 0; i < inventory.getSizeInventory(); ++i)
+        for(int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack itemstack = inventory.getStackInSlot(i);
             if(!itemstack.isEmpty())
@@ -28,13 +28,13 @@ public class InventoryHelper
 
     public static void loadAllItems(ListNBT list, Inventory inventory)
     {
-        for(int i = 0; i < list.size(); ++i)
+        for(int i = 0; i < list.size(); i++)
         {
-            CompoundNBT compoundnbt = list.getCompound(i);
-            int slot = compoundnbt.getByte("Slot") & 255;
+            CompoundNBT compound = list.getCompound(i);
+            int slot = compound.getByte("Slot") & 255;
             if(slot < inventory.getSizeInventory())
             {
-                inventory.setInventorySlotContents(slot, ItemStack.read(compoundnbt));
+                inventory.setInventorySlotContents(slot, ItemStack.read(compound));
             }
         }
     }

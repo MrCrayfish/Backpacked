@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
@@ -13,6 +14,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import top.theillusivec4.curios.api.CuriosAPI;
 import top.theillusivec4.curios.api.capability.ICurioItemHandler;
 
@@ -45,8 +47,10 @@ public class MessageOpenBackpack implements IMessage<MessageOpenBackpack>
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {
-                    player.openContainer(new SimpleNamedContainerProvider((id, playerInventory, entity) ->
-                        new BackpackContainer(id, player.inventory, new BackpackInventory()), BACKPACK_TRANSLATION));
+                    int rows = Config.COMMON.backpackInventorySize.get();
+                    NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity) ->
+                            new BackpackContainer(id, player.inventory, new BackpackInventory(rows), rows), BACKPACK_TRANSLATION),
+                            buffer -> buffer.writeVarInt(rows));
                 }
             }
         });
