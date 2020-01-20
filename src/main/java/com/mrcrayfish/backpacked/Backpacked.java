@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked;
 
+import com.google.common.base.Joiner;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.mrcrayfish.backpacked.asm.BackpackedPlugin;
@@ -9,7 +10,6 @@ import com.mrcrayfish.backpacked.core.ModModels;
 import com.mrcrayfish.backpacked.integration.Baubles;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
-import com.mrcrayfish.backpacked.item.BaubleBackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.CommonProxy;
@@ -18,18 +18,18 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
@@ -39,16 +39,13 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -63,6 +60,8 @@ public class Backpacked extends DummyModContainer
     private static boolean baublesLoaded;
     public static Backpacked instance;
     public static CommonProxy proxy;
+    public static boolean keepBackpackOnDeath;
+    public static int backpackInventorySize;
 
     public Backpacked()
     {
@@ -74,6 +73,25 @@ public class Backpacked extends DummyModContainer
         meta.authorList = Collections.singletonList("MrCrayfish");
         meta.url = "https://mrcrayfish.com/mod?id=backpacked";
         instance = this;
+        this.loadConfig();
+    }
+
+    private void loadConfig()
+    {
+        Joiner newLineJoiner = Joiner.on('\n');
+
+        File cfgFile = new File(Loader.instance().getConfigDir(), "backpacked.cfg");
+        Configuration config = new Configuration(cfgFile);
+        config.load();
+        config.setCategoryComment("common", "Common-only configs");
+
+        Property prop = config.get("common", "keepBackpackOnDeath", true, newLineJoiner.join("Determines whether or not the backpack should be dropped on death", "Default: true"));
+        keepBackpackOnDeath = prop.getBoolean(true);
+
+        prop = config.get("common", "backpackInventorySize", 1, newLineJoiner.join("The amount of rows the backpack has. Each row is nine slots of storage.", "Min: 1", "Max: 6", "Default: 1"), 1, 6);
+        backpackInventorySize = MathHelper.clamp(prop.getInt(1), 1, 6);
+
+        config.save();
     }
 
     @Override
@@ -98,7 +116,7 @@ public class Backpacked extends DummyModContainer
     @Subscribe
     public void onModConstruct(FMLConstructionEvent event)
     {
-        ConfigManager.sync(this.getModId(), Config.Type.INSTANCE);
+        ConfigManager.sync(Reference.MOD_ID, Config.Type.INSTANCE);
         try
         {
             ClassLoader mcl = Loader.instance().getModClassLoader();

@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.inventory;
 
 import com.google.common.collect.ImmutableList;
-import com.mrcrayfish.backpacked.BackpackConfig;
+import com.mrcrayfish.backpacked.Backpacked;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ItemStackHelper;
@@ -220,7 +220,7 @@ public class ExtendedPlayerInventory extends InventoryPlayer
     @Override
     public void dropAllItems()
     {
-        if(BackpackConfig.COMMON.keepBackpackOnDeath)
+        if(Backpacked.keepBackpackOnDeath)
         {
             super.dropAllItems();
         }
