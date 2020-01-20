@@ -29,6 +29,7 @@ public class BaubleBackpackItem extends BackpackItem implements IBauble
         {
             playerIn.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
             handler.insertItem(index, stack.copy(), false);
+            stack.setCount(0);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.FAIL, stack);
