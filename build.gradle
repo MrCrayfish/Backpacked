@@ -18,7 +18,7 @@ archivesBaseName = project.property('mod.id')
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'snapshot', version: '20200122-1.15.1'
 
     runs {
         client {
@@ -65,8 +65,8 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.1-30.0.7'
-    compile "curios:curios-FORGE-1.15.1-2.0:beta:deobf"
+    minecraft 'net.minecraftforge:forge:1.15.2-31.0.0'
+    compileOnly 'curios:curios-FORGE-1.15.1:2.0:beta'
 }
 
 jar {

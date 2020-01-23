@@ -19,7 +19,7 @@ public class ModelBackpack<T extends LivingEntity> extends BipedModel<T>
         this.textureHeight = 32;
         this.backpack = new ModelRenderer(this, 0, 0);
         this.backpack.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.backpack.func_228301_a_(-3.5F, 1.0F, 2.0F, 7, 9, 4, 0.0F);
+        this.backpack.addBox(-3.5F, 1.0F, 2.0F, 7, 9, 4, 0.0F);
     }
 
     @Override

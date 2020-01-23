@@ -126,7 +126,7 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap().func_229223_g_().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+        if(event.getMap().getBasePath().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
         {
             event.addSprite(EMPTY_BACKPACK_SLOT);
         }
