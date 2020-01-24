@@ -15,7 +15,7 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[31,)"
+    versionRange="[30,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
