@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -27,28 +28,27 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
+        this.func_230446_a_(matrixStack); //Draw background
+        super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks); //Super
+        this.func_230459_a_(matrixStack, mouseX, mouseY); //Render hovered tooltips
     }
 
+    //Render
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
-    {
-        this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 0x404040);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F, (float) (this.ySize - 96 + 2), 0x404040);
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-        int startX = (this.width - this.xSize) / 2;
-        int startY = (this.height - this.ySize) / 2;
-        this.blit(startX, startY, 0, 0, this.xSize, this.rows * 18 + 17);
-        this.blit(startX, startY + this.rows * 18 + 17, 0, 126, this.xSize, 96);
+        this.field_230706_i_.getTextureManager().bindTexture(GUI_TEXTURE);
+        this.func_238474_b_(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.rows * 18 + 17);
+        this.func_238474_b_(matrixStack, this.guiLeft, this.guiTop + this.rows * 18 + 17, 0, 126, this.xSize, 96);
+    }
+
+    @Override
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY)
+    {
+        this.field_230712_o_.func_238422_b_(matrixStack, this.field_230704_d_, 8.0F, 6.0F, 0x404040);
+        this.field_230712_o_.func_238422_b_(matrixStack, this.playerInventory.getDisplayName(), 8.0F, (float) (this.ySize - 96 + 2), 0x404040);
     }
 }

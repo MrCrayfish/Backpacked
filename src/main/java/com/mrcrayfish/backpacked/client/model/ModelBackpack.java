@@ -23,13 +23,13 @@ public class ModelBackpack<T extends LivingEntity> extends BipedModel<T>
     }
 
     @Override
-    protected Iterable<ModelRenderer> func_225602_a_()
+    protected Iterable<ModelRenderer> getHeadParts()
     {
         return ImmutableList.of();
     }
 
     @Override
-    protected Iterable<ModelRenderer> func_225600_b_()
+    protected Iterable<ModelRenderer> getBodyParts()
     {
         return ImmutableList.of(this.backpack);
     }

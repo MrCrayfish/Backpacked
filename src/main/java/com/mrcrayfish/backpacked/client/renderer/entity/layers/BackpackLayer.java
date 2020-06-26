@@ -31,7 +31,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
     }
 
     @Override
-    public void func_225628_a_(MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, T player, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_)
+    public void render(MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, T player, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_)
     {
         ItemStack backpackStack = Backpacked.getBackpackStack(player);
         if(!backpackStack.isEmpty())
@@ -39,8 +39,8 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
             stack.push();
             this.getEntityModel().setModelAttributes(this.model);
             this.model.setupAngles(this.getEntityModel());
-            IVertexBuilder builder = ItemRenderer.func_229113_a_(renderTypeBuffer, this.model.func_228282_a_(TEXTURE), false, backpackStack.hasEffect());
-            this.model.render(stack, builder, p_225628_3_, OverlayTexture.DEFAULT_LIGHT, 1.0F, 2.0F, 2.0F, 2.0F);
+            IVertexBuilder builder = ItemRenderer.func_239391_c_(renderTypeBuffer, this.model.getRenderType(TEXTURE), false, backpackStack.hasEffect());
+            this.model.render(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
             stack.pop();
         }
     }

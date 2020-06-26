@@ -1,9 +1,9 @@
 modLoader="javafml"
-loaderVersion="[30,)"
+loaderVersion="[32,)"
 
 [[mods]]
 modId="backpacked"
-version="1.4.1"
+version="1.4.3"
 displayName="Backpacked"
 updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/MiniMods/backpack/update.json"
 displayURL="https://mrcrayfish.com/minimods"
@@ -15,18 +15,18 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[30,)"
+    versionRange="[32,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.1,1.16)"
+    versionRange="[1.16.1,1.17)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.backpacked]]
-    modId="curios"
-    mandatory=false
-    versionRange="[2.0,)"
-    ordering="AFTER"
-    side="BOTH"
+#[[dependencies.backpacked]]
+#    modId="curios"
+#    mandatory=false
+#    versionRange="[2.0,)"
+#    ordering="AFTER"
+#    side="BOTH"

@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -39,8 +40,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.imc.CurioIMCMessage;
+//import top.theillusivec4.curios.api.CuriosAPI;
+//import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -89,8 +90,8 @@ public class Backpacked
         if(!curiosLoaded)
             return;
 
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")));
+        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
+        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")));
     }
 
     @SubscribeEvent
@@ -107,7 +108,7 @@ public class Backpacked
             int left = inventoryScreen.getGuiLeft();
             int top = inventoryScreen.getGuiTop();
             inventoryScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
-            Screen.blit(left + 76, top + 43, 18, 18, 76, 61, 18, 18, 256, 256);
+            Screen.func_238463_a_(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
         }
         else if(screen instanceof CreativeScreen)
         {
@@ -117,7 +118,7 @@ public class Backpacked
                 int left = creativeScreen.getGuiLeft();
                 int top = creativeScreen.getGuiTop();
                 creativeScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
-                Screen.blit(left + 126, top + 19, 18, 18, 76, 61, 18, 18, 256, 256);
+                Screen.func_238463_a_(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
             }
         }
     }
@@ -126,7 +127,7 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap().getBasePath().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+        if(event.getMap().getTextureLocation().equals(PlayerContainer.LOCATION_BLOCKS_TEXTURE))
         {
             event.addSprite(EMPTY_BACKPACK_SLOT);
         }
@@ -276,7 +277,7 @@ public class Backpacked
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         if(Backpacked.isCuriosLoaded())
         {
-            backpack.set(Curios.getBackpackStack(player));
+            //backpack.set(Curios.getBackpackStack(player));
         }
         if(player.inventory instanceof ExtendedPlayerInventory)
         {

@@ -11,14 +11,14 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
-version = project.property('mod.version') + "-1.15.2"
+version = project.property('mod.version') + "-1.16.1"
 group = 'com.mrcrayfish'
 archivesBaseName = project.property('mod.id')
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200122-1.15.1'
+    mappings channel: 'snapshot', version: '20200514-1.16'
 
     runs {
         client {
@@ -65,8 +65,8 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.0.0'
-    compileOnly 'curios:curios-FORGE-1.15.1:2.0:beta'
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.1'
+    //compileOnly 'curios:curios-FORGE-1.15.1:2.0:beta'
 }
 
 jar {

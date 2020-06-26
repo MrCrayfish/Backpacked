@@ -1,20 +1,8 @@
 package com.mrcrayfish.backpacked.integration;
 
-import com.mrcrayfish.backpacked.Config;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.capability.ICurio;
-import top.theillusivec4.curios.api.capability.ICurioItemHandler;
-import top.theillusivec4.curios.common.capability.CapCurioItem;
-
-import javax.annotation.Nonnull;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Author: MrCrayfish
@@ -23,15 +11,16 @@ public class Curios
 {
     public static ItemStack getBackpackStack(PlayerEntity player)
     {
-        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
+        /*AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         LazyOptional<ICurioItemHandler> optional = CuriosAPI.getCuriosHandler(player);
         optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("backpacked", 0)));
-        return backpack.get();
+        return backpack.get();*/
+        return ItemStack.EMPTY;
     }
 
     public static ICapabilityProvider createBackpackProvider()
     {
-        return CapCurioItem.createProvider(new ICurio()
+        /*return CapCurioItem.createProvider(new ICurio()
         {
             @Override
             public void playEquipSound(LivingEntity entity)
@@ -57,6 +46,7 @@ public class Curios
             {
                 return Config.COMMON.keepBackpackOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
             }
-        });
+        });*/
+        return null;
     }
 }
