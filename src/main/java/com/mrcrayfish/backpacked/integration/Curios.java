@@ -1,8 +1,23 @@
 package com.mrcrayfish.backpacked.integration;
 
+import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICurio;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
+import top.theillusivec4.curios.common.capability.CurioItemCapability;
+
+import javax.annotation.Nonnull;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Author: MrCrayfish
@@ -11,21 +26,25 @@ public class Curios
 {
     public static ItemStack getBackpackStack(PlayerEntity player)
     {
-        /*AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        LazyOptional<ICurioItemHandler> optional = CuriosAPI.getCuriosHandler(player);
-        optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("backpacked", 0)));
-        return backpack.get();*/
-        return ItemStack.EMPTY;
+        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        optional.ifPresent(itemHandler -> {
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(Backpacked.CURIOS_SLOT);
+            stacksOptional.ifPresent(stacksHandler -> {
+                backpack.set(stacksHandler.getStacks().getStackInSlot(0));
+            });
+        });
+        return backpack.get();
     }
 
     public static ICapabilityProvider createBackpackProvider()
     {
-        /*return CapCurioItem.createProvider(new ICurio()
+        return CurioItemCapability.createProvider(new ICurio()
         {
             @Override
-            public void playEquipSound(LivingEntity entity)
+            public void playRightClickEquipSound(LivingEntity entity)
             {
-                entity.world.playSound((PlayerEntity)null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                entity.world.playSound(null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
             }
 
             @Override
@@ -35,7 +54,7 @@ public class Curios
             }
 
             @Override
-            public boolean shouldSyncToTracking(String identifier, LivingEntity livingEntity)
+            public boolean canSync(String identifier, int index, LivingEntity livingEntity)
             {
                 return true;
             }
@@ -46,7 +65,6 @@ public class Curios
             {
                 return Config.COMMON.keepBackpackOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
             }
-        });*/
-        return null;
+        });
     }
 }

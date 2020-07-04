@@ -11,7 +11,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
@@ -19,7 +18,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
@@ -40,8 +38,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
-//import top.theillusivec4.curios.api.CuriosAPI;
-//import top.theillusivec4.curios.api.imc.CurioIMCMessage;
+import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -53,6 +50,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Mod(Reference.MOD_ID)
 public class Backpacked
 {
+    public static final String CURIOS_SLOT = "backpacked";
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
 
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
@@ -87,19 +85,16 @@ public class Backpacked
 
     private void onEnqueueIMC(InterModEnqueueEvent event)
     {
-        if(!curiosLoaded)
-            return;
+        if(!curiosLoaded) return;
 
-        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
-        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")));
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(CURIOS_SLOT).size(1).icon(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")).build());
     }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
     {
-        if(curiosLoaded)
-            return;
+        if(curiosLoaded) return;
 
         ContainerScreen screen = event.getGuiContainer();
         if(screen instanceof InventoryScreen)
@@ -136,8 +131,7 @@ public class Backpacked
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event)
     {
-        if(curiosLoaded)
-            return;
+        if(curiosLoaded) return;
 
         PlayerEntity oldPlayer = event.getOriginal();
         if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getPlayer().inventory instanceof ExtendedPlayerInventory)
@@ -149,8 +143,7 @@ public class Backpacked
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event)
     {
-        if(curiosLoaded)
-            return;
+        if(curiosLoaded) return;
 
         PlayerEntity player = event.getPlayer();
         if(player.inventory instanceof ExtendedPlayerInventory)
@@ -165,11 +158,9 @@ public class Backpacked
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event)
     {
-        if(curiosLoaded)
-            return;
+        if(curiosLoaded) return;
 
-        if(event.phase != TickEvent.Phase.START)
-            return;
+        if(event.phase != TickEvent.Phase.START) return;
 
         PlayerEntity player = event.player;
         if(!player.world.isRemote && player.inventory instanceof ExtendedPlayerInventory)
@@ -178,7 +169,7 @@ public class Backpacked
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
                 PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), !inventory.backpackInventory.get(0).isEmpty()));
-                inventory.backpackArray.set( 0, inventory.backpackInventory.get(0));
+                inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }
     }
@@ -189,8 +180,7 @@ public class Backpacked
      */
     public static void onPlayerInit(PlayerEntity player)
     {
-        if(curiosLoaded)
-            return;
+        if(curiosLoaded) return;
         Backpacked.patchInventory(player);
     }
 
@@ -245,11 +235,9 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
     {
-        if(curiosLoaded)
-            return;
+        if(curiosLoaded) return;
 
-        creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
-        {
+        creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot -> {
             Backpacked.setSlotPosition(slot, 127, 20);
         });
     }
@@ -277,7 +265,7 @@ public class Backpacked
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         if(Backpacked.isCuriosLoaded())
         {
-            //backpack.set(Curios.getBackpackStack(player));
+            backpack.set(Curios.getBackpackStack(player));
         }
         if(player.inventory instanceof ExtendedPlayerInventory)
         {

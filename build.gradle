@@ -1,15 +1,18 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url "https://plugins.gradle.org/m2/" }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath "com.wynprice.cursemaven:CurseMaven:2.1.4"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
+apply plugin: "com.wynprice.cursemaven"
 
 version = project.property('mod.version') + "-1.16.1"
 group = 'com.mrcrayfish'
@@ -57,16 +60,9 @@ minecraft {
     }
 }
 
-repositories {
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-}
-
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.1-32.0.1'
-    //compileOnly 'curios:curios-FORGE-1.15.1:2.0:beta'
+    compile fg.deobf('curse.maven:curios:2995027')
 }
 
 jar {

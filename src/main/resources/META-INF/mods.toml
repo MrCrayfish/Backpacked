@@ -3,10 +3,10 @@ loaderVersion="[32,)"
 
 [[mods]]
 modId="backpacked"
-version="1.4.3"
+version="1.4.4"
 displayName="Backpacked"
-updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/MiniMods/backpack/update.json"
-displayURL="https://mrcrayfish.com/minimods"
+updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/ModUpdates/master/backpacked/update.json"
+displayURL="https://mrcrayfish.com/mods?id=backpacked"
 logoFile=""
 credits=""
 authors="MrCrayfish"
@@ -24,9 +24,9 @@ description="Adds a simple backpack to store more items"
     versionRange="[1.16.1,1.17)"
     ordering="NONE"
     side="BOTH"
-#[[dependencies.backpacked]]
-#    modId="curios"
-#    mandatory=false
-#    versionRange="[2.0,)"
-#    ordering="AFTER"
-#    side="BOTH"
+[[dependencies.backpacked]]
+    modId="curios"
+    mandatory=false
+    versionRange="[3.0,)"
+    ordering="AFTER"
+    side="BOTH"
