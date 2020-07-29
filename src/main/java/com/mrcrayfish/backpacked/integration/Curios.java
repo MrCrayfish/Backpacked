@@ -37,6 +37,19 @@ public class Curios
         return backpack.get();
     }
 
+    public static boolean isBackpackVisible(PlayerEntity player)
+    {
+        AtomicReference<Boolean> visible = new AtomicReference<>(true);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        optional.ifPresent(itemHandler -> {
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(Backpacked.CURIOS_SLOT);
+            stacksOptional.ifPresent(stacksHandler -> {
+                visible.set(stacksHandler.getRenders().get(0));
+            });
+        });
+        return visible.get();
+    }
+
     public static ICapabilityProvider createBackpackProvider()
     {
         return CurioItemCapability.createProvider(new ICurio()

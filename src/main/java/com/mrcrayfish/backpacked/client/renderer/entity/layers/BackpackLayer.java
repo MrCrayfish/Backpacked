@@ -36,6 +36,11 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         ItemStack backpackStack = Backpacked.getBackpackStack(player);
         if(!backpackStack.isEmpty())
         {
+            if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
+            {
+                return;
+            }
+
             stack.push();
             this.getEntityModel().setModelAttributes(this.model);
             this.model.setupAngles(this.getEntityModel());
