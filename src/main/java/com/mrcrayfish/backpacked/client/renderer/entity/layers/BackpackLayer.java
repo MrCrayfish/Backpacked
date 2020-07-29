@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
+import com.mrcrayfish.backpacked.integration.Curios;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
@@ -12,7 +13,9 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -36,6 +39,12 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         ItemStack backpackStack = Backpacked.getBackpackStack(player);
         if(!backpackStack.isEmpty())
         {
+            ItemStack chestStack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
+            if(chestStack.getItem() == Items.ELYTRA)
+            {
+                return;
+            }
+
             if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
             {
                 return;
