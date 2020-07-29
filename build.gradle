@@ -61,8 +61,8 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.1'
-    compile fg.deobf('curse.maven:curios:2995027')
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.97'
+    compile fg.deobf('curse.maven:curios:3011016')
 }
 
 jar {
