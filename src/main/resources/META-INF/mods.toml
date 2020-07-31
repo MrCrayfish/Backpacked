@@ -1,5 +1,6 @@
 modLoader="javafml"
 loaderVersion="[32,)"
+license="GNU General Public License 3"
 
 [[mods]]
 modId="backpacked"
