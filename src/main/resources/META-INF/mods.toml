@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[34,)"
 license="GNU General Public License 3"
 
 [[mods]]
@@ -16,18 +16,18 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[32.0.97,)"
+    versionRange="[34.1.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.1,1.17)"
+    versionRange="[1.16.3,1.17)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="curios"
     mandatory=false
-    versionRange="[3.0,)"
+    versionRange="[4.0.1.0,)"
     ordering="AFTER"
     side="BOTH"
