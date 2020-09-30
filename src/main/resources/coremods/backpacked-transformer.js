@@ -5,7 +5,7 @@ function initializeCoreMod() {
                 'type': 'METHOD',
                 'class': 'net.minecraft.entity.player.PlayerEntity',
                 'methodName': '<init>',
-                'methodDesc': '(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lcom/mojang/authlib/GameProfile;)V'
+                'methodDesc': '(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;FLcom/mojang/authlib/GameProfile;)V'
             },
 			'transformer': function(method) {
 			    log("Patching PlayerEntity#<init>");
