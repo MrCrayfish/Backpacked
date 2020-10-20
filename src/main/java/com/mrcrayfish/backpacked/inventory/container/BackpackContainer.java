@@ -25,7 +25,7 @@ public class BackpackContainer extends Container
 
     public BackpackContainer(int id, PlayerInventory playerInventory, IInventory backpackInventory, int rows)
     {
-        super(ModContainers.BACKPACK, id);
+        super(ModContainers.BACKPACK.get(), id);
         assertInventorySize(backpackInventory, rows * 9);
         this.backpackInventory = backpackInventory;
         this.rows = rows;

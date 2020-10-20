@@ -41,7 +41,7 @@ public class ClientProxy extends CommonProxy
         this.addBackpackLayer(skinMap.get("slim"));
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
-        ScreenManager.registerFactory(ModContainers.BACKPACK, BackpackScreen::new);
+        ScreenManager.registerFactory(ModContainers.BACKPACK.get(), BackpackScreen::new);
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)

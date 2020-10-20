@@ -1,8 +1,11 @@
 package com.mrcrayfish.backpacked;
 
+import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
@@ -25,6 +28,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
@@ -70,6 +74,9 @@ public class Backpacked
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModContainers.REGISTER.register(bus);
+        ModItems.REGISTER.register(bus);
         curiosLoaded = ModList.get().isLoaded("curios");
     }
 
