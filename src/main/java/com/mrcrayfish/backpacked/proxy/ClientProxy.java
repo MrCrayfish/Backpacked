@@ -53,7 +53,7 @@ public class ClientProxy extends CommonProxy
         }
     }
 
-    public static void setPlayerBackpack(int entityId, boolean wearing)
+    public static void setPlayerBackpack(int entityId, ItemStack backpack)
     {
         Minecraft minecraft = Minecraft.getInstance();
         if(minecraft.world != null)
@@ -64,7 +64,7 @@ public class ClientProxy extends CommonProxy
                 PlayerEntity player = (PlayerEntity) entity;
                 if(player.inventory instanceof ExtendedPlayerInventory)
                 {
-                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, wearing ? new ItemStack(ModItems.BACKPACK) : ItemStack.EMPTY);
+                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, backpack);
                 }
             }
         }

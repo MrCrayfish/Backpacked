@@ -154,9 +154,10 @@ public class Backpacked
         PlayerEntity player = event.getPlayer();
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
-            if(!((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0).isEmpty())
+            ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
+            if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), true));
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), backpack));
             }
         }
     }
@@ -174,7 +175,7 @@ public class Backpacked
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), !inventory.backpackInventory.get(0).isEmpty()));
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), inventory.backpackInventory.get(0)));
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }

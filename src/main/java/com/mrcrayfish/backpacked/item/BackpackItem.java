@@ -29,7 +29,6 @@ public class BackpackItem extends Item
     public BackpackItem(Properties properties)
     {
         super(properties);
-        this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "backpack"));
     }
 
     @Override
