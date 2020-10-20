@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
@@ -23,6 +24,8 @@ import javax.annotation.Nullable;
  */
 public class BackpackItem extends Item
 {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
+
     public BackpackItem(Properties properties)
     {
         super(properties);
@@ -56,5 +59,15 @@ public class BackpackItem extends Item
             return null;
         }
         return Curios.createBackpackProvider();
+    }
+
+    public int getRowCount()
+    {
+        return Config.COMMON.backpackInventorySize.get();
+    }
+
+    public ResourceLocation getModelTexture()
+    {
+        return TEXTURE;
     }
 }
