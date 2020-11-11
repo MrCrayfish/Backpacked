@@ -10,6 +10,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotTypePreset;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
@@ -29,7 +30,7 @@ public class Curios
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
         optional.ifPresent(itemHandler -> {
-            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(Backpacked.CURIOS_SLOT);
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
             stacksOptional.ifPresent(stacksHandler -> {
                 backpack.set(stacksHandler.getStacks().getStackInSlot(0));
             });
@@ -42,7 +43,7 @@ public class Curios
         AtomicReference<Boolean> visible = new AtomicReference<>(true);
         LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
         optional.ifPresent(itemHandler -> {
-            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(Backpacked.CURIOS_SLOT);
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
             stacksOptional.ifPresent(stacksHandler -> {
                 visible.set(stacksHandler.getRenders().get(0));
             });

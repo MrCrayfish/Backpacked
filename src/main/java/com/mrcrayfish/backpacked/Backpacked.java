@@ -42,7 +42,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.PacketDistributor;
+import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
+import top.theillusivec4.curios.api.SlotTypePreset;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -54,7 +56,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @Mod(Reference.MOD_ID)
 public class Backpacked
 {
-    public static final String CURIOS_SLOT = "backpacked";
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
 
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
@@ -94,7 +95,7 @@ public class Backpacked
     {
         if(!curiosLoaded) return;
 
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(CURIOS_SLOT).size(1).icon(new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")).build());
+        InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> SlotTypePreset.BACK.getMessageBuilder().build());
     }
 
     @SubscribeEvent
