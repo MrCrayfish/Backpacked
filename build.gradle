@@ -26,7 +26,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             mods {
-                examplemod {
+                backpacked {
                     source sourceSets.main
                 }
             }
@@ -37,7 +37,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             mods {
-                modid {
+                backpacked {
                     source sourceSets.main
                 }
             }
@@ -49,7 +49,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
             mods {
-                modid {
+                backpacked {
                     source sourceSets.main
                 }
             }
@@ -59,14 +59,13 @@ minecraft {
 
 repositories {
     maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        url = "https://www.cursemaven.com"
     }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.0.0'
-    compileOnly 'curios:curios-FORGE-1.15.1:2.0:beta'
+    compile fg.deobf('curse.maven:curios:3021133')
 }
 
 jar {

@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.inventory.IInventory;
@@ -20,6 +21,6 @@ public class BackpackSlot extends Slot
     @Override
     public boolean isItemValid(ItemStack stack)
     {
-        return stack.getItem() != ModItems.BACKPACK && !(Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock);
+        return !(stack.getItem() instanceof BackpackItem) && !(Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock);
     }
 }

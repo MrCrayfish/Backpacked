@@ -1,8 +1,11 @@
 package com.mrcrayfish.backpacked;
 
+import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
@@ -26,6 +29,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
@@ -71,6 +75,9 @@ public class Backpacked
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModContainers.REGISTER.register(bus);
+        ModItems.REGISTER.register(bus);
         curiosLoaded = ModList.get().isLoaded("curios");
     }
 
@@ -89,8 +96,7 @@ public class Backpacked
         if(!curiosLoaded)
             return;
 
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("backpacked").setSize(1));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("backpacked", new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot")));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("back"));
     }
 
     @SubscribeEvent
@@ -154,9 +160,10 @@ public class Backpacked
         PlayerEntity player = event.getPlayer();
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
-            if(!((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0).isEmpty())
+            ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
+            if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), true));
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), backpack));
             }
         }
     }
@@ -176,7 +183,7 @@ public class Backpacked
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), !inventory.backpackInventory.get(0).isEmpty()));
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), inventory.backpackInventory.get(0)));
                 inventory.backpackArray.set( 0, inventory.backpackInventory.get(0));
             }
         }
