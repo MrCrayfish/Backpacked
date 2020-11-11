@@ -2,14 +2,17 @@ package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.IContainerFactory;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,26 +20,14 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModContainers
 {
-    private static final List<ContainerType<?>> CONTAINER_TYPES = new ArrayList<>();
+    public static final DeferredRegister<ContainerType<?>> REGISTER = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Reference.MOD_ID);
 
-    public static final ContainerType<BackpackContainer> BACKPACK = register(new ResourceLocation(Reference.MOD_ID, "backpack"), (IContainerFactory<BackpackContainer>) (windowId, playerInventory, data) -> new BackpackContainer(windowId, playerInventory, data.readVarInt()));
+    public static final RegistryObject<ContainerType<BackpackContainer>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainer>) (windowId, playerInventory, data) -> new BackpackContainer(windowId, playerInventory, data.readVarInt()));
 
-    private static <T extends Container> ContainerType<T> register(ResourceLocation name, ContainerType.IFactory<T> factory)
+    private static <T extends Container> RegistryObject<ContainerType<T>> register(String id, ContainerType.IFactory<T> factory)
     {
-        ContainerType<T> type = new ContainerType<>(factory);
-        type.setRegistryName(name);
-        CONTAINER_TYPES.add(type);
-        return type;
-    }
-
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public static void registerTypes(final RegistryEvent.Register<ContainerType<?>> event)
-    {
-        CONTAINER_TYPES.forEach(type -> event.getRegistry().register(type));
-        CONTAINER_TYPES.clear();
+        return REGISTER.register(id, () -> new ContainerType<>(factory));
     }
 }

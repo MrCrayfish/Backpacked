@@ -59,14 +59,13 @@ minecraft {
 
 repositories {
     maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        url = "https://www.cursemaven.com"
     }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.1.70'
-    compile "curios:curios-FORGE-1.14.4:1.0.6:deobf"
+    compile fg.deobf('curse.maven:curios:2868713')
 }
 
 jar {

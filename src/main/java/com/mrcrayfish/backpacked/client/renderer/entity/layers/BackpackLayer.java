@@ -5,11 +5,14 @@ import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.curios.api.CuriosAPI;
@@ -22,8 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> extends LayerRenderer<T, M>
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
-
     private ModelBackpack<T> model;
 
     public BackpackLayer(IEntityRenderer<T, M> renderer, ModelBackpack<T> model)
@@ -35,10 +36,18 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
     @Override
     public void render(T player, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scaleIn)
     {
-        if(!Backpacked.getBackpackStack(player).isEmpty())
+        ItemStack backpack = Backpacked.getBackpackStack(player);
+        if(backpack.getItem() instanceof BackpackItem)
         {
+            ItemStack chestStack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
+            if(chestStack.getItem() == Items.ELYTRA)
+            {
+                return;
+            }
+
             GlStateManager.pushMatrix();
-            this.bindTexture(TEXTURE);
+            BackpackItem item = (BackpackItem) backpack.getItem();
+            this.bindTexture(item.getModelTexture());
             this.model.setupAngles(this.getEntityModel());
             this.model.render(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleIn);
             GlStateManager.popMatrix();

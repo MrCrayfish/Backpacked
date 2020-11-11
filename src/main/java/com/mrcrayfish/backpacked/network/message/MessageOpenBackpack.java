@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.ChestContainer;
 import net.minecraft.inventory.container.ContainerType;
@@ -45,12 +46,10 @@ public class MessageOpenBackpack implements IMessage<MessageOpenBackpack>
             ServerPlayerEntity player = supplier.get().getSender();
             if(player != null)
             {
-                if(!Backpacked.getBackpackStack(player).isEmpty())
+                ItemStack backpack = Backpacked.getBackpackStack(player);
+                if(backpack.getItem() instanceof BackpackItem)
                 {
-                    int rows = Config.COMMON.backpackInventorySize.get();
-                    NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity) ->
-                            new BackpackContainer(id, player.inventory, new BackpackInventory(rows), rows), BACKPACK_TRANSLATION),
-                            buffer -> buffer.writeVarInt(rows));
+                    ((BackpackItem) backpack.getItem()).showInventory(player);
                 }
             }
         });

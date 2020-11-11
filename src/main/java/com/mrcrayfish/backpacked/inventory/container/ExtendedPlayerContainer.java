@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,11 +24,10 @@ public class ExtendedPlayerContainer extends PlayerContainer
         super(playerInventory, localWorld, playerIn);
         this.addSlot(new Slot(playerInventory, 41, 77, 44)
         {
-            @Nullable
             @OnlyIn(Dist.CLIENT)
             public String getSlotTexture()
             {
-                return "backpacked:item/empty_backpack_slot";
+                return Backpacked.EMPTY_BACKPACK_SLOT.toString();
             }
 
             @Override

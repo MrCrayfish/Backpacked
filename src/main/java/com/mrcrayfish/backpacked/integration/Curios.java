@@ -25,7 +25,7 @@ public class Curios
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         LazyOptional<ICurioItemHandler> optional = CuriosAPI.getCuriosHandler(player);
-        optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("backpacked", 0)));
+        optional.ifPresent(handler -> backpack.set(handler.getStackInSlot("back", 0)));
         return backpack.get();
     }
 
@@ -33,12 +33,6 @@ public class Curios
     {
         return CapCurioItem.createProvider(new ICurio()
         {
-            @Override
-            public void onEquipped(String identifier, LivingEntity livingEntity)
-            {
-                System.out.println("YO");
-            }
-
             @Override
             public void playEquipSound(LivingEntity entity)
             {

@@ -25,6 +25,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Author: MrCrayfish
@@ -41,7 +42,7 @@ public class ClientProxy extends CommonProxy
         this.addBackpackLayer(skinMap.get("slim"));
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
-        ScreenManager.registerFactory(ModContainers.BACKPACK, BackpackScreen::new);
+        ScreenManager.registerFactory(Objects.requireNonNull(ModContainers.BACKPACK.get()), BackpackScreen::new);
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)
@@ -53,7 +54,7 @@ public class ClientProxy extends CommonProxy
         }
     }
 
-    public static void setPlayerBackpack(int entityId, boolean wearing)
+    public static void setPlayerBackpack(int entityId, ItemStack backpack)
     {
         Minecraft minecraft = Minecraft.getInstance();
         if(minecraft.world != null)
@@ -64,7 +65,7 @@ public class ClientProxy extends CommonProxy
                 PlayerEntity player = (PlayerEntity) entity;
                 if(player.inventory instanceof ExtendedPlayerInventory)
                 {
-                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, wearing ? new ItemStack(ModItems.BACKPACK) : ItemStack.EMPTY);
+                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, backpack);
                 }
             }
         }
