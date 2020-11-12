@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
