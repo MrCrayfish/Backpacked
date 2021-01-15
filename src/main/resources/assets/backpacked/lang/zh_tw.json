@@ -3,5 +3,5 @@
     "key.backpack": "打開背包",
     "container.backpack": "背包",
     "backpacked.configgui.keepBackpackOnDeath": "死亡後是否保留背包",
-    "curios.identifier.backpacked": "揹背包"
+    "curios.identifier.backpacked": "背包"
 }
