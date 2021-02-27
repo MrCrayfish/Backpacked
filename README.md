@@ -13,7 +13,7 @@ Backpacked adds a very simple backpack into the game. It allows you to store add
 * Optional support for Curios API
 
 ### Crafting:
-![Crafting](https://i.imgur.com/GMpieGQ.png)
+![Crafting](https://i.imgur.com/IUNq1j5.png)
 
 ### Screenshots:
 ![Inventory](https://i.imgur.com/C6e7EmZ.jpg)
