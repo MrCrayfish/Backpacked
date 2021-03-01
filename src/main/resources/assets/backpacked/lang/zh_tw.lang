@@ -1,0 +1,4 @@
+item.backpacked.backpack.name=背包
+key.backpack=打開背包
+container.backpacked.backpack=背包
+backpacked.config.common.keepBackpackOnDeath=死亡後是否保留背包
