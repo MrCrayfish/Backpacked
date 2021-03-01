@@ -1,10 +1,10 @@
 package com.mrcrayfish.backpacked;
 
+import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
-import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
@@ -15,14 +15,13 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -35,7 +34,6 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -46,9 +44,9 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Author: MrCrayfish
@@ -61,11 +59,7 @@ public class Backpacked
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
     private static boolean curiosLoaded = false;
-
-    private static Field xPosField;
-    private static Field yPosField;
-    private static Field inventoryField;
-    private static Field containerField;
+    private static List<ResourceLocation> bannedItemsList;
 
     public Backpacked()
     {
@@ -74,7 +68,9 @@ public class Backpacked
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigLoad);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
@@ -188,19 +184,6 @@ public class Backpacked
         }
     }
 
-    /*
-     * Fixes an issue in net.minecraft.network.play.client.CCreativeInventoryActionPacket where a
-     * slot index flag excludes the backpack slot. Linked via ASM, do not remove!
-     */
-    public static int getCreativeSlotMax(ServerPlayerEntity player)
-    {
-        if(!curiosLoaded && player.inventory instanceof ExtendedPlayerInventory)
-        {
-            return 46;
-        }
-        return 45;
-    }
-
     public static boolean isCuriosLoaded()
     {
         return curiosLoaded;
@@ -219,5 +202,29 @@ public class Backpacked
             backpack.set(inventory.getBackpackItems().get(0));
         }
         return backpack.get();
+    }
+
+    private void onConfigLoad(ModConfig.Loading event)
+    {
+        if(event.getConfig().getModId().equals(Reference.MOD_ID))
+        {
+            this.updateBannedItemsList();
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        this.updateBannedItemsList();
+    }
+
+    private void updateBannedItemsList()
+    {
+        bannedItemsList = ImmutableList.copyOf(Config.SERVER.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toList()));
+    }
+
+    public static List<ResourceLocation> getBannedItemsList()
+    {
+        return bannedItemsList;
     }
 }
