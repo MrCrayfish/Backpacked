@@ -93,7 +93,8 @@ public class Backpacked
 
     private void onEnqueueIMC(InterModEnqueueEvent event)
     {
-        if(!curiosLoaded) return;
+        if(!curiosLoaded)
+            return;
 
         InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> SlotTypePreset.BACK.getMessageBuilder().build());
     }
@@ -102,7 +103,8 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
     {
-        if(curiosLoaded) return;
+        if(curiosLoaded)
+            return;
 
         ContainerScreen screen = event.getGuiContainer();
         if(screen instanceof InventoryScreen)
@@ -138,7 +140,8 @@ public class Backpacked
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event)
     {
-        if(curiosLoaded) return;
+        if(curiosLoaded)
+            return;
 
         PlayerEntity oldPlayer = event.getOriginal();
         if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getPlayer().inventory instanceof ExtendedPlayerInventory)
@@ -150,7 +153,8 @@ public class Backpacked
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event)
     {
-        if(curiosLoaded) return;
+        if(curiosLoaded)
+            return;
 
         PlayerEntity player = event.getPlayer();
         if(player.inventory instanceof ExtendedPlayerInventory)
@@ -166,9 +170,11 @@ public class Backpacked
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event)
     {
-        if(curiosLoaded) return;
+        if(curiosLoaded)
+            return;
 
-        if(event.phase != TickEvent.Phase.START) return;
+        if(event.phase != TickEvent.Phase.START)
+            return;
 
         PlayerEntity player = event.player;
         if(!player.world.isRemote && player.inventory instanceof ExtendedPlayerInventory)
@@ -180,74 +186,6 @@ public class Backpacked
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }
-    }
-
-    /*
-     * Hooks into PlayerEntity constructor to allow manipulation of fields.
-     * Linked via ASM, do not remove!
-     */
-    public static void onPlayerInit(PlayerEntity player)
-    {
-        if(curiosLoaded) return;
-        Backpacked.patchInventory(player);
-    }
-
-    private static void patchInventory(PlayerEntity player)
-    {
-        if(inventoryField == null)
-        {
-            inventoryField = getFieldAndSetAccessible(PlayerEntity.class, "field_71071_by");
-        }
-        if(containerField == null)
-        {
-            containerField = getFieldAndSetAccessible(PlayerEntity.class, "field_71069_bz");
-        }
-        try
-        {
-            ExtendedPlayerInventory inventory = new ExtendedPlayerInventory(player);
-            inventoryField.set(player, inventory);
-
-            ExtendedPlayerContainer container = new ExtendedPlayerContainer(inventory, !player.world.isRemote, player);
-            containerField.set(player, container);
-            player.openContainer = container;
-        }
-        catch(IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private static Field getFieldAndSetAccessible(Class clazz, String obfName)
-    {
-        Field field = ObfuscationReflectionHelper.findField(clazz, obfName);
-        field.setAccessible(true);
-
-        try
-        {
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        }
-        catch(IllegalAccessException | NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        }
-
-        return field;
-    }
-
-    /*
-     * Fixes the backpack slot in the creative inventory to be positioned correctly.
-     * Linked via ASM, do not remove!
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
-    {
-        if(curiosLoaded) return;
-
-        creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot -> {
-            Backpacked.setSlotPosition(slot, 127, 20);
-        });
     }
 
     /*
@@ -281,36 +219,5 @@ public class Backpacked
             backpack.set(inventory.getBackpackItems().get(0));
         }
         return backpack.get();
-    }
-
-    private static void setSlotPosition(Slot slot, int x, int y)
-    {
-        try
-        {
-            if(xPosField == null)
-            {
-                Field xPos = ObfuscationReflectionHelper.findField(Slot.class, "field_75223_e");
-                xPos.setAccessible(true);
-                Field xPosModifiers = Field.class.getDeclaredField("modifiers");
-                xPosModifiers.setAccessible(true);
-                xPosModifiers.setInt(xPos, xPos.getModifiers() & ~Modifier.FINAL);
-                xPosField = xPos;
-            }
-            if(yPosField == null)
-            {
-                Field yPos = ObfuscationReflectionHelper.findField(Slot.class, "field_75221_f");
-                yPos.setAccessible(true);
-                Field yPosModifiers = Field.class.getDeclaredField("modifiers");
-                yPosModifiers.setAccessible(true);
-                yPosModifiers.setInt(yPos, yPos.getModifiers() & ~Modifier.FINAL);
-                yPosField = yPos;
-            }
-            xPosField.set(slot, x);
-            yPosField.set(slot, y);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 }
