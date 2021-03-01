@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.integration;
 
-import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -29,10 +29,16 @@ public class Curios
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
-        optional.ifPresent(itemHandler -> {
+        optional.ifPresent(itemHandler ->
+        {
             Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
-            stacksOptional.ifPresent(stacksHandler -> {
-                backpack.set(stacksHandler.getStacks().getStackInSlot(0));
+            stacksOptional.ifPresent(stacksHandler ->
+            {
+                ItemStack stack = stacksHandler.getStacks().getStackInSlot(0);
+                if(stack.getItem() instanceof BackpackItem)
+                {
+                    backpack.set(stack);
+                }
             });
         });
         return backpack.get();

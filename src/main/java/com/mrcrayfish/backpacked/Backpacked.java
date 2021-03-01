@@ -199,7 +199,11 @@ public class Backpacked
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
-            backpack.set(inventory.getBackpackItems().get(0));
+            ItemStack stack = inventory.getBackpackItems().get(0);
+            if(stack.getItem() instanceof BackpackItem)
+            {
+                backpack.set(stack);
+            }
         }
         return backpack.get();
     }
