@@ -1,10 +1,10 @@
 package com.mrcrayfish.backpacked;
 
+import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
-import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
@@ -16,14 +16,12 @@ import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,7 +34,6 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -46,9 +43,9 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosAPI;
 import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Author: MrCrayfish
@@ -61,11 +58,7 @@ public class Backpacked
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
     private static boolean curiosLoaded = false;
-
-    private static Field xPosField;
-    private static Field yPosField;
-    private static Field inventoryField;
-    private static Field containerField;
+    private static List<ResourceLocation> bannedItemsList;
 
     public Backpacked()
     {
@@ -74,7 +67,9 @@ public class Backpacked
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigLoad);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
@@ -184,93 +179,9 @@ public class Backpacked
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
                 PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), inventory.backpackInventory.get(0)));
-                inventory.backpackArray.set( 0, inventory.backpackInventory.get(0));
+                inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }
-    }
-
-    /*
-     * Hooks into PlayerEntity constructor to allow manipulation of fields.
-     * Linked via ASM, do not remove!
-     */
-    public static void onPlayerInit(PlayerEntity player)
-    {
-        if(curiosLoaded)
-            return;
-        Backpacked.patchInventory(player);
-    }
-
-    private static void patchInventory(PlayerEntity player)
-    {
-        if(inventoryField == null)
-        {
-            inventoryField = getFieldAndSetAccessible(PlayerEntity.class, "field_71071_by");
-        }
-        if(containerField == null)
-        {
-            containerField = getFieldAndSetAccessible(PlayerEntity.class, "field_71069_bz");
-        }
-        try
-        {
-            ExtendedPlayerInventory inventory = new ExtendedPlayerInventory(player);
-            inventoryField.set(player, inventory);
-
-            ExtendedPlayerContainer container = new ExtendedPlayerContainer(inventory, !player.world.isRemote, player);
-            containerField.set(player, container);
-            player.openContainer = container;
-        }
-        catch(IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private static Field getFieldAndSetAccessible(Class clazz, String obfName)
-    {
-        Field field = ObfuscationReflectionHelper.findField(clazz, obfName);
-        field.setAccessible(true);
-
-        try
-        {
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        }
-        catch(IllegalAccessException | NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        }
-
-        return field;
-    }
-
-    /*
-     * Fixes the backpack slot in the creative inventory to be positioned correctly.
-     * Linked via ASM, do not remove!
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static void patchCreativeSlots(CreativeScreen.CreativeContainer creativeContainer)
-    {
-        if(curiosLoaded)
-            return;
-
-        creativeContainer.inventorySlots.stream().filter(slot -> slot.inventory instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot ->
-        {
-            Backpacked.setSlotPosition(slot, 127, 20);
-        });
-    }
-
-    /*
-     * Fixes an issue in net.minecraft.network.play.client.CCreativeInventoryActionPacket where a
-     * slot index flag excludes the backpack slot. Linked via ASM, do not remove!
-     */
-    public static int getCreativeSlotMax(ServerPlayerEntity player)
-    {
-        if(!curiosLoaded && player.inventory instanceof ExtendedPlayerInventory)
-        {
-            return 46;
-        }
-        return 45;
     }
 
     public static boolean isCuriosLoaded()
@@ -288,39 +199,36 @@ public class Backpacked
         if(player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
-            backpack.set(inventory.getBackpackItems().get(0));
+            ItemStack stack = inventory.getBackpackItems().get(0);
+            if(stack.getItem() instanceof BackpackItem)
+            {
+                backpack.set(stack);
+            }
         }
         return backpack.get();
     }
 
-    private static void setSlotPosition(Slot slot, int x, int y)
+    private void onConfigLoad(ModConfig.Loading event)
     {
-        try
+        if(event.getConfig().getModId().equals(Reference.MOD_ID))
         {
-            if(xPosField == null)
-            {
-                Field xPos = ObfuscationReflectionHelper.findField(Slot.class, "field_75223_e");
-                xPos.setAccessible(true);
-                Field xPosModifiers = Field.class.getDeclaredField("modifiers");
-                xPosModifiers.setAccessible(true);
-                xPosModifiers.setInt(xPos, xPos.getModifiers() & ~Modifier.FINAL);
-                xPosField = xPos;
-            }
-            if(yPosField == null)
-            {
-                Field yPos = ObfuscationReflectionHelper.findField(Slot.class, "field_75221_f");
-                yPos.setAccessible(true);
-                Field yPosModifiers = Field.class.getDeclaredField("modifiers");
-                yPosModifiers.setAccessible(true);
-                yPosModifiers.setInt(yPos, yPos.getModifiers() & ~Modifier.FINAL);
-                yPosField = yPos;
-            }
-            xPosField.set(slot, x);
-            yPosField.set(slot, y);
+            this.updateBannedItemsList();
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        this.updateBannedItemsList();
+    }
+
+    private void updateBannedItemsList()
+    {
+        bannedItemsList = ImmutableList.copyOf(Config.SERVER.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toList()));
+    }
+
+    public static List<ResourceLocation> getBannedItemsList()
+    {
+        return bannedItemsList;
     }
 }

@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "com.mrcrayfish.backpacked.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.8",
+  "refmap": "backpacked.refmap.json",
+  "mixins": [
+    "common.PlayerEntityMixin",
+    "common.ServerPlayNetHandlerMixin",
+    "common.SlotMixin"
+  ],
+  "client": [
+    "client.CreativeScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

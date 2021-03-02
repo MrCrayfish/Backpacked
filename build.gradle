@@ -1,21 +1,28 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 
 version = project.property('mod.version') + "-1.15.2"
 group = 'com.mrcrayfish'
 archivesBaseName = project.property('mod.id')
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+mixin {
+    add sourceSets.main, "backpacked.refmap.json"
+}
 
 minecraft {
     mappings channel: 'snapshot', version: '20200122-1.15.1'
@@ -25,6 +32,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            arg '-mixin.config=backpacked.mixins.json'
             mods {
                 backpacked {
                     source sourceSets.main
@@ -64,8 +72,8 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.0.0'
-    compile fg.deobf('curse.maven:curios:3021133')
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.45'
+    compile fg.deobf('curse.maven:curios-309927:3021133')
 }
 
 jar {
@@ -77,7 +85,8 @@ jar {
             "Implementation-Title": project.property('mod.name'),
             "Implementation-Version": project.property('mod.version'),
             "Implementation-Vendor" : project.property('mod.author'),
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConfigs": "backpacked.mixins.json"
         ])
     }
 }

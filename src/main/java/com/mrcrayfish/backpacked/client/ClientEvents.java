@@ -32,7 +32,7 @@ public class ClientEvents
         else if(minecraft.player != null && minecraft.currentScreen == null)
         {
             ClientPlayerEntity player = minecraft.player;
-            if(ClientProxy.KEY_BACKPACK.isPressed())
+            if(ClientProxy.KEY_BACKPACK.isKeyDown() && ClientProxy.KEY_BACKPACK.isPressed())
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {

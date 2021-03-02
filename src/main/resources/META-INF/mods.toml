@@ -1,9 +1,9 @@
 modLoader="javafml"
-loaderVersion="[30,)"
+loaderVersion="[31,)"
 
 [[mods]]
 modId="backpacked"
-version="1.7.0"
+version="1.8.0"
 displayName="Backpacked"
 updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/ModUpdates/master/backpacked/update.json"
 displayURL="https://mrcrayfish.com/mods?id=backpacked"
@@ -15,13 +15,13 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[30,)"
+    versionRange="[31.2.45,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.1,1.16)"
+    versionRange="[1.15.2,1.16)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]

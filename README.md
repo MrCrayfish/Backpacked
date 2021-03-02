@@ -8,12 +8,12 @@ Backpacked adds a very simple backpack into the game. It allows you to store add
 
 ### Features:
 * Simple and straightforward
-* Adds nine slots of additonal storage
+* Adds nine slots of additional storage
 * You keep your backpack on death along with it's contents (can be turned off in config)
 * Optional support for Curios API
 
 ### Crafting:
-![Crafting](https://i.imgur.com/GMpieGQ.png)
+![Crafting](https://i.imgur.com/IUNq1j5.png)
 
 ### Screenshots:
 ![Inventory](https://i.imgur.com/C6e7EmZ.jpg)
