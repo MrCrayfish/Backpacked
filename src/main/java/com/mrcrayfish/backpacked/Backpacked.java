@@ -217,6 +217,7 @@ public class Backpacked
     }
 
     @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
     public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
     {
         this.updateBannedItemsList();
