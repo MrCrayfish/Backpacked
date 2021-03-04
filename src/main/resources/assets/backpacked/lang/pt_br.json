@@ -1,0 +1,7 @@
+{
+    "item.backpacked.backpack": "Mochila",
+    "key.backpack": "Abrir Mochila",
+    "container.backpack": "Mochila",
+    "backpacked.configgui.keepBackpackOnDeath": "Manter mochila ao morer",
+    "curios.identifier.backpacked": "Mochila"
+}

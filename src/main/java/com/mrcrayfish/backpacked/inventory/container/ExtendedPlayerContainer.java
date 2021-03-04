@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.inventory.container.slot.InventoryBackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.MobEntity;
@@ -25,22 +26,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
     public ExtendedPlayerContainer(PlayerInventory playerInventory, boolean localWorld, PlayerEntity playerIn)
     {
         super(playerInventory, localWorld, playerIn);
-        this.addSlot(new Slot(playerInventory, 41, 77, 44)
-        {
-            @Nullable
-            @Override
-            @OnlyIn(Dist.CLIENT)
-            public Pair<ResourceLocation, ResourceLocation> func_225517_c_()
-            {
-                return Pair.of(AtlasTexture.LOCATION_BLOCKS_TEXTURE, Backpacked.EMPTY_BACKPACK_SLOT);
-            }
-
-            @Override
-            public boolean isItemValid(ItemStack stack)
-            {
-                return stack.getItem() instanceof BackpackItem;
-            }
-        });
+        this.addSlot(new InventoryBackpackSlot(playerInventory, 41, 77, 44));
     }
 
     @Override
