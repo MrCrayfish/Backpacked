@@ -30,6 +30,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            property 'mixin.env.disableRefMap', 'true'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             arg '-mixin.config=backpacked.mixins.json'
@@ -74,6 +75,7 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.3-34.1.0'
     compile fg.deobf('curse.maven:curios-309927:3056865')
+    runtimeOnly fg.deobf('curse.maven:backpacker-414218:3217794')
 }
 
 jar {
