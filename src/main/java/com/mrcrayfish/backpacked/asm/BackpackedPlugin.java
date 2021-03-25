@@ -16,6 +16,7 @@ import java.util.Map;
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.Name("Backpacked")
 @IFMLLoadingPlugin.SortingIndex(value = 1001)
+@IFMLLoadingPlugin.DependsOn(value = "baubles")
 public class BackpackedPlugin implements IFMLLoadingPlugin
 {
     public static File LOCATION = null;
@@ -47,6 +48,9 @@ public class BackpackedPlugin implements IFMLLoadingPlugin
             try
             {
                 LOCATION = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+                /* I believe ForgeGradle 3.0 changed the out directory, classes and resources are
+                 * separate now so this fixes resources not being loaded in a dev environment. */
+                LOCATION = new File(LOCATION.getParentFile(), "resources");
             }
             catch(URISyntaxException e)
             {
