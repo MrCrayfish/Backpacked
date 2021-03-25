@@ -58,6 +58,7 @@ public class Backpacked
 
     public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
+    private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
     private static List<ResourceLocation> bannedItemsList;
 
@@ -74,6 +75,7 @@ public class Backpacked
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
+        controllableLoaded = ModList.get().isLoaded("controllable");
         curiosLoaded = ModList.get().isLoaded("curios");
     }
 
@@ -182,6 +184,11 @@ public class Backpacked
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }
+    }
+
+    public static boolean isControllableLoaded()
+    {
+        return controllableLoaded;
     }
 
     public static boolean isCuriosLoaded()

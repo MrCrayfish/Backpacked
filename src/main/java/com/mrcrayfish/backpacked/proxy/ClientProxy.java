@@ -1,6 +1,9 @@
 package com.mrcrayfish.backpacked.proxy;
 
+import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.BackpackedButtonBindings;
 import com.mrcrayfish.backpacked.client.ClientEvents;
+import com.mrcrayfish.backpacked.client.ControllerHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.ModelBackpack;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
@@ -42,6 +45,13 @@ public class ClientProxy extends CommonProxy
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
         ScreenManager.registerFactory(ModContainers.BACKPACK.get(), BackpackScreen::new);
+
+        /* Only register controller events if Controllable is loaded otherwise it will crash */
+        if(Backpacked.isControllableLoaded())
+        {
+            MinecraftForge.EVENT_BUS.register(new ControllerHandler());
+            BackpackedButtonBindings.register();
+        }
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)

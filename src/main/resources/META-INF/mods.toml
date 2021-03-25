@@ -31,3 +31,9 @@ description="Adds a simple backpack to store more items"
     versionRange="[4.0.1.0,)"
     ordering="AFTER"
     side="BOTH"
+[[dependencies.backpacked]]
+    modId="controllable"
+    mandatory=false
+    versionRange="[1.2.2,)"
+    ordering="AFTER"
+    side="CLIENT"
