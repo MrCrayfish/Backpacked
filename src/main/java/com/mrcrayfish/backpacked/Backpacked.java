@@ -39,6 +39,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +66,7 @@ public class Backpacked extends DummyModContainer
     public static boolean keepBackpackOnDeath;
     public static int backpackInventorySize;
 
-    public Backpacked()
+    public Backpacked() throws InvalidVersionSpecificationException
     {
         super(new ModMetadata());
         ModMetadata meta = this.getMetadata();
@@ -72,6 +75,7 @@ public class Backpacked extends DummyModContainer
         meta.version = Reference.MOD_VERSION;
         meta.authorList = Collections.singletonList("MrCrayfish");
         meta.url = "https://mrcrayfish.com/mod?id=backpacked";
+        meta.dependencies.add(new DefaultArtifactVersion("baubles", VersionRange.createFromVersionSpec("[1.5.2,)")));
         instance = this;
         this.loadConfig();
     }
