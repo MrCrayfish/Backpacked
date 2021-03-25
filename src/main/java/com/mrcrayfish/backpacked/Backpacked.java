@@ -109,7 +109,7 @@ public class Backpacked
             int left = inventoryScreen.getGuiLeft();
             int top = inventoryScreen.getGuiTop();
             inventoryScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
-            Screen.func_238463_a_(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
+            Screen.blit(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
         }
         else if(screen instanceof CreativeScreen)
         {
@@ -119,7 +119,7 @@ public class Backpacked
                 int left = creativeScreen.getGuiLeft();
                 int top = creativeScreen.getGuiTop();
                 creativeScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
-                Screen.func_238463_a_(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
+                Screen.blit(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
             }
         }
     }

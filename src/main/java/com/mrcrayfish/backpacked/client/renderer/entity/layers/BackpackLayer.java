@@ -53,7 +53,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
             this.getEntityModel().setModelAttributes(this.model);
             this.model.setupAngles(this.getEntityModel());
             BackpackItem item = (BackpackItem) backpack.getItem();
-            IVertexBuilder builder = ItemRenderer.func_239391_c_(renderTypeBuffer, this.model.getRenderType(item.getModelTexture()), false, backpack.hasEffect());
+            IVertexBuilder builder = ItemRenderer.getBuffer(renderTypeBuffer, this.model.getRenderType(item.getModelTexture()), false, backpack.hasEffect());
             this.model.render(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
             stack.pop();
         }

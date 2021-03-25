@@ -26,7 +26,7 @@ public class InventoryBackpackSlot extends Slot
     @Nullable
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Pair<ResourceLocation, ResourceLocation> func_225517_c_()
+    public Pair<ResourceLocation, ResourceLocation> getBackground()
     {
         return Pair.of(AtlasTexture.LOCATION_BLOCKS_TEXTURE, Backpacked.EMPTY_BACKPACK_SLOT);
     }

@@ -25,7 +25,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200514-1.16'
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
 
     runs {
         client {
@@ -75,6 +75,7 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.3-34.1.0'
     compile fg.deobf('curse.maven:curios-309927:3056865')
+    compile fg.deobf('curse.maven:controllable-317269:3197856')
     runtimeOnly fg.deobf('curse.maven:backpacker-414218:3217794')
 }
 
