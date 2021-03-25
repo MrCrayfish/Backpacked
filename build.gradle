@@ -1,58 +1,80 @@
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
-version = "1.4.2-1.12.2"
+version = "1.4.3-1.12.2"
 group = "com.mrcrayfish"
 archivesBaseName = "backpacked"
 
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    version = "1.12.2-14.23.5.2768"
-    runDir = "run"
-    mappings = "snapshot_20171003"
+    mappings channel: 'snapshot', version: '20171003-1.12'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.coreMods.load', 'com.mrcrayfish.backpacked.asm.BackpackedPlugin'
+        }
+
+        server {
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.coreMods.load', 'com.mrcrayfish.backpacked.asm.BackpackedPlugin'
+        }
+    }
 }
 
 repositories {
     maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        url = "https://www.cursemaven.com"
     }
 }
 
 dependencies {
-    compileOnly 'baubles:Baubles:1.12:1.5.2'
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
+    compileOnly fg.deobf('curse.maven:baubles-227083:2518667')
 }
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'com.mrcrayfish.backpacked.asm.BackpackedPlugin'
+        attributes([
+                "Specification-Title": "Backpacked",
+                "Specification-Vendor": "MrCrayfish",
+                "Specification-Version": "1",
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"MrCrayfish",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "FMLCorePlugin": "com.mrcrayfish.backpacked.asm.BackpackedPlugin"
+        ])
     }
 }
 
-processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-    
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+jar.finalizedBy('reobfJar')
 
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+//publish.dependsOn('reobfJar')
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
     }
-    
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
     }
 }
