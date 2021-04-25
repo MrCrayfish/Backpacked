@@ -28,7 +28,7 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="curios"
     mandatory=false
-    versionRange="[4.0.1.0,)"
+    versionRange="[1.16.3-4.0.1.0,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.backpacked]]
