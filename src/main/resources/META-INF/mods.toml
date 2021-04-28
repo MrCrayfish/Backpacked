@@ -13,6 +13,7 @@ credits=""
 authors="MrCrayfish"
 description="Adds a simple backpack to store more items"
 itemIcon="backpacked:backpack" #Support for Catalogue mod
+configBackground="minecraft:textures/block/terracotta.png" #Support for Configured mod
 
 [[dependencies.backpacked]]
     modId="forge"
