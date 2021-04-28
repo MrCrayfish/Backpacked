@@ -12,6 +12,7 @@ logoFile="backpacked.png"
 credits=""
 authors="MrCrayfish"
 description="Adds a simple backpack to store more items"
+itemIcon="backpacked:backpack" #Support for Catalogue mod
 
 [[dependencies.backpacked]]
     modId="forge"
