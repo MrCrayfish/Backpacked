@@ -27,6 +27,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Author: MrCrayfish
  */
@@ -41,17 +43,17 @@ public class BackpackItem extends Item
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn)
     {
-        ItemStack heldItem = playerIn.getHeldItem(handIn);
+        ItemStack heldItem = playerIn.getItemInHand(handIn);
         if(playerIn.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) playerIn.inventory;
             if(inventory.getBackpackItems().get(0).isEmpty())
             {
-                playerIn.inventory.setInventorySlotContents(41, heldItem.copy());
+                playerIn.inventory.setItem(41, heldItem.copy());
                 heldItem.setCount(0);
-                playerIn.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+                playerIn.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
                 return new ActionResult<>(ActionResultType.SUCCESS, heldItem);
             }
         }
@@ -74,7 +76,7 @@ public class BackpackItem extends Item
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(!backpack.isEmpty())
         {
-            ITextComponent title = backpack.hasDisplayName() ? backpack.getDisplayName() : BACKPACK_TRANSLATION;
+            ITextComponent title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
             int rows = this.getRowCount();
             NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity) -> {
                 return new BackpackContainer(id, player.inventory, new BackpackInventory(rows), rows);

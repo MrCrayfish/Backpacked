@@ -37,7 +37,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
     @Override
     public MessageUpdateBackpack decode(PacketBuffer buffer)
     {
-        return new MessageUpdateBackpack(buffer.readInt(), buffer.readItemStack());
+        return new MessageUpdateBackpack(buffer.readInt(), buffer.readItem());
     }
 
     @Override
@@ -57,9 +57,9 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
         if(!empty)
         {
             Item item = stack.getItem();
-            buffer.writeVarInt(Item.getIdFromItem(item));
+            buffer.writeVarInt(Item.getId(item));
             buffer.writeByte(stack.getCount());
-            buffer.writeCompoundTag(null);
+            buffer.writeNbt(null);
         }
     }
 }

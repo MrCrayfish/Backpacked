@@ -21,12 +21,12 @@ public class BackpackSlot extends Slot
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack)
+    public boolean mayPlace(ItemStack stack)
     {
         if(Backpacked.getBannedItemsList().contains(stack.getItem().getRegistryName()))
         {
             return false;
         }
-        return !(stack.getItem() instanceof BackpackItem) && !(Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock);
+        return !(stack.getItem() instanceof BackpackItem) && !(Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock);
     }
 }

@@ -39,12 +39,12 @@ public class ClientProxy extends CommonProxy
     @Override
     public void setupClient()
     {
-        Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
+        Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getEntityRenderDispatcher().getSkinMap();
         this.addBackpackLayer(skinMap.get("default"));
         this.addBackpackLayer(skinMap.get("slim"));
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
-        ScreenManager.registerFactory(ModContainers.BACKPACK.get(), BackpackScreen::new);
+        ScreenManager.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
 
         /* Only register controller events if Controllable is loaded otherwise it will crash */
         if(Backpacked.isControllableLoaded())
@@ -56,7 +56,7 @@ public class ClientProxy extends CommonProxy
 
     private void addBackpackLayer(PlayerRenderer renderer)
     {
-        List<LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>> layers = ObfuscationReflectionHelper.getPrivateValue(LivingRenderer.class, renderer, "field_177097_h");
+        List<LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>> layers = ObfuscationReflectionHelper.getPrivateValue(LivingRenderer.class, renderer, "layers");
         if(layers != null)
         {
             layers.add(new BackpackLayer<>(renderer, new ModelBackpack<>()));
@@ -66,9 +66,9 @@ public class ClientProxy extends CommonProxy
     public static void setPlayerBackpack(int entityId, ItemStack backpack)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.world != null)
+        if(minecraft.level != null)
         {
-            Entity entity = minecraft.world.getEntityByID(entityId);
+            Entity entity = minecraft.level.getEntity(entityId);
             if(entity instanceof PlayerEntity)
             {
                 PlayerEntity player = (PlayerEntity) entity;

@@ -20,6 +20,8 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import top.theillusivec4.curios.api.type.capability.ICurio.DropRule;
+
 /**
  * Author: MrCrayfish
  */
@@ -64,7 +66,7 @@ public class Curios
             @Override
             public void playRightClickEquipSound(LivingEntity entity)
             {
-                entity.world.playSound(null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
             }
 
             @Override

@@ -22,22 +22,22 @@ public class ClientEvents
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.currentScreen instanceof BackpackScreen)
+        if(minecraft.screen instanceof BackpackScreen)
         {
-            if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientProxy.KEY_BACKPACK.getKey().getKeyCode())
+            if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientProxy.KEY_BACKPACK.getKey().getValue())
             {
-                minecraft.player.closeScreen();
+                minecraft.player.closeContainer();
             }
         }
-        else if(minecraft.player != null && minecraft.currentScreen == null)
+        else if(minecraft.player != null && minecraft.screen == null)
         {
             ClientPlayerEntity player = minecraft.player;
-            if(ClientProxy.KEY_BACKPACK.isKeyDown() && ClientProxy.KEY_BACKPACK.isPressed())
+            if(ClientProxy.KEY_BACKPACK.isDown() && ClientProxy.KEY_BACKPACK.consumeClick())
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {
                     PacketHandler.instance.sendToServer(new MessageOpenBackpack());
-                    minecraft.getSoundHandler().play(SimpleSound.master(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
+                    minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
                 }
             }
         }

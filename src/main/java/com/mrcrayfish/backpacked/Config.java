@@ -49,7 +49,7 @@ public class Config
                         try
                         {
                             //Only allow valid resource locations
-                            ResourceLocation.tryCreate(o.toString());
+                            ResourceLocation.tryParse(o.toString());
                             return true;
                         }
                         catch(ResourceLocationException e)

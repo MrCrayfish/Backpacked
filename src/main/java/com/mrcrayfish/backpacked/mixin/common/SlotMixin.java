@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface SlotMixin
 {
     @Mutable
-    @Accessor(value = "xPos")
+    @Accessor(value = "x")
     void setXPos(int x);
 
     @Mutable
-    @Accessor(value = "yPos")
+    @Accessor(value = "y")
     void setYPos(int y);
 }

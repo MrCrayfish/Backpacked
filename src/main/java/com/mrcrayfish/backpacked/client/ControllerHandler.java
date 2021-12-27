@@ -19,7 +19,7 @@ public class ControllerHandler
     public void onButtonInput(ControllerEvent.Button event)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.currentScreen != null)
+        if(minecraft.screen != null)
             return;
 
         if(BackpackedButtonBindings.BACKPACK.isButtonPressed())
@@ -27,7 +27,7 @@ public class ControllerHandler
             if(!Backpacked.getBackpackStack(minecraft.player).isEmpty())
             {
                 PacketHandler.instance.sendToServer(new MessageOpenBackpack());
-                minecraft.getSoundHandler().play(SimpleSound.master(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
+                minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             }
         }
     }

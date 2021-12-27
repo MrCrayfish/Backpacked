@@ -26,13 +26,13 @@ public class InventoryBackpackSlot extends Slot
     @Nullable
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Pair<ResourceLocation, ResourceLocation> getBackground()
+    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
     {
-        return Pair.of(AtlasTexture.LOCATION_BLOCKS_TEXTURE, Backpacked.EMPTY_BACKPACK_SLOT);
+        return Pair.of(AtlasTexture.LOCATION_BLOCKS, Backpacked.EMPTY_BACKPACK_SLOT);
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack)
+    public boolean mayPlace(ItemStack stack)
     {
         return stack.getItem() instanceof BackpackItem;
     }

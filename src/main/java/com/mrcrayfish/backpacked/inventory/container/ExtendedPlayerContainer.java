@@ -30,20 +30,20 @@ public class ExtendedPlayerContainer extends PlayerContainer
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index)
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index)
     {
         ItemStack copy = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if(slot != null && slot.getHasStack())
+        Slot slot = this.slots.get(index);
+        if(slot != null && slot.hasItem())
         {
-            ItemStack slotStack = slot.getStack();
+            ItemStack slotStack = slot.getItem();
             copy = slotStack.copy();
-            EquipmentSlotType equipmentslottype = MobEntity.getSlotForItemStack(copy);
+            EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(copy);
             if(index != 46 && copy.getItem() instanceof BackpackItem)
             {
-                if(!this.inventorySlots.get(46).getHasStack())
+                if(!this.slots.get(46).hasItem())
                 {
-                    if(!this.mergeItemStack(slotStack, 46, 47, false))
+                    if(!this.moveItemStackTo(slotStack, 46, 47, false))
                     {
                         return ItemStack.EMPTY;
                     }
@@ -51,75 +51,75 @@ public class ExtendedPlayerContainer extends PlayerContainer
             }
             else if(index == 0)
             {
-                if(!this.mergeItemStack(slotStack, 9, 45, true))
+                if(!this.moveItemStackTo(slotStack, 9, 45, true))
                 {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(slotStack, copy);
+                slot.onQuickCraft(slotStack, copy);
             }
             else if(index < 5)
             {
-                if(!this.mergeItemStack(slotStack, 9, 45, false))
+                if(!this.moveItemStackTo(slotStack, 9, 45, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
             else if(index < 9)
             {
-                if(!this.mergeItemStack(slotStack, 9, 45, false))
+                if(!this.moveItemStackTo(slotStack, 9, 45, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(equipmentslottype.getSlotType() == EquipmentSlotType.Group.ARMOR && !this.inventorySlots.get(8 - equipmentslottype.getIndex()).getHasStack())
+            else if(equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(8 - equipmentslottype.getIndex()).hasItem())
             {
                 int i = 8 - equipmentslottype.getIndex();
-                if(!this.mergeItemStack(slotStack, i, i + 1, false))
+                if(!this.moveItemStackTo(slotStack, i, i + 1, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(equipmentslottype == EquipmentSlotType.OFFHAND && !this.inventorySlots.get(45).getHasStack())
+            else if(equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(45).hasItem())
             {
-                if(!this.mergeItemStack(slotStack, 45, 46, false))
+                if(!this.moveItemStackTo(slotStack, 45, 46, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
             else if(index == 46)
             {
-                if(!this.mergeItemStack(slotStack, 9, 45, false))
+                if(!this.moveItemStackTo(slotStack, 9, 45, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
             else if(index < 36)
             {
-                if(!this.mergeItemStack(slotStack, 36, 45, false))
+                if(!this.moveItemStackTo(slotStack, 36, 45, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
             else if(index < 45)
             {
-                if(!this.mergeItemStack(slotStack, 9, 36, false))
+                if(!this.moveItemStackTo(slotStack, 9, 36, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(!this.mergeItemStack(slotStack, 9, 45, false))
+            else if(!this.moveItemStackTo(slotStack, 9, 45, false))
             {
                 return ItemStack.EMPTY;
             }
 
             if(slotStack.isEmpty())
             {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             }
             else
             {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if(slotStack.getCount() == copy.getCount())
@@ -130,7 +130,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
             ItemStack itemstack2 = slot.onTake(playerIn, slotStack);
             if(index == 0)
             {
-                playerIn.dropItem(itemstack2, false);
+                playerIn.drop(itemstack2, false);
             }
         }
 

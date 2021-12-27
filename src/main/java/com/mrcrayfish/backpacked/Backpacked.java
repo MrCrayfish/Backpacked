@@ -105,23 +105,23 @@ public class Backpacked
         if(curiosLoaded)
             return;
 
-        ContainerScreen screen = event.getGuiContainer();
+        ContainerScreen<?> screen = event.getGuiContainer();
         if(screen instanceof InventoryScreen)
         {
             InventoryScreen inventoryScreen = (InventoryScreen) screen;
             int left = inventoryScreen.getGuiLeft();
             int top = inventoryScreen.getGuiTop();
-            inventoryScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
+            inventoryScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
             Screen.blit(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
         }
         else if(screen instanceof CreativeScreen)
         {
             CreativeScreen creativeScreen = (CreativeScreen) screen;
-            if(creativeScreen.getSelectedTabIndex() == ItemGroup.INVENTORY.getIndex())
+            if(creativeScreen.getSelectedTab() == ItemGroup.TAB_INVENTORY.getId())
             {
                 int left = creativeScreen.getGuiLeft();
                 int top = creativeScreen.getGuiTop();
-                creativeScreen.getMinecraft().getTextureManager().bindTexture(ContainerScreen.INVENTORY_BACKGROUND);
+                creativeScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
                 Screen.blit(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
             }
         }
@@ -130,7 +130,7 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap().getTextureLocation().equals(PlayerContainer.LOCATION_BLOCKS_TEXTURE))
+        if(event.getMap().location().equals(PlayerContainer.BLOCK_ATLAS))
         {
             event.addSprite(EMPTY_BACKPACK_SLOT);
         }
@@ -161,7 +161,7 @@ public class Backpacked
             ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
             if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), backpack));
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
             }
         }
     }
@@ -176,12 +176,12 @@ public class Backpacked
             return;
 
         PlayerEntity player = event.player;
-        if(!player.world.isRemote && player.inventory instanceof ExtendedPlayerInventory)
+        if(!player.level.isClientSide && player.inventory instanceof ExtendedPlayerInventory)
         {
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getEntityId(), inventory.backpackInventory.get(0)));
+                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0)));
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }

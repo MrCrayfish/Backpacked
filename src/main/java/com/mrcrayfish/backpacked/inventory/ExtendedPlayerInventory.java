@@ -20,7 +20,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
 {
     public final NonNullList<ItemStack> backpackArray = NonNullList.withSize(1, ItemStack.EMPTY);
     public final NonNullList<ItemStack> backpackInventory = NonNullList.withSize(1, ItemStack.EMPTY);
-    private final List<NonNullList<ItemStack>> allInventories = ImmutableList.of(this.mainInventory, this.armorInventory, this.offHandInventory, this.backpackInventory);
+    private final List<NonNullList<ItemStack>> allInventories = ImmutableList.of(this.items, this.armor, this.offhand, this.backpackInventory);
 
     public ExtendedPlayerInventory(PlayerEntity player)
     {
@@ -38,7 +38,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public ItemStack decrStackSize(int index, int count)
+    public ItemStack removeItem(int index, int count)
     {
         NonNullList<ItemStack> targetInventory = null;
         for(NonNullList<ItemStack> inventory : this.allInventories)
@@ -50,11 +50,11 @@ public class ExtendedPlayerInventory extends PlayerInventory
             }
             index -= inventory.size();
         }
-        return targetInventory != null && !targetInventory.get(index).isEmpty() ? ItemStackHelper.getAndSplit(targetInventory, index, count) : ItemStack.EMPTY;
+        return targetInventory != null && !targetInventory.get(index).isEmpty() ? ItemStackHelper.removeItem(targetInventory, index, count) : ItemStack.EMPTY;
     }
 
     @Override
-    public void deleteStack(ItemStack stack)
+    public void removeItem(ItemStack stack)
     {
         for(NonNullList<ItemStack> inventory : this.allInventories)
         {
@@ -70,7 +70,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int index)
+    public ItemStack removeItemNoUpdate(int index)
     {
         NonNullList<ItemStack> targetInventory = null;
         for(NonNullList<ItemStack> inventory : this.allInventories)
@@ -96,7 +96,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack)
+    public void setItem(int index, ItemStack stack)
     {
         NonNullList<ItemStack> targetInventory = null;
         for(NonNullList<ItemStack> inventory : this.allInventories)
@@ -115,7 +115,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public ItemStack getStackInSlot(int index)
+    public ItemStack getItem(int index)
     {
         List<ItemStack> list = null;
         for(NonNullList<ItemStack> inventory : this.allInventories)
@@ -131,16 +131,16 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public ListNBT write(ListNBT list)
+    public ListNBT save(ListNBT list)
     {
-        list = super.write(list);
+        list = super.save(list);
         for(int i = 0; i < this.backpackInventory.size(); i++)
         {
             if(!this.backpackInventory.get(i).isEmpty())
             {
                 CompoundNBT compound = new CompoundNBT();
                 compound.putByte("Slot", (byte) (i + 200));
-                this.backpackInventory.get(i).write(compound);
+                this.backpackInventory.get(i).save(compound);
                 list.add(compound);
             }
         }
@@ -148,14 +148,14 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public void read(ListNBT list)
+    public void load(ListNBT list)
     {
-        super.read(list);
+        super.load(list);
         for(int i = 0; i < list.size(); ++i)
         {
             CompoundNBT compound = list.getCompound(i);
             int slot = compound.getByte("Slot") & 255;
-            ItemStack stack = ItemStack.read(compound);
+            ItemStack stack = ItemStack.of(compound);
             if(!stack.isEmpty())
             {
                 if(slot >= 200 && slot < this.backpackInventory.size() + 200)
@@ -167,9 +167,9 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public int getSizeInventory()
+    public int getContainerSize()
     {
-        return super.getSizeInventory() + this.backpackInventory.size();
+        return super.getContainerSize() + this.backpackInventory.size();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public boolean hasItemStack(ItemStack targetStack)
+    public boolean contains(ItemStack targetStack)
     {
         for(NonNullList<ItemStack> inventory : this.allInventories)
         {
@@ -198,7 +198,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
                     return false;
                 }
                 ItemStack stack = (ItemStack) iterator.next();
-                if(!stack.isEmpty() && stack.isItemEqual(targetStack))
+                if(!stack.isEmpty() && stack.sameItem(targetStack))
                 {
                     break;
                 }
@@ -209,7 +209,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public void clear()
+    public void clearContent()
     {
         for(List<ItemStack> list : this.allInventories)
         {
@@ -218,11 +218,11 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public void dropAllItems()
+    public void dropAll()
     {
         if(Config.COMMON.keepBackpackOnDeath.get())
         {
-            super.dropAllItems();
+            super.dropAll();
         }
         else
         {
@@ -233,7 +233,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
                     ItemStack itemstack = list.get(i);
                     if(!itemstack.isEmpty())
                     {
-                        this.player.dropItem(itemstack, true, false);
+                        this.player.drop(itemstack, true, false);
                         list.set(i, ItemStack.EMPTY);
                     }
                 }

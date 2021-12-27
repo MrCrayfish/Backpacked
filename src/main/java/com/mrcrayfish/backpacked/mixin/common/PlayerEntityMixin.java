@@ -31,7 +31,7 @@ public class PlayerEntityMixin
     @Shadow
     @Final
     @Mutable
-    public PlayerContainer container;
+    public PlayerContainer inventoryMenu;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void constructorTail(World world, BlockPos pos, float spawnAngle, GameProfile profile, CallbackInfo ci)
@@ -40,7 +40,7 @@ public class PlayerEntityMixin
             return;
         PlayerEntity player = (PlayerEntity) (Object) this;
         this.inventory = new ExtendedPlayerInventory(player);
-        this.container = new ExtendedPlayerContainer(this.inventory, !world.isRemote, player);
-        player.openContainer = this.container;
+        this.inventoryMenu = new ExtendedPlayerContainer(this.inventory, !world.isClientSide, player);
+        player.containerMenu = this.inventoryMenu;
     }
 }

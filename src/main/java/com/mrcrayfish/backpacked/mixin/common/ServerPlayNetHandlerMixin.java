@@ -21,34 +21,34 @@ public class ServerPlayNetHandlerMixin
     @Shadow
     public ServerPlayerEntity player;
 
-    @Inject(method = "processCreativeInventoryAction", at = @At(value = "TAIL"))
+    @Inject(method = "handleSetCreativeModeSlot", at = @At(value = "TAIL"))
     private void patchBackpackAction(CCreativeInventoryActionPacket packetIn, CallbackInfo ci)
     {
         if(!this.player.isCreative())
             return;
 
-        ItemStack stack = packetIn.getStack();
-        int maxSize = this.player.container.inventorySlots.size();
-        if(packetIn.getSlotId() <= 45 || packetIn.getSlotId() >= maxSize)
+        ItemStack stack = packetIn.getItem();
+        int maxSize = this.player.inventoryMenu.slots.size();
+        if(packetIn.getSlotNum() <= 45 || packetIn.getSlotNum() >= maxSize)
             return;
 
-        Slot slot = this.player.container.getSlot(packetIn.getSlotId());
+        Slot slot = this.player.inventoryMenu.getSlot(packetIn.getSlotNum());
         if(!(slot instanceof InventoryBackpackSlot))
             return;
 
-        boolean changed = stack.isEmpty() || stack.getDamage() >= 0 && stack.getCount() <= 64;
+        boolean changed = stack.isEmpty() || stack.getDamageValue() >= 0 && stack.getCount() <= 64;
         if(changed)
         {
             if(stack.isEmpty())
             {
-                this.player.container.putStackInSlot(packetIn.getSlotId(), ItemStack.EMPTY);
+                this.player.inventoryMenu.setItem(packetIn.getSlotNum(), ItemStack.EMPTY);
             }
             else
             {
-                this.player.container.putStackInSlot(packetIn.getSlotId(), stack);
+                this.player.inventoryMenu.setItem(packetIn.getSlotNum(), stack);
             }
-            this.player.container.setCanCraft(this.player, true);
-            this.player.container.detectAndSendChanges();
+            this.player.inventoryMenu.setSynched(this.player, true);
+            this.player.inventoryMenu.broadcastChanges();
         }
     }
 }

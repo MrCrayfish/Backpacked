@@ -38,7 +38,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(backpack.getItem() instanceof BackpackItem)
         {
-            ItemStack chestStack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
+            ItemStack chestStack = player.getItemBySlot(EquipmentSlotType.CHEST);
             if(chestStack.getItem() == Items.ELYTRA)
             {
                 return;
@@ -49,13 +49,13 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
                 return;
             }
 
-            stack.push();
-            this.getEntityModel().setModelAttributes(this.model);
-            this.model.setupAngles(this.getEntityModel());
+            stack.pushPose();
+            this.getParentModel().copyPropertiesTo(this.model);
+            this.model.setupAngles(this.getParentModel());
             BackpackItem item = (BackpackItem) backpack.getItem();
-            IVertexBuilder builder = ItemRenderer.getBuffer(renderTypeBuffer, this.model.getRenderType(item.getModelTexture()), false, backpack.hasEffect());
-            this.model.render(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
-            stack.pop();
+            IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, this.model.renderType(item.getModelTexture()), false, backpack.hasFoil());
+            this.model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
+            stack.popPose();
         }
     }
 }

@@ -24,7 +24,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
     {
         super(backpackContainer, playerInventory, titleIn);
         this.rows = backpackContainer.getRows();
-        this.ySize = 114 + this.rows * 18;
+        this.imageHeight = 114 + this.rows * 18;
     }
 
     @Override
@@ -32,23 +32,23 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
     {
         this.renderBackground(matrixStack); //Draw background
         super.render(matrixStack, mouseX, mouseY, partialTicks); //Super
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY); //Render hovered tooltips
+        this.renderTooltip(matrixStack, mouseX, mouseY); //Render hovered tooltips
     }
 
     //Render
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-        this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.rows * 18 + 17);
-        this.blit(matrixStack, this.guiLeft, this.guiTop + this.rows * 18 + 17, 0, 126, this.xSize, 96);
+        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.rows * 18 + 17);
+        this.blit(matrixStack, this.leftPos, this.topPos + this.rows * 18 + 17, 0, 126, this.imageWidth, 96);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY)
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY)
     {
-        this.font.func_243248_b(matrixStack, this.title, 8.0F, 6.0F, 0x404040);
-        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), 8.0F, (float) (this.ySize - 96 + 2), 0x404040);
+        this.font.draw(matrixStack, this.title, 8.0F, 6.0F, 0x404040);
+        this.font.draw(matrixStack, this.inventory.getDisplayName(), 8.0F, (float) (this.imageHeight - 96 + 2), 0x404040);
     }
 }

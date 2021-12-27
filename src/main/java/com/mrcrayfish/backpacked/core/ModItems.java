@@ -20,5 +20,5 @@ public class ModItems
 {
     public static final DeferredRegister<Item> REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
 
-    public static final RegistryObject<Item> BACKPACK = REGISTER.register("backpack", () -> new BackpackItem(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC)));
+    public static final RegistryObject<Item> BACKPACK = REGISTER.register("backpack", () -> new BackpackItem(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_MISC)));
 }

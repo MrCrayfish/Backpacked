@@ -20,15 +20,15 @@ public class BackpackInventory extends Inventory
     }
 
     @Override
-    public boolean isUsableByPlayer(PlayerEntity player)
+    public boolean stillValid(PlayerEntity player)
     {
         return !Backpacked.getBackpackStack(player).isEmpty();
     }
 
     @Override
-    public void openInventory(PlayerEntity player)
+    public void startOpen(PlayerEntity player)
     {
-        this.clear();
+        this.clearContent();
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(!backpack.isEmpty())
         {
@@ -44,7 +44,7 @@ public class BackpackInventory extends Inventory
     }
 
     @Override
-    public void closeInventory(PlayerEntity player)
+    public void stopOpen(PlayerEntity player)
     {
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(!backpack.isEmpty())
