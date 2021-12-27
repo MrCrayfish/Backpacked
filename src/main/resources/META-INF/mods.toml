@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/MrCrayfish/Backpacked/issues"
 
 [[mods]]
 modId="backpacked"
-version="1.10.1"
+version="1.10.2"
 displayName="Backpacked"
 updateJSONURL="https://mrcrayfish.com/modupdatejson?id=backpacked"
 displayURL="https://mrcrayfish.com/mods?id=backpacked"
