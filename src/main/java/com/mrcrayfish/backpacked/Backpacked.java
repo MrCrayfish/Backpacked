@@ -70,6 +70,7 @@ public class Backpacked
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigLoad);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigReload);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -217,7 +218,17 @@ public class Backpacked
 
     private void onConfigLoad(ModConfig.Loading event)
     {
-        if(event.getConfig().getModId().equals(Reference.MOD_ID))
+        ModConfig config = event.getConfig();
+        if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
+        {
+            this.updateBannedItemsList();
+        }
+    }
+
+    private void onConfigReload(ModConfig.Reloading event)
+    {
+        ModConfig config = event.getConfig();
+        if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
         {
             this.updateBannedItemsList();
         }

@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.mixin.client;
 
-import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.mixin.common.SlotMixin;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
