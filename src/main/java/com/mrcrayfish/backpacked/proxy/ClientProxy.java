@@ -56,11 +56,7 @@ public class ClientProxy extends CommonProxy
 
     private void addBackpackLayer(PlayerRenderer renderer)
     {
-        List<LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>> layers = ObfuscationReflectionHelper.getPrivateValue(LivingRenderer.class, renderer, "layers");
-        if(layers != null)
-        {
-            layers.add(new BackpackLayer<>(renderer, new ModelBackpack<>()));
-        }
+        renderer.addLayer(new BackpackLayer<>(renderer, new ModelBackpack()));
     }
 
     public static void setPlayerBackpack(int entityId, ItemStack backpack)

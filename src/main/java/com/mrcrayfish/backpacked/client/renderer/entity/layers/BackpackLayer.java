@@ -24,9 +24,9 @@ import net.minecraft.util.ResourceLocation;
  */
 public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> extends LayerRenderer<T, M>
 {
-    private ModelBackpack<T> model;
+    private ModelBackpack model;
 
-    public BackpackLayer(IEntityRenderer<T, M> renderer, ModelBackpack<T> model)
+    public BackpackLayer(IEntityRenderer<T, M> renderer, ModelBackpack model)
     {
         super(renderer);
         this.model = model;
@@ -40,18 +40,13 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         {
             ItemStack chestStack = player.getItemBySlot(EquipmentSlotType.CHEST);
             if(chestStack.getItem() == Items.ELYTRA)
-            {
                 return;
-            }
 
             if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
-            {
                 return;
-            }
 
             stack.pushPose();
-            this.getParentModel().copyPropertiesTo(this.model);
-            this.model.setupAngles(this.getParentModel());
+            this.model.setupAngles(this.getParentModel().body, !chestStack.isEmpty());
             BackpackItem item = (BackpackItem) backpack.getItem();
             IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, this.model.renderType(item.getModelTexture()), false, backpack.hasFoil());
             this.model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
