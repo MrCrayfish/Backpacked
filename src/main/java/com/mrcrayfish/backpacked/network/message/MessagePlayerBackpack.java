@@ -14,6 +14,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -70,6 +71,7 @@ public class MessagePlayerBackpack implements IMessage<MessagePlayerBackpack>
                 NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
                     return new BackpackContainer(id, player.inventory, backpackInventory, rows);
                 }, title), buffer -> buffer.writeVarInt(rows));
+                otherPlayer.displayClientMessage(new TranslationTextComponent("message.backpacked.player_opened"), true);
                 player.level.playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.75F, 1.0F);
             }
         });
