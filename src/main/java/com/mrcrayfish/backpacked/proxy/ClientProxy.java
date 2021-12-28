@@ -2,6 +2,8 @@ package com.mrcrayfish.backpacked.proxy;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.BackpackedButtonBindings;
+import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.client.BackpackModels;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.ControllerHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
@@ -16,6 +18,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
@@ -45,6 +48,8 @@ public class ClientProxy extends CommonProxy
             MinecraftForge.EVENT_BUS.register(new ControllerHandler());
             BackpackedButtonBindings.register();
         }
+
+        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "classic"), BackpackModels.CLASSIC);
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)

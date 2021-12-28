@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class StandardBackpackModel extends BackpackModel
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/standard_backpack.png");
 
     private final ModelRenderer root;
     private final ModelRenderer bag;

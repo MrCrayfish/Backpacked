@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.client.BackpackModels;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.model.ClassicBackpackModel;
 import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -52,6 +53,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
             BackpackItem backpackItem = (BackpackItem) backpack.getItem();
             String modelName = backpack.getOrCreateTag().getString("BackpackModel");
             BackpackModel model = VARIANTS.getOrDefault(modelName, backpackItem.getDefaultModel());
+            model = new ClassicBackpackModel();
             model.setupAngles(this.getParentModel().body, !chestStack.isEmpty());
             IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, backpack.hasFoil());
             model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
