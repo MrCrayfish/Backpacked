@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.client.BackpackModels;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
 import com.mrcrayfish.backpacked.integration.Curios;
@@ -27,7 +28,6 @@ import java.util.Map;
  */
 public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> extends LayerRenderer<T, M>
 {
-    private static final BackpackModel DEFAULT_MODEL = new StandardBackpackModel();
     private static final Map<String, BackpackModel> VARIANTS = new HashMap<>();
 
     public BackpackLayer(IEntityRenderer<T, M> renderer)
@@ -49,11 +49,11 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
                 return;
 
             stack.pushPose();
+            BackpackItem backpackItem = (BackpackItem) backpack.getItem();
             String modelName = backpack.getOrCreateTag().getString("BackpackModel");
-            BackpackModel model = VARIANTS.getOrDefault(modelName, DEFAULT_MODEL);
+            BackpackModel model = VARIANTS.getOrDefault(modelName, backpackItem.getDefaultModel());
             model.setupAngles(this.getParentModel().body, !chestStack.isEmpty());
-            BackpackItem item = (BackpackItem) backpack.getItem();
-            IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(item.getModelTexture()), false, backpack.hasFoil());
+            IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, backpack.hasFoil());
             model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
             stack.popPose();
         }

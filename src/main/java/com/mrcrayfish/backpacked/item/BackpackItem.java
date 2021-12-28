@@ -3,6 +3,8 @@ package com.mrcrayfish.backpacked.item;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.client.BackpackModels;
+import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -22,6 +24,8 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -33,7 +37,6 @@ import javax.annotation.Nullable;
 public class BackpackItem extends Item
 {
     public static final TranslationTextComponent BACKPACK_TRANSLATION = new TranslationTextComponent("container.backpack");
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
 
     public BackpackItem(Properties properties)
     {
@@ -90,8 +93,9 @@ public class BackpackItem extends Item
         return Config.COMMON.backpackInventorySize.get();
     }
 
-    public ResourceLocation getModelTexture()
+    @OnlyIn(Dist.CLIENT)
+    public BackpackModel getDefaultModel()
     {
-        return TEXTURE;
+        return BackpackModels.STANDARD;
     }
 }

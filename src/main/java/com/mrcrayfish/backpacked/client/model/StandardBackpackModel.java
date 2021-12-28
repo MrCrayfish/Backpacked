@@ -1,12 +1,16 @@
 package com.mrcrayfish.backpacked.client.model;
 
+import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Author: MrCrayfish
  */
 public class StandardBackpackModel extends BackpackModel
 {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
+
     private final ModelRenderer root;
     private final ModelRenderer bag;
     private final ModelRenderer straps;
@@ -88,5 +92,11 @@ public class StandardBackpackModel extends BackpackModel
     protected ModelRenderer getStraps()
     {
         return this.straps;
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation()
+    {
+        return TEXTURE;
     }
 }

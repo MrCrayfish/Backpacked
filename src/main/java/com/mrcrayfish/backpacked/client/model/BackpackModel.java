@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.ResourceLocation;
 
 public abstract class BackpackModel extends Model
 {
@@ -44,4 +45,6 @@ public abstract class BackpackModel extends Model
     protected abstract ModelRenderer getBag();
 
     protected abstract ModelRenderer getStraps();
+
+    public abstract ResourceLocation getTextureLocation();
 }
