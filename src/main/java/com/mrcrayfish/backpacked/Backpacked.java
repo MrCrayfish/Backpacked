@@ -14,11 +14,14 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -249,5 +252,27 @@ public class Backpacked
     public static List<ResourceLocation> getBannedItemsList()
     {
         return bannedItemsList;
+    }
+
+    public static boolean canPickpocketPlayer(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
+    {
+        return inRangeOfBackpack(targetPlayer, thiefPlayer) && inReachOfBackpack(targetPlayer, thiefPlayer);
+    }
+
+    public static boolean inRangeOfBackpack(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
+    {
+        if(targetPlayer.getPose() == Pose.SWIMMING) // Backpack is exposed at any direction
+            return true;
+        Vector3d between = thiefPlayer.getPosition(1.0F).subtract(targetPlayer.getPosition(1.0F));
+        float angle = (float) Math.toDegrees(Math.atan2(between.z, between.x)) - 90F;
+        float difference = MathHelper.degreesDifferenceAbs(targetPlayer.yBodyRot + 180F, angle);
+        return difference <= 80F;
+    }
+
+    public static boolean inReachOfBackpack(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
+    {
+        Vector3d pos = targetPlayer.getPosition(1.0F);
+        pos = pos.add(Vector3d.directionFromRotation(0F, targetPlayer.yBodyRot + 180F).scale(targetPlayer.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
+        return pos.distanceTo(thiefPlayer.getPosition(1.0F)) <= Config.SERVER.pickpocketMaxDistance.get();
     }
 }

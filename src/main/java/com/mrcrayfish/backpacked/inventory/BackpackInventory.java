@@ -43,7 +43,7 @@ public class BackpackInventory extends Inventory
     @Override
     public boolean stillValid(PlayerEntity player)
     {
-        return Backpacked.getBackpackStack(this.player).equals(this.stack) && player.distanceTo(this.player) <= Config.SERVER.pickpocketMaxDistance.get();
+        return Backpacked.getBackpackStack(this.player).equals(this.stack) && Backpacked.canPickpocketPlayer(this.player, player);
     }
 
     @Override
