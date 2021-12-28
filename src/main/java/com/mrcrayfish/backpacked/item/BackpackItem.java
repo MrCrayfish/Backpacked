@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +20,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -27,14 +27,12 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Author: MrCrayfish
  */
 public class BackpackItem extends Item
 {
-    private static final TranslationTextComponent BACKPACK_TRANSLATION = new TranslationTextComponent("container.backpack");
+    public static final TranslationTextComponent BACKPACK_TRANSLATION = new TranslationTextComponent("container.backpack");
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/backpack.png");
 
     public BackpackItem(Properties properties)
@@ -76,10 +74,13 @@ public class BackpackItem extends Item
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(!backpack.isEmpty())
         {
+            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+            if(backpackInventory == null)
+                return;
             ITextComponent title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
             int rows = this.getRowCount();
             NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity) -> {
-                return new BackpackContainer(id, player.inventory, new BackpackInventory(rows), rows);
+                return new BackpackContainer(id, player.inventory, backpackInventory, rows);
             }, title), buffer -> buffer.writeVarInt(rows));
         }
     }

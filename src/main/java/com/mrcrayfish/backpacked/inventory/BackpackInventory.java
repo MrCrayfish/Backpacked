@@ -14,50 +14,42 @@ import net.minecraftforge.common.util.Constants;
  */
 public class BackpackInventory extends Inventory
 {
-    public BackpackInventory(int rows)
+    private final PlayerEntity player;
+    private final ItemStack stack;
+
+    public BackpackInventory(int rows, PlayerEntity player, ItemStack stack)
     {
-        super(9 * rows);
+        super(rows * 9);
+        this.player = player;
+        this.stack = stack;
+        this.loadBackpackContents();
+    }
+
+    private void loadBackpackContents()
+    {
+        CompoundNBT compound = this.stack.getOrCreateTag();
+        if(compound.contains("Items", Constants.NBT.TAG_LIST))
+        {
+            InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this);
+        }
+    }
+
+    public ItemStack getBackpackStack()
+    {
+        return this.stack;
     }
 
     @Override
     public boolean stillValid(PlayerEntity player)
     {
-        return !Backpacked.getBackpackStack(player).isEmpty();
+        return Backpacked.getBackpackStack(this.player).equals(this.stack) && player.distanceTo(this.player) < 2.0F;
     }
 
     @Override
-    public void startOpen(PlayerEntity player)
+    public void setChanged()
     {
-        this.clearContent();
-        ItemStack backpack = Backpacked.getBackpackStack(player);
-        if(!backpack.isEmpty())
-        {
-            CompoundNBT compound = backpack.getTag();
-            if(compound != null)
-            {
-                if(compound.contains("Items", Constants.NBT.TAG_LIST))
-                {
-                    InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void stopOpen(PlayerEntity player)
-    {
-        ItemStack backpack = Backpacked.getBackpackStack(player);
-        if(!backpack.isEmpty())
-        {
-            CompoundNBT compound = backpack.getTag();
-            if(compound == null)
-            {
-                compound = new CompoundNBT();
-            }
-            ListNBT list = new ListNBT();
-            InventoryHelper.saveAllItems(list, this);
-            compound.put("Items", list);
-            backpack.setTag(compound);
-        }
+        super.setChanged();
+        CompoundNBT compound = this.stack.getOrCreateTag();
+        compound.put("Items", InventoryHelper.saveAllItems(new ListNBT(), this));
     }
 }
