@@ -49,7 +49,7 @@ public class ClientProxy extends CommonProxy
 
     private void addBackpackLayer(PlayerRenderer renderer)
     {
-        renderer.addLayer(new BackpackLayer<>(renderer, new StandardBackpackModel()));
+        renderer.addLayer(new BackpackLayer<>(renderer));
     }
 
     public static void setPlayerBackpack(int entityId, ItemStack backpack)
