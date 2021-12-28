@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
+import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -43,7 +43,7 @@ public class BackpackInventory extends Inventory
     @Override
     public boolean stillValid(PlayerEntity player)
     {
-        return Backpacked.getBackpackStack(this.player).equals(this.stack) && Backpacked.canPickpocketPlayer(this.player, player);
+        return Backpacked.getBackpackStack(this.player).equals(this.stack) && PickpocketUtil.canPickpocketPlayer(this.player, player);
     }
 
     @Override

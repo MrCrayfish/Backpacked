@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
+import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -64,6 +65,9 @@ public class MessagePlayerBackpack implements IMessage<MessagePlayerBackpack>
                 return;
 
             PlayerEntity otherPlayer = (PlayerEntity) entity;
+            if(!PickpocketUtil.canSeeBackpack(otherPlayer, player))
+                return;
+
             ItemStack backpack = Backpacked.getBackpackStack(otherPlayer);
             if(!backpack.isEmpty())
             {

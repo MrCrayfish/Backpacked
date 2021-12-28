@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
+import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -78,7 +79,7 @@ public class ClientEvents
 
         double range = Config.SERVER.pickpocketMaxDistance.get();
         List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-            return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && Backpacked.canPickpocketPlayer(player, mc.player);
+            return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketPlayer(player, mc.player);
         });
 
         if(players.isEmpty())
@@ -91,7 +92,7 @@ public class ClientEvents
         PlayerEntity hitPlayer = null;
         for(PlayerEntity player : players)
         {
-            AxisAlignedBB box = this.getBackpackBox(player, 1.0F);
+            AxisAlignedBB box = PickpocketUtil.getBackpackBox(player, 1.0F);
             Optional<Vector3d> optionalHitVec = box.clip(start, end);
             if(!optionalHitVec.isPresent())
                 continue;
@@ -104,26 +105,12 @@ public class ClientEvents
             }
         }
 
-        if(hitPlayer != null)
+        if(hitPlayer != null && PickpocketUtil.canSeeBackpack(hitPlayer, mc.player))
         {
             PacketHandler.instance.sendToServer(new MessagePlayerBackpack(hitPlayer.getId()));
             return true;
         }
         return false;
-    }
-
-    private AxisAlignedBB getBackpackBox(PlayerEntity player, float partialTick)
-    {
-        AxisAlignedBB backpackBox = new AxisAlignedBB(-0.25, 0.0, -0.25, 0.25, 0.5625, 0.25);
-        backpackBox = backpackBox.move(player.getPosition(partialTick));
-        backpackBox = backpackBox.move(0, player.getPose() != Pose.SWIMMING ? 0.875 : 0.3125, 0);
-        if(player.getPose() == Pose.CROUCHING)
-        {
-            backpackBox = backpackBox.move(0, -0.1875, 0);
-        }
-        float bodyRotation = MathHelper.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-        backpackBox = backpackBox.move(Vector3d.directionFromRotation(0F, bodyRotation + 180F).scale(player.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
-        return backpackBox;
     }
 
     @SubscribeEvent
@@ -146,14 +133,14 @@ public class ClientEvents
             if(player.isLocalPlayer())
                 continue;
 
-            boolean inReach = Backpacked.inReachOfBackpack(player, mc.player);
+            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player) && PickpocketUtil.canSeeBackpack(player, mc.player);
             float boxRed = inReach ? 0.0F : 1.0F;
             float boxGreen = inReach ? 1.0F : 1.0F;
             float boxBlue = inReach ? 0.0F : 1.0F;
             IVertexBuilder builder = source.getBuffer(RenderType.lines());
-            WorldRenderer.renderLineBox(stack, builder, this.getBackpackBox(player, event.getPartialTicks()), boxRed, boxGreen, boxBlue, 1.0F);
+            WorldRenderer.renderLineBox(stack, builder, PickpocketUtil.getBackpackBox(player, event.getPartialTicks()), boxRed, boxGreen, boxBlue, 1.0F);
 
-            boolean inRange = Backpacked.inRangeOfBackpack(player, mc.player);
+            boolean inRange = PickpocketUtil.inRangeOfBackpack(player, mc.player);
             float lineRed = inRange ? 0.0F : 1.0F;
             float lineGreen = inRange ? 1.0F : 1.0F;
             float lineBlue = inRange ? 0.0F : 1.0F;
