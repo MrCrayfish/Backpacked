@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -51,6 +52,9 @@ public class MessagePlayerBackpack implements IMessage<MessagePlayerBackpack>
     {
         supplier.get().enqueueWork(() ->
         {
+            if(!Config.SERVER.pickpocketBackpacks.get())
+                return;
+
             ServerPlayerEntity player = supplier.get().getSender();
             if(player == null)
                 return;

@@ -38,6 +38,8 @@ public class Config
     public static class Server
     {
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> bannedItems;
+        public final ForgeConfigSpec.BooleanValue pickpocketBackpacks;
+        public final ForgeConfigSpec.DoubleValue pickpocketMaxDistance;
 
         Server(ForgeConfigSpec.Builder builder)
         {
@@ -57,6 +59,8 @@ public class Config
                             return false;
                         }
                     });
+            this.pickpocketBackpacks = builder.comment("If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.").define("pickpocketBackpacks", true);
+            this.pickpocketMaxDistance = builder.comment("The maximum distance a player can be to interact with another player's backpack.").defineInRange("pickpocketDistance", 1.5F, 0.0F, 4.0F);
             builder.pop();
         }
     }

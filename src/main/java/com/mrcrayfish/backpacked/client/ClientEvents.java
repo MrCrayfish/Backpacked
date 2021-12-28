@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
@@ -64,7 +65,7 @@ public class ClientEvents
     {
         if(event.isUseItem())
         {
-            if(this.performBackpackRaytrace())
+            if(Config.SERVER.pickpocketBackpacks.get() && this.performBackpackRaytrace())
             {
                 event.setCanceled(true);
             }
@@ -77,7 +78,7 @@ public class ClientEvents
         if(mc.level == null || mc.player == null || mc.gameMode == null)
             return false;
 
-        float range = 1.5F;
+        double range = Config.SERVER.pickpocketMaxDistance.get();
         List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player));
         if(players.isEmpty())
             return false;
@@ -91,7 +92,8 @@ public class ClientEvents
         {
             AxisAlignedBB box = this.getBackpackBox(player, 1.0F);
             Optional<Vector3d> optionalHitVec = box.clip(start, end);
-            if(!optionalHitVec.isPresent()) continue;
+            if(!optionalHitVec.isPresent())
+                continue;
             double distance = start.distanceTo(optionalHitVec.get());
             if(distance < closestDistance)
             {
