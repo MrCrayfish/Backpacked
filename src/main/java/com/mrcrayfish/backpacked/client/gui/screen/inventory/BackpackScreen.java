@@ -3,9 +3,12 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,6 +28,13 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         super(backpackContainer, playerInventory, titleIn);
         this.rows = backpackContainer.getRows();
         this.imageHeight = 114 + this.rows * 18;
+    }
+
+    @Override
+    public void init(Minecraft minecraft, int width, int height)
+    {
+        super.init(minecraft, width, height);
+        minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
     }
 
     @Override

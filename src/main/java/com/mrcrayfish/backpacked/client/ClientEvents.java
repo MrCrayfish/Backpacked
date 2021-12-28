@@ -53,7 +53,6 @@ public class ClientEvents
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {
                     PacketHandler.instance.sendToServer(new MessageOpenBackpack());
-                    minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
                 }
             }
         }
