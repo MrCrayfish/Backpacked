@@ -16,10 +16,8 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.InputEvent;
@@ -77,7 +75,7 @@ public class ClientEvents
         if(mc.level == null || mc.player == null || mc.gameMode == null)
             return false;
 
-        double range = Config.SERVER.pickpocketMaxDistance.get();
+        double range = Config.SERVER.pickpocketMaxReachDistance.get();
         List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
             return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketPlayer(player, mc.player);
         });
@@ -146,8 +144,8 @@ public class ClientEvents
             float lineBlue = inRange ? 0.0F : 1.0F;
             Matrix4f matrix4f = stack.last().pose();
             Vector3d pos = player.getPosition(event.getPartialTicks());
-            Vector3d start = Vector3d.directionFromRotation(0, player.yBodyRot + 180 - 80).scale(Config.SERVER.pickpocketMaxDistance.get());
-            Vector3d end = Vector3d.directionFromRotation(0, player.yBodyRot - 180 + 80).scale(Config.SERVER.pickpocketMaxDistance.get());
+            Vector3d start = Vector3d.directionFromRotation(0, player.yBodyRot + 180 - Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
+            Vector3d end = Vector3d.directionFromRotation(0, player.yBodyRot - 180 + Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
             builder.vertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();
             builder.vertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();
             builder.vertex(matrix4f, (float) (pos.x + end.x),(float) (pos.y + end.y), (float) (pos.z + end.z)).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();

@@ -43,14 +43,14 @@ public class PickpocketUtil
         Vector3d between = thiefPlayer.getPosition(1.0F).subtract(targetPlayer.getPosition(1.0F));
         float angle = (float) Math.toDegrees(Math.atan2(between.z, between.x)) - 90F;
         float difference = MathHelper.degreesDifferenceAbs(targetPlayer.yBodyRot + 180F, angle);
-        return difference <= 80F;
+        return difference <= Config.SERVER.pickpocketMaxRangeAngle.get();
     }
 
     public static boolean inReachOfBackpack(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
     {
         Vector3d pos = targetPlayer.getPosition(1.0F);
         pos = pos.add(Vector3d.directionFromRotation(0F, targetPlayer.yBodyRot + 180F).scale(targetPlayer.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
-        return pos.distanceTo(thiefPlayer.getPosition(1.0F)) <= Config.SERVER.pickpocketMaxDistance.get();
+        return pos.distanceTo(thiefPlayer.getPosition(1.0F)) <= Config.SERVER.pickpocketMaxReachDistance.get();
     }
 
     public static boolean canSeeBackpack(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
@@ -61,7 +61,7 @@ public class PickpocketUtil
 
         AxisAlignedBB backpackBox = getBackpackBox(targetPlayer, 1.0F);
         Vector3d start = thiefPlayer.getEyePosition(1.0F);
-        Vector3d end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxDistance.get() + 1.0).add(start);
+        Vector3d end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxReachDistance.get() + 1.0).add(start);
         Optional<Vector3d> hitPos = backpackBox.clip(start, end);
         if(!hitPos.isPresent())
             return false;

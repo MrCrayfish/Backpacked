@@ -7,8 +7,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Author: MrCrayfish
@@ -39,7 +37,8 @@ public class Config
     {
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> bannedItems;
         public final ForgeConfigSpec.BooleanValue pickpocketBackpacks;
-        public final ForgeConfigSpec.DoubleValue pickpocketMaxDistance;
+        public final ForgeConfigSpec.DoubleValue pickpocketMaxReachDistance;
+        public final ForgeConfigSpec.DoubleValue pickpocketMaxRangeAngle;
 
         Server(ForgeConfigSpec.Builder builder)
         {
@@ -60,7 +59,8 @@ public class Config
                         }
                     });
             this.pickpocketBackpacks = builder.comment("If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.").define("pickpocketBackpacks", true);
-            this.pickpocketMaxDistance = builder.comment("The maximum distance a player can be to interact with another player's backpack.").defineInRange("pickpocketDistance", 1.5F, 0.0F, 4.0F);
+            this.pickpocketMaxReachDistance = builder.comment("The maximum reach distance of a player to interact with another player's backpack.").defineInRange("pickpocketDistance", 1.5, 0.0, 4.0);
+            this.pickpocketMaxRangeAngle = builder.comment("The maximum angle at which another player's backpack can be accessed").defineInRange("pickpocketMaxRangeAngle", 80.0, 0.0, 90.0);
             builder.pop();
         }
     }
