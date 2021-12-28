@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -111,9 +112,13 @@ public class ClientEvents
     {
         AxisAlignedBB backpackBox = new AxisAlignedBB(-0.25, 0.0, -0.25, 0.25, 0.5625, 0.25);
         backpackBox = backpackBox.move(player.getPosition(partialTick));
-        backpackBox = backpackBox.move(0, 0.875, 0);
+        backpackBox = backpackBox.move(0, player.getPose() != Pose.SWIMMING ? 0.875 : 0.3125, 0);
+        if(player.getPose() == Pose.CROUCHING)
+        {
+            backpackBox = backpackBox.move(0, -0.1875, 0);
+        }
         float bodyRotation = MathHelper.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-        backpackBox = backpackBox.move(Vector3d.directionFromRotation(0F, bodyRotation + 180F).scale(0.3125));
+        backpackBox = backpackBox.move(Vector3d.directionFromRotation(0F, bodyRotation + 180F).scale(player.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
         return backpackBox;
     }
 
