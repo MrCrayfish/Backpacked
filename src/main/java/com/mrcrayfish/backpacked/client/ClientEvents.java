@@ -118,6 +118,9 @@ public class ClientEvents
         if(!mc.getEntityRenderDispatcher().shouldRenderHitBoxes())
             return;
 
+        if(!Config.SERVER.pickpocketBackpacks.get())
+            return;
+
         MatrixStack stack = event.getMatrixStack();
         stack.pushPose();
         Vector3d view = mc.gameRenderer.getMainCamera().getPosition();
