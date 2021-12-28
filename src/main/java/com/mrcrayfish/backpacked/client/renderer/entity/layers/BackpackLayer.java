@@ -3,8 +3,7 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.client.model.ModelBackpack;
+import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -17,16 +16,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 
 /**
  * Author: MrCrayfish
  */
 public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> extends LayerRenderer<T, M>
 {
-    private ModelBackpack model;
+    private StandardBackpackModel model;
 
-    public BackpackLayer(IEntityRenderer<T, M> renderer, ModelBackpack model)
+    public BackpackLayer(IEntityRenderer<T, M> renderer, StandardBackpackModel model)
     {
         super(renderer);
         this.model = model;

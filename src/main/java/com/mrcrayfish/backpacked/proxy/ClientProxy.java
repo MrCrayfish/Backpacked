@@ -5,28 +5,21 @@ import com.mrcrayfish.backpacked.BackpackedButtonBindings;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.ControllerHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
-import com.mrcrayfish.backpacked.client.model.ModelBackpack;
+import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.core.ModContainers;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,7 +49,7 @@ public class ClientProxy extends CommonProxy
 
     private void addBackpackLayer(PlayerRenderer renderer)
     {
-        renderer.addLayer(new BackpackLayer<>(renderer, new ModelBackpack()));
+        renderer.addLayer(new BackpackLayer<>(renderer, new StandardBackpackModel()));
     }
 
     public static void setPlayerBackpack(int entityId, ItemStack backpack)
