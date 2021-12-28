@@ -24,15 +24,12 @@ public abstract class BackpackModel extends Model
     {
         ModelRenderer root = this.getRoot();
         root.copyFrom(body);
-        root.y += 8.9;
-        root.z += 2;
+
+        ModelRenderer bag = this.getBag();
+        bag.setPos(0.0F, -0.2F, 2.0F + (armour ? 1.0F : 0.0F));
 
         ModelRenderer straps = this.getStraps();
         straps.visible = !armour;
-        if(armour)
-        {
-            root.z += 1;
-        }
     }
 
     @Override
@@ -43,6 +40,8 @@ public abstract class BackpackModel extends Model
     }
 
     protected abstract ModelRenderer getRoot();
+
+    protected abstract ModelRenderer getBag();
 
     protected abstract ModelRenderer getStraps();
 }
