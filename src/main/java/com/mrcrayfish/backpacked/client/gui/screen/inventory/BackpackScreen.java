@@ -22,6 +22,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
     private final int rows;
+    private boolean opened;
 
     public BackpackScreen(BackpackContainer backpackContainer, PlayerInventory playerInventory, ITextComponent titleIn)
     {
@@ -34,7 +35,11 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
     public void init(Minecraft minecraft, int width, int height)
     {
         super.init(minecraft, width, height);
-        minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
+        if(!this.opened)
+        {
+            minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
+            this.opened = true;
+        }
     }
 
     @Override
