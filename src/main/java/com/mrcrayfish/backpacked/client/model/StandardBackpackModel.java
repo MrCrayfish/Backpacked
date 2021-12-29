@@ -89,7 +89,7 @@ public class StandardBackpackModel extends BackpackModel
     }
 
     @Override
-    protected ModelRenderer getStraps()
+    public ModelRenderer getStraps()
     {
         return this.straps;
     }

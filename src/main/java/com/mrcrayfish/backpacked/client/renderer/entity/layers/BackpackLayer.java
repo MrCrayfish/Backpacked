@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
@@ -63,5 +64,10 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
     public synchronized static <T extends BackpackModel> void registerModel(ResourceLocation id, T model)
     {
         VARIANTS.putIfAbsent(id.toString(), model);
+    }
+
+    public static Map<String, BackpackModel> getBackpackModels()
+    {
+        return ImmutableMap.copyOf(VARIANTS);
     }
 }

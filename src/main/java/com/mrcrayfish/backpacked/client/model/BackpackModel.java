@@ -42,9 +42,9 @@ public abstract class BackpackModel extends Model
 
     protected abstract ModelRenderer getRoot();
 
-    protected abstract ModelRenderer getBag();
+    public abstract ModelRenderer getBag();
 
-    protected abstract ModelRenderer getStraps();
+    public abstract ModelRenderer getStraps();
 
     public abstract ResourceLocation getTextureLocation();
 }

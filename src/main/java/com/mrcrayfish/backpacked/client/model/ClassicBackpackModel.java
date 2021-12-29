@@ -20,9 +20,7 @@ public class ClassicBackpackModel extends BackpackModel
         this.texWidth = 32;
         this.texHeight = 32;
         this.backpack = new ModelRenderer(this);
-        this.backpack.setPos(0.0F, 24.0F, 0.0F);
         this.bag = new ModelRenderer(this);
-        this.bag.setPos(0.0F, -9.0F, 0.0F);
         this.backpack.addChild(this.bag);
         this.bag.texOffs(0, 0).addBox(-3.5F, 0.0F, 0.0F, 7.0F, 9.0F, 4.0F, 0.0F, false);
         this.bag.texOffs(16, 13).addBox(-1.5F, 2.0F, 2.5F, 3.0F, 2.0F, 2.0F, 0.0F, false);
@@ -42,13 +40,13 @@ public class ClassicBackpackModel extends BackpackModel
     }
 
     @Override
-    protected ModelRenderer getBag()
+    public ModelRenderer getBag()
     {
         return this.bag;
     }
 
     @Override
-    protected ModelRenderer getStraps()
+    public ModelRenderer getStraps()
     {
         return this.strap;
     }

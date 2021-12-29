@@ -1,23 +1,39 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.client.BackpackModels;
+import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Author: MrCrayfish
@@ -38,12 +54,18 @@ public class CustomiseBackpackScreen extends Screen
     private Button resetButton;
     private Button saveButton;
     private String displayBackpackModel;
+    private final List<BackpackModelEntry> models;
+    private int scroll;
 
     public CustomiseBackpackScreen()
     {
         super(new TranslationTextComponent("backpacked.title.customise_backpack"));
         this.windowWidth = 176;
         this.windowHeight = 166;
+        List<BackpackModelEntry> models = BackpackLayer.getBackpackModels().entrySet().stream().map(entry -> new BackpackModelEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        models.add(new BackpackModelEntry());
+        models.sort(Comparator.comparing(o -> o.label.getString()));
+        this.models = ImmutableList.copyOf(models);
     }
 
     @Override
@@ -106,6 +128,39 @@ public class CustomiseBackpackScreen extends Screen
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
         this.font.draw(matrixStack, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752);
+        for(int i = 0; i < this.models.size() && i < 7; i++)
+        {
+            this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + i * 20, mouseX, mouseY, this.models.get(i));
+        }
+    }
+
+    private void drawBackpackItem(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
+    {
+        boolean selected = entry.getId().equals(this.getBackpackModel());
+        boolean hovered = !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 72, 20);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        this.blit(matrixStack, x, y, 176, 15 + (selected ? 20 : 0) + (hovered ? 40 : 0), 72, 20);
+        this.font.draw(matrixStack, entry.getLabel(), x + 20, y + 6, 16777088);
+
+        matrixStack.pushPose();
+        matrixStack.translate(x + 8, y + 4, 50);
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(-10F));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(35F));
+        matrixStack.scale(20F, 20F, 20F);
+        RenderHelper.setupForFlatItems();
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.pushMatrix();
+        IRenderTypeBuffer.Impl source = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+        IVertexBuilder builder = source.getBuffer(entry.getModel().renderType(entry.getModel().getTextureLocation()));
+        BackpackModel backpackModel = entry.getModel();
+        backpackModel.getStraps().visible = false;
+        ModelRenderer bag = backpackModel.getBag();
+        bag.setPos(0, 0, 0);
+        bag.render(matrixStack, builder, 15728880, OverlayTexture.NO_OVERLAY);
+        source.endBatch();
+        RenderSystem.popMatrix();
+        matrixStack.popPose();
     }
 
     @Override
@@ -184,5 +239,42 @@ public class CustomiseBackpackScreen extends Screen
         player.yHeadRot = origHeadYaw;
         this.setLocalBackpackModel(origBackpackModel);
         RenderSystem.popMatrix();
+    }
+
+    private static class BackpackModelEntry
+    {
+        private final String id;
+        private final BackpackModel model;
+        private final ITextComponent label;
+
+        public BackpackModelEntry(String id, BackpackModel model)
+        {
+            this.id = id;
+            this.model = model;
+            ResourceLocation location = new ResourceLocation(id);
+            this.label = new TranslationTextComponent(location.getNamespace() + ".backpack." + location.getPath());
+        }
+
+        private BackpackModelEntry()
+        {
+            this.id = "";
+            this.model = BackpackModels.STANDARD;
+            this.label = new TranslationTextComponent("backpacked.backpack.standard");
+        }
+
+        public String getId()
+        {
+            return this.id;
+        }
+
+        public ITextComponent getLabel()
+        {
+            return this.label;
+        }
+
+        public BackpackModel getModel()
+        {
+            return this.model;
+        }
     }
 }
