@@ -15,6 +15,7 @@
     "message.backpacked.player_opened": "A player has opened your backpack",
     "backpacked.backpack.standard": "Standard",
     "backpacked.backpack.classic": "Classic",
+    "backpacked.backpack.bamboo_basket": "Bamboo Basket",
     "backpacked.chat.install_configured": "Install %s to access config options",
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page"
 }
