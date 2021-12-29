@@ -78,6 +78,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.20'
     implementation fg.deobf('curse.maven:curios-309927:3456953')
     compileOnly fg.deobf('curse.maven:controllable-317269:3519536')
+    runtimeOnly fg.deobf('curse.maven:configured-457570:3546348')
     //runtimeOnly fg.deobf('curse.maven:backpacker-414218:3217794')
 }
 

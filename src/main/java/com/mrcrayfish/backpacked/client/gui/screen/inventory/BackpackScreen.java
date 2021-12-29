@@ -2,11 +2,13 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
@@ -14,9 +16,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * Author: MrCrayfish
@@ -54,7 +66,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
         }));
         this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3 + 13, this.topPos + 5, 210, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
-            //TODO
+            this.openConfigScreen();
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
         }));
@@ -87,5 +99,28 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
     {
         this.font.draw(matrixStack, this.title, 8.0F, 6.0F, 0x404040);
         this.font.draw(matrixStack, this.inventory.getDisplayName(), 8.0F, (float) (this.imageHeight - 96 + 2), 0x404040);
+    }
+
+    private void openConfigScreen()
+    {
+        ModList.get().getModContainerById(Reference.MOD_ID).ifPresent(container ->
+        {
+            Screen screen = container.getCustomExtension(ExtensionPoint.CONFIGGUIFACTORY).map(function -> function.apply(this.minecraft, null)).orElse(null);
+            if(screen != null)
+            {
+                this.minecraft.setScreen(screen);
+            }
+            else if(this.minecraft != null && this.minecraft.player != null)
+            {
+                StringTextComponent modName = new StringTextComponent("Configured");
+                modName.setStyle(modName.getStyle()
+                        .withColor(TextFormatting.YELLOW)
+                        .withUnderlined(true)
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("backpacked.chat.open_curseforge_page")))
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/configured")));
+                ITextComponent message = new TranslationTextComponent("backpacked.chat.install_configured", modName);
+                this.minecraft.player.displayClientMessage(message, false);
+            }
+        });
     }
 }
