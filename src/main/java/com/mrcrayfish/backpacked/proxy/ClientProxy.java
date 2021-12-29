@@ -51,6 +51,7 @@ public class ClientProxy extends CommonProxy
 
         BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "classic"), BackpackModels.CLASSIC);
         BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "bamboo_basket"), BackpackModels.BAMBOO_BASKET);
+        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "rocket"), BackpackModels.ROCKET);
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)

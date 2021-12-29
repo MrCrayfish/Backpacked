@@ -16,6 +16,7 @@
     "backpacked.backpack.standard": "Standard",
     "backpacked.backpack.classic": "Classic",
     "backpacked.backpack.bamboo_basket": "Bamboo Basket",
+    "backpacked.backpack.rocket": "Rocket",
     "backpacked.chat.install_configured": "Install %s to access config options",
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page"
 }
