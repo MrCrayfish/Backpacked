@@ -31,7 +31,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
     public void encode(MessageUpdateBackpack message, PacketBuffer buffer)
     {
         buffer.writeInt(message.entityId);
-        this.writeItemStackNoTag(buffer, message.backpack);
+        this.writeBackpackStack(buffer, message.backpack);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
         supplier.get().setPacketHandled(true);
     }
 
-    private void writeItemStackNoTag(PacketBuffer buffer, ItemStack stack)
+    private void writeBackpackStack(PacketBuffer buffer, ItemStack stack)
     {
         boolean empty = stack.isEmpty();
         buffer.writeBoolean(!empty);
@@ -59,7 +59,9 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
             Item item = stack.getItem();
             buffer.writeVarInt(Item.getId(item));
             buffer.writeByte(stack.getCount());
-            buffer.writeNbt(null);
+            CompoundNBT tag = new CompoundNBT();
+            tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
+            buffer.writeNbt(tag);
         }
     }
 }
