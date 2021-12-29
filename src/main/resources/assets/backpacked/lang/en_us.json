@@ -9,6 +9,8 @@
     "backpacked.button.open_backpack": "Open Backpack",
     "backpacked.button.reset": "Reset",
     "backpacked.button.save": "Save",
+    "backpacked.button.customise.tooltip": "Customize",
+    "backpacked.button.config.tooltip": "Config Options",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "message.backpacked.player_opened": "A player has opened your backpack",
     "backpacked.backpack.standard": "Standard",

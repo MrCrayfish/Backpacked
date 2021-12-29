@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -13,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,6 +25,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class BackpackScreen extends ContainerScreen<BackpackContainer>
 {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+    private static final ITextComponent CUSTOMISE_TOOLTIP = new TranslationTextComponent("backpacked.button.customise.tooltip");
+    private static final ITextComponent CONFIG_TOOLTIP = new TranslationTextComponent("backpacked.button.config.tooltip");
 
     private final int rows;
     private boolean opened;
@@ -43,8 +47,16 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             this.opened = true;
         }
-        this.addButton(new Button(this.leftPos, this.topPos, 20, 20, StringTextComponent.EMPTY, onPress -> {
+        int titleWidth = minecraft.font.width(this.title);
+        this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 200, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
             minecraft.setScreen(new CustomiseBackpackScreen());
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
+        }));
+        this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3 + 13, this.topPos + 5, 210, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            //TODO
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
         }));
     }
 
@@ -54,6 +66,11 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         this.renderBackground(matrixStack); //Draw background
         super.render(matrixStack, mouseX, mouseY, partialTicks); //Super
         this.renderTooltip(matrixStack, mouseX, mouseY); //Render hovered tooltips
+        this.buttons.forEach(widget -> {
+            if(widget.isHovered()) {
+                widget.renderToolTip(matrixStack, mouseX, mouseY);
+            }
+        });
     }
 
     @Override
