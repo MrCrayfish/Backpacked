@@ -2,14 +2,17 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -40,6 +43,9 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             this.opened = true;
         }
+        this.addButton(new Button(this.leftPos, this.topPos, 20, 20, StringTextComponent.EMPTY, onPress -> {
+            minecraft.setScreen(new CustomiseBackpackScreen());
+        }));
     }
 
     @Override
@@ -50,7 +56,6 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         this.renderTooltip(matrixStack, mouseX, mouseY); //Render hovered tooltips
     }
 
-    //Render
     @Override
     protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
     {
