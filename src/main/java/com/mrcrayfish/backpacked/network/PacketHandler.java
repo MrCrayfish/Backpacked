@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.network.message.IMessage;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageSetBackpackModel;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -29,6 +30,7 @@ public class PacketHandler
         register(MessageOpenBackpack.class, new MessageOpenBackpack());
         register(MessageUpdateBackpack.class, new MessageUpdateBackpack());
         register(MessagePlayerBackpack.class, new MessagePlayerBackpack());
+        register(MessageSetBackpackModel.class, new MessageSetBackpackModel());
     }
 
     private static <T> void register(Class<T> clazz, IMessage<T> message)

@@ -69,7 +69,7 @@ public class BackpackItem extends Item
         {
             return null;
         }
-        return Curios.createBackpackProvider();
+        return Curios.createBackpackProvider(stack);
     }
 
     public void showInventory(ServerPlayerEntity player)

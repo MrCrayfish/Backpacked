@@ -9,8 +9,11 @@ import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.BackpackModels;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.message.MessageSetBackpackModel;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -23,6 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
@@ -75,8 +79,12 @@ public class CustomiseBackpackScreen extends Screen
         this.displayBackpackModel = this.getBackpackModel();
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
-        this.resetButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslationTextComponent("backpacked.button.reset"), onPress -> {}));
-        this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {}));
+        this.resetButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslationTextComponent("backpacked.button.reset"), onPress -> {
+            this.displayBackpackModel = "";
+        }));
+        this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
+            PacketHandler.instance.sendToServer(new MessageSetBackpackModel(this.displayBackpackModel));
+        }));
         this.updateButtons();
     }
 
@@ -103,6 +111,12 @@ public class CustomiseBackpackScreen extends Screen
     {
         this.resetButton.active = !this.getBackpackModel().isEmpty();
         this.saveButton.active = !this.displayBackpackModel.equals(this.getBackpackModel());
+    }
+
+    @Override
+    public boolean isPauseScreen()
+    {
+        return false;
     }
 
     @Override
@@ -136,12 +150,12 @@ public class CustomiseBackpackScreen extends Screen
 
     private void drawBackpackItem(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
     {
-        boolean selected = entry.getId().equals(this.getBackpackModel());
+        boolean selected = entry.getId().equals(this.displayBackpackModel);
         boolean hovered = !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 72, 20);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(GUI_TEXTURE);
         this.blit(matrixStack, x, y, 176, 15 + (selected ? 20 : 0) + (hovered ? 40 : 0), 72, 20);
-        this.font.draw(matrixStack, entry.getLabel(), x + 20, y + 6, 16777088);
+        this.font.draw(matrixStack, entry.getLabel(), x + 20, y + 6, selected ? 4226832 : hovered ? 16777088 : 6839882);
 
         matrixStack.pushPose();
         matrixStack.translate(x + 8, y + 4, 50);
@@ -166,7 +180,19 @@ public class CustomiseBackpackScreen extends Screen
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 8, this.windowTop + 18, 69, 92))
+        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 72, 140))
+        {
+            if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            {
+                int index = (int) ((mouseY - this.windowTop - 17) / 20);
+                if(index >= 0 && index < this.models.size())
+                {
+                    this.displayBackpackModel = this.models.get(index).getId();
+                    this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                }
+            }
+        }
+        else if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 8, this.windowTop + 18, 69, 92))
         {
             if(!this.mouseGrabbed && button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {

@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -17,6 +18,7 @@ import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.common.capability.CurioItemCapability;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -59,7 +61,7 @@ public class Curios
         return visible.get();
     }
 
-    public static ICapabilityProvider createBackpackProvider()
+    public static ICapabilityProvider createBackpackProvider(ItemStack stack)
     {
         return CurioItemCapability.createProvider(new ICurio()
         {
@@ -79,6 +81,21 @@ public class Curios
             public boolean canSync(String identifier, int index, LivingEntity livingEntity)
             {
                 return true;
+            }
+
+            @Nullable
+            @Override
+            public CompoundNBT writeSyncData()
+            {
+                CompoundNBT tag = new CompoundNBT();
+                tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
+                return tag;
+            }
+
+            @Override
+            public void readSyncData(CompoundNBT compound)
+            {
+                stack.getOrCreateTag().putString("BackpackModel", compound.getString("BackpackModel"));
             }
 
             @Nonnull
