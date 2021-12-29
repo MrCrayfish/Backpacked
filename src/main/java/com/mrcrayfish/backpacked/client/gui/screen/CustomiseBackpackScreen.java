@@ -24,14 +24,13 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -52,8 +51,8 @@ public class CustomiseBackpackScreen extends Screen
     private int windowTop;
     private float windowRotationX = -35F;
     private float windowRotationY = 10;
-    private boolean mouseGrabbed;
-    private int mouseGrabbedButton;
+    private boolean windowGrabbed;
+    private boolean scrollGrabbed;
     private int mouseClickedX, mouseClickedY;
     private Button resetButton;
     private Button saveButton;
@@ -134,6 +133,8 @@ public class CustomiseBackpackScreen extends Screen
         this.minecraft.getTextureManager().bind(GUI_TEXTURE);
         this.blit(matrixStack, this.windowLeft, this.windowTop, 0, 0, this.windowWidth, this.windowHeight);
         super.render(matrixStack, mouseX, mouseY, partialTick);
+
+        // Draw player in window
         if(this.minecraft.player != null)
         {
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -141,10 +142,22 @@ public class CustomiseBackpackScreen extends Screen
             this.renderPlayer(this.windowLeft + 42, this.windowTop + this.windowHeight / 2, mouseX, mouseY, this.minecraft.player);
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
+
+        // Draw title
         this.font.draw(matrixStack, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752);
-        for(int i = 0; i < this.models.size() && i < 7; i++)
+
+        // Draw scroll bar
+        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        boolean canScroll = this.models.size() > 7;
+        int scroll = (canScroll ? this.scroll : 0) + (this.scrollGrabbed ? mouseY - this.mouseClickedY : 0);
+        scroll = MathHelper.clamp(scroll, 0, 123);
+        this.blit(matrixStack, this.windowLeft + 156, this.windowTop + 18 + scroll, 176 + (!canScroll ? 12 : 0), 0, 12, 15);
+
+        // Draw backpack items
+        int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
+        for(int i = startIndex; i < this.models.size() && i < startIndex + 7; i++)
         {
-            this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + i * 20, mouseX, mouseY, this.models.get(i));
+            this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, this.models.get(i));
         }
     }
 
@@ -184,21 +197,30 @@ public class CustomiseBackpackScreen extends Screen
         {
             if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
-                int index = (int) ((mouseY - this.windowTop - 17) / 20);
-                if(index >= 0 && index < this.models.size())
+                int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
+                int displayIndex = (int) ((mouseY - this.windowTop - 17) / 20);
+                if(startIndex + displayIndex >= 0 && startIndex + displayIndex < this.models.size())
                 {
-                    this.displayBackpackModel = this.models.get(index).getId();
+                    this.displayBackpackModel = this.models.get(startIndex + displayIndex).getId();
                     this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 }
             }
         }
         else if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 8, this.windowTop + 18, 69, 92))
         {
-            if(!this.mouseGrabbed && button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            if(!this.windowGrabbed && button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
-                this.mouseGrabbed = true;
-                this.mouseGrabbedButton = GLFW.GLFW_MOUSE_BUTTON_LEFT;
+                this.windowGrabbed = true;
                 this.mouseClickedX = (int) mouseX;
+                this.mouseClickedY = (int) mouseY;
+                return true;
+            }
+        }
+        else if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 156, this.windowTop + 18 + this.scroll, 12, 15))
+        {
+            if(!this.scrollGrabbed && button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            {
+                this.scrollGrabbed = true;
                 this.mouseClickedY = (int) mouseY;
                 return true;
             }
@@ -209,13 +231,22 @@ public class CustomiseBackpackScreen extends Screen
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
-        if(this.mouseGrabbed)
+        if(this.windowGrabbed)
         {
-            if(this.mouseGrabbedButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
                 this.windowRotationX += (mouseX - this.mouseClickedX);
                 this.windowRotationY += (mouseY - this.mouseClickedY);
-                this.mouseGrabbed = false;
+                this.windowGrabbed = false;
+            }
+        }
+        if(this.scrollGrabbed)
+        {
+            if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            {
+                this.scroll += (mouseY - this.mouseClickedY);
+                this.scroll = MathHelper.clamp(this.scroll, 0, 123);
+                this.scrollGrabbed = false;
             }
         }
         return super.mouseReleased(mouseX, mouseY, button);
@@ -232,8 +263,8 @@ public class CustomiseBackpackScreen extends Screen
         matrixStack.translate(0, -15, 0);
         Quaternion playerRotation = Vector3f.ZP.rotationDegrees(180.0F);
         Quaternion cameraRotation = new Quaternion(0F, 0F, 0F, true);
-        cameraRotation.mul(Vector3f.XN.rotationDegrees(this.windowRotationY + (this.mouseGrabbed && this.mouseGrabbedButton == GLFW.GLFW_MOUSE_BUTTON_LEFT ? mouseY - this.mouseClickedY : 0)));
-        cameraRotation.mul(Vector3f.YP.rotationDegrees(this.windowRotationX + (this.mouseGrabbed && this.mouseGrabbedButton == GLFW.GLFW_MOUSE_BUTTON_LEFT ? mouseX - this.mouseClickedX : 0)));
+        cameraRotation.mul(Vector3f.XN.rotationDegrees(this.windowRotationY + (this.windowGrabbed ? mouseY - this.mouseClickedY : 0)));
+        cameraRotation.mul(Vector3f.YP.rotationDegrees(this.windowRotationX + (this.windowGrabbed ? mouseX - this.mouseClickedX : 0)));
         playerRotation.mul(cameraRotation);
         matrixStack.mulPose(playerRotation);
         matrixStack.translate(0, -this.windowHeight / 2, 0);
