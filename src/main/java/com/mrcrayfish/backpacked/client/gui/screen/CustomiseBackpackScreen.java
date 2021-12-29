@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
@@ -10,10 +11,10 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -34,6 +35,9 @@ public class CustomiseBackpackScreen extends Screen
     private boolean mouseGrabbed;
     private int mouseGrabbedButton;
     private int mouseClickedX, mouseClickedY;
+    private Button resetButton;
+    private Button saveButton;
+    private String displayBackpackModel;
 
     public CustomiseBackpackScreen()
     {
@@ -46,10 +50,44 @@ public class CustomiseBackpackScreen extends Screen
     protected void init()
     {
         super.init();
+        this.displayBackpackModel = this.getBackpackModel();
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
-        this.addButton(new Button(this.windowLeft + 7, this.windowTop + 115, 71, 20, new TranslationTextComponent("backpacked.button.reset"), onPress -> {}));
-        this.addButton(new Button(this.windowLeft + 7, this.windowTop + 139, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {}));
+        this.resetButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslationTextComponent("backpacked.button.reset"), onPress -> {}));
+        this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {}));
+        this.updateButtons();
+    }
+
+    private String getBackpackModel()
+    {
+        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!stack.isEmpty())
+        {
+            return stack.getOrCreateTag().getString("BackpackModel");
+        }
+        return "";
+    }
+
+    private void setLocalBackpackModel(String model)
+    {
+        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!stack.isEmpty())
+        {
+            stack.getOrCreateTag().putString("BackpackModel", model);
+        }
+    }
+
+    private void updateButtons()
+    {
+        this.resetButton.active = !this.getBackpackModel().isEmpty();
+        this.saveButton.active = !this.displayBackpackModel.equals(this.getBackpackModel());
+    }
+
+    @Override
+    public void tick()
+    {
+        super.tick();
+        this.updateButtons();
     }
 
     @Override
@@ -124,11 +162,13 @@ public class CustomiseBackpackScreen extends Screen
         float origPitch = player.xRot;
         float origHeadYawOld = player.yHeadRotO;
         float origHeadYaw = player.yHeadRot;
+        String origBackpackModel = this.getBackpackModel();
         player.yBodyRot = 0.0F;
         player.yRot = 0.0F;
         player.xRot = 0.0F;
         player.yHeadRot = player.yRot;
         player.yHeadRotO = player.yRot;
+        this.setLocalBackpackModel(this.displayBackpackModel);
         EntityRendererManager manager = Minecraft.getInstance().getEntityRenderDispatcher();
         cameraRotation.conj();
         manager.overrideCameraOrientation(cameraRotation);
@@ -142,6 +182,7 @@ public class CustomiseBackpackScreen extends Screen
         player.xRot = origPitch;
         player.yHeadRotO = origHeadYawOld;
         player.yHeadRot = origHeadYaw;
+        this.setLocalBackpackModel(origBackpackModel);
         RenderSystem.popMatrix();
     }
 }
