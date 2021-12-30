@@ -70,7 +70,7 @@ public class RocketBackpackModel extends BackpackModel
     {
         if(player.isFallFlying())
         {
-            player.level.addParticle(ParticleTypes.LARGE_SMOKE, player.xo, player.yo, player.zo, 0, 0, 0);
+            player.level.addParticle(ParticleTypes.LARGE_SMOKE, player.getX(), player.getY(), player.getZ(), 0, 0, 0);
         }
     }
 }

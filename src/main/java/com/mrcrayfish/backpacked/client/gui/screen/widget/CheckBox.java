@@ -30,7 +30,7 @@ public class CheckBox extends Button
         super(x, y, 8, 8, title, onPress, tooltip);
     }
 
-    public void setToggled(boolean toggled)
+    public void setChecked(boolean toggled)
     {
         this.toggled = toggled;
     }

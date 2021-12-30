@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.common.BackpackProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
@@ -22,12 +23,14 @@ import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
@@ -79,16 +82,29 @@ public class ClientEvents
         for(PlayerEntity player : players)
         {
             if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
-                return;
+                continue;
 
             ItemStack stack = Backpacked.getBackpackStack(player);
             if(stack.isEmpty())
+                continue;
+
+            if(!canShowBackpackEffects(stack))
                 continue;
 
             String modelName = stack.getOrCreateTag().getString("BackpackModel");
             BackpackModel model = BackpackLayer.getModel(modelName);
             model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
         }
+    }
+
+    public static boolean canShowBackpackEffects(ItemStack stack)
+    {
+        CompoundNBT tag = stack.getOrCreateTag();
+        if(tag.contains(BackpackProperty.SHOW_EFFECTS.getTagName(), Constants.NBT.TAG_BYTE))
+        {
+            return tag.getBoolean(BackpackProperty.SHOW_EFFECTS.getTagName());
+        }
+        return true;
     }
 
     @SubscribeEvent

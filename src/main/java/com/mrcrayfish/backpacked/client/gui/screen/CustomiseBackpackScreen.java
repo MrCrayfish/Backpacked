@@ -7,11 +7,13 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.BackpackModels;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
+import com.mrcrayfish.backpacked.client.ClientEvents;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.common.BackpackProperty;
 import com.mrcrayfish.backpacked.network.PacketHandler;
-import com.mrcrayfish.backpacked.network.message.MessageSetBackpackModel;
+import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -25,13 +27,16 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.util.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -45,6 +50,8 @@ import java.util.stream.Collectors;
 public class CustomiseBackpackScreen extends Screen
 {
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/customise_backpack.png");
+    private static final ITextComponent SHOW_EFFECTS_TOOLTIP = new TranslationTextComponent("backpacked.button.show_effects.tooltip");
+    private static final ITextComponent SHOW_WITH_ELYTRA_TOOLTIP = new TranslationTextComponent("backpacked.button.show_with_elytra.tooltip");
 
     private final int windowWidth;
     private final int windowHeight;
@@ -57,7 +64,11 @@ public class CustomiseBackpackScreen extends Screen
     private int mouseClickedX, mouseClickedY;
     private Button resetButton;
     private Button saveButton;
-    private String displayBackpackModel;
+    private CheckBox showWithElytraButton;
+    private CheckBox showEffectsButton;
+    private String displayBackpackModel = null;
+    private boolean displayShowWithElytra;
+    private boolean displayShowEffects;
     private final List<BackpackModelEntry> models;
     private int scroll;
 
@@ -76,41 +87,56 @@ public class CustomiseBackpackScreen extends Screen
     protected void init()
     {
         super.init();
-        this.displayBackpackModel = this.getBackpackModel();
+        if(this.displayBackpackModel == null)
+        {
+            this.displayBackpackModel = this.getBackpackModel();
+            this.displayShowWithElytra = this.getLocalBackpackProperty(BackpackProperty.SHOW_WITH_ELYTRA);
+            this.displayShowEffects = this.getLocalBackpackProperty(BackpackProperty.SHOW_EFFECTS);
+        }
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
         this.resetButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslationTextComponent("backpacked.button.reset"), onPress -> {
             this.displayBackpackModel = "";
         }));
         this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
-            PacketHandler.instance.sendToServer(new MessageSetBackpackModel(this.displayBackpackModel));
+            PacketHandler.instance.sendToServer(new MessageCustomiseBackpack(this.displayBackpackModel, this.displayShowWithElytra, this.displayShowEffects));
         }));
+        this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 135, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
+            this.displayShowWithElytra = !this.displayShowWithElytra;
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, SHOW_WITH_ELYTRA_TOOLTIP, mouseX, mouseY);
+        }));
+        this.showEffectsButton = this.addButton(new CheckBox(this.windowLeft + 161, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
+            this.displayShowEffects = !this.displayShowEffects;
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, SHOW_EFFECTS_TOOLTIP, mouseX, mouseY);
+        }));
+        ItemStack backpack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!backpack.isEmpty())
+        {
+            this.showWithElytraButton.setChecked(BackpackLayer.canRenderWithElytra(backpack));
+            this.showEffectsButton.setChecked(ClientEvents.canShowBackpackEffects(backpack));
+        }
         this.updateButtons();
-    }
-
-    private String getBackpackModel()
-    {
-        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
-        if(!stack.isEmpty())
-        {
-            return stack.getOrCreateTag().getString("BackpackModel");
-        }
-        return "";
-    }
-
-    private void setLocalBackpackModel(String model)
-    {
-        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
-        if(!stack.isEmpty())
-        {
-            stack.getOrCreateTag().putString("BackpackModel", model);
-        }
     }
 
     private void updateButtons()
     {
         this.resetButton.active = !this.getBackpackModel().isEmpty();
-        this.saveButton.active = !this.displayBackpackModel.equals(this.getBackpackModel());
+        this.saveButton.active = this.needsToSave();
+    }
+
+    private boolean needsToSave()
+    {
+        if(!this.displayBackpackModel.equals(this.getBackpackModel()))
+        {
+            return true;
+        }
+        else if (this.getLocalBackpackProperty(BackpackProperty.SHOW_EFFECTS) != this.displayShowEffects)
+        {
+            return true;
+        }
+        return this.getLocalBackpackProperty(BackpackProperty.SHOW_WITH_ELYTRA) != this.displayShowWithElytra;
     }
 
     @Override
@@ -160,6 +186,12 @@ public class CustomiseBackpackScreen extends Screen
         {
             this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, this.models.get(i));
         }
+
+        this.buttons.forEach(widget -> {
+            if(widget.isHovered()) {
+                widget.renderToolTip(matrixStack, mouseX, mouseY);
+            }
+        });
     }
 
     private void drawBackpackItem(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
@@ -253,6 +285,48 @@ public class CustomiseBackpackScreen extends Screen
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    private String getBackpackModel()
+    {
+        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!stack.isEmpty())
+        {
+            return stack.getOrCreateTag().getString("BackpackModel");
+        }
+        return "";
+    }
+
+    private void setLocalBackpackModel(String model)
+    {
+        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!stack.isEmpty())
+        {
+            stack.getOrCreateTag().putString("BackpackModel", model);
+        }
+    }
+
+    private boolean getLocalBackpackProperty(BackpackProperty property)
+    {
+        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!stack.isEmpty())
+        {
+            CompoundNBT tag = stack.getOrCreateTag();
+            if(tag.contains(property.getTagName(), Constants.NBT.TAG_BYTE))
+            {
+                return tag.getBoolean(property.getTagName());
+            }
+        }
+        return property.getDefaultValue();
+    }
+
+    private void setLocalBackpackProperty(BackpackProperty property, boolean value)
+    {
+        ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
+        if(!stack.isEmpty())
+        {
+            stack.getOrCreateTag().putBoolean(property.getTagName(), value);
+        }
+    }
+
     private void renderPlayer(int x, int y, int mouseX, int mouseY, PlayerEntity player)
     {
         float scale = 70F;
@@ -276,12 +350,16 @@ public class CustomiseBackpackScreen extends Screen
         float origHeadYawOld = player.yHeadRotO;
         float origHeadYaw = player.yHeadRot;
         String origBackpackModel = this.getBackpackModel();
+        boolean origShowWithElytra = this.getLocalBackpackProperty(BackpackProperty.SHOW_WITH_ELYTRA);
+        boolean origShowEffects = this.getLocalBackpackProperty(BackpackProperty.SHOW_EFFECTS);
         player.yBodyRot = 0.0F;
         player.yRot = 0.0F;
         player.xRot = 0.0F;
         player.yHeadRot = player.yRot;
         player.yHeadRotO = player.yRot;
         this.setLocalBackpackModel(this.displayBackpackModel);
+        this.setLocalBackpackProperty(BackpackProperty.SHOW_WITH_ELYTRA, this.displayShowWithElytra);
+        this.setLocalBackpackProperty(BackpackProperty.SHOW_EFFECTS, this.displayShowEffects);
         EntityRendererManager manager = Minecraft.getInstance().getEntityRenderDispatcher();
         cameraRotation.conj();
         manager.overrideCameraOrientation(cameraRotation);
@@ -296,6 +374,8 @@ public class CustomiseBackpackScreen extends Screen
         player.yHeadRotO = origHeadYawOld;
         player.yHeadRot = origHeadYaw;
         this.setLocalBackpackModel(origBackpackModel);
+        this.setLocalBackpackProperty(BackpackProperty.SHOW_WITH_ELYTRA, origShowWithElytra);
+        this.setLocalBackpackProperty(BackpackProperty.SHOW_EFFECTS, origShowEffects);
         RenderSystem.popMatrix();
     }
 

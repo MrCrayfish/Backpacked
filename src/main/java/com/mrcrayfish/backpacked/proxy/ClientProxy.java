@@ -49,12 +49,12 @@ public class ClientProxy extends CommonProxy
             BackpackedButtonBindings.register();
         }
 
-        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "classic"), BackpackModels.CLASSIC);
-        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "bamboo_basket"), BackpackModels.BAMBOO_BASKET);
+        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "classic"), BackpackModels.CLASSIC);
+        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "bamboo_basket"), BackpackModels.BAMBOO_BASKET);
         BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "rocket"), BackpackModels.ROCKET);
-        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "mini_chest"), BackpackModels.MINI_CHEST);
-        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "trash_can"), BackpackModels.TRASH_CAN);
-        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "honey_jar"), BackpackModels.HONEY_JAR);
+        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "mini_chest"), BackpackModels.MINI_CHEST);
+        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "trash_can"), BackpackModels.TRASH_CAN);
+        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "honey_jar"), BackpackModels.HONEY_JAR);
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)

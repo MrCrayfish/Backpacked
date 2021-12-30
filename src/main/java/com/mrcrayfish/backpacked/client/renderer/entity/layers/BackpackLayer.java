@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.client.BackpackModels;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.model.ClassicBackpackModel;
 import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
+import com.mrcrayfish.backpacked.common.BackpackProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -44,7 +46,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         if(backpack.getItem() instanceof BackpackItem)
         {
             ItemStack chestStack = player.getItemBySlot(EquipmentSlotType.CHEST);
-            if(chestStack.getItem() == Items.ELYTRA)
+            if(chestStack.getItem() == Items.ELYTRA && !canRenderWithElytra(backpack))
                 return;
 
             if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
@@ -61,9 +63,9 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         }
     }
 
-    public void tick(double x, double y, double z, PlayerEntity player)
+    public static boolean canRenderWithElytra(ItemStack stack)
     {
-
+        return stack.getOrCreateTag().getBoolean(BackpackProperty.SHOW_WITH_ELYTRA.getTagName());
     }
 
     public synchronized static <T extends BackpackModel> void registerModel(ResourceLocation id, T model)

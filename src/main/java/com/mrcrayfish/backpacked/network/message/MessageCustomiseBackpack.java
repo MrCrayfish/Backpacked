@@ -1,12 +1,13 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.common.BackpackProperty;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -16,31 +17,37 @@ import java.util.function.Supplier;
 /**
  * Author: MrCrayfish
  */
-public class MessageSetBackpackModel implements IMessage<MessageSetBackpackModel>
+public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpack>
 {
     private String model;
+    private boolean showWithElytra;
+    private boolean showEffects;
 
-    public MessageSetBackpackModel() {}
+    public MessageCustomiseBackpack() {}
 
-    public MessageSetBackpackModel(String model)
+    public MessageCustomiseBackpack(String model, boolean showWithElytra, boolean showEffects)
     {
         this.model = model;
+        this.showWithElytra = showWithElytra;
+        this.showEffects = showEffects;
     }
 
     @Override
-    public void encode(MessageSetBackpackModel message, PacketBuffer buffer)
+    public void encode(MessageCustomiseBackpack message, PacketBuffer buffer)
     {
         buffer.writeUtf(message.model);
+        buffer.writeBoolean(message.showWithElytra);
+        buffer.writeBoolean(message.showEffects);
     }
 
     @Override
-    public MessageSetBackpackModel decode(PacketBuffer buffer)
+    public MessageCustomiseBackpack decode(PacketBuffer buffer)
     {
-        return new MessageSetBackpackModel(buffer.readUtf());
+        return new MessageCustomiseBackpack(buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean());
     }
 
     @Override
-    public void handle(MessageSetBackpackModel message, Supplier<NetworkEvent.Context> supplier)
+    public void handle(MessageCustomiseBackpack message, Supplier<NetworkEvent.Context> supplier)
     {
         supplier.get().enqueueWork(() ->
         {
@@ -50,7 +57,10 @@ public class MessageSetBackpackModel implements IMessage<MessageSetBackpackModel
                 ItemStack stack = Backpacked.getBackpackStack(player);
                 if(!stack.isEmpty())
                 {
-                    stack.getOrCreateTag().putString("BackpackModel", message.model);
+                    CompoundNBT tag = stack.getOrCreateTag();
+                    tag.putString("BackpackModel", message.model);
+                    tag.putBoolean(BackpackProperty.SHOW_WITH_ELYTRA.getTagName(), message.showWithElytra);
+                    tag.putBoolean(BackpackProperty.SHOW_EFFECTS.getTagName(), message.showEffects);
 
                     if(Backpacked.isCuriosLoaded())
                         return;
