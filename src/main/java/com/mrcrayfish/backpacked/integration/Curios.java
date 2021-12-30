@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.integration;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.BackpackProperty;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,6 +10,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypePreset;
@@ -87,8 +89,15 @@ public class Curios
             @Override
             public CompoundNBT writeSyncData()
             {
+                CompoundNBT realTag = stack.getOrCreateTag();
                 CompoundNBT tag = new CompoundNBT();
                 tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
+                for(BackpackProperty property : BackpackProperty.values())
+                {
+                    String tagName = property.getTagName();
+                    boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+                    tag.putBoolean(tagName, value);
+                }
                 return tag;
             }
 

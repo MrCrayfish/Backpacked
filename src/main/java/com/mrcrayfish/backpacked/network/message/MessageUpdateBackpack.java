@@ -1,10 +1,12 @@
 package com.mrcrayfish.backpacked.network.message;
 
+import com.mrcrayfish.backpacked.common.BackpackProperty;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -59,8 +61,15 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
             Item item = stack.getItem();
             buffer.writeVarInt(Item.getId(item));
             buffer.writeByte(stack.getCount());
+            CompoundNBT realTag = stack.getOrCreateTag();
             CompoundNBT tag = new CompoundNBT();
-            tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
+            tag.putString("BackpackModel", realTag.getString("BackpackModel"));
+            for(BackpackProperty property : BackpackProperty.values())
+            {
+                String tagName = property.getTagName();
+                boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+                tag.putBoolean(tagName, value);
+            }
             buffer.writeNbt(tag);
         }
     }
