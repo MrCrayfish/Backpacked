@@ -7,11 +7,18 @@ import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.function.Function;
+
 public abstract class BackpackModel extends Model
 {
     public BackpackModel()
     {
         super(RenderType::entityCutoutNoCull);
+    }
+
+    public BackpackModel(Function<ResourceLocation, RenderType> renderType)
+    {
+        super(renderType);
     }
 
     protected static void setRotationAngle(ModelRenderer renderer, float x, float y, float z)

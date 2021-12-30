@@ -19,6 +19,7 @@
     "backpacked.backpack.rocket": "Rocket",
     "backpacked.backpack.mini_chest": "Mini Chest",
     "backpacked.backpack.trash_can": "Trash Can",
+    "backpacked.backpack.honey_jar": "Honey Jar",
     "backpacked.chat.install_configured": "Install %s to access config options",
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page"
 }
