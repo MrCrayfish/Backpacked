@@ -5,6 +5,8 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
+import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
@@ -15,18 +17,22 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -55,6 +61,29 @@ public class ClientEvents
                     PacketHandler.instance.sendToServer(new MessageOpenBackpack());
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onClientTickEnd(TickEvent.ClientTickEvent event)
+    {
+        if(event.phase != TickEvent.Phase.END)
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.level == null || mc.player == null)
+            return;
+
+        List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(16F), player -> true);
+        for(PlayerEntity player : players)
+        {
+            ItemStack stack = Backpacked.getBackpackStack(player);
+            if(stack.isEmpty())
+                continue;
+
+            String modelName = stack.getOrCreateTag().getString("BackpackModel");
+            BackpackModel model = BackpackLayer.getModel(modelName);
+            model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
         }
     }
 

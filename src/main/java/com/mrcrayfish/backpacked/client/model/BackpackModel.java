@@ -5,7 +5,9 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.function.Function;
 
@@ -46,6 +48,8 @@ public abstract class BackpackModel extends Model
         matrixStack.scale(1.05F, 1.05F, 1.05F);
         this.getRoot().render(matrixStack, builder, p_225598_3_, p_225598_4_);
     }
+
+    public void tickForPlayer(Vector3d pos, PlayerEntity player) {}
 
     protected abstract ModelRenderer getRoot();
 

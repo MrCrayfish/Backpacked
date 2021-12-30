@@ -61,9 +61,19 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
         }
     }
 
+    public void tick(double x, double y, double z, PlayerEntity player)
+    {
+
+    }
+
     public synchronized static <T extends BackpackModel> void registerModel(ResourceLocation id, T model)
     {
         VARIANTS.putIfAbsent(id.toString(), model);
+    }
+
+    public static BackpackModel getModel(String id)
+    {
+        return VARIANTS.getOrDefault(id, BackpackModels.STANDARD);
     }
 
     public static Map<String, BackpackModel> getBackpackModels()

@@ -1,9 +1,15 @@
 package com.mrcrayfish.backpacked.client.model;
 
 import com.mrcrayfish.backpacked.Reference;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.HoneyBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  * Author: MrCrayfish
@@ -59,5 +65,17 @@ public class HoneyJarBackpackModel extends BackpackModel
     public ResourceLocation getTextureLocation()
     {
         return TEXTURE;
+    }
+
+    @Override
+    public void tickForPlayer(Vector3d pos, PlayerEntity player)
+    {
+        if(player.hurtTime != 0 && player.hurtTime == player.hurtDuration - 1)
+        {
+            for(int i = 0; i < 5; i++)
+            {
+                player.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, Blocks.HONEY_BLOCK.defaultBlockState()), pos.x, pos.y + 0.25, pos.z, 0, 0, 0);
+            }
+        }
     }
 }
