@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.client.model.ClassicBackpackModel;
 import com.mrcrayfish.backpacked.client.model.MiniChestBackpackModel;
 import com.mrcrayfish.backpacked.client.model.RocketBackpackModel;
 import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
+import com.mrcrayfish.backpacked.client.model.TrashCanBackpackModel;
 
 /**
  * Author: MrCrayfish
@@ -17,4 +18,5 @@ public class BackpackModels
     public static final BackpackModel BAMBOO_BASKET = new BambooBasketBackpackModel();
     public static final BackpackModel ROCKET = new RocketBackpackModel();
     public static final BackpackModel MINI_CHEST = new MiniChestBackpackModel();
+    public static final BackpackModel TRASH_CAN = new TrashCanBackpackModel();
 }
