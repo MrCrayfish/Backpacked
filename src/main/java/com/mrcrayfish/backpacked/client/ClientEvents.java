@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
@@ -77,6 +78,9 @@ public class ClientEvents
         List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(16F), player -> true);
         for(PlayerEntity player : players)
         {
+            if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
+                return;
+
             ItemStack stack = Backpacked.getBackpackStack(player);
             if(stack.isEmpty())
                 continue;
