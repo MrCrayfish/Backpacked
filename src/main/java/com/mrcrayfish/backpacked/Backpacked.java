@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableList;
+import com.mrcrayfish.backpacked.common.data.UnlockTracker;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.integration.Curios;
@@ -14,14 +15,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -85,6 +83,7 @@ public class Backpacked
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
+        UnlockTracker.registerCapability();
         PacketHandler.init();
     }
 

@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.common;
 /**
  * Author: MrCrayfish
  */
-public enum BackpackProperty
+public enum BackpackModelProperty
 {
     SHOW_WITH_ELYTRA("AlwaysRenderBackpack", false),
     SHOW_EFFECTS("ShowBackpackEffects", true);
@@ -11,7 +11,7 @@ public enum BackpackProperty
     private final String tagName;
     private final boolean defaultValue;
 
-    BackpackProperty(String tagName, boolean defaultValue)
+    BackpackModelProperty(String tagName, boolean defaultValue)
     {
         this.tagName = tagName;
         this.defaultValue = defaultValue;

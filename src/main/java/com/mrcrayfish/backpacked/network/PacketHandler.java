@@ -2,9 +2,11 @@ package com.mrcrayfish.backpacked.network;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.network.message.IMessage;
+import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
+import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -19,6 +21,7 @@ public class PacketHandler
     private static int nextId = 0;
     public static SimpleChannel instance;
 
+    //TODO fix direction
     public static void init()
     {
         instance = NetworkRegistry.ChannelBuilder
@@ -31,6 +34,8 @@ public class PacketHandler
         register(MessageUpdateBackpack.class, new MessageUpdateBackpack());
         register(MessagePlayerBackpack.class, new MessagePlayerBackpack());
         register(MessageCustomiseBackpack.class, new MessageCustomiseBackpack());
+        register(MessageSyncUnlockTracker.class, new MessageSyncUnlockTracker());
+        register(MessageUnlockBackpack.class, new MessageUnlockBackpack());
     }
 
     private static <T> void register(Class<T> clazz, IMessage<T> message)

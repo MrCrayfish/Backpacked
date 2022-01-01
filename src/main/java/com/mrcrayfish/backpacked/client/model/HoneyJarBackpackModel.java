@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.client.model;
 
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.HoneyBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.player.PlayerEntity;

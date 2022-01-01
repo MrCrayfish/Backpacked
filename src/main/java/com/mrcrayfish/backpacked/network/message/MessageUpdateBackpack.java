@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.network.message;
 
-import com.mrcrayfish.backpacked.common.BackpackProperty;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,9 +19,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
     private int entityId;
     private ItemStack backpack;
 
-    public MessageUpdateBackpack()
-    {
-    }
+    public MessageUpdateBackpack() {}
 
     public MessageUpdateBackpack(int entityId, ItemStack backpack)
     {
@@ -64,7 +62,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
             CompoundNBT realTag = stack.getOrCreateTag();
             CompoundNBT tag = new CompoundNBT();
             tag.putString("BackpackModel", realTag.getString("BackpackModel"));
-            for(BackpackProperty property : BackpackProperty.values())
+            for(BackpackModelProperty property : BackpackModelProperty.values())
             {
                 String tagName = property.getTagName();
                 boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();

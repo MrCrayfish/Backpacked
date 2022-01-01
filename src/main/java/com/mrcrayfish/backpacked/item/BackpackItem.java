@@ -2,8 +2,7 @@ package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.client.BackpackModels;
+import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -19,7 +18,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -96,6 +94,6 @@ public class BackpackItem extends Item
     @OnlyIn(Dist.CLIENT)
     public BackpackModel getDefaultModel()
     {
-        return BackpackModels.STANDARD;
+        return ModelInstances.STANDARD;
     }
 }

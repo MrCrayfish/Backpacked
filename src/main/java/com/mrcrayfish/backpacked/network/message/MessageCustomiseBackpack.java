@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.common.BackpackProperty;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
@@ -59,8 +59,8 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
                 {
                     CompoundNBT tag = stack.getOrCreateTag();
                     tag.putString("BackpackModel", message.model);
-                    tag.putBoolean(BackpackProperty.SHOW_WITH_ELYTRA.getTagName(), message.showWithElytra);
-                    tag.putBoolean(BackpackProperty.SHOW_EFFECTS.getTagName(), message.showEffects);
+                    tag.putBoolean(BackpackModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.showWithElytra);
+                    tag.putBoolean(BackpackModelProperty.SHOW_EFFECTS.getTagName(), message.showEffects);
 
                     if(Backpacked.isCuriosLoaded())
                         return;

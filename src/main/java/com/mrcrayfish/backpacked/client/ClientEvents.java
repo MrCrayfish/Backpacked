@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
-import com.mrcrayfish.backpacked.common.BackpackProperty;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
@@ -19,7 +19,6 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -36,7 +35,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -100,9 +98,9 @@ public class ClientEvents
     public static boolean canShowBackpackEffects(ItemStack stack)
     {
         CompoundNBT tag = stack.getOrCreateTag();
-        if(tag.contains(BackpackProperty.SHOW_EFFECTS.getTagName(), Constants.NBT.TAG_BYTE))
+        if(tag.contains(BackpackModelProperty.SHOW_EFFECTS.getTagName(), Constants.NBT.TAG_BYTE))
         {
-            return tag.getBoolean(BackpackProperty.SHOW_EFFECTS.getTagName());
+            return tag.getBoolean(BackpackModelProperty.SHOW_EFFECTS.getTagName());
         }
         return true;
     }

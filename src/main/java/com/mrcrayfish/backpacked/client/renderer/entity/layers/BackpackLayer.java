@@ -4,11 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.client.BackpackModels;
+import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
-import com.mrcrayfish.backpacked.client.model.ClassicBackpackModel;
-import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
-import com.mrcrayfish.backpacked.common.BackpackProperty;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -21,7 +19,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -65,7 +62,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
 
     public static boolean canRenderWithElytra(ItemStack stack)
     {
-        return stack.getOrCreateTag().getBoolean(BackpackProperty.SHOW_WITH_ELYTRA.getTagName());
+        return stack.getOrCreateTag().getBoolean(BackpackModelProperty.SHOW_WITH_ELYTRA.getTagName());
     }
 
     public synchronized static <T extends BackpackModel> void registerModel(ResourceLocation id, T model)
@@ -75,7 +72,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
 
     public static BackpackModel getModel(String id)
     {
-        return VARIANTS.getOrDefault(id, BackpackModels.STANDARD);
+        return VARIANTS.getOrDefault(id, ModelInstances.STANDARD);
     }
 
     public static Map<String, BackpackModel> getBackpackModels()

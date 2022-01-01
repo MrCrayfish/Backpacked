@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.integration;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.BackpackProperty;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,8 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-
-import top.theillusivec4.curios.api.type.capability.ICurio.DropRule;
 
 /**
  * Author: MrCrayfish
@@ -92,7 +90,7 @@ public class Curios
                 CompoundNBT realTag = stack.getOrCreateTag();
                 CompoundNBT tag = new CompoundNBT();
                 tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
-                for(BackpackProperty property : BackpackProperty.values())
+                for(BackpackModelProperty property : BackpackModelProperty.values())
                 {
                     String tagName = property.getTagName();
                     boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();

@@ -2,13 +2,11 @@ package com.mrcrayfish.backpacked.proxy;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.BackpackedButtonBindings;
-import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.client.BackpackModels;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.ControllerHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
-import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import net.minecraft.client.Minecraft;
@@ -18,7 +16,6 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
@@ -49,12 +46,9 @@ public class ClientProxy extends CommonProxy
             BackpackedButtonBindings.register();
         }
 
-        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "classic"), BackpackModels.CLASSIC);
-        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "bamboo_basket"), BackpackModels.BAMBOO_BASKET);
-        BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "rocket"), BackpackModels.ROCKET);
-        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "mini_chest"), BackpackModels.MINI_CHEST);
-        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "trash_can"), BackpackModels.TRASH_CAN);
-        //BackpackLayer.registerModel(new ResourceLocation(Reference.MOD_ID, "honey_jar"), BackpackModels.HONEY_JAR);
+        BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
+            BackpackLayer.registerModel(backpack.getId(), backpack.getModel());
+        });
     }
 
     private void addBackpackLayer(PlayerRenderer renderer)

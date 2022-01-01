@@ -1,10 +1,8 @@
 package com.mrcrayfish.backpacked.client.model;
 
 import com.mrcrayfish.backpacked.Reference;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;

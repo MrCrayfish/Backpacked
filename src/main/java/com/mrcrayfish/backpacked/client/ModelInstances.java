@@ -12,7 +12,7 @@ import com.mrcrayfish.backpacked.client.model.TrashCanBackpackModel;
 /**
  * Author: MrCrayfish
  */
-public class BackpackModels
+public class ModelInstances
 {
     public static final BackpackModel STANDARD = new StandardBackpackModel();
     public static final BackpackModel CLASSIC = new ClassicBackpackModel();
