@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -11,15 +12,15 @@ import java.util.function.Supplier;
  */
 public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpack>
 {
-    private String model;
+    private ResourceLocation id;
     private boolean showWithElytra;
     private boolean showEffects;
 
     public MessageCustomiseBackpack() {}
 
-    public MessageCustomiseBackpack(String model, boolean showWithElytra, boolean showEffects)
+    public MessageCustomiseBackpack(ResourceLocation id, boolean showWithElytra, boolean showEffects)
     {
-        this.model = model;
+        this.id = id;
         this.showWithElytra = showWithElytra;
         this.showEffects = showEffects;
     }
@@ -27,7 +28,7 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
     @Override
     public void encode(MessageCustomiseBackpack message, PacketBuffer buffer)
     {
-        buffer.writeUtf(message.model);
+        buffer.writeResourceLocation(message.id);
         buffer.writeBoolean(message.showWithElytra);
         buffer.writeBoolean(message.showEffects);
     }
@@ -35,7 +36,7 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
     @Override
     public MessageCustomiseBackpack decode(PacketBuffer buffer)
     {
-        return new MessageCustomiseBackpack(buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean());
+        return new MessageCustomiseBackpack(buffer.readResourceLocation(), buffer.readBoolean(), buffer.readBoolean());
     }
 
     @Override
@@ -45,9 +46,9 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
         supplier.get().setPacketHandled(true);
     }
 
-    public String getModel()
+    public ResourceLocation getBackpackId()
     {
-        return this.model;
+        return this.id;
     }
 
     public boolean isShowWithElytra()

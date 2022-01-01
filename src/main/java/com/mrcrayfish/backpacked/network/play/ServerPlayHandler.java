@@ -2,6 +2,8 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.Backpack;
+import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -20,6 +22,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
@@ -37,8 +40,16 @@ public class ServerPlayHandler
         ItemStack stack = Backpacked.getBackpackStack(player);
         if(!stack.isEmpty())
         {
+            ResourceLocation id = message.getBackpackId();
+            Backpack backpack = BackpackManager.instance().getBackpack(id);
+            if(backpack == null)
+                return;
+
+            if(!backpack.isUnlocked(player))
+                return;
+
             CompoundNBT tag = stack.getOrCreateTag();
-            tag.putString("BackpackModel", message.getModel());
+            tag.putString("BackpackModel", id.toString());
             tag.putBoolean(BackpackModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.isShowWithElytra());
             tag.putBoolean(BackpackModelProperty.SHOW_EFFECTS.getTagName(), message.isShowEffects());
 
@@ -47,10 +58,10 @@ public class ServerPlayHandler
 
             if(player.inventory instanceof ExtendedPlayerInventory)
             {
-                ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
-                if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
+                ItemStack backpackStack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
+                if(!backpackStack.isEmpty() && backpackStack.getItem() instanceof BackpackItem)
                 {
-                    Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
+                    Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), backpackStack));
                 }
             }
         }

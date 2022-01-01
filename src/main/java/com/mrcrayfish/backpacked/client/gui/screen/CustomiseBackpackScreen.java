@@ -109,7 +109,7 @@ public class CustomiseBackpackScreen extends Screen
             this.displayBackpackModel = "";
         }));
         this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
-            Network.getPlayChannel().sendToServer(new MessageCustomiseBackpack(this.displayBackpackModel, this.displayShowWithElytra, this.displayShowEffects));
+            Network.getPlayChannel().sendToServer(new MessageCustomiseBackpack(new ResourceLocation(this.displayBackpackModel), this.displayShowWithElytra, this.displayShowEffects));
         }));
         this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 135, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
