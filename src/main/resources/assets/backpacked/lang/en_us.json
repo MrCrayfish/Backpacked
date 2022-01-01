@@ -6,6 +6,7 @@
     "backpacked.configgui.backpackInventorySize": "Backpack Inventory Rows",
     "curios.identifier.backpacked": "Backpacked",
     "button.categories.backpacked": "Backpacked",
+    "backpacked.gui.locked": "Locked",
     "backpacked.button.open_backpack": "Open Backpack",
     "backpacked.button.reset": "Reset",
     "backpacked.button.save": "Save",

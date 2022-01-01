@@ -29,18 +29,22 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,6 +57,7 @@ public class CustomiseBackpackScreen extends Screen
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/customise_backpack.png");
     private static final ITextComponent SHOW_EFFECTS_TOOLTIP = new TranslationTextComponent("backpacked.button.show_effects.tooltip");
     private static final ITextComponent SHOW_WITH_ELYTRA_TOOLTIP = new TranslationTextComponent("backpacked.button.show_with_elytra.tooltip");
+    private static final ITextComponent LOCKED = new TranslationTextComponent("backpacked.gui.locked").withStyle(TextFormatting.RED, TextFormatting.BOLD);
 
     private final int windowWidth;
     private final int windowHeight;
@@ -192,6 +197,17 @@ public class CustomiseBackpackScreen extends Screen
             this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, this.models.get(i));
         }
 
+        int hoveredIndex = this.getHoveredIndex(mouseX, mouseY);
+        if(hoveredIndex != -1)
+        {
+            BackpackModelEntry entry = this.models.get(hoveredIndex);
+            if(!entry.getBackpack().isUnlocked(this.minecraft.player))
+            {
+                this.renderTooltip(matrixStack, entry.getUnlockTooltip(), mouseX, mouseY);
+                return;
+            }
+        }
+
         this.buttons.forEach(widget -> {
             if(widget.isHovered()) {
                 widget.renderToolTip(matrixStack, mouseX, mouseY);
@@ -204,13 +220,18 @@ public class CustomiseBackpackScreen extends Screen
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
         boolean selected = unlocked && entry.getId().equals(this.displayBackpackModel);
         boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 72, 20);
+
+        // Draw background for item TODO made wider to support longer length text
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(GUI_TEXTURE);
         int offset = (unlocked ? 0 : 60) + (selected ? 20 : 0) + (hovered ? 40 : 0);
         this.blit(matrixStack, x, y, 0, 166 + offset, 72, 20);
+
+        // Draw label. TODO convert dumb values into readable hex
         int color = selected ? 4226832 : (hovered ? 16777088 : (unlocked ? 6839882 : 0x4E1C1C));
         this.font.draw(matrixStack, entry.getLabel(), x + 20, y + 6, color);
 
+        // Draw backpack model
         matrixStack.pushPose();
         matrixStack.translate(x + 8, y + 4, 50);
         matrixStack.mulPose(Vector3f.XP.rotationDegrees(-10F));
@@ -231,6 +252,21 @@ public class CustomiseBackpackScreen extends Screen
         matrixStack.popPose();
     }
 
+    private int getHoveredIndex(int mouseX, int mouseY)
+    {
+        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + 82, this.windowTop + 17, 72, 140))
+        {
+            int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
+            int displayIndex = (mouseY - this.windowTop - 17) / 20;
+            int actualIndex = startIndex + displayIndex;
+            if(actualIndex >= 0 && actualIndex < this.models.size())
+            {
+                return actualIndex;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
@@ -238,11 +274,10 @@ public class CustomiseBackpackScreen extends Screen
         {
             if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
-                int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
-                int displayIndex = (int) ((mouseY - this.windowTop - 17) / 20);
-                if(startIndex + displayIndex >= 0 && startIndex + displayIndex < this.models.size())
+                int hoveredIndex = this.getHoveredIndex((int) mouseX, (int) mouseY);
+                if(hoveredIndex != -1)
                 {
-                    this.displayBackpackModel = this.models.get(startIndex + displayIndex).getId();
+                    this.displayBackpackModel = this.models.get(hoveredIndex).getId();
                     this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 }
             }
@@ -392,12 +427,17 @@ public class CustomiseBackpackScreen extends Screen
         private final String id;
         private final Backpack backpack;
         private final ITextComponent label;
+        private final List<IReorderingProcessor> unlockTooltip;
 
         public BackpackModelEntry(Backpack backpack)
         {
             this.id = backpack.getId().toString();
             this.backpack = backpack;
             this.label = new TranslationTextComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
+            ITextComponent unlockMessage = new TranslationTextComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
+            List<IReorderingProcessor> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
+            list.add(0, LanguageMap.getInstance().getVisualOrder(LOCKED));
+            this.unlockTooltip = ImmutableList.copyOf(list);
         }
 
         public String getId()
@@ -408,6 +448,11 @@ public class CustomiseBackpackScreen extends Screen
         public ITextComponent getLabel()
         {
             return this.label;
+        }
+
+        public List<IReorderingProcessor> getUnlockTooltip()
+        {
+            return this.unlockTooltip;
         }
 
         public Backpack getBackpack()
