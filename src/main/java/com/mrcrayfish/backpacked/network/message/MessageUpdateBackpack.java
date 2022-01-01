@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.network.message;
 
-import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
+import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -43,7 +43,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
     @Override
     public void handle(MessageUpdateBackpack message, Supplier<NetworkEvent.Context> supplier)
     {
-        supplier.get().enqueueWork(() -> ClientHandler.setPlayerBackpack(message.entityId, message.backpack));
+        supplier.get().enqueueWork(() -> ClientPlayHandler.handleUpdateBackpack(message));
         supplier.get().setPacketHandled(true);
     }
 
@@ -67,5 +67,15 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
             }
             buffer.writeNbt(tag);
         }
+    }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public ItemStack getBackpack()
+    {
+        return this.backpack;
     }
 }

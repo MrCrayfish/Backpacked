@@ -1,9 +1,6 @@
 package com.mrcrayfish.backpacked.network.message;
 
-import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
+import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -26,18 +23,7 @@ public class MessageOpenBackpack implements IMessage<MessageOpenBackpack>
     @Override
     public void handle(MessageOpenBackpack message, Supplier<NetworkEvent.Context> supplier)
     {
-        supplier.get().enqueueWork(() ->
-        {
-            ServerPlayerEntity player = supplier.get().getSender();
-            if(player != null)
-            {
-                ItemStack backpack = Backpacked.getBackpackStack(player);
-                if(backpack.getItem() instanceof BackpackItem)
-                {
-                    ((BackpackItem) backpack.getItem()).showInventory(player);
-                }
-            }
-        });
+        supplier.get().enqueueWork(() -> ServerPlayHandler.handleOpenBackpack(message, supplier.get().getSender()));
         supplier.get().setPacketHandled(true);
     }
 }

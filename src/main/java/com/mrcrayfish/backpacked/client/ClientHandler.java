@@ -53,20 +53,4 @@ public class ClientHandler
         renderer.addLayer(new BackpackLayer<>(renderer));
     }
 
-    public static void setPlayerBackpack(int entityId, ItemStack backpack)
-    {
-        Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.level != null)
-        {
-            Entity entity = minecraft.level.getEntity(entityId);
-            if(entity instanceof PlayerEntity)
-            {
-                PlayerEntity player = (PlayerEntity) entity;
-                if(player.inventory instanceof ExtendedPlayerInventory)
-                {
-                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, backpack);
-                }
-            }
-        }
-    }
 }
