@@ -232,19 +232,23 @@ public class CustomiseBackpackScreen extends Screen
         this.font.draw(matrixStack, entry.getLabel(), x + 20, y + 6, color);
 
         // Draw backpack model
+        drawBackpackModel(matrixStack, entry.getBackpack().getModel(), x + 8, y + 4, 20);
+    }
+
+    public static void drawBackpackModel(MatrixStack matrixStack, BackpackModel model, int x, int y, float scale)
+    {
         matrixStack.pushPose();
-        matrixStack.translate(x + 8, y + 4, 50);
+        matrixStack.translate(x, y, 50);
         matrixStack.mulPose(Vector3f.XP.rotationDegrees(-10F));
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(35F));
-        matrixStack.scale(20F, 20F, 20F);
+        matrixStack.scale(scale, scale, scale);
         RenderHelper.setupForFlatItems();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.pushMatrix();
         IRenderTypeBuffer.Impl source = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
-        BackpackModel backpackModel = entry.getBackpack().getModel();
-        IVertexBuilder builder = source.getBuffer(backpackModel.renderType(backpackModel.getTextureLocation()));
-        backpackModel.getStraps().visible = false;
-        ModelRenderer bag = backpackModel.getBag();
+        IVertexBuilder builder = source.getBuffer(model.renderType(model.getTextureLocation()));
+        model.getStraps().visible = false;
+        ModelRenderer bag = model.getBag();
         bag.setPos(0, 0, 0);
         bag.render(matrixStack, builder, 15728880, OverlayTexture.NO_OVERLAY);
         source.endBatch();

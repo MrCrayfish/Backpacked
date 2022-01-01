@@ -1,5 +1,8 @@
 package com.mrcrayfish.backpacked.network.play;
 
+import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
+import com.mrcrayfish.backpacked.common.Backpack;
+import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.data.UnlockTracker;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
@@ -8,7 +11,6 @@ import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 
 /**
  * Author: MrCrayfish
@@ -22,9 +24,14 @@ public class ClientPlayHandler
             return;
 
         PlayerEntity player = mc.player;
-        UnlockTracker.get(player).ifPresent(impl -> {
-            impl.unlockBackpack(message.getId());
-            //TODO display toast
+        UnlockTracker.get(player).ifPresent(impl ->
+        {
+            Backpack backpack = BackpackManager.instance().getBackpack(message.getId());
+            if(backpack != null)
+            {
+                impl.unlockBackpack(message.getId());
+                mc.getToasts().addToast(new UnlockBackpackToast(backpack));
+            }
         });
     }
 

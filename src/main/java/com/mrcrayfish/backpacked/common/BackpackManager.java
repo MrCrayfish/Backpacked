@@ -62,6 +62,11 @@ public class BackpackManager
         return ImmutableList.copyOf(this.registeredBackpacks.values());
     }
 
+    public Backpack getBackpack(ResourceLocation id)
+    {
+        return this.registeredBackpacks.get(id);
+    }
+
     public void unlockBackpack(ServerPlayerEntity player, ResourceLocation id)
     {
         if(this.registeredBackpacks.containsKey(id))

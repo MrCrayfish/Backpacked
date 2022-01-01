@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.data;
 
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import net.minecraft.entity.Entity;
@@ -51,7 +52,11 @@ public class UnlockTracker
 
     public boolean unlockBackpack(ResourceLocation id)
     {
-        return this.unlockedBackpacks.add(id);
+        if(BackpackManager.instance().getBackpack(id) != null)
+        {
+            return this.unlockedBackpacks.add(id);
+        }
+        return false;
     }
 
     public static void registerCapability()
