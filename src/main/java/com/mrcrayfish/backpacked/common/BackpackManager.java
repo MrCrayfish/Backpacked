@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
 import com.mrcrayfish.backpacked.common.backpack.StandardBackpack;
 import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
 import com.mrcrayfish.backpacked.common.data.UnlockTracker;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -70,7 +70,7 @@ public class BackpackManager
             {
                 if(impl.unlockBackpack(id))
                 {
-                    PacketHandler.instance.send(PacketDistributor.PLAYER.with(() -> player), new MessageUnlockBackpack(id));
+                    Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> player), new MessageUnlockBackpack(id));
                 }
             });
         }

@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
@@ -59,7 +59,7 @@ public class ClientEvents
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {
-                    PacketHandler.instance.sendToServer(new MessageOpenBackpack());
+                    Network.getPlayChannel().sendToServer(new MessageOpenBackpack());
                 }
             }
         }
@@ -152,7 +152,7 @@ public class ClientEvents
 
         if(hitPlayer != null && PickpocketUtil.canSeeBackpack(hitPlayer, mc.player))
         {
-            PacketHandler.instance.sendToServer(new MessagePlayerBackpack(hitPlayer.getId()));
+            Network.getPlayChannel().sendToServer(new MessagePlayerBackpack(hitPlayer.getId()));
             return true;
         }
         return false;

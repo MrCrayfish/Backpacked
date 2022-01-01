@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.data;
 
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,7 +77,7 @@ public class UnlockTracker
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
     {
         get(event.getPlayer()).ifPresent(unlockTracker -> {
-            PacketHandler.instance.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 

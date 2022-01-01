@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -81,7 +81,7 @@ public class Backpacked
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
         UnlockTracker.registerCapability();
-        PacketHandler.init();
+        Network.init();
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
@@ -160,7 +160,7 @@ public class Backpacked
             ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
             if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
+                Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
             }
         }
     }
@@ -180,7 +180,7 @@ public class Backpacked
             ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
-                PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0)));
+                Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0)));
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }

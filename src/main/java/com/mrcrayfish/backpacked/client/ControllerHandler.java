@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.BackpackedButtonBindings;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.controllable.event.ControllerEvent;
 import net.minecraft.client.Minecraft;
@@ -26,7 +26,7 @@ public class ControllerHandler
         {
             if(!Backpacked.getBackpackStack(minecraft.player).isEmpty())
             {
-                PacketHandler.instance.sendToServer(new MessageOpenBackpack());
+                Network.getPlayChannel().sendToServer(new MessageOpenBackpack());
                 minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             }
         }

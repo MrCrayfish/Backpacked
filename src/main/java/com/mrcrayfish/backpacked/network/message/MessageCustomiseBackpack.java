@@ -4,7 +4,7 @@ import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -70,7 +70,7 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
                         ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
                         if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
                         {
-                            PacketHandler.instance.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
+                            Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
                         }
                     }
                 }

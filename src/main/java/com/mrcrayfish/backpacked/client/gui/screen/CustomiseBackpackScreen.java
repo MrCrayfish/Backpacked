@@ -13,7 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
-import com.mrcrayfish.backpacked.network.PacketHandler;
+import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
@@ -104,7 +104,7 @@ public class CustomiseBackpackScreen extends Screen
             this.displayBackpackModel = "";
         }));
         this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
-            PacketHandler.instance.sendToServer(new MessageCustomiseBackpack(this.displayBackpackModel, this.displayShowWithElytra, this.displayShowEffects));
+            Network.getPlayChannel().sendToServer(new MessageCustomiseBackpack(this.displayBackpackModel, this.displayShowWithElytra, this.displayShowEffects));
         }));
         this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 135, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
