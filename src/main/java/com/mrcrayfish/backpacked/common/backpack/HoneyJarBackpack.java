@@ -11,9 +11,11 @@ import net.minecraft.util.ResourceLocation;
  */
 public class HoneyJarBackpack extends Backpack
 {
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "honey_jar");
+
     public HoneyJarBackpack()
     {
-        super(new ResourceLocation(Reference.MOD_ID, "honey_jar"));
+        super(ID);
     }
 
     @Override
