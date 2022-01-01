@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableList;
+import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.data.UnlockTracker;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -9,8 +10,6 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import com.mrcrayfish.backpacked.proxy.ClientProxy;
-import com.mrcrayfish.backpacked.proxy.CommonProxy;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
@@ -57,8 +56,6 @@ public class Backpacked
 {
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
 
-    public static final CommonProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
-
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
     private static List<ResourceLocation> bannedItemsList;
@@ -89,7 +86,7 @@ public class Backpacked
 
     private void onClientSetup(FMLClientSetupEvent event)
     {
-        PROXY.setupClient();
+        ClientHandler.setup();
     }
 
     private void onEnqueueIMC(InterModEnqueueEvent event)

@@ -12,7 +12,6 @@ import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.network.PacketHandler;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
-import com.mrcrayfish.backpacked.proxy.ClientProxy;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -48,7 +47,7 @@ public class ClientEvents
         Minecraft minecraft = Minecraft.getInstance();
         if(minecraft.screen instanceof BackpackScreen)
         {
-            if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientProxy.KEY_BACKPACK.getKey().getValue())
+            if(event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ClientHandler.KEY_BACKPACK.getKey().getValue())
             {
                 minecraft.player.closeContainer();
             }
@@ -56,7 +55,7 @@ public class ClientEvents
         else if(minecraft.player != null && minecraft.screen == null)
         {
             ClientPlayerEntity player = minecraft.player;
-            if(ClientProxy.KEY_BACKPACK.isDown() && ClientProxy.KEY_BACKPACK.consumeClick())
+            if(ClientHandler.KEY_BACKPACK.isDown() && ClientHandler.KEY_BACKPACK.consumeClick())
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
                 {

@@ -1,9 +1,7 @@
-package com.mrcrayfish.backpacked.proxy;
+package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.BackpackedButtonBindings;
-import com.mrcrayfish.backpacked.client.ClientEvents;
-import com.mrcrayfish.backpacked.client.ControllerHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
@@ -25,16 +23,15 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public class ClientProxy extends CommonProxy
+public class ClientHandler
 {
     public static final KeyBinding KEY_BACKPACK = new KeyBinding("key.backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
 
-    @Override
-    public void setupClient()
+    public static void setup()
     {
         Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getEntityRenderDispatcher().getSkinMap();
-        this.addBackpackLayer(skinMap.get("default"));
-        this.addBackpackLayer(skinMap.get("slim"));
+        addBackpackLayer(skinMap.get("default"));
+        addBackpackLayer(skinMap.get("slim"));
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
         ScreenManager.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
@@ -51,7 +48,7 @@ public class ClientProxy extends CommonProxy
         });
     }
 
-    private void addBackpackLayer(PlayerRenderer renderer)
+    private static void addBackpackLayer(PlayerRenderer renderer)
     {
         renderer.addLayer(new BackpackLayer<>(renderer));
     }
