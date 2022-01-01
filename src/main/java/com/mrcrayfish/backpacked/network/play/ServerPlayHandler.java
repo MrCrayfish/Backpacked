@@ -45,7 +45,7 @@ public class ServerPlayHandler
             if(backpack == null)
                 return;
 
-            if(!backpack.isUnlocked(player))
+            if(!backpack.isUnlocked(player) && !Config.SERVER.unlockAllBackpacks.get())
                 return;
 
             CompoundNBT tag = stack.getOrCreateTag();

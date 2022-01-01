@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.data.UnlockTracker;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,7 +28,7 @@ public abstract class Backpack
 
     public boolean isUnlocked(PlayerEntity player)
     {
-        return UnlockTracker.get(player).map(impl -> impl.getUnlockedBackpacks().contains(this.id)).orElse(false);
+        return UnlockTracker.get(player).map(impl -> impl.getUnlockedBackpacks().contains(this.id)).orElse(false) || Config.SERVER.unlockAllBackpacks.get();
     }
 
     @OnlyIn(Dist.CLIENT)

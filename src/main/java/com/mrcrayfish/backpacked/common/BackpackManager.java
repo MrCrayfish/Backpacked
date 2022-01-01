@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.google.common.collect.ImmutableList;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BambooBasketBackpack;
 import com.mrcrayfish.backpacked.common.backpack.ClassicBackpack;
 import com.mrcrayfish.backpacked.common.backpack.HoneyJarBackpack;
@@ -69,6 +70,11 @@ public class BackpackManager
 
     public void unlockBackpack(ServerPlayerEntity player, ResourceLocation id)
     {
+        // Prevents unlocking backpacks when all backpacks are forcefully unlocked. This helps in case
+        // the server owner wants to revert their change.
+        if(Config.SERVER.unlockAllBackpacks.get())
+            return;
+
         if(this.registeredBackpacks.containsKey(id))
         {
             UnlockTracker.get(player).ifPresent(impl ->
