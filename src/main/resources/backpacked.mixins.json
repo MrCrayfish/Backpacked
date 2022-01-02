@@ -11,6 +11,7 @@
         "common.LockableLootTileEntityMixin",
         "common.PandaEntityMixin",
         "common.PlayerEntityMixin",
+        "common.PlayerInteractionManagerMixin",
         "common.ServerPlayNetHandlerMixin",
         "common.SlotMixin"
     ],

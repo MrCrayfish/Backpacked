@@ -42,24 +42,4 @@ public class CardboardBoxBackpack extends Backpack
     {
         return new CountProgressTracker(1000, ProgressFormatters.CUT_X_OF_X);
     }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST) // Should hopefully not be cancelled during lowest priority
-    public void onBreakBlock(BlockEvent.BreakEvent event)
-    {
-        PlayerEntity player = event.getPlayer();
-        if(!(player instanceof ServerPlayerEntity))
-            return;
-
-        if(event.getState().getBlock().is(BlockTags.LOGS))
-        {
-            UnlockTracker.get(player).ifPresent(unlockTracker ->
-            {
-                unlockTracker.getProgressTracker(ID).ifPresent(progressTracker ->
-                {
-                    CountProgressTracker tracker = (CountProgressTracker) progressTracker;
-                    tracker.increment((ServerPlayerEntity) player);
-                });
-            });
-        }
-    }
 }
