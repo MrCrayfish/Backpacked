@@ -1,14 +1,6 @@
 package com.mrcrayfish.backpacked.client;
 
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
-import com.mrcrayfish.backpacked.client.model.BambooBasketBackpackModel;
-import com.mrcrayfish.backpacked.client.model.ClassicBackpackModel;
-import com.mrcrayfish.backpacked.client.model.HoneyJarBackpackModel;
-import com.mrcrayfish.backpacked.client.model.MiniChestBackpackModel;
-import com.mrcrayfish.backpacked.client.model.RocketBackpackModel;
-import com.mrcrayfish.backpacked.client.model.StandardBackpackModel;
-import com.mrcrayfish.backpacked.client.model.TrashCanBackpackModel;
-import com.mrcrayfish.backpacked.client.model.TurtleShellBackpackModel;
+import com.mrcrayfish.backpacked.client.model.*;
 
 /**
  * Author: MrCrayfish
@@ -23,4 +15,5 @@ public class ModelInstances
     public static final BackpackModel TRASH_CAN = new TrashCanBackpackModel();
     public static final BackpackModel HONEY_JAR = new HoneyJarBackpackModel();
     public static final BackpackModel TURTLE_SHELL = new TurtleShellBackpackModel();
+    public static final BackpackModel CARDBOARD_BOX = new CardboardBoxBackpackModel();
 }

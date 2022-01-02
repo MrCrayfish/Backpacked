@@ -35,6 +35,10 @@ public class ProgressFormatters
         return new TranslationTextComponent("backpacked.formatter.bred_x_of_x", count, maxCount);
     };
 
+    public static final BiFunction<Integer, Integer, ITextComponent> CUT_X_OF_X = (count, unused) -> {
+        return new TranslationTextComponent("backpacked.formatter.cut_x_of_x", count);
+    };
+
     public static final BiFunction<Integer, Integer, ITextComponent> INT_PERCENT = (numerator, denominator) -> {
         int percent = (int) (100 * (double) numerator / (double) denominator);
         return new TranslationTextComponent("backpacked.formatter.int_percent", percent, "%");

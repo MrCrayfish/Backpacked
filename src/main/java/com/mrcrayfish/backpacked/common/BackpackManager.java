@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common;
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BambooBasketBackpack;
+import com.mrcrayfish.backpacked.common.backpack.CardboardBoxBackpack;
 import com.mrcrayfish.backpacked.common.backpack.ClassicBackpack;
 import com.mrcrayfish.backpacked.common.backpack.HoneyJarBackpack;
 import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
@@ -42,6 +43,7 @@ public class BackpackManager
     private BackpackManager()
     {
         this.register(new BambooBasketBackpack());
+        this.register(new CardboardBoxBackpack());
         this.register(new ClassicBackpack());
         this.register(new HoneyJarBackpack());
         this.register(new MiniChestBackpack());
