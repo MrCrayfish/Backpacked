@@ -5,6 +5,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Author: MrCrayfish
@@ -24,6 +25,10 @@ public class ProgressFormatters
     public static final BiFunction<Integer, Integer, ITextComponent> FOUND_X_OF_X = (count, maxCount) -> {
         count = MathHelper.clamp(count, 0, maxCount);
         return new TranslationTextComponent("backpacked.formatter.found_x_of_x", count, maxCount);
+    };
+
+    public static final Function<Integer, ITextComponent> USED_X_TIMES = (count) -> {
+        return new TranslationTextComponent("backpacked.formatter.used_x_times", count);
     };
 
     public static final BiFunction<Integer, Integer, ITextComponent> INT_PERCENT = (numerator, denominator) -> {

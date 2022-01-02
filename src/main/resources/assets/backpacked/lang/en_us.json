@@ -34,5 +34,6 @@
     "backpacked.formatter.collected_x_of_x": "Collected %s / %s",
     "backpacked.formatter.fed_x_of_x": "Fed %s / %s",
     "backpacked.formatter.found_x_of_x": "Found %s / %s",
-    "backpacked.formatter.int_percent": "Completed %s%s"
+    "backpacked.formatter.int_percent": "Completed %s%s",
+    "backpacked.formatter.used_x_times": "Used %s Times"
 }
