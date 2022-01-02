@@ -32,7 +32,7 @@
     "backpacked.backpack.turtle_shell": "Turtle Shell",
     "backpacked.backpack.turtle_shell.unlock": "Breed Turtles 20 times to unlock this backpack",
     "backpacked.backpack.cardboard_box": "Cardboard Box",
-    "backpacked.backpack.cardboard_box.unlock": "Chop 1000 logs to unlock this backpack",
+    "backpacked.backpack.cardboard_box.unlock": "Chop 1000 Logs to unlock this backpack",
     "backpacked.chat.install_configured": "Install %s to access config options",
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page",
     "backpacked.formatter.collected_x_of_x": "Collected %s / %s",
