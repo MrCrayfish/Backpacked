@@ -334,6 +334,24 @@ public class CustomiseBackpackScreen extends Screen
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
+    {
+        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 72, 140))
+        {
+            int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
+            int newIndex = startIndex - (int) Math.signum(scroll);
+            this.scrollToIndex(newIndex);
+        }
+        return super.mouseScrolled(mouseX, mouseY, scroll);
+    }
+
+    private void scrollToIndex(int index)
+    {
+        this.scroll = (int) (123.0 * ((double) index / (double) Math.max(this.models.size() - 7, 1)));
+        this.scroll = MathHelper.clamp(this.scroll, 0, 123);
+    }
+
     private String getBackpackModel()
     {
         ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
