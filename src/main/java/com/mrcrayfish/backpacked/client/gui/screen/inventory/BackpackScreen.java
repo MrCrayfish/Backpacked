@@ -56,12 +56,12 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             this.opened = true;
         }
         int titleWidth = minecraft.font.width(this.title);
-        this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 200, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+        this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
             Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
         }));
-        this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3 + 13, this.topPos + 5, 210, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+        this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3 + 13, this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
             this.openConfigScreen();
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);

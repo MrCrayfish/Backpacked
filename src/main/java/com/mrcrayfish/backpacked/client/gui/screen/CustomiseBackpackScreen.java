@@ -83,7 +83,7 @@ public class CustomiseBackpackScreen extends Screen
     public CustomiseBackpackScreen(Map<ResourceLocation, ITextComponent> progressMap)
     {
         super(new TranslationTextComponent("backpacked.title.customise_backpack"));
-        this.windowWidth = 176;
+        this.windowWidth = 201;
         this.windowHeight = 166;
         Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
         Comparator<BackpackModelEntry> compareLabel = Comparator.comparing(e -> e.label.getString());
@@ -113,12 +113,12 @@ public class CustomiseBackpackScreen extends Screen
         this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
             Network.getPlayChannel().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowWithElytra, this.displayShowEffects));
         }));
-        this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 135, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
+        this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 160, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_WITH_ELYTRA_TOOLTIP, mouseX, mouseY);
         }));
-        this.showEffectsButton = this.addButton(new CheckBox(this.windowLeft + 161, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
+        this.showEffectsButton = this.addButton(new CheckBox(this.windowLeft + 186, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
             this.displayShowEffects = !this.displayShowEffects;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_EFFECTS_TOOLTIP, mouseX, mouseY);
@@ -190,7 +190,7 @@ public class CustomiseBackpackScreen extends Screen
         boolean canScroll = this.models.size() > 7;
         int scroll = (canScroll ? this.scroll : 0) + (this.scrollGrabbed ? mouseY - this.mouseClickedY : 0);
         scroll = MathHelper.clamp(scroll, 0, 123);
-        this.blit(matrixStack, this.windowLeft + 156, this.windowTop + 18 + scroll, 176 + (!canScroll ? 12 : 0), 0, 12, 15);
+        this.blit(matrixStack, this.windowLeft + 181, this.windowTop + 18 + scroll, 201 + (!canScroll ? 12 : 0), 0, 12, 15);
 
         // Draw backpack items
         int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
@@ -221,13 +221,13 @@ public class CustomiseBackpackScreen extends Screen
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
         boolean selected = unlocked && entry.getId().equals(this.displayBackpackModel);
-        boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 72, 20);
+        boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 97, 20);
 
-        // Draw background for item TODO made wider to support longer length text
+        // Draw background for item
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(GUI_TEXTURE);
         int offset = (unlocked ? 0 : 60) + (selected ? 20 : 0) + (hovered ? 40 : 0);
-        this.blit(matrixStack, x, y, 0, 166 + offset, 72, 20);
+        this.blit(matrixStack, x, y, 0, 166 + offset, 97, 20);
 
         // Draw label. TODO convert dumb values into readable hex
         int color = selected ? 4226832 : (hovered ? 16777088 : (unlocked ? 6839882 : 0x4E1C1C));
@@ -260,7 +260,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private int getHoveredIndex(int mouseX, int mouseY)
     {
-        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + 82, this.windowTop + 17, 72, 140))
+        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + 82, this.windowTop + 17, 97, 140))
         {
             int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
             int displayIndex = (mouseY - this.windowTop - 17) / 20;
@@ -276,7 +276,7 @@ public class CustomiseBackpackScreen extends Screen
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 72, 140))
+        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 97, 140))
         {
             if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
@@ -302,7 +302,7 @@ public class CustomiseBackpackScreen extends Screen
                 return true;
             }
         }
-        else if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 156, this.windowTop + 18 + this.scroll, 12, 15))
+        else if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 181, this.windowTop + 18 + this.scroll, 12, 15))
         {
             if(!this.scrollGrabbed && button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
@@ -341,7 +341,7 @@ public class CustomiseBackpackScreen extends Screen
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
     {
-        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 72, 140))
+        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 112, 140))
         {
             int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
             int newIndex = startIndex - (int) Math.signum(scroll);
