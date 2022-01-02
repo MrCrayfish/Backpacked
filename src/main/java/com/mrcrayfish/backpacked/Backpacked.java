@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
-import com.mrcrayfish.backpacked.core.ModStats;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -83,11 +82,8 @@ public class Backpacked
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> {
-            UnlockTracker.registerCapability();
-            Network.init();
-            ModStats.register();
-        });
+        UnlockTracker.registerCapability();
+        Network.init();
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
