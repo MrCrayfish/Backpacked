@@ -26,7 +26,6 @@ public class Network
     private static int nextId = 0;
     private static SimpleChannel playChannel;
 
-    //TODO fix direction
     public static void init()
     {
         playChannel = NetworkRegistry.ChannelBuilder

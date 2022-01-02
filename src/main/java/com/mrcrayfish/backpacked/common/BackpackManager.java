@@ -2,15 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.BambooBasketBackpack;
-import com.mrcrayfish.backpacked.common.backpack.CardboardBoxBackpack;
-import com.mrcrayfish.backpacked.common.backpack.ClassicBackpack;
-import com.mrcrayfish.backpacked.common.backpack.HoneyJarBackpack;
-import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
-import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
-import com.mrcrayfish.backpacked.common.backpack.StandardBackpack;
-import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
-import com.mrcrayfish.backpacked.common.backpack.TurtleShellBackpack;
+import com.mrcrayfish.backpacked.common.backpack.*;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -48,6 +40,7 @@ public class BackpackManager
         this.register(new HoneyJarBackpack());
         this.register(new MiniChestBackpack());
         this.register(new RocketBackpack());
+        this.register(new SheepPlushBackpack());
         this.register(new StandardBackpack());
         this.register(new TrashCanBackpack());
         this.register(new TurtleShellBackpack());

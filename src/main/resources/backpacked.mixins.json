@@ -13,6 +13,7 @@
         "common.PlayerEntityMixin",
         "common.PlayerInteractionManagerMixin",
         "common.ServerPlayNetHandlerMixin",
+        "common.SheepEntityMixin",
         "common.SlotMixin"
     ],
     "client": [

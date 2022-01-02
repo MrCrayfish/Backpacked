@@ -16,4 +16,5 @@ public class ModelInstances
     public static final BackpackModel HONEY_JAR = new HoneyJarBackpackModel();
     public static final BackpackModel TURTLE_SHELL = new TurtleShellBackpackModel();
     public static final BackpackModel CARDBOARD_BOX = new CardboardBoxBackpackModel();
+    public static final BackpackModel SHEEP_PLUSH = new SheepPlushBackpackModel();
 }

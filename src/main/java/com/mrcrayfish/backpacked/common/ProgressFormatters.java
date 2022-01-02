@@ -39,6 +39,10 @@ public class ProgressFormatters
         return new TranslationTextComponent("backpacked.formatter.cut_x_of_x", count, maxCount);
     };
 
+    public static final BiFunction<Integer, Integer, ITextComponent> SHEARED_X_SHEEP = (count, maxCount) -> {
+        return new TranslationTextComponent("backpacked.formatter.shear_x_sheep", count, maxCount);
+    };
+
     public static final BiFunction<Integer, Integer, ITextComponent> INT_PERCENT = (numerator, denominator) -> {
         int percent = (int) (100 * (double) numerator / (double) denominator);
         return new TranslationTextComponent("backpacked.formatter.int_percent", percent, "%");
