@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
 import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
 import com.mrcrayfish.backpacked.common.backpack.StandardBackpack;
 import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
+import com.mrcrayfish.backpacked.common.backpack.TurtleShellBackpack;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -47,6 +48,7 @@ public class BackpackManager
         this.register(new RocketBackpack());
         this.register(new StandardBackpack());
         this.register(new TrashCanBackpack());
+        this.register(new TurtleShellBackpack());
     }
 
     public synchronized void register(Backpack backpack)

@@ -29,11 +29,14 @@
     "backpacked.backpack.trash_can.unlock": "Recycle food and plants in a Composter 100 times to unlock this backpack",
     "backpacked.backpack.honey_jar": "Honey Jar",
     "backpacked.backpack.honey_jar.unlock": "Gather 20 Honey Bottles to unlock this backpack",
+    "backpacked.backpack.turtle_shell": "Turtle Shell",
+    "backpacked.backpack.turtle_shell.unlock": "Breed Turtles 20 times to unlock this backpack",
     "backpacked.chat.install_configured": "Install %s to access config options",
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page",
     "backpacked.formatter.collected_x_of_x": "Collected %s / %s",
     "backpacked.formatter.fed_x_of_x": "Fed %s / %s",
     "backpacked.formatter.found_x_of_x": "Found %s / %s",
     "backpacked.formatter.int_percent": "Completed %s%s",
-    "backpacked.formatter.used_x_times": "Used %s Times"
+    "backpacked.formatter.used_x_times": "Used %s Times",
+    "backpacked.formatter.bred_x_of_x": "Bred %s / %s"
 }
