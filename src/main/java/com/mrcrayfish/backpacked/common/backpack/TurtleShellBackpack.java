@@ -8,6 +8,8 @@ import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +26,7 @@ public class TurtleShellBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
         return ModelInstances.TURTLE_SHELL;

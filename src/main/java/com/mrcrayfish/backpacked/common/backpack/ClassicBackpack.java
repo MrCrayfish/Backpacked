@@ -7,6 +7,8 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +29,7 @@ public class ClassicBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
         return ModelInstances.CLASSIC;

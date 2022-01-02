@@ -6,6 +6,8 @@ import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Author: MrCrayfish
@@ -24,6 +26,7 @@ public class StandardBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
         return ModelInstances.STANDARD;

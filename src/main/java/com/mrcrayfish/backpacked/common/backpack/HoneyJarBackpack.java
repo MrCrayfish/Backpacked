@@ -13,6 +13,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
@@ -31,6 +33,7 @@ public class HoneyJarBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
         return ModelInstances.HONEY_JAR;
