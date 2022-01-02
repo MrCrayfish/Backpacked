@@ -5,25 +5,25 @@ issueTrackerURL="https://github.com/MrCrayfish/Backpacked/issues"
 
 [[mods]]
 modId="backpacked"
-version="1.10.2"
+version="2.0.0"
 displayName="Backpacked"
 updateJSONURL="https://mrcrayfish.com/modupdatejson?id=backpacked"
 displayURL="https://mrcrayfish.com/mods?id=backpacked"
 logoFile="backpacked.png"
 authors="MrCrayfish"
-credits="JamesTheMaker, Unstellary, Zinc, wwozniak"
+credits="JamesTheMaker, Unstellary, Zinc, and wwozniak from Discord for a few backpack ideas."
 description="Adds a simple backpack to store more items"
 
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[34.1.0,)"
+    versionRange="[36.2.20,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,1.17)"
+    versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
