@@ -33,5 +33,6 @@
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page",
     "backpacked.formatter.collected_x_of_x": "Collected %s / %s",
     "backpacked.formatter.fed_x_of_x": "Fed %s / %s",
-    "backpacked.formatter.found_x_of_x": "Found %s / %s"
+    "backpacked.formatter.found_x_of_x": "Found %s / %s",
+    "backpacked.formatter.int_percent": "Completed %s%s"
 }

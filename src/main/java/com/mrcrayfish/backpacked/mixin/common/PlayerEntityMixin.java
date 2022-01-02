@@ -2,16 +2,21 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mojang.authlib.GameProfile;
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -72,5 +77,24 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
             this.backpackedInventory = new BackpackInventory(backpackItem.getRowCount(), player, stack);
         }
         return this.backpackedInventory;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;awardStat(Lnet/minecraft/util/ResourceLocation;I)V", ordinal = 7))
+    public void onFallFlying(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        PlayerEntity player = (PlayerEntity) (Object) this;
+        if(!(player instanceof ServerPlayerEntity))
+            return;
+
+        int distance = Math.round(MathHelper.sqrt(dx * dx + dy * dy + dz * dz));
+        UnlockTracker.get(player).ifPresent(unlockTracker ->
+        {
+            unlockTracker.getProgressTracker(RocketBackpack.ID).ifPresent(tracker ->
+            {
+                RocketBackpack.ProgressTracker progressTracker = (RocketBackpack.ProgressTracker) tracker;
+                progressTracker.addDistance(distance, (ServerPlayerEntity) player);
+            });
+        });
     }
 }
