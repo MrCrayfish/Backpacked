@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.client.ClientHandler;
-import com.mrcrayfish.backpacked.common.data.UnlockTracker;
+import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;

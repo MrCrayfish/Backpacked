@@ -9,7 +9,6 @@ import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
 import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
 import com.mrcrayfish.backpacked.common.backpack.StandardBackpack;
 import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
-import com.mrcrayfish.backpacked.common.data.UnlockTracker;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.entity.player.ServerPlayerEntity;

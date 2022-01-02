@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.network.play;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
-import com.mrcrayfish.backpacked.common.data.UnlockTracker;
+import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;

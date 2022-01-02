@@ -2,12 +2,13 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
-import com.mrcrayfish.backpacked.common.data.UnlockTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -36,4 +37,10 @@ public abstract class Backpack
 
     @OnlyIn(Dist.CLIENT)
     public abstract BackpackModel getModel();
+
+    @Nullable
+    protected IProgressTracker createProgressTracker()
+    {
+        return null;
+    }
 }

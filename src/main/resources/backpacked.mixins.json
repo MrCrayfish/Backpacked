@@ -6,6 +6,7 @@
     "refmap": "backpacked.refmap.json",
     "mixins": [
         "common.BeehiveBlockMixin",
+        "common.PandaEntityMixin",
         "common.PlayerEntityMixin",
         "common.ServerPlayNetHandlerMixin",
         "common.SlotMixin"
