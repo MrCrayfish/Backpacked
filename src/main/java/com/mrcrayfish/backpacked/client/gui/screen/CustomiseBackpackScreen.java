@@ -283,8 +283,12 @@ public class CustomiseBackpackScreen extends Screen
                 int hoveredIndex = this.getHoveredIndex((int) mouseX, (int) mouseY);
                 if(hoveredIndex != -1)
                 {
-                    this.displayBackpackModel = this.models.get(hoveredIndex).getId();
-                    this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                    BackpackModelEntry entry = this.models.get(hoveredIndex);
+                    if(entry.getBackpack().isUnlocked(this.minecraft.player))
+                    {
+                        this.displayBackpackModel = entry.getId();
+                        this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                    }
                 }
             }
         }
