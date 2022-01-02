@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.HoneyJarBackpack;
+import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +32,7 @@ public class BeehiveBlockMixin
             {
                 unlockTracker.getProgressTracker(HoneyJarBackpack.ID).ifPresent(progressTracker ->
                 {
-                    HoneyJarBackpack.ProgressTracker tracker = (HoneyJarBackpack.ProgressTracker) progressTracker;
+                    CountProgressTracker tracker = (CountProgressTracker) progressTracker;
                     tracker.increment((ServerPlayerEntity) player);
                 });
             });

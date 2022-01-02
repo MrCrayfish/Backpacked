@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
+import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.LootTable;
@@ -42,7 +43,7 @@ public class LockableLootTileEntityMixin
         {
             unlockTracker.getProgressTracker(MiniChestBackpack.ID).ifPresent(progressTracker ->
             {
-                MiniChestBackpack.ProgressTracker tracker = (MiniChestBackpack.ProgressTracker) progressTracker;
+                CountProgressTracker tracker = (CountProgressTracker) progressTracker;
                 tracker.increment((ServerPlayerEntity) player);
             });
         });

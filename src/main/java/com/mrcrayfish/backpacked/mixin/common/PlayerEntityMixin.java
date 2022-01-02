@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
+import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
@@ -90,10 +91,10 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
         int distance = Math.round(MathHelper.sqrt(dx * dx + dy * dy + dz * dz));
         UnlockTracker.get(player).ifPresent(unlockTracker ->
         {
-            unlockTracker.getProgressTracker(RocketBackpack.ID).ifPresent(tracker ->
+            unlockTracker.getProgressTracker(RocketBackpack.ID).ifPresent(progressTracker ->
             {
-                RocketBackpack.ProgressTracker progressTracker = (RocketBackpack.ProgressTracker) tracker;
-                progressTracker.addDistance(distance, (ServerPlayerEntity) player);
+                CountProgressTracker tracker = (CountProgressTracker) progressTracker;
+                tracker.increment(distance, (ServerPlayerEntity) player);
             });
         });
     }

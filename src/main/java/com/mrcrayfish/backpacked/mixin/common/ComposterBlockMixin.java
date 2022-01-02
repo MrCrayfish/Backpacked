@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
 import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
+import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +34,7 @@ public class ComposterBlockMixin
         {
             unlockTracker.getProgressTracker(TrashCanBackpack.ID).ifPresent(progressTracker ->
             {
-                TrashCanBackpack.ProgressTracker tracker = (TrashCanBackpack.ProgressTracker) progressTracker;
+                CountProgressTracker tracker = (CountProgressTracker) progressTracker;
                 tracker.increment((ServerPlayerEntity) player);
             });
         });

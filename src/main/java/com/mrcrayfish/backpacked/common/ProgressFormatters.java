@@ -27,7 +27,7 @@ public class ProgressFormatters
         return new TranslationTextComponent("backpacked.formatter.found_x_of_x", count, maxCount);
     };
 
-    public static final Function<Integer, ITextComponent> USED_X_TIMES = (count) -> {
+    public static final BiFunction<Integer, Integer, ITextComponent> USED_X_TIMES = (count, unused) -> {
         return new TranslationTextComponent("backpacked.formatter.used_x_times", count);
     };
 

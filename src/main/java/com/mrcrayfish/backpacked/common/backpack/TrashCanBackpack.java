@@ -6,10 +6,13 @@ import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -29,39 +32,10 @@ public class TrashCanBackpack extends Backpack
         return ModelInstances.TRASH_CAN;
     }
 
-    public static class ProgressTracker implements IProgressTracker
+    @Nullable
+    @Override
+    protected IProgressTracker createProgressTracker()
     {
-        private static final int TOTAL_COUNT = 100;
-        private int count;
-
-        public void increment(ServerPlayerEntity player)
-        {
-            this.count++;
-            this.markForCompletionTest(player);
-        }
-
-        @Override
-        public boolean isComplete()
-        {
-            return this.count >= TOTAL_COUNT;
-        }
-
-        @Override
-        public void read(CompoundNBT tag)
-        {
-            this.count = tag.getInt("Count");
-        }
-
-        @Override
-        public void write(CompoundNBT tag)
-        {
-            tag.putInt("Count", this.count);
-        }
-
-        @Override
-        public ITextComponent getDisplayComponent()
-        {
-            return ProgressFormatters.USED_X_TIMES.apply(this.count);
-        }
+        return new CountProgressTracker(100, ProgressFormatters.USED_X_TIMES);
     }
 }
