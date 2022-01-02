@@ -20,4 +20,9 @@ public class ProgressFormatters
         count = MathHelper.clamp(count, 0, maxCount);
         return new TranslationTextComponent("backpacked.formatter.fed_x_of_x", count, maxCount);
     };
+
+    public static final BiFunction<Integer, Integer, ITextComponent> FOUND_X_OF_X = (count, maxCount) -> {
+        count = MathHelper.clamp(count, 0, maxCount);
+        return new TranslationTextComponent("backpacked.formatter.found_x_of_x", count, maxCount);
+    };
 }
