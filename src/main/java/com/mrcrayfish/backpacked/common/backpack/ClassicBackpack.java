@@ -4,13 +4,10 @@ import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
-import com.mrcrayfish.backpacked.common.IProgressTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish

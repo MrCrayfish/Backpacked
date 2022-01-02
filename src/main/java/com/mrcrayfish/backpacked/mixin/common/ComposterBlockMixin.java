@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.UnlockTracker;
-import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
 import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.block.BlockState;

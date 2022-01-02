@@ -7,10 +7,7 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

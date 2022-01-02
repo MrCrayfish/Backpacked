@@ -4,7 +4,6 @@ import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.CardboardBoxBackpack;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;

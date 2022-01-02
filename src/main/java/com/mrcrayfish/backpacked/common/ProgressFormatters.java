@@ -5,7 +5,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Author: MrCrayfish

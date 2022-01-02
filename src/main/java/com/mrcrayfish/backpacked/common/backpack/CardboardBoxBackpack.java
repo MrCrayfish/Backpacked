@@ -6,17 +6,10 @@ import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
-import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
 

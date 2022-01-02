@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.common.backpack.MiniChestBackpack;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.LockableLootTileEntity;
