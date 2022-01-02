@@ -14,7 +14,7 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -44,9 +44,11 @@ import net.minecraftforge.common.util.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -78,7 +80,7 @@ public class CustomiseBackpackScreen extends Screen
     private final List<BackpackModelEntry> models;
     private int scroll;
 
-    public CustomiseBackpackScreen()
+    public CustomiseBackpackScreen(Map<ResourceLocation, ITextComponent> progressMap)
     {
         super(new TranslationTextComponent("backpacked.title.customise_backpack"));
         this.windowWidth = 176;
@@ -87,7 +89,7 @@ public class CustomiseBackpackScreen extends Screen
         Comparator<BackpackModelEntry> compareLabel = Comparator.comparing(e -> e.label.getString());
         List<BackpackModelEntry> models = BackpackManager.instance().getRegisteredBackpacks()
                 .stream()
-                .map(BackpackModelEntry::new)
+                .map(backpack -> new BackpackModelEntry(backpack, progressMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toList());
         this.models = ImmutableList.copyOf(models);
@@ -109,7 +111,7 @@ public class CustomiseBackpackScreen extends Screen
             this.displayBackpackModel = "";
         }));
         this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
-            Network.getPlayChannel().sendToServer(new MessageCustomiseBackpack(new ResourceLocation(this.displayBackpackModel), this.displayShowWithElytra, this.displayShowEffects));
+            Network.getPlayChannel().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowWithElytra, this.displayShowEffects));
         }));
         this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 135, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
@@ -433,7 +435,7 @@ public class CustomiseBackpackScreen extends Screen
         private final ITextComponent label;
         private final List<IReorderingProcessor> unlockTooltip;
 
-        public BackpackModelEntry(Backpack backpack)
+        public BackpackModelEntry(Backpack backpack, Map<ResourceLocation, ITextComponent> progressMap)
         {
             this.id = backpack.getId().toString();
             this.backpack = backpack;
@@ -441,6 +443,11 @@ public class CustomiseBackpackScreen extends Screen
             ITextComponent unlockMessage = new TranslationTextComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
             List<IReorderingProcessor> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
             list.add(0, LanguageMap.getInstance().getVisualOrder(LOCKED));
+            if(progressMap.containsKey(backpack.getId()))
+            {
+                ITextComponent component = progressMap.get(backpack.getId()).plainCopy().withStyle(TextFormatting.YELLOW);
+                list.add(LanguageMap.getInstance().getVisualOrder(component));
+            }
             this.unlockTooltip = ImmutableList.copyOf(list);
         }
 

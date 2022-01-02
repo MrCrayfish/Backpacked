@@ -30,5 +30,7 @@
     "backpacked.backpack.honey_jar": "Honey Jar",
     "backpacked.backpack.honey_jar.unlock": "Gather 20 Honey Bottles to unlock this backpack",
     "backpacked.chat.install_configured": "Install %s to access config options",
-    "backpacked.chat.open_curseforge_page": "Open CurseForge Page"
+    "backpacked.chat.open_curseforge_page": "Open CurseForge Page",
+    "backpacked.formatter.collected_x_of_x": "Collected %s / %s",
+    "backpacked.formatter.fed_x_of_x": "Fed %s / %s"
 }

@@ -1,10 +1,12 @@
 package com.mrcrayfish.backpacked.network.play;
 
+import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
@@ -62,5 +64,14 @@ public class ClientPlayHandler
                 }
             }
         }
+    }
+
+    public static void handleOpenCustomisation(MessageOpenCustomisation message)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.player == null)
+            return;
+
+        minecraft.setScreen(new CustomiseBackpackScreen(message.getProgressMap()));
     }
 }

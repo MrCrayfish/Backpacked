@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 
 /**
  * Author: MrCrayfish
@@ -14,7 +15,7 @@ public interface IProgressTracker
 
     void write(CompoundNBT tag);
 
-    String getDisplayString();
+    ITextComponent getDisplayComponent();
 
     default void markForCompletionTest(ServerPlayerEntity player)
     {

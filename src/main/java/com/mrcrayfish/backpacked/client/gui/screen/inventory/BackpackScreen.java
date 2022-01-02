@@ -6,6 +6,8 @@ import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.Screen;
@@ -55,7 +57,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         }
         int titleWidth = minecraft.font.width(this.title);
         this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 200, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
-            minecraft.setScreen(new CustomiseBackpackScreen());
+            Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
         }));

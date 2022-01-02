@@ -14,6 +14,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
@@ -90,9 +91,9 @@ public class BambooBasketBackpack extends Backpack
         }
 
         @Override
-        public String getDisplayString()
+        public ITextComponent getDisplayComponent()
         {
-            return ProgressFormatters.X_OF_X.apply(this.fedPandas.size(), COUNT);
+            return ProgressFormatters.FED_X_OF_X.apply(this.fedPandas.size(), COUNT);
         }
     }
 }

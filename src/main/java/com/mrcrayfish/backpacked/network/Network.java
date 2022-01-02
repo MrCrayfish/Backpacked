@@ -2,9 +2,11 @@ package com.mrcrayfish.backpacked.network;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.network.message.IMessage;
-import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
@@ -36,9 +38,11 @@ public class Network
         register(MessageOpenBackpack.class, new MessageOpenBackpack(), NetworkDirection.PLAY_TO_SERVER);
         register(MessageUpdateBackpack.class, new MessageUpdateBackpack(), NetworkDirection.PLAY_TO_CLIENT);
         register(MessagePlayerBackpack.class, new MessagePlayerBackpack(), NetworkDirection.PLAY_TO_CLIENT);
-        register(MessageCustomiseBackpack.class, new MessageCustomiseBackpack(), NetworkDirection.PLAY_TO_SERVER);
+        register(MessageBackpackCosmetics.class, new MessageBackpackCosmetics(), NetworkDirection.PLAY_TO_SERVER);
         register(MessageSyncUnlockTracker.class, new MessageSyncUnlockTracker(), NetworkDirection.PLAY_TO_CLIENT);
         register(MessageUnlockBackpack.class, new MessageUnlockBackpack(), NetworkDirection.PLAY_TO_CLIENT);
+        register(MessageRequestCustomisation.class, new MessageRequestCustomisation(), NetworkDirection.PLAY_TO_SERVER);
+        register(MessageOpenCustomisation.class, new MessageOpenCustomisation(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     private static <T> void register(Class<T> clazz, IMessage<T> message, NetworkDirection direction)

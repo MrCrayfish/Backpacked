@@ -5,14 +5,17 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
+import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageCustomiseBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
+import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
@@ -30,12 +33,15 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Author: MrCrayfish
  */
 public class ServerPlayHandler
 {
-    public static void handleCustomiseBackpack(MessageCustomiseBackpack message, ServerPlayerEntity player)
+    public static void handleCustomiseBackpack(MessageBackpackCosmetics message, ServerPlayerEntity player)
     {
         ItemStack stack = Backpacked.getBackpackStack(player);
         if(!stack.isEmpty())
@@ -103,5 +109,24 @@ public class ServerPlayHandler
             otherPlayer.displayClientMessage(new TranslationTextComponent("message.backpacked.player_opened"), true);
             player.level.playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.75F, 1.0F);
         }
+    }
+
+    public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayerEntity player)
+    {
+        UnlockTracker.get(player).ifPresent(unlockTracker ->
+        {
+            Map<ResourceLocation, ITextComponent> map = new HashMap<>();
+            for(Backpack backpack : BackpackManager.instance().getRegisteredBackpacks())
+            {
+                if(!unlockTracker.isUnlocked(backpack.getId()))
+                {
+                    unlockTracker.getProgressTracker(backpack.getId()).ifPresent(progressTracker ->
+                    {
+                        map.put(backpack.getId(), progressTracker.getDisplayComponent());
+                    });
+                }
+            }
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> player), new MessageOpenCustomisation(map));
+        });
     }
 }

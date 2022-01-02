@@ -68,6 +68,11 @@ public class UnlockTracker
         return ImmutableSet.copyOf(this.unlockedBackpacks);
     }
 
+    public boolean isUnlocked(ResourceLocation id)
+    {
+        return this.unlockedBackpacks.contains(id);
+    }
+
     public Optional<IProgressTracker> getProgressTracker(ResourceLocation id)
     {
         if(!Config.SERVER.unlockAllBackpacks.get() && !this.unlockedBackpacks.contains(id))

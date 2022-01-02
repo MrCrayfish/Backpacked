@@ -11,6 +11,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
@@ -43,7 +44,7 @@ public class HoneyJarBackpack extends Backpack
 
     public static class ProgressTracker implements IProgressTracker
     {
-        private static final int TOTAL_COUNT = 10;
+        private static final int TOTAL_COUNT = 20;
         private int count;
 
         public void increment(ServerPlayerEntity player)
@@ -71,9 +72,9 @@ public class HoneyJarBackpack extends Backpack
         }
 
         @Override
-        public String getDisplayString()
+        public ITextComponent getDisplayComponent()
         {
-            return ProgressFormatters.X_OF_X.apply(this.count, TOTAL_COUNT);
+            return ProgressFormatters.COLLECT_X_OF_X.apply(this.count, TOTAL_COUNT);
         }
     }
 }

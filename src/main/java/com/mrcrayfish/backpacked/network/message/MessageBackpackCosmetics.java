@@ -10,15 +10,15 @@ import java.util.function.Supplier;
 /**
  * Author: MrCrayfish
  */
-public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpack>
+public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmetics>
 {
     private ResourceLocation id;
     private boolean showWithElytra;
     private boolean showEffects;
 
-    public MessageCustomiseBackpack() {}
+    public MessageBackpackCosmetics() {}
 
-    public MessageCustomiseBackpack(ResourceLocation id, boolean showWithElytra, boolean showEffects)
+    public MessageBackpackCosmetics(ResourceLocation id, boolean showWithElytra, boolean showEffects)
     {
         this.id = id;
         this.showWithElytra = showWithElytra;
@@ -26,7 +26,7 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
     }
 
     @Override
-    public void encode(MessageCustomiseBackpack message, PacketBuffer buffer)
+    public void encode(MessageBackpackCosmetics message, PacketBuffer buffer)
     {
         buffer.writeResourceLocation(message.id);
         buffer.writeBoolean(message.showWithElytra);
@@ -34,13 +34,13 @@ public class MessageCustomiseBackpack implements IMessage<MessageCustomiseBackpa
     }
 
     @Override
-    public MessageCustomiseBackpack decode(PacketBuffer buffer)
+    public MessageBackpackCosmetics decode(PacketBuffer buffer)
     {
-        return new MessageCustomiseBackpack(buffer.readResourceLocation(), buffer.readBoolean(), buffer.readBoolean());
+        return new MessageBackpackCosmetics(buffer.readResourceLocation(), buffer.readBoolean(), buffer.readBoolean());
     }
 
     @Override
-    public void handle(MessageCustomiseBackpack message, Supplier<NetworkEvent.Context> supplier)
+    public void handle(MessageBackpackCosmetics message, Supplier<NetworkEvent.Context> supplier)
     {
         supplier.get().enqueueWork(() -> ServerPlayHandler.handleCustomiseBackpack(message, supplier.get().getSender()));
         supplier.get().setPacketHandled(true);
