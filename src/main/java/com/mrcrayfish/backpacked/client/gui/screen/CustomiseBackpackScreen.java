@@ -13,6 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
+import com.mrcrayfish.backpacked.common.backpack.StandardBackpack;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
@@ -133,7 +134,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.getBackpackModel().isEmpty();
+        this.resetButton.active = !this.getBackpackModel().equals(StandardBackpack.ID.toString());
         this.saveButton.active = this.needsToSave();
     }
 
@@ -360,9 +361,17 @@ public class CustomiseBackpackScreen extends Screen
         ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
         if(!stack.isEmpty())
         {
-            return stack.getOrCreateTag().getString("BackpackModel");
+            CompoundNBT tag = stack.getOrCreateTag();
+            if(tag.contains("BackpackModel", Constants.NBT.TAG_STRING))
+            {
+                String model = tag.getString("BackpackModel");
+                if(!model.isEmpty())
+                {
+                    return model;
+                }
+            }
         }
-        return "";
+        return StandardBackpack.ID.toString();
     }
 
     private void setLocalBackpackModel(String model)

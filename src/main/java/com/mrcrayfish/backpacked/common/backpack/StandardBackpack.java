@@ -14,9 +14,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 public class StandardBackpack extends Backpack
 {
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "standard");
+
     public StandardBackpack()
     {
-        super(new ResourceLocation(Reference.MOD_ID, "standard"));
+        super(ID);
     }
 
     @Override
