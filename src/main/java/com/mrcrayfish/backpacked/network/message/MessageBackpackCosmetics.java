@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.network.message;
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

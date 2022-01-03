@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -22,8 +23,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fmlclient.ConfigGuiHandler;
 
 /**
  * Author: MrCrayfish
@@ -75,12 +76,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         super.render(matrixStack, mouseX, mouseY, partialTicks); //Super
         this.renderTooltip(matrixStack, mouseX, mouseY); //Render hovered tooltips
 
-        //TODO fix tooltips
-        /*this.renderables.forEach(widget -> {
-            if(widget.isHovered()) {
-                widget.renderToolTip(matrixStack, mouseX, mouseY);
+        this.children().forEach(widget ->
+        {
+            if(widget instanceof Button button && button.isHoveredOrFocused())
+            {
+                button.renderToolTip(matrixStack, mouseX, mouseY);
             }
-        });*/
+        });
     }
 
     @Override

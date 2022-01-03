@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
@@ -162,7 +162,7 @@ public class ClientEvents
     }
 
     @SubscribeEvent
-    public void onRenderWorldLastEvent(RenderWorldLastEvent event)
+    public void onRenderWorldLastEvent(RenderLevelLastEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
         if(!mc.getEntityRenderDispatcher().shouldRenderHitBoxes())
@@ -171,7 +171,7 @@ public class ClientEvents
         if(!Config.SERVER.pickpocketBackpacks.get())
             return;
 
-        PoseStack stack = event.getMatrixStack();
+        PoseStack stack = event.getPoseStack();
         stack.pushPose();
         Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
         stack.translate(-view.x(), -view.y, -view.z());
@@ -189,15 +189,15 @@ public class ClientEvents
             float boxGreen = inReach ? 1.0F : 1.0F;
             float boxBlue = inReach ? 0.0F : 1.0F;
             VertexConsumer builder = source.getBuffer(RenderType.lines());
-            LevelRenderer.renderLineBox(stack, builder, PickpocketUtil.getBackpackBox(player, event.getPartialTicks()), boxRed, boxGreen, boxBlue, 1.0F);
+            LevelRenderer.renderLineBox(stack, builder, PickpocketUtil.getBackpackBox(player, event.getPartialTick()), boxRed, boxGreen, boxBlue, 1.0F);
 
-            float bodyRotation = Mth.lerp(event.getPartialTicks(), player.yBodyRotO, player.yBodyRot);
+            float bodyRotation = Mth.lerp(event.getPartialTick(), player.yBodyRotO, player.yBodyRot);
             boolean inRange = PickpocketUtil.inRangeOfBackpack(player, mc.player);
             float lineRed = inRange ? 0.0F : 1.0F;
             float lineGreen = inRange ? 1.0F : 1.0F;
             float lineBlue = inRange ? 0.0F : 1.0F;
             Matrix4f matrix4f = stack.last().pose();
-            Vec3 pos = player.getPosition(event.getPartialTicks());
+            Vec3 pos = player.getPosition(event.getPartialTick());
             Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
             Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
             builder.vertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();

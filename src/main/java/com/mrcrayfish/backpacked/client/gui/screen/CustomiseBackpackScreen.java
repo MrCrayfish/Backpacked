@@ -135,7 +135,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.getBackpackModel().isEmpty();
+        this.resetButton.active = !this.getBackpackModel().equals(StandardBackpack.ID.toString());
         this.saveButton.active = this.needsToSave();
     }
 
@@ -214,12 +214,13 @@ public class CustomiseBackpackScreen extends Screen
             }
         }
 
-        //TODO fix tooltips
-        /*this.buttons.forEach(widget -> {
-            if(widget.isHovered()) {
-                widget.renderToolTip(matrixStack, mouseX, mouseY);
+        this.children().forEach(widget ->
+        {
+            if(widget instanceof Button button && button.isHoveredOrFocused())
+            {
+                button.renderToolTip(matrixStack, mouseX, mouseY);
             }
-        });*/
+        });
     }
 
     private void drawBackpackItem(PoseStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
@@ -365,9 +366,17 @@ public class CustomiseBackpackScreen extends Screen
         ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
         if(!stack.isEmpty())
         {
-            return stack.getOrCreateTag().getString("BackpackModel");
+            CompoundTag tag = stack.getOrCreateTag();
+            if(tag.contains("BackpackModel", Tag.TAG_STRING))
+            {
+                String model = tag.getString("BackpackModel");
+                if(!model.isEmpty())
+                {
+                    return model;
+                }
+            }
         }
-        return "";
+        return StandardBackpack.ID.toString();
     }
 
     private void setLocalBackpackModel(String model)

@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -43,7 +43,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
@@ -105,12 +105,12 @@ public class Backpacked
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
+    public void onPlayerRenderScreen(ContainerScreenEvent.DrawBackground event)
     {
         if(curiosLoaded)
             return;
 
-        AbstractContainerScreen<?> screen = event.getGuiContainer();
+        AbstractContainerScreen<?> screen = event.getContainerScreen();
         if(screen instanceof InventoryScreen inventory)
         {
             int left = inventory.getGuiLeft();
@@ -118,7 +118,7 @@ public class Backpacked
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
-            Screen.blit(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
+            Screen.blit(event.getPoseStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
         }
         else if(screen instanceof CreativeModeInventoryScreen inventory)
         {
@@ -129,7 +129,7 @@ public class Backpacked
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
-                Screen.blit(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
+                Screen.blit(event.getPoseStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
             }
         }
     }
@@ -137,7 +137,7 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap().location().equals(InventoryMenu.BLOCK_ATLAS))
+        if(event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
         {
             event.addSprite(EMPTY_BACKPACK_SLOT);
         }
