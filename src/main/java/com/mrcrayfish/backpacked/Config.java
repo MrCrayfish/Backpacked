@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ResourceLocationException;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 

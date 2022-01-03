@@ -12,19 +12,20 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = project.property('mod.version') + "-1.16.5"
+version = project.property('mod.version') + "-1.17.1"
 group = 'com.mrcrayfish'
 archivesBaseName = project.property('mod.id')
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 mixin {
     add sourceSets.main, "backpacked.refmap.json"
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.16.5'
+    mappings channel: 'official', version: '1.17.1'
 
     runs {
         client {
@@ -75,11 +76,10 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.20'
-    implementation fg.deobf('curse.maven:curios-309927:3456953')
-    compileOnly fg.deobf('curse.maven:controllable-317269:3519536')
-    runtimeOnly fg.deobf('curse.maven:configured-457570:3546348')
-    //runtimeOnly fg.deobf('curse.maven:backpacker-414218:3217794')
+    minecraft 'net.minecraftforge:forge:1.17.1-37.1.1'
+    implementation fg.deobf('curse.maven:curios-309927:3573792')
+    compileOnly fg.deobf('curse.maven:controllable-317269:3528563')
+    runtimeOnly fg.deobf('curse.maven:configured-457570:3537614')
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
 

@@ -5,10 +5,10 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.*;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +64,7 @@ public class BackpackManager
         return this.registeredBackpacks.get(id);
     }
 
-    public void unlockBackpack(ServerPlayerEntity player, ResourceLocation id)
+    public void unlockBackpack(ServerPlayer player, ResourceLocation id)
     {
         // Prevents unlocking backpacks when all backpacks are forcefully unlocked. This helps in case
         // the server owner wants to revert their change.

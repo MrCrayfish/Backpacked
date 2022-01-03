@@ -1,61 +1,77 @@
 package com.mrcrayfish.backpacked.client.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.Model;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Function;
 
 public abstract class BackpackModel extends Model
 {
-    public BackpackModel()
+    protected final ResourceLocation texture;
+    protected final ModelPart backpack;
+    protected final ModelPart bag;
+    protected final ModelPart strap;
+
+    public BackpackModel(ModelPart root, ResourceLocation texture)
     {
-        super(RenderType::entityCutoutNoCull);
+        this(root, texture, RenderType::entityCutoutNoCull);
     }
 
-    public BackpackModel(Function<ResourceLocation, RenderType> renderType)
+    public BackpackModel(ModelPart root, ResourceLocation texture, Function<ResourceLocation, RenderType> renderType)
     {
         super(renderType);
+        this.texture = texture;
+        this.backpack = root.getChild("backpack");
+        this.bag = this.backpack.getChild("bag");
+        this.strap = this.bag.getChild("strap");
     }
 
-    protected static void setRotationAngle(ModelRenderer renderer, float x, float y, float z)
+    public void setupAngles(ModelPart body, boolean armour)
     {
-        renderer.xRot = x;
-        renderer.yRot = y;
-        renderer.zRot = z;
-    }
-
-    public void setupAngles(ModelRenderer body, boolean armour)
-    {
-        ModelRenderer root = this.getRoot();
+        ModelPart root = this.getRoot();
         root.copyFrom(body);
 
-        ModelRenderer bag = this.getBag();
+        ModelPart bag = this.getBag();
         bag.setPos(0.0F, -0.2F, 2.0F + (armour ? 1.0F : 0.0F));
 
-        ModelRenderer straps = this.getStraps();
+        ModelPart straps = this.getStraps();
         straps.visible = !armour;
     }
 
     @Override
-    public void renderToBuffer(MatrixStack matrixStack, IVertexBuilder builder, int p_225598_3_, int p_225598_4_, float p_225598_5_, float p_225598_6_, float p_225598_7_, float p_225598_8_)
+    public void renderToBuffer(PoseStack matrixStack, VertexConsumer builder, int p_225598_3_, int p_225598_4_, float p_225598_5_, float p_225598_6_, float p_225598_7_, float p_225598_8_)
     {
         matrixStack.scale(1.05F, 1.05F, 1.05F);
         this.getRoot().render(matrixStack, builder, p_225598_3_, p_225598_4_);
     }
 
-    public void tickForPlayer(Vector3d pos, PlayerEntity player) {}
+    public void tickForPlayer(Vec3 pos, Player player)
+    {
+    }
 
-    protected abstract ModelRenderer getRoot();
+    protected ModelPart getRoot()
+    {
+        return this.backpack;
+    }
 
-    public abstract ModelRenderer getBag();
+    public ModelPart getBag()
+    {
+        return this.bag;
+    }
 
-    public abstract ModelRenderer getStraps();
+    public ModelPart getStraps()
+    {
+        return this.strap;
+    }
 
-    public abstract ResourceLocation getTextureLocation();
+    public ResourceLocation getTextureLocation()
+    {
+        return this.texture;
+    }
 }

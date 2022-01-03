@@ -2,9 +2,9 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,13 +27,13 @@ public abstract class Backpack
         return this.id;
     }
 
-    public boolean isUnlocked(PlayerEntity player)
+    public boolean isUnlocked(Player player)
     {
         return UnlockTracker.get(player).map(impl -> impl.getUnlockedBackpacks().contains(this.id)).orElse(false) || Config.SERVER.unlockAllBackpacks.get();
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void clientTick(PlayerEntity player, Vector3d pos) {}
+    public void clientTick(Player player, Vec3 pos) {}
 
     @OnlyIn(Dist.CLIENT)
     public abstract BackpackModel getModel();

@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.common.tracker;
 
 import com.mrcrayfish.backpacked.common.IProgressTracker;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.BiFunction;
 
@@ -12,23 +12,23 @@ import java.util.function.BiFunction;
  */
 public class CountProgressTracker implements IProgressTracker
 {
-    private final BiFunction<Integer, Integer, ITextComponent> formatter;
+    private final BiFunction<Integer, Integer, Component> formatter;
     private final int maxCount;
     private int count;
 
-    public CountProgressTracker(int maxCount, BiFunction<Integer, Integer, ITextComponent> formatter)
+    public CountProgressTracker(int maxCount, BiFunction<Integer, Integer, Component> formatter)
     {
         this.maxCount = maxCount;
         this.formatter = formatter;
     }
 
-    public void increment(ServerPlayerEntity player)
+    public void increment(ServerPlayer player)
     {
         this.count++;
         this.markForCompletionTest(player);
     }
 
-    public void increment(int amount, ServerPlayerEntity player)
+    public void increment(int amount, ServerPlayer player)
     {
         this.count += amount;
         this.markForCompletionTest(player);
@@ -41,19 +41,19 @@ public class CountProgressTracker implements IProgressTracker
     }
 
     @Override
-    public void read(CompoundNBT tag)
+    public void read(CompoundTag tag)
     {
         this.count = tag.getInt("Count");
     }
 
     @Override
-    public void write(CompoundNBT tag)
+    public void write(CompoundTag tag)
     {
         tag.putInt("Count", this.count);
     }
 
     @Override
-    public ITextComponent getDisplayComponent()
+    public Component getDisplayComponent()
     {
         return this.formatter.apply(this.count, this.maxCount);
     }

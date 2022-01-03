@@ -2,36 +2,36 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.inventory.container.slot.InventoryBackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Author: MrCrayfish
  */
-public class ExtendedPlayerContainer extends PlayerContainer
+public class ExtendedPlayerContainer extends InventoryMenu
 {
-    public ExtendedPlayerContainer(PlayerInventory playerInventory, boolean localWorld, PlayerEntity playerIn)
+    public ExtendedPlayerContainer(Inventory playerInventory, boolean localWorld, Player playerIn)
     {
         super(playerInventory, localWorld, playerIn);
         this.addSlot(new InventoryBackpackSlot(playerInventory, 41, 77, 44));
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index)
+    public ItemStack quickMoveStack(Player playerIn, int index)
     {
-        ItemStack copy = ItemStack.EMPTY;
+        ItemStack copyStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if(slot != null && slot.hasItem())
+        if(slot.hasItem())
         {
             ItemStack slotStack = slot.getItem();
-            copy = slotStack.copy();
-            EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(copy);
-            if(index != 46 && copy.getItem() instanceof BackpackItem)
+            copyStack = slotStack.copy();
+            EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(copyStack);
+            if(index != 46 && copyStack.getItem() instanceof BackpackItem)
             {
                 if(!this.slots.get(46).hasItem())
                 {
@@ -48,7 +48,7 @@ public class ExtendedPlayerContainer extends PlayerContainer
                     return ItemStack.EMPTY;
                 }
 
-                slot.onQuickCraft(slotStack, copy);
+                slot.onQuickCraft(slotStack, copyStack);
             }
             else if(index < 5)
             {
@@ -64,15 +64,15 @@ public class ExtendedPlayerContainer extends PlayerContainer
                     return ItemStack.EMPTY;
                 }
             }
-            else if(equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(8 - equipmentslottype.getIndex()).hasItem())
+            else if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem())
             {
-                int i = 8 - equipmentslottype.getIndex();
+                int i = 8 - equipmentSlot.getIndex();
                 if(!this.moveItemStackTo(slotStack, i, i + 1, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(45).hasItem())
+            else if(equipmentSlot == EquipmentSlot.OFFHAND && !this.slots.get(45).hasItem())
             {
                 if(!this.moveItemStackTo(slotStack, 45, 46, false))
                 {
@@ -114,18 +114,18 @@ public class ExtendedPlayerContainer extends PlayerContainer
                 slot.setChanged();
             }
 
-            if(slotStack.getCount() == copy.getCount())
+            if(slotStack.getCount() == copyStack.getCount())
             {
                 return ItemStack.EMPTY;
             }
 
-            ItemStack itemstack2 = slot.onTake(playerIn, slotStack);
+            slot.onTake(playerIn, slotStack);
             if(index == 0)
             {
-                playerIn.drop(itemstack2, false);
+                playerIn.drop(slotStack, false);
             }
         }
 
-        return copy;
+        return copyStack;
     }
 }

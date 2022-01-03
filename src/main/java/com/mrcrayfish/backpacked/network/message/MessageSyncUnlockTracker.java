@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,14 +24,14 @@ public class MessageSyncUnlockTracker implements IMessage<MessageSyncUnlockTrack
     }
 
     @Override
-    public void encode(MessageSyncUnlockTracker message, PacketBuffer buffer)
+    public void encode(MessageSyncUnlockTracker message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.unlockedBackpacks.size());
         message.unlockedBackpacks.forEach(buffer::writeResourceLocation);
     }
 
     @Override
-    public MessageSyncUnlockTracker decode(PacketBuffer buffer)
+    public MessageSyncUnlockTracker decode(FriendlyByteBuf buffer)
     {
         int size = buffer.readInt();
         Set<ResourceLocation> unlockedBackpacks = new HashSet<>();

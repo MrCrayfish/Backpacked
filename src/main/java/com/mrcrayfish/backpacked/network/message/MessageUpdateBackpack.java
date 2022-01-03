@@ -2,12 +2,12 @@ package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -28,14 +28,14 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
     }
 
     @Override
-    public void encode(MessageUpdateBackpack message, PacketBuffer buffer)
+    public void encode(MessageUpdateBackpack message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.entityId);
         this.writeBackpackStack(buffer, message.backpack);
     }
 
     @Override
-    public MessageUpdateBackpack decode(PacketBuffer buffer)
+    public MessageUpdateBackpack decode(FriendlyByteBuf buffer)
     {
         return new MessageUpdateBackpack(buffer.readInt(), buffer.readItem());
     }
@@ -47,7 +47,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
         supplier.get().setPacketHandled(true);
     }
 
-    private void writeBackpackStack(PacketBuffer buffer, ItemStack stack)
+    private void writeBackpackStack(FriendlyByteBuf buffer, ItemStack stack)
     {
         boolean empty = stack.isEmpty();
         buffer.writeBoolean(!empty);
@@ -56,13 +56,13 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
             Item item = stack.getItem();
             buffer.writeVarInt(Item.getId(item));
             buffer.writeByte(stack.getCount());
-            CompoundNBT realTag = stack.getOrCreateTag();
-            CompoundNBT tag = new CompoundNBT();
+            CompoundTag realTag = stack.getOrCreateTag();
+            CompoundTag tag = new CompoundTag();
             tag.putString("BackpackModel", realTag.getString("BackpackModel"));
             for(BackpackModelProperty property : BackpackModelProperty.values())
             {
                 String tagName = property.getTagName();
-                boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+                boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
                 tag.putBoolean(tagName, value);
             }
             buffer.writeNbt(tag);

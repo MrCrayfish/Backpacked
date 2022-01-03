@@ -1,20 +1,90 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.model.*;
+import com.mrcrayfish.backpacked.core.ModLayerDefinitions;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * Author: MrCrayfish
  */
 public class ModelInstances
 {
-    public static final BackpackModel STANDARD = new StandardBackpackModel();
-    public static final BackpackModel CLASSIC = new ClassicBackpackModel();
-    public static final BackpackModel BAMBOO_BASKET = new BambooBasketBackpackModel();
-    public static final BackpackModel ROCKET = new RocketBackpackModel();
-    public static final BackpackModel MINI_CHEST = new MiniChestBackpackModel();
-    public static final BackpackModel TRASH_CAN = new TrashCanBackpackModel();
-    public static final BackpackModel HONEY_JAR = new HoneyJarBackpackModel();
-    public static final BackpackModel TURTLE_SHELL = new TurtleShellBackpackModel();
-    public static final BackpackModel CARDBOARD_BOX = new CardboardBoxBackpackModel();
-    public static final BackpackModel SHEEP_PLUSH = new SheepPlushBackpackModel();
+    private BackpackModel standardModel;
+    private BackpackModel classic;
+    private BackpackModel bambooBasketModel;
+    private BackpackModel rocket;
+    private BackpackModel miniChest;
+    private BackpackModel trashCan;
+    private BackpackModel honeyJar;
+    private BackpackModel turtleShell;
+    private BackpackModel cardboardBox;
+    private BackpackModel sheepPlush;
+
+    @SubscribeEvent
+    public void onLoadModels(EntityRenderersEvent.AddLayers event)
+    {
+        EntityModelSet models = event.getEntityModels();
+        this.standardModel = new StandardBackpackModel(models.bakeLayer(ModLayerDefinitions.STANDARD));
+        this.classic = new ClassicBackpackModel(models.bakeLayer(ModLayerDefinitions.CLASSIC));
+        this.bambooBasketModel = new BambooBasketBackpackModel(models.bakeLayer(ModLayerDefinitions.BAMBOO_BASKET));
+        this.rocket = new RocketBackpackModel(models.bakeLayer(ModLayerDefinitions.ROCKET));
+        this.miniChest = new MiniChestBackpackModel(models.bakeLayer(ModLayerDefinitions.MINI_CHEST));
+        this.trashCan = new TrashCanBackpackModel(models.bakeLayer(ModLayerDefinitions.TRASH_CAN));
+        this.honeyJar = new HoneyJarBackpackModel(models.bakeLayer(ModLayerDefinitions.HONEY_JAR));
+        this.turtleShell = new TurtleShellBackpackModel(models.bakeLayer(ModLayerDefinitions.TURTLE_SHELL));
+        this.cardboardBox = new CardboardBoxBackpackModel(models.bakeLayer(ModLayerDefinitions.CARDBOARD_BOX));
+        this.sheepPlush = new SheepPlushBackpackModel(models.bakeLayer(ModLayerDefinitions.SHEEP_PLUSH));
+    }
+
+    public BackpackModel getStandardModel()
+    {
+        return this.standardModel;
+    }
+
+    public BackpackModel getClassic()
+    {
+        return this.classic;
+    }
+
+    public BackpackModel getBambooBasketModel()
+    {
+        return this.bambooBasketModel;
+    }
+
+    public BackpackModel getRocket()
+    {
+        return this.rocket;
+    }
+
+    public BackpackModel getMiniChest()
+    {
+        return this.miniChest;
+    }
+
+    public BackpackModel getTrashCan()
+    {
+        return this.trashCan;
+    }
+
+    public BackpackModel getHoneyJar()
+    {
+        return this.honeyJar;
+    }
+
+    public BackpackModel getTurtleShell()
+    {
+        return this.turtleShell;
+    }
+
+    public BackpackModel getCardboardBox()
+    {
+        return this.cardboardBox;
+    }
+
+    public BackpackModel getSheepPlush()
+    {
+        return this.sheepPlush;
+    }
 }

@@ -1,9 +1,13 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ClientEvents;
@@ -13,34 +17,32 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
+import com.mrcrayfish.backpacked.common.backpack.StandardBackpack;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.LanguageMap;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.locale.Language;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -56,9 +58,9 @@ import java.util.stream.Collectors;
 public class CustomiseBackpackScreen extends Screen
 {
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/customise_backpack.png");
-    private static final ITextComponent SHOW_EFFECTS_TOOLTIP = new TranslationTextComponent("backpacked.button.show_effects.tooltip");
-    private static final ITextComponent SHOW_WITH_ELYTRA_TOOLTIP = new TranslationTextComponent("backpacked.button.show_with_elytra.tooltip");
-    private static final ITextComponent LOCKED = new TranslationTextComponent("backpacked.gui.locked").withStyle(TextFormatting.RED, TextFormatting.BOLD);
+    private static final Component SHOW_EFFECTS_TOOLTIP = new TranslatableComponent("backpacked.button.show_effects.tooltip");
+    private static final Component SHOW_WITH_ELYTRA_TOOLTIP = new TranslatableComponent("backpacked.button.show_with_elytra.tooltip");
+    private static final Component LOCKED = new TranslatableComponent("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
 
     private final int windowWidth;
     private final int windowHeight;
@@ -79,9 +81,9 @@ public class CustomiseBackpackScreen extends Screen
     private final List<BackpackModelEntry> models;
     private int scroll;
 
-    public CustomiseBackpackScreen(Map<ResourceLocation, ITextComponent> progressMap)
+    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap)
     {
-        super(new TranslationTextComponent("backpacked.title.customise_backpack"));
+        super(new TranslatableComponent("backpacked.title.customise_backpack"));
         this.windowWidth = 201;
         this.windowHeight = 166;
         Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
@@ -106,18 +108,18 @@ public class CustomiseBackpackScreen extends Screen
         }
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
-        this.resetButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslationTextComponent("backpacked.button.reset"), onPress -> {
-            this.displayBackpackModel = "";
+        this.resetButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslatableComponent("backpacked.button.reset"), onPress -> {
+            this.displayBackpackModel = StandardBackpack.ID.toString();
         }));
-        this.saveButton = this.addButton(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslationTextComponent("backpacked.button.save"), onPress -> {
+        this.saveButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslatableComponent("backpacked.button.save"), onPress -> {
             Network.getPlayChannel().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowWithElytra, this.displayShowEffects));
         }));
-        this.showWithElytraButton = this.addButton(new CheckBox(this.windowLeft + 160, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
+        this.showWithElytraButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 160, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_WITH_ELYTRA_TOOLTIP, mouseX, mouseY);
         }));
-        this.showEffectsButton = this.addButton(new CheckBox(this.windowLeft + 186, this.windowTop + 6, StringTextComponent.EMPTY, onPress -> {
+        this.showEffectsButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 186, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
             this.displayShowEffects = !this.displayShowEffects;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_EFFECTS_TOOLTIP, mouseX, mouseY);
@@ -164,11 +166,12 @@ public class CustomiseBackpackScreen extends Screen
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTick)
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTick)
     {
         this.renderBackground(matrixStack);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
         this.blit(matrixStack, this.windowLeft, this.windowTop, 0, 0, this.windowWidth, this.windowHeight);
         super.render(matrixStack, mouseX, mouseY, partialTick);
 
@@ -185,14 +188,16 @@ public class CustomiseBackpackScreen extends Screen
         this.font.draw(matrixStack, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752);
 
         // Draw scroll bar
-        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
         boolean canScroll = this.models.size() > 7;
         int scroll = (canScroll ? this.scroll : 0) + (this.scrollGrabbed ? mouseY - this.mouseClickedY : 0);
-        scroll = MathHelper.clamp(scroll, 0, 123);
+        scroll = Mth.clamp(scroll, 0, 123);
         this.blit(matrixStack, this.windowLeft + 181, this.windowTop + 18 + scroll, 201 + (!canScroll ? 12 : 0), 0, 12, 15);
 
         // Draw backpack items
-        int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
+        int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
         for(int i = startIndex; i < this.models.size() && i < startIndex + 7; i++)
         {
             this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, this.models.get(i));
@@ -209,22 +214,24 @@ public class CustomiseBackpackScreen extends Screen
             }
         }
 
-        this.buttons.forEach(widget -> {
+        //TODO fix tooltips
+        /*this.buttons.forEach(widget -> {
             if(widget.isHovered()) {
                 widget.renderToolTip(matrixStack, mouseX, mouseY);
             }
-        });
+        });*/
     }
 
-    private void drawBackpackItem(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
+    private void drawBackpackItem(PoseStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
         boolean selected = unlocked && entry.getId().equals(this.displayBackpackModel);
         boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 97, 20);
 
         // Draw background for item
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
         int offset = (unlocked ? 0 : 60) + (selected ? 20 : 0) + (hovered ? 40 : 0);
         this.blit(matrixStack, x, y, 0, 166 + offset, 97, 20);
 
@@ -236,24 +243,22 @@ public class CustomiseBackpackScreen extends Screen
         drawBackpackModel(matrixStack, entry.getBackpack().getModel(), x + 8, y + 4, 20);
     }
 
-    public static void drawBackpackModel(MatrixStack matrixStack, BackpackModel model, int x, int y, float scale)
+    public static void drawBackpackModel(PoseStack matrixStack, BackpackModel model, int x, int y, float scale)
     {
         matrixStack.pushPose();
         matrixStack.translate(x, y, 50);
         matrixStack.mulPose(Vector3f.XP.rotationDegrees(-10F));
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(35F));
         matrixStack.scale(scale, scale, scale);
-        RenderHelper.setupForFlatItems();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.pushMatrix();
-        IRenderTypeBuffer.Impl source = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
-        IVertexBuilder builder = source.getBuffer(model.renderType(model.getTextureLocation()));
+        Lighting.setupForFlatItems();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        MultiBufferSource.BufferSource source = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+        VertexConsumer builder = source.getBuffer(model.renderType(model.getTextureLocation()));
         model.getStraps().visible = false;
-        ModelRenderer bag = model.getBag();
+        ModelPart bag = model.getBag();
         bag.setPos(0, 0, 0);
         bag.render(matrixStack, builder, 15728880, OverlayTexture.NO_OVERLAY);
         source.endBatch();
-        RenderSystem.popMatrix();
         matrixStack.popPose();
     }
 
@@ -261,7 +266,7 @@ public class CustomiseBackpackScreen extends Screen
     {
         if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + 82, this.windowTop + 17, 97, 140))
         {
-            int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
+            int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
             int displayIndex = (mouseY - this.windowTop - 17) / 20;
             int actualIndex = startIndex + displayIndex;
             if(actualIndex >= 0 && actualIndex < this.models.size())
@@ -286,7 +291,7 @@ public class CustomiseBackpackScreen extends Screen
                     if(entry.getBackpack().isUnlocked(this.minecraft.player))
                     {
                         this.displayBackpackModel = entry.getId();
-                        this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                        this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     }
                 }
             }
@@ -330,7 +335,7 @@ public class CustomiseBackpackScreen extends Screen
             if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
                 this.scroll += (mouseY - this.mouseClickedY);
-                this.scroll = MathHelper.clamp(this.scroll, 0, 123);
+                this.scroll = Mth.clamp(this.scroll, 0, 123);
                 this.scrollGrabbed = false;
             }
         }
@@ -342,7 +347,7 @@ public class CustomiseBackpackScreen extends Screen
     {
         if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 112, 140))
         {
-            int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
+            int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
             int newIndex = startIndex - (int) Math.signum(scroll);
             this.scrollToIndex(newIndex);
         }
@@ -352,7 +357,7 @@ public class CustomiseBackpackScreen extends Screen
     private void scrollToIndex(int index)
     {
         this.scroll = (int) (123.0 * ((double) index / (double) Math.max(this.models.size() - 7, 1)));
-        this.scroll = MathHelper.clamp(this.scroll, 0, 123);
+        this.scroll = Mth.clamp(this.scroll, 0, 123);
     }
 
     private String getBackpackModel()
@@ -379,8 +384,8 @@ public class CustomiseBackpackScreen extends Screen
         ItemStack stack = Backpacked.getBackpackStack(this.minecraft.player);
         if(!stack.isEmpty())
         {
-            CompoundNBT tag = stack.getOrCreateTag();
-            if(tag.contains(property.getTagName(), Constants.NBT.TAG_BYTE))
+            CompoundTag tag = stack.getOrCreateTag();
+            if(tag.contains(property.getTagName(), Tag.TAG_BYTE))
             {
                 return tag.getBoolean(property.getTagName());
             }
@@ -397,13 +402,15 @@ public class CustomiseBackpackScreen extends Screen
         }
     }
 
-    private void renderPlayer(int x, int y, int mouseX, int mouseY, PlayerEntity player)
+    private void renderPlayer(int x, int y, int mouseX, int mouseY, Player player)
     {
         float scale = 70F;
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef((float)x, (float)y, 1050.0F);
-        RenderSystem.scalef(1.0F, 1.0F, -1.0F);
-        MatrixStack matrixStack = new MatrixStack();
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
+        modelViewStack.translate(x, y, 1050.0F);
+        modelViewStack.scale(1.0F, 1.0F, -1.0F);
+        RenderSystem.applyModelViewMatrix();
+        PoseStack matrixStack = new PoseStack();
         matrixStack.translate(0, 0, 1000);
         matrixStack.translate(0, -15, 0);
         Quaternion playerRotation = Vector3f.ZP.rotationDegrees(180.0F);
@@ -415,59 +422,61 @@ public class CustomiseBackpackScreen extends Screen
         matrixStack.translate(0, -this.windowHeight / 2, 0);
         matrixStack.scale(scale, scale, scale);
         float origBodyRot = player.yBodyRot;
-        float origYaw = player.yRot;
-        float origPitch = player.xRot;
+        float origYaw = player.getYRot();
+        float origPitch = player.getXRot();
         float origHeadYawOld = player.yHeadRotO;
         float origHeadYaw = player.yHeadRot;
         String origBackpackModel = this.getBackpackModel();
         boolean origShowWithElytra = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA);
         boolean origShowEffects = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS);
         player.yBodyRot = 0.0F;
-        player.yRot = 0.0F;
-        player.xRot = 0.0F;
-        player.yHeadRot = player.yRot;
-        player.yHeadRotO = player.yRot;
+        player.setYRot(0.0F);
+        player.setXRot(0.0F);
+        player.yHeadRot = player.getYRot();
+        player.yHeadRotO = player.getYRot();
         this.setLocalBackpackModel(this.displayBackpackModel);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA, this.displayShowWithElytra);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS, this.displayShowEffects);
-        EntityRendererManager manager = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderDispatcher manager = Minecraft.getInstance().getEntityRenderDispatcher();
         cameraRotation.conj();
-        manager.overrideCameraOrientation(cameraRotation);
+        //manager.overrideCameraOrientation(cameraRotation);
         manager.setRenderShadow(false);
-        IRenderTypeBuffer.Impl source = Minecraft.getInstance().renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource source = Minecraft.getInstance().renderBuffers().bufferSource();
         RenderSystem.runAsFancy(() -> manager.render(player, 0, 0.0625, 0.35, 0, 1, matrixStack, source, 15728880));
         source.endBatch();
         manager.setRenderShadow(true);
         player.yBodyRot = origBodyRot;
-        player.yRot = origYaw;
-        player.xRot = origPitch;
+        player.setYRot(origYaw);
+        player.setXRot(origPitch);
         player.yHeadRotO = origHeadYawOld;
         player.yHeadRot = origHeadYaw;
         this.setLocalBackpackModel(origBackpackModel);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA, origShowWithElytra);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS, origShowEffects);
-        RenderSystem.popMatrix();
+        modelViewStack.popPose();
+        RenderSystem.applyModelViewMatrix();
+        Lighting.setupFor3DItems();
     }
 
     private static class BackpackModelEntry
     {
         private final String id;
         private final Backpack backpack;
-        private final ITextComponent label;
-        private final List<IReorderingProcessor> unlockTooltip;
+        private final Component label;
+        private final List<FormattedCharSequence> unlockTooltip;
 
-        public BackpackModelEntry(Backpack backpack, Map<ResourceLocation, ITextComponent> progressMap)
+        public BackpackModelEntry(Backpack backpack, Map<ResourceLocation, Component> progressMap)
         {
             this.id = backpack.getId().toString();
             this.backpack = backpack;
-            this.label = new TranslationTextComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
-            ITextComponent unlockMessage = new TranslationTextComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
-            List<IReorderingProcessor> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
-            list.add(0, LanguageMap.getInstance().getVisualOrder(LOCKED));
+            this.label = new TranslatableComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
+            Component unlockMessage = new TranslatableComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
+            List<FormattedCharSequence> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
+            list.add(0, Language.getInstance().getVisualOrder(LOCKED));
             if(progressMap.containsKey(backpack.getId()))
             {
-                ITextComponent component = progressMap.get(backpack.getId()).plainCopy().withStyle(TextFormatting.YELLOW);
-                list.add(LanguageMap.getInstance().getVisualOrder(component));
+                Component component = progressMap.get(backpack.getId()).plainCopy().withStyle(ChatFormatting.YELLOW);
+                list.add(Language.getInstance().getVisualOrder(component));
             }
             this.unlockTooltip = ImmutableList.copyOf(list);
         }
@@ -477,12 +486,12 @@ public class CustomiseBackpackScreen extends Screen
             return this.id;
         }
 
-        public ITextComponent getLabel()
+        public Component getLabel()
         {
             return this.label;
         }
 
-        public List<IReorderingProcessor> getUnlockTooltip()
+        public List<FormattedCharSequence> getUnlockTooltip()
         {
             return this.unlockTooltip;
         }

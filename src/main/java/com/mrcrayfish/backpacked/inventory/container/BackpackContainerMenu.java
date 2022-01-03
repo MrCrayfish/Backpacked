@@ -2,41 +2,41 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainer extends Container
+public class BackpackContainerMenu extends AbstractContainerMenu
 {
-    private final IInventory backpackInventory;
+    private final Container backpackInventory;
     private final int rows;
 
-    public BackpackContainer(int id, PlayerInventory playerInventory, int rows)
+    public BackpackContainerMenu(int id, Inventory playerInventory, int rows)
     {
-        this(id, playerInventory, new Inventory(9 * rows), rows);
+        this(id, playerInventory, new SimpleContainer(9 * rows), rows);
     }
 
-    public BackpackContainer(int id, PlayerInventory playerInventory, IInventory backpackInventory, int rows)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int rows)
     {
         super(ModContainers.BACKPACK.get(), id);
-        checkContainerSize(backpackInventory, rows * 9);
-        this.backpackInventory = backpackInventory;
+        checkContainerSize(backpackContainer, rows * 9);
+        this.backpackInventory = backpackContainer;
         this.rows = rows;
-        backpackInventory.startOpen(playerInventory.player);
+        backpackContainer.startOpen(playerInventory.player);
         int offset = (this.rows - 4) * 18;
 
         for(int j = 0; j < rows; j++)
         {
             for(int i = 0; i < 9; ++i)
             {
-                this.addSlot(new BackpackSlot(backpackInventory, i + j * 9, 8 + i * 18, 18 + j * 18));
+                this.addSlot(new BackpackSlot(backpackContainer, i + j * 9, 8 + i * 18, 18 + j * 18));
             }
         }
 
@@ -55,13 +55,13 @@ public class BackpackContainer extends Container
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn)
+    public boolean stillValid(Player playerIn)
     {
         return this.backpackInventory.stillValid(playerIn);
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index)
+    public ItemStack quickMoveStack(Player playerIn, int index)
     {
         ItemStack copy = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
@@ -94,7 +94,7 @@ public class BackpackContainer extends Container
     }
 
     @Override
-    public void removed(PlayerEntity playerIn)
+    public void removed(Player playerIn)
     {
         super.removed(playerIn);
         this.backpackInventory.stopOpen(playerIn);

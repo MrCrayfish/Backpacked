@@ -3,22 +3,22 @@ package com.mrcrayfish.backpacked.inventory;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackInventory extends Inventory
+public class BackpackInventory extends SimpleContainer
 {
-    private final PlayerEntity player;
+    private final Player player;
     private final ItemStack stack;
 
-    public BackpackInventory(int rows, PlayerEntity player, ItemStack stack)
+    public BackpackInventory(int rows, Player player, ItemStack stack)
     {
         super(rows * 9);
         this.player = player;
@@ -28,10 +28,10 @@ public class BackpackInventory extends Inventory
 
     private void loadBackpackContents()
     {
-        CompoundNBT compound = this.stack.getOrCreateTag();
-        if(compound.contains("Items", Constants.NBT.TAG_LIST))
+        CompoundTag compound = this.stack.getOrCreateTag();
+        if(compound.contains("Items", Tag.TAG_LIST))
         {
-            InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this);
+            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this);
         }
     }
 
@@ -41,7 +41,7 @@ public class BackpackInventory extends Inventory
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player)
+    public boolean stillValid(Player player)
     {
         return Backpacked.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketPlayer(this.player, player));
     }
@@ -50,7 +50,7 @@ public class BackpackInventory extends Inventory
     public void setChanged()
     {
         super.setChanged();
-        CompoundNBT compound = this.stack.getOrCreateTag();
-        compound.put("Items", InventoryHelper.saveAllItems(new ListNBT(), this));
+        CompoundTag compound = this.stack.getOrCreateTag();
+        compound.put("Items", InventoryHelper.saveAllItems(new ListTag(), this));
     }
 }

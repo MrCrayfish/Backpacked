@@ -1,12 +1,13 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 /**
  * Author: MrCrayfish
@@ -17,12 +18,12 @@ public class CheckBox extends Button
 
     private boolean toggled = false;
 
-    public CheckBox(int x, int y, ITextComponent title, Button.IPressable onPress)
+    public CheckBox(int x, int y, Component title, Button.OnPress onPress)
     {
         this(x, y, title, onPress, NO_TOOLTIP);
     }
 
-    public CheckBox(int x, int y, ITextComponent title, Button.IPressable onPress, Button.ITooltip tooltip)
+    public CheckBox(int x, int y, Component title, Button.OnPress onPress, Button.OnTooltip tooltip)
     {
         super(x, y, 8, 8, title, onPress, tooltip);
     }
@@ -32,23 +33,23 @@ public class CheckBox extends Button
         this.toggled = toggled;
     }
 
-    public boolean isToggled()
+    public boolean isChecked()
     {
         return this.toggled;
     }
 
     @Override
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bind(GUI);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI);
         this.blit(matrixStack, this.x, this.y, 0, 0, 8, 8);
         if(this.toggled)
         {
             this.blit(matrixStack, this.x, this.y - 1, 8, 0, 9, 8);
         }
-        minecraft.font.draw(matrixStack, this.getMessage().getString(), this.x + 12, this.y, 0xFFFFFF);
+        Minecraft.getInstance().font.draw(matrixStack, this.getMessage().getString(), this.x + 12, this.y, 0xFFFFFF);
     }
 
     @Override

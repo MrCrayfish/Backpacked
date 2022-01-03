@@ -2,13 +2,13 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.NonNullList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.NonNullList;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class ExtendedPlayerInventory extends PlayerInventory
+public class ExtendedPlayerInventory extends Inventory
 {
     public final NonNullList<ItemStack> backpackArray = NonNullList.withSize(1, ItemStack.EMPTY);
     public final NonNullList<ItemStack> backpackInventory = NonNullList.withSize(1, ItemStack.EMPTY);
     private final List<NonNullList<ItemStack>> allInventories = ImmutableList.of(this.items, this.armor, this.offhand, this.backpackInventory);
 
-    public ExtendedPlayerInventory(PlayerEntity player)
+    public ExtendedPlayerInventory(Player player)
     {
         super(player);
     }
@@ -50,7 +50,7 @@ public class ExtendedPlayerInventory extends PlayerInventory
             }
             index -= inventory.size();
         }
-        return targetInventory != null && !targetInventory.get(index).isEmpty() ? ItemStackHelper.removeItem(targetInventory, index, count) : ItemStack.EMPTY;
+        return targetInventory != null && !targetInventory.get(index).isEmpty() ? ContainerHelper.removeItem(targetInventory, index, count) : ItemStack.EMPTY;
     }
 
     @Override
@@ -131,14 +131,14 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public ListNBT save(ListNBT list)
+    public ListTag save(ListTag list)
     {
         list = super.save(list);
         for(int i = 0; i < this.backpackInventory.size(); i++)
         {
             if(!this.backpackInventory.get(i).isEmpty())
             {
-                CompoundNBT compound = new CompoundNBT();
+                CompoundTag compound = new CompoundTag();
                 compound.putByte("Slot", (byte) (i + 200));
                 this.backpackInventory.get(i).save(compound);
                 list.add(compound);
@@ -148,12 +148,12 @@ public class ExtendedPlayerInventory extends PlayerInventory
     }
 
     @Override
-    public void load(ListNBT list)
+    public void load(ListTag list)
     {
         super.load(list);
         for(int i = 0; i < list.size(); ++i)
         {
-            CompoundNBT compound = list.getCompound(i);
+            CompoundTag compound = list.getCompound(i);
             int slot = compound.getByte("Slot") & 255;
             ItemStack stack = ItemStack.of(compound);
             if(!stack.isEmpty())

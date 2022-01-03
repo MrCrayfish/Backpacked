@@ -4,15 +4,15 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 
 /**
  * Author: MrCrayfish
  */
 public class UnlockBackpackCommand
 {
-    public static void register(CommandDispatcher<CommandSource> dispatcher)
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(Commands.literal("unlockbackpack").requires(source -> {
             return source.hasPermission(2);

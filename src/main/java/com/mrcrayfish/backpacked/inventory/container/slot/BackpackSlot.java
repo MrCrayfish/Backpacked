@@ -2,18 +2,18 @@ package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.block.Block;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Author: MrCrayfish
  */
 public class BackpackSlot extends Slot
 {
-    public BackpackSlot(IInventory inventoryIn, int index, int xPosition, int yPosition)
+    public BackpackSlot(Container inventoryIn, int index, int xPosition, int yPosition)
     {
         super(inventoryIn, index, xPosition, yPosition);
     }

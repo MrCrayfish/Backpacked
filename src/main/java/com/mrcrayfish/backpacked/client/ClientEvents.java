@@ -1,7 +1,8 @@
 package com.mrcrayfish.backpacked.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
@@ -14,21 +15,20 @@ import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
@@ -54,7 +54,7 @@ public class ClientEvents
         }
         else if(minecraft.player != null && minecraft.screen == null)
         {
-            ClientPlayerEntity player = minecraft.player;
+            LocalPlayer player = minecraft.player;
             if(ClientHandler.KEY_BACKPACK.isDown() && ClientHandler.KEY_BACKPACK.consumeClick())
             {
                 if(!Backpacked.getBackpackStack(player).isEmpty())
@@ -75,8 +75,8 @@ public class ClientEvents
         if(mc.level == null || mc.player == null)
             return;
 
-        List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(16F), player -> true);
-        for(PlayerEntity player : players)
+        List<Player> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(16F), player -> true);
+        for(Player player : players)
         {
             if(Backpacked.isCuriosLoaded() && !Curios.isBackpackVisible(player))
                 continue;
@@ -89,15 +89,18 @@ public class ClientEvents
                 continue;
 
             String modelName = stack.getOrCreateTag().getString("BackpackModel");
-            BackpackModel model = BackpackLayer.getModel(modelName);
+            BackpackModel model = BackpackLayer.getModel(modelName).get();
+            if(model == null)
+                continue;
+
             model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
         }
     }
 
     public static boolean canShowBackpackEffects(ItemStack stack)
     {
-        CompoundNBT tag = stack.getOrCreateTag();
-        if(tag.contains(BackpackModelProperty.SHOW_EFFECTS.getTagName(), Constants.NBT.TAG_BYTE))
+        CompoundTag tag = stack.getOrCreateTag();
+        if(tag.contains(BackpackModelProperty.SHOW_EFFECTS.getTagName(), Tag.TAG_BYTE))
         {
             return tag.getBoolean(BackpackModelProperty.SHOW_EFFECTS.getTagName());
         }
@@ -123,22 +126,22 @@ public class ClientEvents
             return false;
 
         double range = Config.SERVER.pickpocketMaxReachDistance.get();
-        List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
+        List<Player> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
             return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketPlayer(player, mc.player);
         });
 
         if(players.isEmpty())
             return false;
 
-        Vector3d start = mc.player.getEyePosition(1.0F);
-        Vector3d end = mc.player.getViewVector(1.0F).scale(mc.gameMode.getPickRange()).add(start);
+        Vec3 start = mc.player.getEyePosition(1.0F);
+        Vec3 end = mc.player.getViewVector(1.0F).scale(mc.gameMode.getPickRange()).add(start);
 
         double closestDistance = Double.MAX_VALUE;
-        PlayerEntity hitPlayer = null;
-        for(PlayerEntity player : players)
+        Player hitPlayer = null;
+        for(Player player : players)
         {
-            AxisAlignedBB box = PickpocketUtil.getBackpackBox(player, 1.0F);
-            Optional<Vector3d> optionalHitVec = box.clip(start, end);
+            AABB box = PickpocketUtil.getBackpackBox(player, 1.0F);
+            Optional<Vec3> optionalHitVec = box.clip(start, end);
             if(!optionalHitVec.isPresent())
                 continue;
 
@@ -168,12 +171,12 @@ public class ClientEvents
         if(!Config.SERVER.pickpocketBackpacks.get())
             return;
 
-        MatrixStack stack = event.getMatrixStack();
+        PoseStack stack = event.getMatrixStack();
         stack.pushPose();
-        Vector3d view = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
         stack.translate(-view.x(), -view.y, -view.z());
-        IRenderTypeBuffer.Impl source = mc.renderBuffers().bufferSource();
-        for(PlayerEntity player : mc.level.players())
+        MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();
+        for(Player player : mc.level.players())
         {
             if(Backpacked.getBackpackStack(player).isEmpty())
                 continue;
@@ -185,18 +188,18 @@ public class ClientEvents
             float boxRed = inReach ? 0.0F : 1.0F;
             float boxGreen = inReach ? 1.0F : 1.0F;
             float boxBlue = inReach ? 0.0F : 1.0F;
-            IVertexBuilder builder = source.getBuffer(RenderType.lines());
-            WorldRenderer.renderLineBox(stack, builder, PickpocketUtil.getBackpackBox(player, event.getPartialTicks()), boxRed, boxGreen, boxBlue, 1.0F);
+            VertexConsumer builder = source.getBuffer(RenderType.lines());
+            LevelRenderer.renderLineBox(stack, builder, PickpocketUtil.getBackpackBox(player, event.getPartialTicks()), boxRed, boxGreen, boxBlue, 1.0F);
 
-            float bodyRotation = MathHelper.lerp(event.getPartialTicks(), player.yBodyRotO, player.yBodyRot);
+            float bodyRotation = Mth.lerp(event.getPartialTicks(), player.yBodyRotO, player.yBodyRot);
             boolean inRange = PickpocketUtil.inRangeOfBackpack(player, mc.player);
             float lineRed = inRange ? 0.0F : 1.0F;
             float lineGreen = inRange ? 1.0F : 1.0F;
             float lineBlue = inRange ? 0.0F : 1.0F;
             Matrix4f matrix4f = stack.last().pose();
-            Vector3d pos = player.getPosition(event.getPartialTicks());
-            Vector3d start = Vector3d.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
-            Vector3d end = Vector3d.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
+            Vec3 pos = player.getPosition(event.getPartialTicks());
+            Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
+            Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketMaxReachDistance.get());
             builder.vertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();
             builder.vertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();
             builder.vertex(matrix4f, (float) (pos.x + end.x),(float) (pos.y + end.y), (float) (pos.z + end.z)).color(lineRed, lineGreen, lineBlue, 1.0F).endVertex();

@@ -3,15 +3,15 @@ package com.mrcrayfish.backpacked.mixin.common;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.TrashCanBackpack;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ComposterBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,10 +23,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ComposterBlock.class)
 public class ComposterBlockMixin
 {
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/ComposterBlock;extractProduce(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"))
-    public void beforeCollect(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result, CallbackInfoReturnable<ActionResultType> cir)
+    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/ComposterBlock;extractProduce(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
+    public void beforeCollect(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
-        if(!(player instanceof ServerPlayerEntity))
+        if(!(player instanceof ServerPlayer))
             return;
 
         UnlockTracker.get(player).ifPresent(unlockTracker ->
@@ -34,7 +34,7 @@ public class ComposterBlockMixin
             unlockTracker.getProgressTracker(TrashCanBackpack.ID).ifPresent(progressTracker ->
             {
                 CountProgressTracker tracker = (CountProgressTracker) progressTracker;
-                tracker.increment((ServerPlayerEntity) player);
+                tracker.increment((ServerPlayer) player);
             });
         });
     }

@@ -2,30 +2,31 @@ package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
-import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +35,7 @@ import javax.annotation.Nullable;
  */
 public class BackpackItem extends Item
 {
-    public static final TranslationTextComponent BACKPACK_TRANSLATION = new TranslationTextComponent("container.backpack");
+    public static final TranslatableComponent BACKPACK_TRANSLATION = new TranslatableComponent("container.backpack");
 
     public BackpackItem(Properties properties)
     {
@@ -42,26 +43,25 @@ public class BackpackItem extends Item
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn)
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn)
     {
         ItemStack heldItem = playerIn.getItemInHand(handIn);
-        if(playerIn.inventory instanceof ExtendedPlayerInventory)
+        if(playerIn.getInventory() instanceof ExtendedPlayerInventory inventory)
         {
-            ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) playerIn.inventory;
             if(inventory.getBackpackItems().get(0).isEmpty())
             {
-                playerIn.inventory.setItem(41, heldItem.copy());
+                inventory.setItem(41, heldItem.copy());
                 heldItem.setCount(0);
                 playerIn.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
-                return new ActionResult<>(ActionResultType.SUCCESS, heldItem);
+                return new InteractionResultHolder<>(InteractionResult.SUCCESS, heldItem);
             }
         }
-        return new ActionResult<>(ActionResultType.FAIL, heldItem);
+        return new InteractionResultHolder<>(InteractionResult.FAIL, heldItem);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt)
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
     {
         if(!Backpacked.isCuriosLoaded())
         {
@@ -70,7 +70,7 @@ public class BackpackItem extends Item
         return Curios.createBackpackProvider(stack);
     }
 
-    public void showInventory(ServerPlayerEntity player)
+    public void showInventory(ServerPlayer player)
     {
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(!backpack.isEmpty())
@@ -78,10 +78,10 @@ public class BackpackItem extends Item
             BackpackInventory backpackInventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
             if(backpackInventory == null)
                 return;
-            ITextComponent title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
+            Component title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
             int rows = this.getRowCount();
-            NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity) -> {
-                return new BackpackContainer(id, player.inventory, backpackInventory, rows);
+            NetworkHooks.openGui(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
+                return new BackpackContainerMenu(id, player.getInventory(), backpackInventory, rows);
             }, title), buffer -> buffer.writeVarInt(rows));
         }
     }
@@ -94,6 +94,6 @@ public class BackpackItem extends Item
     @OnlyIn(Dist.CLIENT)
     public BackpackModel getDefaultModel()
     {
-        return ModelInstances.STANDARD;
+        return ClientHandler.getModelInstances().getStandardModel();
     }
 }

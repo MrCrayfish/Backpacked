@@ -1,11 +1,11 @@
 package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.network.IContainerFactory;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.fmllegacy.network.IContainerFactory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -14,12 +14,12 @@ import net.minecraftforge.registries.ForgeRegistries;
  */
 public class ModContainers
 {
-    public static final DeferredRegister<ContainerType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, Reference.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, Reference.MOD_ID);
 
-    public static final RegistryObject<ContainerType<BackpackContainer>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainer>) (windowId, playerInventory, data) -> new BackpackContainer(windowId, playerInventory, data.readVarInt()));
+    public static final RegistryObject<MenuType<BackpackContainerMenu>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainerMenu>) (windowId, playerInventory, data) -> new BackpackContainerMenu(windowId, playerInventory, data.readVarInt()));
 
-    private static <T extends Container> RegistryObject<ContainerType<T>> register(String id, ContainerType.IFactory<T> factory)
+    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String id, MenuType.MenuSupplier<T> factory)
     {
-        return REGISTER.register(id, () -> new ContainerType<>(factory));
+        return REGISTER.register(id, () -> new MenuType<>(factory));
     }
 }

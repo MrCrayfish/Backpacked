@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.core.ModCommands;
@@ -11,15 +12,16 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -36,11 +38,12 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
@@ -66,11 +69,13 @@ public class Backpacked
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCommands());
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onTextureStitch));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().register(ClientHandler.getModelInstances()));
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigLoad);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigReload);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(UnlockTracker::register);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -82,7 +87,6 @@ public class Backpacked
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
-        UnlockTracker.registerCapability();
         Network.init();
     }
 
@@ -106,23 +110,25 @@ public class Backpacked
         if(curiosLoaded)
             return;
 
-        ContainerScreen<?> screen = event.getGuiContainer();
-        if(screen instanceof InventoryScreen)
+        AbstractContainerScreen<?> screen = event.getGuiContainer();
+        if(screen instanceof InventoryScreen inventory)
         {
-            InventoryScreen inventoryScreen = (InventoryScreen) screen;
-            int left = inventoryScreen.getGuiLeft();
-            int top = inventoryScreen.getGuiTop();
-            inventoryScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
+            int left = inventory.getGuiLeft();
+            int top = inventory.getGuiTop();
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
             Screen.blit(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
         }
-        else if(screen instanceof CreativeScreen)
+        else if(screen instanceof CreativeModeInventoryScreen inventory)
         {
-            CreativeScreen creativeScreen = (CreativeScreen) screen;
-            if(creativeScreen.getSelectedTab() == ItemGroup.TAB_INVENTORY.getId())
+            if(inventory.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId())
             {
-                int left = creativeScreen.getGuiLeft();
-                int top = creativeScreen.getGuiTop();
-                creativeScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
+                int left = inventory.getGuiLeft();
+                int top = inventory.getGuiTop();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
                 Screen.blit(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
             }
         }
@@ -131,7 +137,7 @@ public class Backpacked
     @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event)
     {
-        if(event.getMap().location().equals(PlayerContainer.BLOCK_ATLAS))
+        if(event.getMap().location().equals(InventoryMenu.BLOCK_ATLAS))
         {
             event.addSprite(EMPTY_BACKPACK_SLOT);
         }
@@ -143,10 +149,10 @@ public class Backpacked
         if(curiosLoaded)
             return;
 
-        PlayerEntity oldPlayer = event.getOriginal();
-        if(oldPlayer.inventory instanceof ExtendedPlayerInventory && event.getPlayer().inventory instanceof ExtendedPlayerInventory)
+        Player oldPlayer = event.getOriginal();
+        if(oldPlayer.getInventory() instanceof ExtendedPlayerInventory inventory1 && event.getPlayer().getInventory() instanceof ExtendedPlayerInventory inventory2)
         {
-            ((ExtendedPlayerInventory) event.getPlayer().inventory).copyBackpack((ExtendedPlayerInventory) oldPlayer.inventory);
+            inventory2.copyBackpack(inventory1);
         }
     }
 
@@ -156,10 +162,10 @@ public class Backpacked
         if(curiosLoaded)
             return;
 
-        PlayerEntity player = event.getPlayer();
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        Player player = event.getPlayer();
+        if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
         {
-            ItemStack backpack = ((ExtendedPlayerInventory) player.inventory).getBackpackItems().get(0);
+            ItemStack backpack = inventory.getBackpackItems().get(0);
             if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
             {
                 Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), backpack));
@@ -176,10 +182,9 @@ public class Backpacked
         if(event.phase != TickEvent.Phase.START)
             return;
 
-        PlayerEntity player = event.player;
-        if(!player.level.isClientSide && player.inventory instanceof ExtendedPlayerInventory)
+        Player player = event.player;
+        if(!player.level.isClientSide && player.getInventory() instanceof ExtendedPlayerInventory inventory)
         {
-            ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
                 Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0)));
@@ -198,16 +203,15 @@ public class Backpacked
         return curiosLoaded;
     }
 
-    public static ItemStack getBackpackStack(PlayerEntity player)
+    public static ItemStack getBackpackStack(Player player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         if(Backpacked.isCuriosLoaded())
         {
             backpack.set(Curios.getBackpackStack(player));
         }
-        if(player.inventory instanceof ExtendedPlayerInventory)
+        if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
         {
-            ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
             ItemStack stack = inventory.getBackpackItems().get(0);
             if(stack.getItem() instanceof BackpackItem)
             {
@@ -217,7 +221,7 @@ public class Backpacked
         return backpack.get();
     }
 
-    private void onConfigLoad(ModConfig.Loading event)
+    private void onConfigLoad(ModConfigEvent.Loading event)
     {
         ModConfig config = event.getConfig();
         if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
@@ -226,7 +230,7 @@ public class Backpacked
         }
     }
 
-    private void onConfigReload(ModConfig.Reloading event)
+    private void onConfigReload(ModConfigEvent.Reloading event)
     {
         ModConfig config = event.getConfig();
         if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
@@ -251,5 +255,4 @@ public class Backpacked
     {
         return bannedItemsList;
     }
-
 }

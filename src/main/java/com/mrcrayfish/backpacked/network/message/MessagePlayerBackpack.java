@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -21,13 +21,13 @@ public class MessagePlayerBackpack implements IMessage<MessagePlayerBackpack>
     }
 
     @Override
-    public void encode(MessagePlayerBackpack message, PacketBuffer buffer)
+    public void encode(MessagePlayerBackpack message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.entityId);
     }
 
     @Override
-    public MessagePlayerBackpack decode(PacketBuffer buffer)
+    public MessagePlayerBackpack decode(FriendlyByteBuf buffer)
     {
         return new MessagePlayerBackpack(buffer.readInt());
     }

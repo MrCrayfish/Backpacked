@@ -1,13 +1,14 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,7 +30,7 @@ public class MiniChestBackpack extends Backpack
     @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
-        return ModelInstances.MINI_CHEST;
+        return ClientHandler.getModelInstances().getMiniChest();
     }
 
     @Nullable

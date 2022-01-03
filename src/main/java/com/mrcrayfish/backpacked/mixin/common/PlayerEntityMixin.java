@@ -10,14 +10,14 @@ import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -32,28 +32,28 @@ import javax.annotation.Nullable;
 /**
  * Author: MrCrayfish
  */
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public class PlayerEntityMixin implements BackpackedInventoryAccess
 {
     @Shadow
     @Final
     @Mutable
-    public PlayerInventory inventory;
+    public Inventory inventory;
 
     @Shadow
     @Final
     @Mutable
-    public PlayerContainer inventoryMenu;
+    public InventoryMenu inventoryMenu;
 
     @Unique
     public BackpackInventory backpackedInventory = null;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void constructorTail(World world, BlockPos pos, float spawnAngle, GameProfile profile, CallbackInfo ci)
+    private void constructorTail(Level world, BlockPos pos, float spawnAngle, GameProfile profile, CallbackInfo ci)
     {
         if(Backpacked.isCuriosLoaded())
             return;
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
         this.inventory = new ExtendedPlayerInventory(player);
         this.inventoryMenu = new ExtendedPlayerContainer(this.inventory, !world.isClientSide, player);
         player.containerMenu = this.inventoryMenu;
@@ -63,7 +63,7 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
     @Nullable
     public BackpackInventory getBackpackedInventory()
     {
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
         ItemStack stack = Backpacked.getBackpackStack(player);
         if(stack.isEmpty())
         {
@@ -80,20 +80,20 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
     }
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;awardStat(Lnet/minecraft/util/ResourceLocation;I)V", ordinal = 7))
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 7))
     public void onFallFlying(double dx, double dy, double dz, CallbackInfo ci)
     {
-        PlayerEntity player = (PlayerEntity) (Object) this;
-        if(!(player instanceof ServerPlayerEntity))
+        Player player = (Player) (Object) this;
+        if(!(player instanceof ServerPlayer))
             return;
 
-        int distance = Math.round(MathHelper.sqrt(dx * dx + dy * dy + dz * dz));
+        int distance = (int) Math.round(Math.sqrt(dx * dx + dy * dy + dz * dz));
         UnlockTracker.get(player).ifPresent(unlockTracker ->
         {
             unlockTracker.getProgressTracker(RocketBackpack.ID).ifPresent(progressTracker ->
             {
                 CountProgressTracker tracker = (CountProgressTracker) progressTracker;
-                tracker.increment(distance, (ServerPlayerEntity) player);
+                tracker.increment(distance, (ServerPlayer) player);
             });
         });
     }

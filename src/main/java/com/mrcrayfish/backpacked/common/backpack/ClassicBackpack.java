@@ -1,11 +1,12 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -20,7 +21,7 @@ public class ClassicBackpack extends Backpack
     }
 
     @Override
-    public boolean isUnlocked(PlayerEntity player)
+    public boolean isUnlocked(Player player)
     {
         return true;
     }
@@ -29,6 +30,6 @@ public class ClassicBackpack extends Backpack
     @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
-        return ModelInstances.CLASSIC;
+        return ClientHandler.getModelInstances().getClassic();
     }
 }

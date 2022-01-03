@@ -17,13 +17,13 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[36.2.20,)"
+    versionRange="[37.1.1,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,1.17)"
+    versionRange="[1.17.1,1.18)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]

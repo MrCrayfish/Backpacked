@@ -3,16 +3,18 @@ package com.mrcrayfish.backpacked.integration;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotTypePreset;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -29,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Curios
 {
-    public static ItemStack getBackpackStack(PlayerEntity player)
+    public static ItemStack getBackpackStack(Player player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
         LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
@@ -48,7 +50,7 @@ public class Curios
         return backpack.get();
     }
 
-    public static boolean isBackpackVisible(PlayerEntity player)
+    public static boolean isBackpackVisible(Player player)
     {
         AtomicReference<Boolean> visible = new AtomicReference<>(true);
         LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
@@ -66,48 +68,62 @@ public class Curios
         return CurioItemCapability.createProvider(new ICurio()
         {
             @Override
-            public void playRightClickEquipSound(LivingEntity entity)
+            public ItemStack getStack()
             {
-                entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                return stack;
+            }
+
+            @Nonnull
+            @Override
+            public SoundInfo getEquipSound(SlotContext context)
+            {
+                return new SoundInfo(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
             }
 
             @Override
-            public boolean canRightClickEquip()
+            public boolean canEquip(SlotContext context)
             {
                 return true;
             }
 
             @Override
-            public boolean canSync(String identifier, int index, LivingEntity livingEntity)
+            public boolean canSync(SlotContext context)
             {
                 return true;
             }
 
             @Nullable
             @Override
-            public CompoundNBT writeSyncData()
+            public CompoundTag writeSyncData(SlotContext context)
             {
-                CompoundNBT realTag = stack.getOrCreateTag();
-                CompoundNBT tag = new CompoundNBT();
+                CompoundTag realTag = stack.getOrCreateTag();
+                CompoundTag tag = new CompoundTag();
                 tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
                 for(BackpackModelProperty property : BackpackModelProperty.values())
                 {
                     String tagName = property.getTagName();
-                    boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+                    boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
                     tag.putBoolean(tagName, value);
                 }
                 return tag;
             }
 
             @Override
-            public void readSyncData(CompoundNBT compound)
+            public void readSyncData(SlotContext context, CompoundTag compound)
             {
-                stack.getOrCreateTag().putString("BackpackModel", compound.getString("BackpackModel"));
+                CompoundTag itemTag = stack.getOrCreateTag();
+                itemTag.putString("BackpackModel", compound.getString("BackpackModel"));
+                for(BackpackModelProperty property : BackpackModelProperty.values())
+                {
+                    String tagName = property.getTagName();
+                    boolean value = compound.contains(tagName, Tag.TAG_BYTE) ? compound.getBoolean(tagName) : property.getDefaultValue();
+                    itemTag.putBoolean(tagName, value);
+                }
             }
 
             @Nonnull
             @Override
-            public DropRule getDropRule(LivingEntity livingEntity)
+            public DropRule getDropRule(SlotContext context, DamageSource source, int lootingLevel, boolean recentlyHit)
             {
                 return Config.COMMON.keepBackpackOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
             }

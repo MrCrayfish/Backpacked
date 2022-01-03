@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -22,13 +22,13 @@ public class MessageUnlockBackpack implements IMessage<MessageUnlockBackpack>
     }
 
     @Override
-    public void encode(MessageUnlockBackpack message, PacketBuffer buffer)
+    public void encode(MessageUnlockBackpack message, FriendlyByteBuf buffer)
     {
         buffer.writeResourceLocation(message.id);
     }
 
     @Override
-    public MessageUnlockBackpack decode(PacketBuffer buffer)
+    public MessageUnlockBackpack decode(FriendlyByteBuf buffer)
     {
         return new MessageUnlockBackpack(buffer.readResourceLocation());
     }

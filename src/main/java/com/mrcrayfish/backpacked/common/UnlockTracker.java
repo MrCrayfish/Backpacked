@@ -6,27 +6,27 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,10 +41,9 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class UnlockTracker
 {
-    @CapabilityInject(UnlockTracker.class)
-    public static final Capability<UnlockTracker> UNLOCK_TRACKER_CAPABILITY = null;
+    public static final Capability<UnlockTracker> UNLOCK_TRACKER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
     public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "unlock_tracker");
-    private static final Set<ServerPlayerEntity> testForCompletion = new HashSet<>();
+    private static final Set<ServerPlayer> testForCompletion = new HashSet<>();
 
     private final Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
     private final Map<ResourceLocation, IProgressTracker> progressTrackerMap;
@@ -91,20 +90,20 @@ public class UnlockTracker
         return false;
     }
 
-    public static void registerCapability()
-    {
-        CapabilityManager.INSTANCE.register(UnlockTracker.class, new Storage(), UnlockTracker::new);
-    }
-
-    static void queuePlayerForCompletionTest(ServerPlayerEntity player)
+    static void queuePlayerForCompletionTest(ServerPlayer player)
     {
         testForCompletion.add(player);
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static LazyOptional<UnlockTracker> get(PlayerEntity player)
+    public static LazyOptional<UnlockTracker> get(Player player)
     {
         return player.getCapability(UNLOCK_TRACKER_CAPABILITY);
+    }
+
+    public static void register(RegisterCapabilitiesEvent event)
+    {
+        event.register(UnlockTracker.class);
     }
 
     @SubscribeEvent
@@ -119,7 +118,7 @@ public class UnlockTracker
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
     {
         get(event.getPlayer()).ifPresent(unlockTracker -> {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
@@ -132,7 +131,7 @@ public class UnlockTracker
         if(testForCompletion.isEmpty())
             return;
 
-        for(ServerPlayerEntity player : testForCompletion)
+        for(ServerPlayer player : testForCompletion)
         {
             get(player).ifPresent(unlockTracker ->
             {
@@ -148,57 +147,7 @@ public class UnlockTracker
         testForCompletion.clear();
     }
 
-    public static class Storage implements Capability.IStorage<UnlockTracker>
-    {
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<UnlockTracker> capability, UnlockTracker instance, Direction side)
-        {
-            CompoundNBT tag = new CompoundNBT();
-
-            ListNBT unlockedBackpacks = new ListNBT();
-            instance.unlockedBackpacks.forEach(location -> unlockedBackpacks.add(StringNBT.valueOf(location.toString())));
-            tag.put("UnlockedBackpacks", unlockedBackpacks);
-
-            ListNBT progressTrackers = new ListNBT();
-            instance.progressTrackerMap.forEach((location, progressTracker) -> {
-                CompoundNBT progressTag = new CompoundNBT();
-                progressTag.putString("Id", location.toString());
-                CompoundNBT dataTag = new CompoundNBT();
-                progressTracker.write(dataTag);
-                progressTag.put("Data", dataTag);
-                progressTrackers.add(progressTag);
-            });
-            tag.put("ProgressTrackers", progressTrackers);
-
-            return tag;
-        }
-
-        @Override
-        public void readNBT(Capability<UnlockTracker> capability, UnlockTracker instance, Direction side, INBT nbt)
-        {
-            instance.unlockedBackpacks.clear();
-            CompoundNBT tag = (CompoundNBT) nbt;
-
-            ListNBT unlockedBackpacks = tag.getList("UnlockedBackpacks", Constants.NBT.TAG_STRING);
-            unlockedBackpacks.forEach(t -> instance.unlockedBackpacks.add(ResourceLocation.tryParse(t.getAsString())));
-
-            ListNBT progressTrackers = tag.getList("ProgressTrackers", Constants.NBT.TAG_COMPOUND);
-            progressTrackers.forEach(t ->
-            {
-                CompoundNBT progressTag = (CompoundNBT) t;
-                ResourceLocation id = new ResourceLocation(progressTag.getString("Id"));
-                IProgressTracker tracker = instance.progressTrackerMap.get(id);
-                if(tracker != null)
-                {
-                    CompoundNBT dataTag = progressTag.getCompound("Data");
-                    tracker.read(dataTag);
-                }
-            });
-        }
-    }
-
-    public static class Provider implements ICapabilitySerializable<CompoundNBT>
+    public static class Provider implements ICapabilitySerializable<CompoundTag>
     {
         private final UnlockTracker instance = new UnlockTracker();
         private final LazyOptional<UnlockTracker> optional = LazyOptional.of(() -> this.instance);
@@ -211,15 +160,48 @@ public class UnlockTracker
         }
 
         @Override
-        public CompoundNBT serializeNBT()
+        public CompoundTag serializeNBT()
         {
-            return (CompoundNBT) UNLOCK_TRACKER_CAPABILITY.writeNBT(this.instance, null);
+            CompoundTag tag = new CompoundTag();
+
+            ListTag unlockedBackpacks = new ListTag();
+            this.instance.unlockedBackpacks.forEach(location -> unlockedBackpacks.add(StringTag.valueOf(location.toString())));
+            tag.put("UnlockedBackpacks", unlockedBackpacks);
+
+            ListTag progressTrackers = new ListTag();
+            this.instance.progressTrackerMap.forEach((location, progressTracker) -> {
+                CompoundTag progressTag = new CompoundTag();
+                progressTag.putString("Id", location.toString());
+                CompoundTag dataTag = new CompoundTag();
+                progressTracker.write(dataTag);
+                progressTag.put("Data", dataTag);
+                progressTrackers.add(progressTag);
+            });
+            tag.put("ProgressTrackers", progressTrackers);
+
+            return tag;
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT tag)
+        public void deserializeNBT(CompoundTag tag)
         {
-            UNLOCK_TRACKER_CAPABILITY.readNBT(this.instance, null, tag);
+            this.instance.unlockedBackpacks.clear();
+
+            ListTag unlockedBackpacks = tag.getList("UnlockedBackpacks", Tag.TAG_STRING);
+            unlockedBackpacks.forEach(t -> this.instance.unlockedBackpacks.add(ResourceLocation.tryParse(t.getAsString())));
+
+            ListTag progressTrackers = tag.getList("ProgressTrackers", Tag.TAG_COMPOUND);
+            progressTrackers.forEach(t ->
+            {
+                CompoundTag progressTag = (CompoundTag) t;
+                ResourceLocation id = new ResourceLocation(progressTag.getString("Id"));
+                IProgressTracker tracker = this.instance.progressTrackerMap.get(id);
+                if(tracker != null)
+                {
+                    CompoundTag dataTag = progressTag.getCompound("Data");
+                    tracker.read(dataTag);
+                }
+            });
         }
 
         public void invalidate()

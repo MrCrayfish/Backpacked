@@ -11,8 +11,8 @@ import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Author: MrCrayfish
@@ -25,7 +25,7 @@ public class ClientPlayHandler
         if(mc.player == null)
             return;
 
-        PlayerEntity player = mc.player;
+        Player player = mc.player;
         UnlockTracker.get(player).ifPresent(impl ->
         {
             Backpack backpack = BackpackManager.instance().getBackpack(message.getId());
@@ -43,7 +43,7 @@ public class ClientPlayHandler
         if(mc.player == null)
             return;
 
-        PlayerEntity player = mc.player;
+        Player player = mc.player;
         UnlockTracker.get(player).ifPresent(impl -> {
             message.getUnlockedBackpacks().forEach(impl::unlockBackpack);
         });
@@ -55,12 +55,11 @@ public class ClientPlayHandler
         if(minecraft.level != null)
         {
             Entity entity = minecraft.level.getEntity(message.getEntityId());
-            if(entity instanceof PlayerEntity)
+            if(entity instanceof Player player)
             {
-                PlayerEntity player = (PlayerEntity) entity;
-                if(player.inventory instanceof ExtendedPlayerInventory)
+                if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
                 {
-                    ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, message.getBackpack());
+                    inventory.getBackpackItems().set(0, message.getBackpack());
                 }
             }
         }

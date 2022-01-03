@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -26,7 +26,7 @@ public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmeti
     }
 
     @Override
-    public void encode(MessageBackpackCosmetics message, PacketBuffer buffer)
+    public void encode(MessageBackpackCosmetics message, FriendlyByteBuf buffer)
     {
         buffer.writeResourceLocation(message.id);
         buffer.writeBoolean(message.showWithElytra);
@@ -34,7 +34,7 @@ public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmeti
     }
 
     @Override
-    public MessageBackpackCosmetics decode(PacketBuffer buffer)
+    public MessageBackpackCosmetics decode(FriendlyByteBuf buffer)
     {
         return new MessageBackpackCosmetics(buffer.readResourceLocation(), buffer.readBoolean(), buffer.readBoolean());
     }

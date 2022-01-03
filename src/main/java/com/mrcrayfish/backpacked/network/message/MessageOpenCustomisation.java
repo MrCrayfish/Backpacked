@@ -1,10 +1,10 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,17 +15,17 @@ import java.util.function.Supplier;
  */
 public class MessageOpenCustomisation implements IMessage<MessageOpenCustomisation>
 {
-    private Map<ResourceLocation, ITextComponent> map;
+    private Map<ResourceLocation, Component> map;
 
     public MessageOpenCustomisation() {}
 
-    public MessageOpenCustomisation(Map<ResourceLocation, ITextComponent> map)
+    public MessageOpenCustomisation(Map<ResourceLocation, Component> map)
     {
         this.map = map;
     }
 
     @Override
-    public void encode(MessageOpenCustomisation message, PacketBuffer buffer)
+    public void encode(MessageOpenCustomisation message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.map.size());
         message.map.forEach((location, formattedProgress) -> {
@@ -35,14 +35,14 @@ public class MessageOpenCustomisation implements IMessage<MessageOpenCustomisati
     }
 
     @Override
-    public MessageOpenCustomisation decode(PacketBuffer buffer)
+    public MessageOpenCustomisation decode(FriendlyByteBuf buffer)
     {
-        Map<ResourceLocation, ITextComponent> map = new HashMap<>();
+        Map<ResourceLocation, Component> map = new HashMap<>();
         int size = buffer.readInt();
         for(int i = 0; i < size; i++)
         {
             ResourceLocation id = buffer.readResourceLocation();
-            ITextComponent formattedProgress = buffer.readComponent();
+            Component formattedProgress = buffer.readComponent();
             map.put(id, formattedProgress);
         }
         return new MessageOpenCustomisation(map);
@@ -55,7 +55,7 @@ public class MessageOpenCustomisation implements IMessage<MessageOpenCustomisati
         supplier.get().setPacketHandled(true);
     }
 
-    public Map<ResourceLocation, ITextComponent> getProgressMap()
+    public Map<ResourceLocation, Component> getProgressMap()
     {
         return this.map;
     }

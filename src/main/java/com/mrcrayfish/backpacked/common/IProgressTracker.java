@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.common;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 /**
  * Author: MrCrayfish
@@ -11,13 +11,13 @@ public interface IProgressTracker
 {
     boolean isComplete();
 
-    void read(CompoundNBT tag);
+    void read(CompoundTag tag);
 
-    void write(CompoundNBT tag);
+    void write(CompoundTag tag);
 
-    ITextComponent getDisplayComponent();
+    Component getDisplayComponent();
 
-    default void markForCompletionTest(ServerPlayerEntity player)
+    default void markForCompletionTest(ServerPlayer player)
     {
         UnlockTracker.queuePlayerForCompletionTest(player);
     }

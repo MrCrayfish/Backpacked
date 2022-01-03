@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -12,10 +12,10 @@ import java.util.function.Supplier;
 public class MessageOpenBackpack implements IMessage<MessageOpenBackpack>
 {
     @Override
-    public void encode(MessageOpenBackpack message, PacketBuffer buffer) {}
+    public void encode(MessageOpenBackpack message, FriendlyByteBuf buffer) {}
 
     @Override
-    public MessageOpenBackpack decode(PacketBuffer buffer)
+    public MessageOpenBackpack decode(FriendlyByteBuf buffer)
     {
         return new MessageOpenBackpack();
     }

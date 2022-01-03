@@ -1,20 +1,21 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
-import net.minecraft.entity.passive.PandaEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.animal.Panda;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class BambooBasketBackpack extends Backpack
     @OnlyIn(Dist.CLIENT)
     public BackpackModel getModel()
     {
-        return ModelInstances.BAMBOO_BASKET;
+        return ClientHandler.getModelInstances().getBambooBasketModel();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class BambooBasketBackpack extends Backpack
         private static final int COUNT = 10;
         private final Set<UUID> fedPandas = new HashSet<>();
 
-        public void addPanda(PandaEntity panda, ServerPlayerEntity player)
+        public void addPanda(Panda panda, ServerPlayer player)
         {
             this.fedPandas.add(panda.getUUID());
             this.markForCompletionTest(player);
@@ -65,12 +66,12 @@ public class BambooBasketBackpack extends Backpack
         }
 
         @Override
-        public void read(CompoundNBT tag)
+        public void read(CompoundTag tag)
         {
             this.fedPandas.clear();
-            ListNBT list = tag.getList("FedPandas", Constants.NBT.TAG_COMPOUND);
+            ListTag list = tag.getList("FedPandas", Tag.TAG_COMPOUND);
             list.forEach(t -> {
-                CompoundNBT uuidTag = (CompoundNBT) t;
+                CompoundTag uuidTag = (CompoundTag) t;
                 long mostBits = uuidTag.getLong("Most");
                 long leastBits = uuidTag.getLong("Least");
                 this.fedPandas.add(new UUID(mostBits, leastBits));
@@ -78,11 +79,11 @@ public class BambooBasketBackpack extends Backpack
         }
 
         @Override
-        public void write(CompoundNBT tag)
+        public void write(CompoundTag tag)
         {
-            ListNBT list = new ListNBT();
+            ListTag list = new ListTag();
             this.fedPandas.forEach(uuid -> {
-                CompoundNBT uuidTag = new CompoundNBT();
+                CompoundTag uuidTag = new CompoundTag();
                 uuidTag.putLong("Most", uuid.getMostSignificantBits());
                 uuidTag.putLong("Least", uuid.getLeastSignificantBits());
                 list.add(uuidTag);
@@ -91,7 +92,7 @@ public class BambooBasketBackpack extends Backpack
         }
 
         @Override
-        public ITextComponent getDisplayComponent()
+        public Component getDisplayComponent()
         {
             return ProgressFormatters.FED_X_OF_X.apply(this.fedPandas.size(), COUNT);
         }
