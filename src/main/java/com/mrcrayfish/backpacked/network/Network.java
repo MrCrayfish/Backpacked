@@ -36,7 +36,7 @@ public class Network
                 .simpleChannel();
         register(MessageOpenBackpack.class, new MessageOpenBackpack(), NetworkDirection.PLAY_TO_SERVER);
         register(MessageUpdateBackpack.class, new MessageUpdateBackpack(), NetworkDirection.PLAY_TO_CLIENT);
-        register(MessagePlayerBackpack.class, new MessagePlayerBackpack(), NetworkDirection.PLAY_TO_CLIENT);
+        register(MessagePlayerBackpack.class, new MessagePlayerBackpack(), NetworkDirection.PLAY_TO_SERVER);
         register(MessageBackpackCosmetics.class, new MessageBackpackCosmetics(), NetworkDirection.PLAY_TO_SERVER);
         register(MessageSyncUnlockTracker.class, new MessageSyncUnlockTracker(), NetworkDirection.PLAY_TO_CLIENT);
         register(MessageUnlockBackpack.class, new MessageUnlockBackpack(), NetworkDirection.PLAY_TO_CLIENT);
