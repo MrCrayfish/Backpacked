@@ -38,7 +38,7 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
     @Shadow
     @Final
     @Mutable
-    public Inventory inventory;
+    private Inventory inventory;
 
     @Shadow
     @Final
