@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -17,6 +18,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -47,6 +50,7 @@ import net.minecraftforge.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
+import top.theillusivec4.curios.server.command.CurioArgumentType;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -88,6 +92,7 @@ public class Backpacked
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
         Network.init();
+        ArgumentTypes.register("backpacked:backpack", BackpackArgument.class, new EmptyArgumentSerializer<>(BackpackArgument::backpacks));
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
