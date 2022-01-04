@@ -81,7 +81,7 @@ public class Curios
             }
 
             @Override
-            public boolean canEquip(SlotContext context)
+            public boolean canEquipFromUse(SlotContext context)
             {
                 return true;
             }
