@@ -85,7 +85,7 @@ public class UnlockTracker
     {
         if(BackpackManager.instance().getBackpack(id) != null)
         {
-            return this.unlockedBackpacks.remove(id);
+            return this.unlockedBackpacks.add(id);
         }
         return false;
     }
