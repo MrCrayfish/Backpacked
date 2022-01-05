@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -20,6 +21,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -46,6 +48,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
@@ -70,21 +73,22 @@ public class Backpacked
 
     public Backpacked()
     {
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new ModCommands());
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onTextureStitch));
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().register(ClientHandler.getModelInstances()));
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEnqueueIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigLoad);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigReload);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(UnlockTracker::register);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> bus.addListener(this::onTextureStitch));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> bus.register(ClientHandler.getModelInstances()));
+        bus.addListener(this::onCommonSetup);
+        bus.addListener(this::onClientSetup);
+        bus.addListener(this::onEnqueueIMC);
+        bus.addListener(this::onConfigLoad);
+        bus.addListener(this::onConfigReload);
+        bus.addListener(this::onGatherData);
+        bus.addListener(UnlockTracker::register);
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
+        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new ModCommands());
         controllableLoaded = ModList.get().isLoaded("controllable");
         curiosLoaded = ModList.get().isLoaded("curios");
     }
@@ -106,6 +110,12 @@ public class Backpacked
             return;
 
         InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> SlotTypePreset.BACK.getMessageBuilder().build());
+    }
+
+    private void onGatherData(GatherDataEvent event)
+    {
+        DataGenerator generator = event.getGenerator();
+        generator.addProvider(new RecipeGen(generator));
     }
 
     @SubscribeEvent

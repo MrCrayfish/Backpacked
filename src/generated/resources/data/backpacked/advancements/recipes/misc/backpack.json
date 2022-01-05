@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "backpacked:backpack"
+    ]
+  },
+  "criteria": {
+    "has_hide": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:rabbit_hide"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "backpacked:backpack"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hide",
+      "has_the_recipe"
+    ]
+  ]
+}

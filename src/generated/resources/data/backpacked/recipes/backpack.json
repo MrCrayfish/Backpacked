@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "SIS",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:rabbit_hide"
+    },
+    "S": {
+      "tag": "forge:string"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "backpacked:backpack"
+  }
+}
