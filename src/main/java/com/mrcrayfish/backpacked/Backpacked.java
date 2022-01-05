@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -15,6 +16,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.command.arguments.ArgumentSerializer;
+import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemGroup;
@@ -84,6 +87,7 @@ public class Backpacked
     {
         UnlockTracker.registerCapability();
         Network.init();
+        ArgumentTypes.register("backpacked:backpack", BackpackArgument.class, new ArgumentSerializer<>(BackpackArgument::backpacks));
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
