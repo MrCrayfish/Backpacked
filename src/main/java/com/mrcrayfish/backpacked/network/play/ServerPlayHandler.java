@@ -75,11 +75,7 @@ public class ServerPlayHandler
 
     public static void handleOpenBackpack(MessageOpenBackpack message, ServerPlayerEntity player)
     {
-        ItemStack backpack = Backpacked.getBackpackStack(player);
-        if(backpack.getItem() instanceof BackpackItem)
-        {
-            ((BackpackItem) backpack.getItem()).showInventory(player);
-        }
+        BackpackItem.openBackpack(player, player);
     }
 
     public static void handlePlayerBackpack(MessagePlayerBackpack message, ServerPlayerEntity player)
@@ -88,24 +84,15 @@ public class ServerPlayHandler
             return;
 
         Entity entity = player.level.getEntity(message.getEntityId());
-        if(!(entity instanceof PlayerEntity))
+        if(!(entity instanceof ServerPlayerEntity))
             return;
 
-        PlayerEntity otherPlayer = (PlayerEntity) entity;
+        ServerPlayerEntity otherPlayer = (ServerPlayerEntity) entity;
         if(!PickpocketUtil.canSeeBackpack(otherPlayer, player))
             return;
 
-        ItemStack backpack = Backpacked.getBackpackStack(otherPlayer);
-        if(!backpack.isEmpty())
+        if(BackpackItem.openBackpack(otherPlayer, player))
         {
-            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) otherPlayer).getBackpackedInventory();
-            if(backpackInventory == null)
-                return;
-            ITextComponent title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
-            int rows = ((BackpackItem) backpack.getItem()).getRowCount();
-            NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
-                return new BackpackContainer(id, player.inventory, backpackInventory, rows);
-            }, title), buffer -> buffer.writeVarInt(rows));
             otherPlayer.displayClientMessage(new TranslationTextComponent("message.backpacked.player_opened"), true);
             player.level.playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.75F, 1.0F);
         }
@@ -113,6 +100,9 @@ public class ServerPlayHandler
 
     public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayerEntity player)
     {
+        if(Backpacked.getBackpackStack(player).isEmpty())
+            return;
+
         UnlockTracker.get(player).ifPresent(unlockTracker ->
         {
             Map<ResourceLocation, ITextComponent> map = new HashMap<>();

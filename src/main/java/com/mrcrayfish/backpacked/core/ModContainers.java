@@ -16,7 +16,7 @@ public class ModContainers
 {
     public static final DeferredRegister<ContainerType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, Reference.MOD_ID);
 
-    public static final RegistryObject<ContainerType<BackpackContainer>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainer>) (windowId, playerInventory, data) -> new BackpackContainer(windowId, playerInventory, data.readVarInt()));
+    public static final RegistryObject<ContainerType<BackpackContainer>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainer>) (windowId, playerInventory, data) -> new BackpackContainer(windowId, playerInventory, data.readVarInt(), data.readBoolean()));
 
     private static <T extends Container> RegistryObject<ContainerType<T>> register(String id, ContainerType.IFactory<T> factory)
     {
