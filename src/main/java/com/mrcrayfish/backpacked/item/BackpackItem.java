@@ -69,20 +69,27 @@ public class BackpackItem extends Item
         return Curios.createBackpackProvider(stack);
     }
 
-    public void showInventory(ServerPlayer player)
+    public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
     {
-        ItemStack backpack = Backpacked.getBackpackStack(player);
+        ItemStack backpack = Backpacked.getBackpackStack(ownerPlayer);
         if(!backpack.isEmpty())
         {
-            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) ownerPlayer).getBackpackedInventory();
             if(backpackInventory == null)
-                return;
+                return false;
+            BackpackItem backpackItem = (BackpackItem) backpack.getItem();
             Component title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
-            int rows = this.getRowCount();
-            NetworkHooks.openGui(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
-                return new BackpackContainerMenu(id, player.getInventory(), backpackInventory, rows);
-            }, title), buffer -> buffer.writeVarInt(rows));
+            int rows = backpackItem.getRowCount();
+            boolean owner = ownerPlayer.equals(openingPlayer);
+            NetworkHooks.openGui(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
+                return new BackpackContainerMenu(id, openingPlayer.getInventory(), backpackInventory, rows, owner);
+            }, title), buffer -> {
+                buffer.writeVarInt(rows);
+                buffer.writeBoolean(owner);
+            });
+            return true;
         }
+        return false;
     }
 
     public int getRowCount()

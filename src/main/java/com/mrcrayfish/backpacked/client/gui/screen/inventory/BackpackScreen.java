@@ -37,12 +37,14 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final Component CONFIG_TOOLTIP = new TranslatableComponent("backpacked.button.config.tooltip");
 
     private final int rows;
+    private final boolean owner;
     private boolean opened;
 
     public BackpackScreen(BackpackContainerMenu backpackContainerMenu, Inventory playerInventory, Component titleIn)
     {
         super(backpackContainerMenu, playerInventory, titleIn);
         this.rows = backpackContainerMenu.getRows();
+        this.owner = backpackContainerMenu.isOwner();
         this.imageHeight = 114 + this.rows * 18;
         this.inventoryLabelY = this.imageHeight - 96 + 2;
     }
@@ -56,13 +58,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             this.opened = true;
         }
-        int titleWidth = minecraft.font.width(this.title);
-        this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
-            Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
-        }, (button, matrixStack, mouseX, mouseY) -> {
-            this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
-        }));
-        this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3 + 13, this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+        int titleWidth = this.minecraft.font.width(this.title);
+        if(this.owner)
+        {
+            this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+                Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
+            }, (button, matrixStack, mouseX, mouseY) -> {
+                this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
+            }));
+        }
+        this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3 + (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
             this.openConfigScreen();
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);

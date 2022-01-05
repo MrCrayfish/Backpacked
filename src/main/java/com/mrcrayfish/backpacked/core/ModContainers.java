@@ -16,7 +16,7 @@ public class ModContainers
 {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, Reference.MOD_ID);
 
-    public static final RegistryObject<MenuType<BackpackContainerMenu>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainerMenu>) (windowId, playerInventory, data) -> new BackpackContainerMenu(windowId, playerInventory, data.readVarInt()));
+    public static final RegistryObject<MenuType<BackpackContainerMenu>> BACKPACK = register("backpack", (IContainerFactory<BackpackContainerMenu>) (windowId, playerInventory, data) -> new BackpackContainerMenu(windowId, playerInventory, data.readVarInt(), data.readBoolean()));
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String id, MenuType.MenuSupplier<T> factory)
     {

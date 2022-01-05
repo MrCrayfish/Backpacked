@@ -85,7 +85,7 @@ public class UnlockTracker
     {
         if(BackpackManager.instance().getBackpack(id) != null)
         {
-            return this.unlockedBackpacks.add(id);
+            return this.unlockedBackpacks.remove(id);
         }
         return false;
     }
@@ -95,7 +95,6 @@ public class UnlockTracker
         testForCompletion.add(player);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static LazyOptional<UnlockTracker> get(Player player)
     {
         return player.getCapability(UNLOCK_TRACKER_CAPABILITY);

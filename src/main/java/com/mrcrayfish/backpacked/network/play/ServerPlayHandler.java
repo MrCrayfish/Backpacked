@@ -6,10 +6,7 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
-import com.mrcrayfish.backpacked.inventory.BackpackInventory;
-import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
-import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -26,11 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -75,11 +69,7 @@ public class ServerPlayHandler
 
     public static void handleOpenBackpack(MessageOpenBackpack message, ServerPlayer player)
     {
-        ItemStack backpack = Backpacked.getBackpackStack(player);
-        if(backpack.getItem() instanceof BackpackItem)
-        {
-            ((BackpackItem) backpack.getItem()).showInventory(player);
-        }
+        BackpackItem.openBackpack(player, player);
     }
 
     public static void handlePlayerBackpack(MessagePlayerBackpack message, ServerPlayer player)
@@ -88,24 +78,14 @@ public class ServerPlayHandler
             return;
 
         Entity entity = player.level.getEntity(message.getEntityId());
-        if(!(entity instanceof Player))
+        if(!(entity instanceof ServerPlayer otherPlayer))
             return;
 
-        Player otherPlayer = (Player) entity;
         if(!PickpocketUtil.canSeeBackpack(otherPlayer, player))
             return;
 
-        ItemStack backpack = Backpacked.getBackpackStack(otherPlayer);
-        if(!backpack.isEmpty())
+        if(BackpackItem.openBackpack(otherPlayer, player))
         {
-            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) otherPlayer).getBackpackedInventory();
-            if(backpackInventory == null)
-                return;
-            Component title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
-            int rows = ((BackpackItem) backpack.getItem()).getRowCount();
-            NetworkHooks.openGui(player, new SimpleMenuProvider((id, playerInventory, entity1) -> {
-                return new BackpackContainerMenu(id, player.getInventory(), backpackInventory, rows);
-            }, title), buffer -> buffer.writeVarInt(rows));
             otherPlayer.displayClientMessage(new TranslatableComponent("message.backpacked.player_opened"), true);
             player.level.playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.75F, 1.0F);
         }
@@ -113,6 +93,9 @@ public class ServerPlayHandler
 
     public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayer player)
     {
+        if(Backpacked.getBackpackStack(player).isEmpty())
+            return;
+
         UnlockTracker.get(player).ifPresent(unlockTracker ->
         {
             Map<ResourceLocation, Component> map = new HashMap<>();

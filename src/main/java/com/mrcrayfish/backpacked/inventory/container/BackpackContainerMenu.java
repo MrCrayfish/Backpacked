@@ -17,18 +17,20 @@ public class BackpackContainerMenu extends AbstractContainerMenu
 {
     private final Container backpackInventory;
     private final int rows;
+    private final boolean owner;
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, int rows)
+    public BackpackContainerMenu(int id, Inventory playerInventory, int rows, boolean owner)
     {
-        this(id, playerInventory, new SimpleContainer(9 * rows), rows);
+        this(id, playerInventory, new SimpleContainer(9 * rows), rows, owner);
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int rows)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int rows, boolean owner)
     {
         super(ModContainers.BACKPACK.get(), id);
         checkContainerSize(backpackContainer, rows * 9);
         this.backpackInventory = backpackContainer;
         this.rows = rows;
+        this.owner = owner;
         backpackContainer.startOpen(playerInventory.player);
         int offset = (this.rows - 4) * 18;
 
@@ -102,6 +104,11 @@ public class BackpackContainerMenu extends AbstractContainerMenu
 
     public int getRows()
     {
-        return rows;
+        return this.rows;
+    }
+
+    public boolean isOwner()
+    {
+        return this.owner;
     }
 }
