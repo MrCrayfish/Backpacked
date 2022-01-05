@@ -20,6 +20,8 @@ archivesBaseName = project.property('mod.id')
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 mixin {
     add sourceSets.main, "backpacked.refmap.json"
 }
@@ -60,7 +62,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'backpacked', '--all', '--output', file('src/generated/resources/')
             mods {
                 backpacked {
                     source sourceSets.main
