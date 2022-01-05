@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CreativeModeInventoryScreen.class)
 public class CreativeScreenMixin
 {
-    @Inject(method = "selectTab", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;add(Ljava/lang/Object;)Z", ordinal = 1))
+    @Inject(method = "selectTab", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/NonNullList;add(Ljava/lang/Object;)Z", ordinal = 3))
     private void patchBackpackSlot(CreativeModeTab tab, CallbackInfo ci)
     {
         CreativeModeInventoryScreen screen = (CreativeModeInventoryScreen) (Object) this;
