@@ -24,21 +24,16 @@ public class CommonEvents
     @SubscribeEvent
     public static void onPickupItem(EntityItemPickupEvent event)
     {
-        if(Config.SERVER.lockBackpackIntoSlot.get() && event.getEntityLiving() instanceof ServerPlayer player)
+        if(Config.SERVER.autoEquipBackpackOnPickup.get() && event.getEntityLiving() instanceof ServerPlayer player)
         {
             ItemEntity entity = event.getItem();
             ItemStack stack = entity.getItem();
             if(!(stack.getItem() instanceof BackpackItem))
                 return;
 
-            CompoundTag tag = stack.getTag();
-            if(tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty())
-                return;
-
-            event.setCanceled(true);
-
             if(Backpacked.getBackpackStack(player).isEmpty())
             {
+                event.setCanceled(true);
                 if(Backpacked.setBackpackStack(player, stack))
                 {
                     ((ServerLevel) entity.level).getChunkSource().broadcast(entity, new ClientboundTakeItemEntityPacket(entity.getId(), player.getId(), stack.getCount()));
