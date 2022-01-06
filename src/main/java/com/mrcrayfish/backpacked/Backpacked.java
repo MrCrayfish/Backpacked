@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
@@ -52,6 +53,7 @@ import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -65,7 +67,7 @@ public class Backpacked
 
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
-    private static List<ResourceLocation> bannedItemsList;
+    private static Set<ResourceLocation> bannedItemsList;
 
     public Backpacked()
     {
@@ -276,10 +278,10 @@ public class Backpacked
 
     private void updateBannedItemsList()
     {
-        bannedItemsList = ImmutableList.copyOf(Config.SERVER.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toList()));
+        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
     }
 
-    public static List<ResourceLocation> getBannedItemsList()
+    public static Set<ResourceLocation> getBannedItemsList()
     {
         return bannedItemsList;
     }
