@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +24,7 @@ public class CommonEvents
     @SubscribeEvent
     public static void onPickupItem(EntityItemPickupEvent event)
     {
-        if(event.getEntity() instanceof ServerPlayer player)
+        if(Config.SERVER.lockBackpackIntoSlot.get() && event.getEntityLiving() instanceof ServerPlayer player)
         {
             ItemEntity entity = event.getItem();
             ItemStack stack = entity.getItem();

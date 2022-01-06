@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.BackpackedButtonBindings;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
@@ -79,6 +80,9 @@ public class ClientHandler
 
     public static void createBackpackTooltip(ItemStack stack, List<Component> list)
     {
+        if(!Config.SERVER.lockBackpackIntoSlot.get())
+            return;
+
         Minecraft mc = Minecraft.getInstance();
         if(mc.player != null && Backpacked.getBackpackStack(mc.player).equals(stack))
         {

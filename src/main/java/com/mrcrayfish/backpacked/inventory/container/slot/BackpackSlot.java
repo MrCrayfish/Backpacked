@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -34,6 +35,8 @@ public class BackpackSlot extends Slot
     @Override
     public boolean mayPickup(Player player)
     {
+        if(!Config.SERVER.lockBackpackIntoSlot.get())
+            return true;
         CompoundTag tag = this.getItem().getTag();
         return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
     }

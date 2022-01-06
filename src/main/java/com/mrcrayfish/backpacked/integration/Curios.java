@@ -108,6 +108,8 @@ public class Curios
             @Override
             public boolean canUnequip(SlotContext context)
             {
+                if(!Config.SERVER.lockBackpackIntoSlot.get())
+                    return true;
                 CompoundTag tag = stack.getTag();
                 return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
             }
