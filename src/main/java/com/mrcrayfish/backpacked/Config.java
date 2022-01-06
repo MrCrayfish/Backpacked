@@ -46,28 +46,19 @@ public class Config
         Server(ForgeConfigSpec.Builder builder)
         {
             builder.comment("Common configuration settings").push("common");
-            this.bannedItems = builder
-                    .comment("A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
-                    .defineList("bannedItems", Server::getDefaultBannedItems, o ->
-                    {
-                        try
-                        {
-                            //Only allow valid resource locations
-                            ResourceLocation.tryParse(o.toString());
-                            return true;
-                        }
-                        catch(ResourceLocationException e)
-                        {
-                            return false;
-                        }
-                    });
+            this.bannedItems = builder.comment("A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!").defineList("bannedItems", Server::getDefaultBannedItems, Server::resourceLocationValidator);
             this.unlockAllBackpacks = builder.comment("Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.").define("unlockAllBackpacks", false);
-            this.lockBackpackIntoSlot = builder.comment("Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks").define("lockBackpackIntoSlot", true);
+            this.lockBackpackIntoSlot = builder.comment("Stops players from removing the backpack if it's not empty. This prevents players from utilising multiple backpacks, something that could be considered overpowered.").define("lockBackpackIntoSlot", true);
             this.autoEquipBackpackOnPickup = builder.comment("When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.").define("autoEquipBackpackOnPickup", false);
             this.pickpocketBackpacks = builder.comment("If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.").define("pickpocketBackpacks", true);
             this.pickpocketMaxReachDistance = builder.comment("The maximum reach distance of a player to interact with another player's backpack.").defineInRange("pickpocketDistance", 1.5, 0.0, 4.0);
             this.pickpocketMaxRangeAngle = builder.comment("The maximum angle at which another player's backpack can be accessed").defineInRange("pickpocketMaxRangeAngle", 80.0, 0.0, 90.0);
             builder.pop();
+        }
+        
+        private static boolean resourceLocationValidator(Object o)
+        {
+            return ResourceLocation.tryParse(o.toString()) != null;
         }
 
         private static List<String> getDefaultBannedItems()
