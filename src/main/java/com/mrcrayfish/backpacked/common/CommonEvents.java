@@ -31,18 +31,20 @@ public class CommonEvents
             if(!(stack.getItem() instanceof BackpackItem))
                 return;
 
-            if(!Backpacked.getBackpackStack(player).isEmpty())
-                return;
-
             CompoundTag tag = stack.getTag();
             if(tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty())
                 return;
 
-            if(Backpacked.setBackpackStack(player, stack))
+            event.setCanceled(true);
+
+            if(Backpacked.getBackpackStack(player).isEmpty())
             {
-                ((ServerLevel) entity.level).getChunkSource().broadcast(entity, new ClientboundTakeItemEntityPacket(entity.getId(), player.getId(), stack.getCount()));
-                event.setCanceled(true);
-                event.getItem().discard();
+                if(Backpacked.setBackpackStack(player, stack))
+                {
+                    ((ServerLevel) entity.level).getChunkSource().broadcast(entity, new ClientboundTakeItemEntityPacket(entity.getId(), player.getId(), stack.getCount()));
+                    event.setCanceled(true);
+                    event.getItem().discard();
+                }
             }
         }
     }
