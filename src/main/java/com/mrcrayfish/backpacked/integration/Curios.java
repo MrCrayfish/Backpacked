@@ -50,6 +50,19 @@ public class Curios
         return backpack.get();
     }
 
+    public static void setBackpackStack(Player player, ItemStack stack)
+    {
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        optional.ifPresent(itemHandler ->
+        {
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
+            stacksOptional.ifPresent(stacksHandler ->
+            {
+                stacksHandler.getStacks().setStackInSlot(0, stack.copy());
+            });
+        });
+    }
+
     public static boolean isBackpackVisible(Player player)
     {
         AtomicReference<Boolean> visible = new AtomicReference<>(true);
@@ -90,6 +103,13 @@ public class Curios
             public boolean canSync(SlotContext context)
             {
                 return true;
+            }
+
+            @Override
+            public boolean canUnequip(SlotContext context)
+            {
+                CompoundTag tag = stack.getTag();
+                return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
             }
 
             @Nullable

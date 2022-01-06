@@ -7,10 +7,19 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -18,6 +27,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -63,6 +74,21 @@ public class ClientHandler
         if(renderer instanceof PlayerRenderer playerRenderer)
         {
             playerRenderer.addLayer(new BackpackLayer<>(playerRenderer));
+        }
+    }
+
+    public static void createBackpackTooltip(ItemStack stack, List<Component> list)
+    {
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.player != null && Backpacked.getBackpackStack(mc.player).equals(stack))
+        {
+            CompoundTag tag = stack.getTag();
+            if(tag != null && !tag.getList("Items", Tag.TAG_COMPOUND).isEmpty())
+            {
+                mc.font.getSplitter().splitLines(BackpackItem.REMOVE_ITEMS_TOOLTIP, 150, Style.EMPTY).forEach(formattedText -> {
+                    list.add(new TextComponent(formattedText.getString()).withStyle(ChatFormatting.RED));
+                });
+            }
         }
     }
 }

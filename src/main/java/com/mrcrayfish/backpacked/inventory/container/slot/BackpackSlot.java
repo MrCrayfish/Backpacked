@@ -2,6 +2,9 @@ package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.Container;
@@ -26,5 +29,12 @@ public class BackpackSlot extends Slot
             return false;
         }
         return !(stack.getItem() instanceof BackpackItem) && !(Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock);
+    }
+
+    @Override
+    public boolean mayPickup(Player player)
+    {
+        CompoundTag tag = this.getItem().getTag();
+        return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
     }
 }

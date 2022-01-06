@@ -9,8 +9,11 @@ import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -21,6 +24,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -28,6 +32,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -35,6 +40,7 @@ import javax.annotation.Nullable;
 public class BackpackItem extends Item
 {
     public static final TranslatableComponent BACKPACK_TRANSLATION = new TranslatableComponent("container.backpack");
+    public static final MutableComponent REMOVE_ITEMS_TOOLTIP = new TranslatableComponent("backpacked.tooltip.remove_items").withStyle(ChatFormatting.RED);
 
     public BackpackItem(Properties properties)
     {
@@ -67,6 +73,12 @@ public class BackpackItem extends Item
             return null;
         }
         return Curios.createBackpackProvider(stack);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag)
+    {
+        ClientHandler.createBackpackTooltip(stack, list);
     }
 
     public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
