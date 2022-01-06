@@ -101,6 +101,8 @@ public class Config
             bannedItems.add("improvedbackpacks:red_backpack");
             bannedItems.add("improvedbackpacks:black_backpack");
             bannedItems.add("immersiveengineering:toolbox");
+            bannedItems.add("immersiveengineering:crate");
+            bannedItems.add("immersiveengineering:reinforced_crate");
             bannedItems.add("create:white_toolbox");
             bannedItems.add("create:orange_toolbox");
             bannedItems.add("create:magenta_toolbox");
