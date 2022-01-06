@@ -231,6 +231,24 @@ public class Backpacked
         return backpack.get();
     }
 
+    public static boolean setBackpackStack(PlayerEntity player, ItemStack stack)
+    {
+        if(!(stack.getItem() instanceof BackpackItem))
+            return false;
+
+        if(Backpacked.isCuriosLoaded())
+        {
+            Curios.setBackpackStack(player, stack);
+            return true;
+        }
+        else if(player.inventory instanceof ExtendedPlayerInventory)
+        {
+            ((ExtendedPlayerInventory) player.inventory).getBackpackItems().set(0, stack.copy());
+            return true;
+        }
+        return false;
+    }
+
     private void onConfigLoad(ModConfig.Loading event)
     {
         ModConfig config = event.getConfig();

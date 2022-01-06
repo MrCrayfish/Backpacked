@@ -13,6 +13,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotTypePreset;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -48,6 +49,19 @@ public class Curios
         return backpack.get();
     }
 
+    public static void setBackpackStack(PlayerEntity player, ItemStack stack)
+    {
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        optional.ifPresent(itemHandler ->
+        {
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
+            stacksOptional.ifPresent(stacksHandler ->
+            {
+                stacksHandler.getStacks().setStackInSlot(0, stack.copy());
+            });
+        });
+    }
+
     public static boolean isBackpackVisible(PlayerEntity player)
     {
         AtomicReference<Boolean> visible = new AtomicReference<>(true);
@@ -65,16 +79,24 @@ public class Curios
     {
         return CurioItemCapability.createProvider(new ICurio()
         {
+            @Nonnull
             @Override
-            public void playRightClickEquipSound(LivingEntity entity)
+            public SoundInfo getEquipSound(SlotContext slotContext)
             {
-                entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                return new SoundInfo(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
             }
 
             @Override
-            public boolean canRightClickEquip()
+            public boolean canEquipFromUse(SlotContext slotContext)
             {
                 return true;
+            }
+
+            @Override
+            public boolean canUnequip(String identifier, LivingEntity livingEntity)
+            {
+                CompoundNBT tag = stack.getTag();
+                return tag == null || tag.getList("Items", Constants.NBT.TAG_COMPOUND).isEmpty();
             }
 
             @Override

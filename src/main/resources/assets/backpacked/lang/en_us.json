@@ -44,5 +44,6 @@
     "backpacked.formatter.used_x_times": "Used %s Times",
     "backpacked.formatter.bred_x_of_x": "Bred %s / %s",
     "backpacked.formatter.cut_x_of_x": "Cut %s / %s",
-    "backpacked.formatter.shear_x_sheep": "Sheared %s / %s"
+    "backpacked.formatter.shear_x_sheep": "Sheared %s / %s",
+    "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it"
 }
