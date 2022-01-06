@@ -32,13 +32,4 @@ public class BackpackSlot extends Slot
         }
         return !(stack.getItem() instanceof BackpackItem) && !(Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock) && stack.getItem() != Items.BUNDLE;
     }
-
-    @Override
-    public boolean mayPickup(Player player)
-    {
-        if(!Config.SERVER.lockBackpackIntoSlot.get())
-            return true;
-        CompoundTag tag = this.getItem().getTag();
-        return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
-    }
 }

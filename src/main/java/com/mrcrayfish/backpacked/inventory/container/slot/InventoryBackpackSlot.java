@@ -2,9 +2,13 @@ package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -36,5 +40,14 @@ public class InventoryBackpackSlot extends Slot
     public boolean mayPlace(ItemStack stack)
     {
         return stack.getItem() instanceof BackpackItem;
+    }
+
+    @Override
+    public boolean mayPickup(Player player)
+    {
+        if(!Config.SERVER.lockBackpackIntoSlot.get())
+            return true;
+        CompoundTag tag = this.getItem().getTag();
+        return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
     }
 }
