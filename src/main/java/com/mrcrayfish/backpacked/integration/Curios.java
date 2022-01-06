@@ -95,6 +95,8 @@ public class Curios
             @Override
             public boolean canUnequip(String identifier, LivingEntity livingEntity)
             {
+                if(!Config.SERVER.lockBackpackIntoSlot.get())
+                    return true;
                 CompoundNBT tag = stack.getTag();
                 return tag == null || tag.getList("Items", Constants.NBT.TAG_COMPOUND).isEmpty();
             }

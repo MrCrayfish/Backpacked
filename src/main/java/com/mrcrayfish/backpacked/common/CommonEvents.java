@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.item.ItemEntity;
@@ -23,7 +24,7 @@ public class CommonEvents
     @SubscribeEvent
     public static void onPickupItem(EntityItemPickupEvent event)
     {
-        if(event.getEntity() instanceof ServerPlayerEntity)
+        if(Config.SERVER.lockBackpackIntoSlot.get() && event.getEntityLiving() instanceof ServerPlayerEntity)
         {
             ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
             ItemEntity entity = event.getItem();
