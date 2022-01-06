@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.common;
 
-import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 
 import java.util.function.BiFunction;
 

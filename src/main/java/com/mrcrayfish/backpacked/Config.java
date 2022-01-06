@@ -1,12 +1,11 @@
 package com.mrcrayfish.backpacked;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

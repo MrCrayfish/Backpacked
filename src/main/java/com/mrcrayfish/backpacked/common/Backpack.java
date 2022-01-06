@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

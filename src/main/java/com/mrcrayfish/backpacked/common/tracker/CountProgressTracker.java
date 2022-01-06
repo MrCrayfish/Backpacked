@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.common.tracker;
 
 import com.mrcrayfish.backpacked.common.IProgressTracker;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.BiFunction;
 

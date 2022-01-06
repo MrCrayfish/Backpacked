@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.util;
 
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Author: MrCrayfish
