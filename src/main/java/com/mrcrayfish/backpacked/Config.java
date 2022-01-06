@@ -5,6 +5,7 @@ import net.minecraft.ResourceLocationException;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class Config
             builder.comment("Common configuration settings").push("common");
             this.bannedItems = builder
                     .comment("A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
-                    .defineList("bannedItems", Collections.emptyList(), o ->
+                    .defineList("bannedItems", Server::getDefaultBannedItems, o ->
                     {
                         try
                         {
@@ -66,6 +67,57 @@ public class Config
             this.pickpocketMaxReachDistance = builder.comment("The maximum reach distance of a player to interact with another player's backpack.").defineInRange("pickpocketDistance", 1.5, 0.0, 4.0);
             this.pickpocketMaxRangeAngle = builder.comment("The maximum angle at which another player's backpack can be accessed").defineInRange("pickpocketMaxRangeAngle", 80.0, 0.0, 90.0);
             builder.pop();
+        }
+
+        private static List<String> getDefaultBannedItems()
+        {
+            List<String> bannedItems = new ArrayList<>();
+            bannedItems.add("travelersbackpack:custom_travelers_backpack");
+            bannedItems.add("pinesbarrels:better_barrel");
+            bannedItems.add("quark:seed_pouch");
+            bannedItems.add("quark:backpack");
+            bannedItems.add("sophisticatedbackpacks:backpack");
+            bannedItems.add("sophisticatedbackpacks:iron_backpack");
+            bannedItems.add("sophisticatedbackpacks:gold_backpack");
+            bannedItems.add("sophisticatedbackpacks:diamond_backpack");
+            bannedItems.add("sophisticatedbackpacks:netherite_backpack");
+            bannedItems.add("improvedbackpacks:tiny_pocket");
+            bannedItems.add("improvedbackpacks:medium_pocket");
+            bannedItems.add("improvedbackpacks:large_pocket");
+            bannedItems.add("improvedbackpacks:white_backpack");
+            bannedItems.add("improvedbackpacks:orange_backpack");
+            bannedItems.add("improvedbackpacks:magenta_backpack");
+            bannedItems.add("improvedbackpacks:light_blue_backpack");
+            bannedItems.add("improvedbackpacks:yellow_backpack");
+            bannedItems.add("improvedbackpacks:lime_backpack");
+            bannedItems.add("improvedbackpacks:pink_backpack");
+            bannedItems.add("improvedbackpacks:gray_backpack");
+            bannedItems.add("improvedbackpacks:light_gray_backpack");
+            bannedItems.add("improvedbackpacks:cyan_backpack");
+            bannedItems.add("improvedbackpacks:purple_backpack");
+            bannedItems.add("improvedbackpacks:blue_backpack");
+            bannedItems.add("improvedbackpacks:brown_backpack");
+            bannedItems.add("improvedbackpacks:green_backpack");
+            bannedItems.add("improvedbackpacks:red_backpack");
+            bannedItems.add("improvedbackpacks:black_backpack");
+            bannedItems.add("immersiveengineering:toolbox");
+            bannedItems.add("create:white_toolbox");
+            bannedItems.add("create:orange_toolbox");
+            bannedItems.add("create:magenta_toolbox");
+            bannedItems.add("create:light_blue_toolbox");
+            bannedItems.add("create:yellow_toolbox");
+            bannedItems.add("create:lime_toolbox");
+            bannedItems.add("create:pink_toolbox");
+            bannedItems.add("create:gray_toolbox");
+            bannedItems.add("create:light_gray_toolbox");
+            bannedItems.add("create:cyan_toolbox");
+            bannedItems.add("create:purple_toolbox");
+            bannedItems.add("create:blue_toolbox");
+            bannedItems.add("create:brown_toolbox");
+            bannedItems.add("create:green_toolbox");
+            bannedItems.add("create:red_toolbox");
+            bannedItems.add("create:black_toolbox");
+            return bannedItems;
         }
     }
 
