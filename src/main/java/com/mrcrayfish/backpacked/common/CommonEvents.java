@@ -24,7 +24,7 @@ public class CommonEvents
     @SubscribeEvent
     public static void onPickupItem(EntityItemPickupEvent event)
     {
-        if(Config.SERVER.lockBackpackIntoSlot.get() && event.getEntityLiving() instanceof ServerPlayerEntity)
+        if(Config.SERVER.autoEquipBackpackOnPickup.get() && event.getEntityLiving() instanceof ServerPlayerEntity)
         {
             ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
             ItemEntity entity = event.getItem();
@@ -32,18 +32,15 @@ public class CommonEvents
             if(!(stack.getItem() instanceof BackpackItem))
                 return;
 
-            if(!Backpacked.getBackpackStack(player).isEmpty())
-                return;
-
-            CompoundNBT tag = stack.getTag();
-            if(tag == null || tag.getList("Items", Constants.NBT.TAG_COMPOUND).isEmpty())
-                return;
-
-            if(Backpacked.setBackpackStack(player, stack))
+            if(Backpacked.getBackpackStack(player).isEmpty())
             {
-                ((ServerWorld) entity.level).getChunkSource().broadcast(entity, new SCollectItemPacket(entity.getId(), player.getId(), stack.getCount()));
                 event.setCanceled(true);
-                event.getItem().kill();
+                if(Backpacked.setBackpackStack(player, stack))
+                {
+                    ((ServerWorld) entity.level).getChunkSource().broadcast(entity, new SCollectItemPacket(entity.getId(), player.getId(), stack.getCount()));
+                    event.setCanceled(true);
+                    event.getItem().kill();
+                }
             }
         }
     }
