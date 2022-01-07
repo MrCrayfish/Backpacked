@@ -23,15 +23,15 @@ public class BackpackInventory extends SimpleContainer
         super(rows * cols);
         this.player = player;
         this.stack = stack;
-        this.loadBackpackContents();
+        this.loadBackpackContents(player);
     }
 
-    private void loadBackpackContents()
+    private void loadBackpackContents(Player player)
     {
         CompoundTag compound = this.stack.getOrCreateTag();
         if(compound.contains("Items", Tag.TAG_LIST))
         {
-            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this);
+            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this, player);
         }
     }
 
