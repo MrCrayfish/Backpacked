@@ -1,5 +1,7 @@
 package com.mrcrayfish.backpacked.util;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,7 +28,7 @@ public class InventoryHelper
         return list;
     }
 
-    public static void loadAllItems(ListNBT list, Inventory inventory)
+    public static void loadAllItems(ListNBT list, Inventory inventory, PlayerEntity player)
     {
         for(int i = 0; i < list.size(); i++)
         {
@@ -35,6 +37,11 @@ public class InventoryHelper
             if(slot < inventory.getContainerSize())
             {
                 inventory.setItem(slot, ItemStack.of(compound));
+            }
+            else if(player instanceof ServerPlayerEntity)
+            {
+                ItemStack stack = ItemStack.of(compound);
+                player.spawnAtLocation(inventory.addItem(stack));
             }
         }
     }

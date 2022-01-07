@@ -23,15 +23,15 @@ public class BackpackInventory extends Inventory
         super(rows * cols);
         this.player = player;
         this.stack = stack;
-        this.loadBackpackContents();
+        this.loadBackpackContents(player);
     }
 
-    private void loadBackpackContents()
+    private void loadBackpackContents(PlayerEntity player)
     {
         CompoundNBT compound = this.stack.getOrCreateTag();
         if(compound.contains("Items", Constants.NBT.TAG_LIST))
         {
-            InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this);
+            InventoryHelper.loadAllItems(compound.getList("Items", Constants.NBT.TAG_COMPOUND), this, player);
         }
     }
 
