@@ -116,6 +116,8 @@ public class Config
             bannedItems.add("create:green_toolbox");
             bannedItems.add("create:red_toolbox");
             bannedItems.add("create:black_toolbox");
+            bannedItems.add("mekanism:personal_chest");
+            bannedItems.add("supplementaries:sack");
             return bannedItems;
         }
     }
