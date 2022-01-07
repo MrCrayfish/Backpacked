@@ -12,6 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -32,10 +33,11 @@ import net.minecraftforge.fml.ModList;
 @OnlyIn(Dist.CLIENT)
 public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
 {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/backpack.png");
     private static final Component CUSTOMISE_TOOLTIP = new TranslatableComponent("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = new TranslatableComponent("backpacked.button.config.tooltip");
 
+    private final int cols;
     private final int rows;
     private final boolean owner;
     private boolean opened;
@@ -43,10 +45,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     public BackpackScreen(BackpackContainerMenu backpackContainerMenu, Inventory playerInventory, Component titleIn)
     {
         super(backpackContainerMenu, playerInventory, titleIn);
+        this.cols = backpackContainerMenu.getCols();
         this.rows = backpackContainerMenu.getRows();
         this.owner = backpackContainerMenu.isOwner();
+        this.imageWidth = 14 + Math.max(this.cols, 9) * 18;
         this.imageHeight = 114 + this.rows * 18;
-        this.inventoryLabelY = this.imageHeight - 96 + 2;
+        this.inventoryLabelX = Math.max(((this.cols * 18) - (9 * 18)) / 2, 0) + 7;
+        this.inventoryLabelY = this.rows * 18 + 17 + 4;
     }
 
     @Override
@@ -95,16 +100,44 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI_TEXTURE);
-        this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.rows * 18 + 17);
-        this.blit(matrixStack, this.leftPos, this.topPos + this.rows * 18 + 17, 0, 126, this.imageWidth, 96);
+        this.drawBackgroundWindow(matrixStack, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
     }
 
-    /*@Override
+    @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY)
     {
         this.font.draw(matrixStack, this.title, 8.0F, 6.0F, 0x404040);
-        this.font.draw(matrixStack, this.inventory.getDisplayName(), 8.0F, (float) (this.imageHeight - 96 + 2), 0x404040);
-    }*/
+        this.font.draw(matrixStack, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0x404040);
+    }
+
+    private void drawBackgroundWindow(PoseStack poseStack, int x, int y, int width, int height)
+    {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
+
+        // Backpack Inventory
+        int backpackHeight = 17 + this.rows * 18;
+        blit(poseStack, x,             y,          7, backpackHeight, 0, 0, 7, backpackHeight, 256, 256); /* Top left corner */
+        blit(poseStack, x + width - 7, y,          7, backpackHeight, 8, 0, 7, backpackHeight, 256, 256); /* Top right corner */
+        blit(poseStack, x + 7,         y, width - 14, backpackHeight, 7, 0, 1, backpackHeight, 256, 256); /* Top border */
+
+        // Draw Backpack Slots
+        int slotWidth = this.cols * 18;
+        int slotHeight = this.rows * 18;
+        int minSlotWidth = 9 * 18; //Player inventory will always have 9 columns
+        int backpackStartX = Math.max((minSlotWidth - slotWidth) / 2, 0);
+        blit(poseStack, backpackStartX + x + 7, y + 17, slotWidth, slotHeight, 15, 0, slotWidth, slotHeight, 256, 256);
+
+        // Player Inventory
+        blit(poseStack, x,             y + backpackHeight,          7, 97, 0, 143,  7, 97, 256, 256); /* Bottom left corner */
+        blit(poseStack, x + width - 7, y + backpackHeight,          7, 97, 8, 143,  7, 97, 256, 256); /* Bottom right corner */
+        blit(poseStack, x + 7,         y + backpackHeight, width - 14, 97, 7, 143,  1, 97, 256, 256); /* Bottom border */
+
+        // Draw Player Inventory Slots
+        int inventoryStartX = Math.max((slotWidth - minSlotWidth) / 2, 0);
+        blit(poseStack, x + inventoryStartX + 7, y + backpackHeight + 14, 163, 76, 15, 157, 163, 76, 256, 256);
+    }
 
     private void openConfigScreen()
     {

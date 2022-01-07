@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked;
 
-import net.minecraft.ResourceLocationException;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,7 +16,8 @@ public class Config
     public static class Common
     {
         public final ForgeConfigSpec.BooleanValue keepBackpackOnDeath;
-        public final ForgeConfigSpec.IntValue backpackInventorySize;
+        public final ForgeConfigSpec.IntValue backpackInventorySizeColumns;
+        public final ForgeConfigSpec.IntValue backpackInventorySizeRows;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -25,10 +26,14 @@ public class Config
                     .comment("Determines whether or not the backpack should be dropped on death")
                     .translation("backpacked.configgui.keepBackpackOnDeath")
                     .define("keepBackpackOnDeath", false);
-            this.backpackInventorySize = builder
-                    .comment("The amount of rows the backpack has. Each row is nine slots of storage.")
-                    .translation("backpacked.configgui.backpackInventorySize")
-                    .defineInRange("backpackInventorySize", 1, 1, 6);
+            this.backpackInventorySizeColumns = builder
+                    .comment("The amount of slot columns in the backpack inventory.")
+                    .translation("backpacked.configgui.backpackInventorySizeColumns")
+                    .defineInRange("backpackInventorySizeColumns", 9, 1, BackpackContainerMenu.MAX_COLUMNS);
+            this.backpackInventorySizeRows = builder
+                    .comment("The amount of slot rows in the backpack inventory.")
+                    .translation("backpacked.configgui.backpackInventorySizeRows")
+                    .defineInRange("backpackInventorySize", 1, 1, BackpackContainerMenu.MAX_ROWS);
             builder.pop();
         }
     }

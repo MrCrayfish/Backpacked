@@ -18,9 +18,9 @@ public class BackpackInventory extends SimpleContainer
     private final Player player;
     private final ItemStack stack;
 
-    public BackpackInventory(int rows, Player player, ItemStack stack)
+    public BackpackInventory(int cols, int rows, Player player, ItemStack stack)
     {
-        super(rows * 9);
+        super(rows * cols);
         this.player = player;
         this.stack = stack;
         this.loadBackpackContents();

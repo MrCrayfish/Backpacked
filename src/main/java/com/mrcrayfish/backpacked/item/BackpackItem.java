@@ -90,11 +90,13 @@ public class BackpackItem extends Item
                 return false;
             BackpackItem backpackItem = (BackpackItem) backpack.getItem();
             Component title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
+            int cols = backpackItem.getColumnCount();
             int rows = backpackItem.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
             NetworkHooks.openGui(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
-                return new BackpackContainerMenu(id, openingPlayer.getInventory(), backpackInventory, rows, owner);
+                return new BackpackContainerMenu(id, openingPlayer.getInventory(), backpackInventory, cols, rows, owner);
             }, title), buffer -> {
+                buffer.writeVarInt(cols);
                 buffer.writeVarInt(rows);
                 buffer.writeBoolean(owner);
             });
@@ -103,9 +105,14 @@ public class BackpackItem extends Item
         return false;
     }
 
+    public int getColumnCount()
+    {
+        return Config.COMMON.backpackInventorySizeColumns.get();
+    }
+
     public int getRowCount()
     {
-        return Config.COMMON.backpackInventorySize.get();
+        return Config.COMMON.backpackInventorySizeRows.get();
     }
 
     @OnlyIn(Dist.CLIENT)
