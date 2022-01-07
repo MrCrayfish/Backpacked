@@ -72,9 +72,9 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
         }
 
         BackpackItem backpackItem = (BackpackItem) stack.getItem();
-        if(this.backpackedInventory == null || !this.backpackedInventory.getBackpackStack().equals(stack) || this.backpackedInventory.getContainerSize() != backpackItem.getRowCount() * 9)
+        if(this.backpackedInventory == null || !this.backpackedInventory.getBackpackStack().equals(stack) || this.backpackedInventory.getContainerSize() != backpackItem.getRowCount() * backpackItem.getColumnCount())
         {
-            this.backpackedInventory = new BackpackInventory(backpackItem.getRowCount(), player, stack);
+            this.backpackedInventory = new BackpackInventory(backpackItem.getColumnCount(), backpackItem.getRowCount(), player, stack);
         }
         return this.backpackedInventory;
     }

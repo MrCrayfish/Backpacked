@@ -18,9 +18,9 @@ public class BackpackInventory extends Inventory
     private final PlayerEntity player;
     private final ItemStack stack;
 
-    public BackpackInventory(int rows, PlayerEntity player, ItemStack stack)
+    public BackpackInventory(int cols, int rows, PlayerEntity player, ItemStack stack)
     {
-        super(rows * 9);
+        super(rows * cols);
         this.player = player;
         this.stack = stack;
         this.loadBackpackContents();
