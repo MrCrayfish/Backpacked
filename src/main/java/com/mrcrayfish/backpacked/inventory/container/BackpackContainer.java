@@ -16,6 +16,9 @@ import net.minecraft.util.math.MathHelper;
  */
 public class BackpackContainer extends Container
 {
+    public static final int MAX_COLUMNS = 13;
+    public static final int MAX_ROWS = 7;
+
     private final IInventory backpackInventory;
     private final int cols;
     private final int rows;
@@ -23,15 +26,15 @@ public class BackpackContainer extends Container
 
     public BackpackContainer(int id, PlayerInventory playerInventory, int cols, int rows, boolean owner)
     {
-        this(id, playerInventory, new Inventory(MathHelper.clamp(cols, 1, 13) * MathHelper.clamp(rows, 1, 6)), cols, rows, owner);
+        this(id, playerInventory, new Inventory(MathHelper.clamp(cols, 1, MAX_COLUMNS) * MathHelper.clamp(rows, 1, MAX_ROWS)), cols, rows, owner);
     }
 
     public BackpackContainer(int id, PlayerInventory playerInventory, IInventory backpackInventory, int cols, int rows, boolean owner)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackInventory;
-        this.cols = MathHelper.clamp(cols, 1, 13);
-        this.rows = MathHelper.clamp(rows, 1, 6);
+        this.cols = MathHelper.clamp(cols, 1, MAX_COLUMNS);
+        this.rows = MathHelper.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
         checkContainerSize(backpackInventory, this.cols * this.rows);
         backpackInventory.startOpen(playerInventory.player);

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked;
 
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,11 +29,11 @@ public class Config
             this.backpackInventorySizeColumns = builder
                     .comment("The amount of slot columns in the backpack inventory.")
                     .translation("backpacked.configgui.backpackInventorySizeColumns")
-                    .defineInRange("backpackInventorySizeColumns", 9, 1, 13);
+                    .defineInRange("backpackInventorySizeColumns", 9, 1, BackpackContainer.MAX_COLUMNS);
             this.backpackInventorySizeRows = builder
                     .comment("The amount of slot rows in the backpack inventory.")
                     .translation("backpacked.configgui.backpackInventorySizeRows")
-                    .defineInRange("backpackInventorySize", 1, 1, 6);
+                    .defineInRange("backpackInventorySize", 1, 1,  BackpackContainer.MAX_ROWS);
             builder.pop();
         }
     }
