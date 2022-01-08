@@ -17,10 +17,18 @@ import java.util.Optional;
  */
 public class PickpocketUtil
 {
+    private static Vector3d getEntityPos(PlayerEntity player, float partialTick)
+    {
+        double x = MathHelper.lerp(partialTick, player.xo, player.getX());
+        double y = MathHelper.lerp(partialTick, player.yo, player.getY());
+        double z = MathHelper.lerp(partialTick, player.zo, player.getZ());
+        return new Vector3d(x, y, z);
+    }
+
     public static AxisAlignedBB getBackpackBox(PlayerEntity player, float partialTick)
     {
         AxisAlignedBB backpackBox = new AxisAlignedBB(-0.25, 0.0, -0.25, 0.25, 0.5625, 0.25);
-        backpackBox = backpackBox.move(player.getPosition(partialTick));
+        backpackBox = backpackBox.move(getEntityPos(player, partialTick));
         backpackBox = backpackBox.move(0, player.getPose() != Pose.SWIMMING ? 0.875 : 0.3125, 0);
         if(player.getPose() == Pose.CROUCHING)
         {
@@ -40,7 +48,7 @@ public class PickpocketUtil
     {
         if(targetPlayer.getPose() == Pose.SWIMMING) // Backpack is exposed at any direction
             return true;
-        Vector3d between = thiefPlayer.getPosition(1.0F).subtract(targetPlayer.getPosition(1.0F));
+        Vector3d between = getEntityPos(thiefPlayer, 1.0F).subtract(getEntityPos(targetPlayer, 1.0F));
         float angle = (float) Math.toDegrees(Math.atan2(between.z, between.x)) - 90F;
         float difference = MathHelper.degreesDifferenceAbs(targetPlayer.yBodyRot + 180F, angle);
         return difference <= Config.SERVER.pickpocketMaxRangeAngle.get();
@@ -48,9 +56,9 @@ public class PickpocketUtil
 
     public static boolean inReachOfBackpack(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
     {
-        Vector3d pos = targetPlayer.getPosition(1.0F);
+        Vector3d pos = getEntityPos(targetPlayer, 1.0F);
         pos = pos.add(Vector3d.directionFromRotation(0F, targetPlayer.yBodyRot + 180F).scale(targetPlayer.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
-        return pos.distanceTo(thiefPlayer.getPosition(1.0F)) <= Config.SERVER.pickpocketMaxReachDistance.get();
+        return pos.distanceTo(getEntityPos(thiefPlayer, 1.0F)) <= Config.SERVER.pickpocketMaxReachDistance.get();
     }
 
     public static boolean canSeeBackpack(PlayerEntity targetPlayer, PlayerEntity thiefPlayer)
