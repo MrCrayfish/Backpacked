@@ -37,7 +37,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
     }
 
     @Override
-    public void render(MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, T player, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_)
+    public void render(MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, T player, float p_225628_5_, float p_225628_6_, float partialTick, float p_225628_8_, float p_225628_9_, float p_225628_10_)
     {
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(backpack.getItem() instanceof BackpackItem)
@@ -53,7 +53,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
             BackpackItem backpackItem = (BackpackItem) backpack.getItem();
             String modelName = backpack.getOrCreateTag().getString("BackpackModel");
             BackpackModel model = VARIANTS.getOrDefault(modelName, backpackItem.getDefaultModel());
-            model.setupAngles(this.getParentModel().body, !chestStack.isEmpty());
+            model.setupAngles(player, this.getParentModel().body, !chestStack.isEmpty(), partialTick);
             IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, backpack.hasFoil());
             model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
             stack.popPose();

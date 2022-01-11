@@ -46,4 +46,9 @@ public class ProgressFormatters
         int percent = (int) (100 * (double) numerator / (double) denominator);
         return new TranslationTextComponent("backpacked.formatter.int_percent", percent, "%");
     };
+
+    public static final BiFunction<Integer, Integer, ITextComponent> CRAFT_X_OF_X = (count, maxCount) -> {
+        count = MathHelper.clamp(count, 0, maxCount);
+        return new TranslationTextComponent("backpacked.formatter.craft_x_of_x", count, maxCount);
+    };
 }

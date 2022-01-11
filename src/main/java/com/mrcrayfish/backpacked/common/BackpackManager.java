@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -44,10 +45,21 @@ public class BackpackManager
         this.register(new StandardBackpack());
         this.register(new TrashCanBackpack());
         this.register(new TurtleShellBackpack());
+        this.registerDependant("create", new CreateBackpack());
     }
 
     public synchronized void register(Backpack backpack)
     {
+        this.registeredBackpacks.computeIfAbsent(backpack.getId(), location -> {
+            MinecraftForge.EVENT_BUS.register(backpack);
+            return backpack;
+        });
+    }
+
+    private synchronized void registerDependant(String mod, Backpack backpack)
+    {
+        if(!ModList.get().isLoaded(mod))
+            return;
         this.registeredBackpacks.computeIfAbsent(backpack.getId(), location -> {
             MinecraftForge.EVENT_BUS.register(backpack);
             return backpack;

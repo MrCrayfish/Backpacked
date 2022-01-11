@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.model.*;
+import com.mrcrayfish.backpacked.client.model.CreateBackpackModel;
 
 /**
  * Author: MrCrayfish
@@ -17,4 +18,6 @@ public class ModelInstances
     public static final BackpackModel TURTLE_SHELL = new TurtleShellBackpackModel();
     public static final BackpackModel CARDBOARD_BOX = new CardboardBoxBackpackModel();
     public static final BackpackModel SHEEP_PLUSH = new SheepPlushBackpackModel();
+
+    public static final BackpackModel CREATE = new CreateBackpackModel();
 }

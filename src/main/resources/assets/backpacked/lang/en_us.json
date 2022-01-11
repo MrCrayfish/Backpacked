@@ -36,6 +36,8 @@
     "backpacked.backpack.cardboard_box.unlock": "Chop 1000 Logs to unlock this backpack",
     "backpacked.backpack.sheep_plush": "Sheep Plush",
     "backpacked.backpack.sheep_plush.unlock": "Shear 250 Sheep to unlock this backpack",
+    "backpacked.backpack.create": "Cogwheel",
+    "backpacked.backpack.create.unlock": "Craft 64 Cogwheels from Create to unlock this backpack",
     "backpacked.chat.install_configured": "Install %s to access config options",
     "backpacked.chat.open_curseforge_page": "Open CurseForge Page",
     "backpacked.formatter.collected_x_of_x": "Collected %s / %s",
@@ -46,5 +48,6 @@
     "backpacked.formatter.bred_x_of_x": "Bred %s / %s",
     "backpacked.formatter.cut_x_of_x": "Cut %s / %s",
     "backpacked.formatter.shear_x_sheep": "Sheared %s / %s",
+    "backpacked.formatter.craft_x_of_x": "Crafted %s / %s",
     "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it"
 }

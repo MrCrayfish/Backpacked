@@ -30,7 +30,7 @@ public abstract class BackpackModel extends Model
         renderer.zRot = z;
     }
 
-    public void setupAngles(ModelRenderer body, boolean armour)
+    public void setupAngles(PlayerEntity player, ModelRenderer body, boolean armour, float partialTick)
     {
         ModelRenderer root = this.getRoot();
         root.copyFrom(body);
