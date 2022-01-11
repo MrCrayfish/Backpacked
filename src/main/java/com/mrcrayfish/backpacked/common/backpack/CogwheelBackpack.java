@@ -22,14 +22,14 @@ import javax.annotation.Nullable;
 /**
  * Author: MrCrayfish
  */
-public class CreateBackpack extends Backpack
+public class CogwheelBackpack extends Backpack
 {
     private static Item cogwheelItem = null;
     private static Item largeCogwheelItem = null;
 
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "create");
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "cogwheel");
 
-    public CreateBackpack()
+    public CogwheelBackpack()
     {
         super(ID);
     }
@@ -37,7 +37,7 @@ public class CreateBackpack extends Backpack
     @Override
     public BackpackModel getModel()
     {
-        return ModelInstances.CREATE;
+        return ModelInstances.COGWHEEL;
     }
 
     @Nullable

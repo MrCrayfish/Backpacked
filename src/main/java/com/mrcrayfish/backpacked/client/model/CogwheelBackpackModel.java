@@ -8,16 +8,16 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class CreateBackpackModel extends BackpackModel
+public class CogwheelBackpackModel extends BackpackModel
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/create_backpack.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/cogwheel_backpack.png");
 
     private final ModelRenderer backpack;
     private final ModelRenderer bag;
     private final ModelRenderer gear;
     private final ModelRenderer strap;
 
-    public CreateBackpackModel()
+    public CogwheelBackpackModel()
     {
         this.texWidth = 64;
         this.texHeight = 64;
