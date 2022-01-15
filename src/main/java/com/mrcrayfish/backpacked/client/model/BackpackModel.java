@@ -32,6 +32,17 @@ public abstract class BackpackModel extends Model
 
     public void setupAngles(PlayerEntity player, ModelRenderer body, boolean armour, float partialTick)
     {
+        this.setupAngles(body, armour);
+    }
+
+    @Deprecated
+    public void setupAngles(ModelRenderer body, boolean armour)
+    {
+        this.beforeRender(body, armour);
+    }
+
+    private void beforeRender(ModelRenderer body, boolean armour)
+    {
         ModelRenderer root = this.getRoot();
         root.copyFrom(body);
 
