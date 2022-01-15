@@ -23,9 +23,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ComposterBlock.class)
 public class ComposterBlockMixin
 {
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/ComposterBlock;extractProduce(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"))
+    @Inject(method = "use", at = @At(value = "HEAD"))
     public void beforeCollect(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result, CallbackInfoReturnable<ActionResultType> cir)
     {
+        if(state.getValue(ComposterBlock.LEVEL) != 8)
+            return;
+
         if(!(player instanceof ServerPlayerEntity))
             return;
 
