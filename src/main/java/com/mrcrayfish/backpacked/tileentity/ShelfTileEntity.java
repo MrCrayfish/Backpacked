@@ -17,6 +17,9 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 
 import javax.annotation.Nullable;
 
@@ -99,5 +102,11 @@ public class ShelfTileEntity extends TileEntity
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt)
     {
         this.load(null, pkt.getTag());
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox()
+    {
+        return VoxelShapes.block().bounds().inflate(0.5).move(this.worldPosition);
     }
 }
