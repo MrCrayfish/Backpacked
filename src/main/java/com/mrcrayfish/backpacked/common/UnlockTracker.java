@@ -91,6 +91,11 @@ public class UnlockTracker
         return false;
     }
 
+    Map<ResourceLocation, IProgressTracker> getProgressTrackerMap()
+    {
+        return this.progressTrackerMap;
+    }
+
     public static void registerCapability()
     {
         CapabilityManager.INSTANCE.register(UnlockTracker.class, new Storage(), UnlockTracker::new);

@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.common.tracker.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,6 +13,7 @@ import net.minecraft.network.play.server.SCollectItemPacket;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -43,5 +45,25 @@ public class CommonEvents
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onCraftedItem(PlayerEvent.ItemCraftedEvent event)
+    {
+        if(!(event.getPlayer() instanceof ServerPlayerEntity))
+            return;
+
+        ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+        ItemStack craftedItem = event.getCrafting();
+        UnlockTracker.get(event.getPlayer()).ifPresent(unlockTracker ->
+        {
+            unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
+            {
+                if(progressTracker instanceof CraftingProgressTracker && !progressTracker.isComplete())
+                {
+                    ((CraftingProgressTracker) progressTracker).processCrafted(craftedItem, player);
+                }
+            });
+        });
     }
 }
