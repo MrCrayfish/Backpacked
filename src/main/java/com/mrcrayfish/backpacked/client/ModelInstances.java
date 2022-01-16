@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.model.*;
-import com.mrcrayfish.backpacked.client.model.CogwheelBackpackModel;
 
 /**
  * Author: MrCrayfish
