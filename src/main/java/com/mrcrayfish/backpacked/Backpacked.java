@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
+import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -83,6 +84,7 @@ public class Backpacked
         bus.addListener(this::onGatherData);
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
+        ModBlocks.REGISTER.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCommands());
         controllableLoaded = ModList.get().isLoaded("controllable");
