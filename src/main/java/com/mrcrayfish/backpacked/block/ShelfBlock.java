@@ -32,11 +32,18 @@ import java.util.Map;
  */
 public class ShelfBlock extends HorizontalBlock
 {
-    private static final Map<Direction, VoxelShape> SHAPES = Maps.newEnumMap(ImmutableMap.of(
-        Direction.NORTH, Block.box(2, 1, 7, 14, 5, 16),
-        Direction.SOUTH, Block.box(2, 1, 0, 14, 5, 9),
-        Direction.WEST, Block.box(7, 1, 2, 16, 5, 14),
-        Direction.EAST, Block.box(0, 1, 2, 9, 5, 14))
+    private static final Map<Direction, VoxelShape> EMPTY_SHAPES = Maps.newEnumMap(ImmutableMap.of(
+        Direction.NORTH, Block.box(2, 3, 7, 14, 5, 16),
+        Direction.SOUTH, Block.box(2, 3, 0, 14, 5, 9),
+        Direction.WEST, Block.box(7, 3, 2, 16, 5, 14),
+        Direction.EAST, Block.box(0, 3, 2, 9, 5, 14))
+    );
+
+    private static final Map<Direction, VoxelShape> SHELVED_SHAPES = Maps.newEnumMap(ImmutableMap.of(
+            Direction.NORTH, Block.box(2, 3, 7, 14, 14, 16),
+            Direction.SOUTH, Block.box(2, 3, 0, 14, 14, 9),
+            Direction.WEST, Block.box(7, 3, 2, 16, 14, 14),
+            Direction.EAST, Block.box(0, 3, 2, 9, 14, 14))
     );
 
     public ShelfBlock(Properties properties)
@@ -61,7 +68,15 @@ public class ShelfBlock extends HorizontalBlock
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext context)
     {
-        return SHAPES.get(state.getValue(FACING));
+        TileEntity tileEntity = reader.getBlockEntity(pos);
+        if(tileEntity instanceof ShelfTileEntity)
+        {
+            if(!((ShelfTileEntity) tileEntity).getBackpack().isEmpty())
+            {
+                return SHELVED_SHAPES.get(state.getValue(FACING));
+            }
+        }
+        return EMPTY_SHAPES.get(state.getValue(FACING));
     }
 
     @Override
