@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  * Author: MrCrayfish
@@ -11,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class CogwheelBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/cogwheel_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 9, -7);
 
     private final ModelRenderer backpack;
     private final ModelRenderer bag;
@@ -88,5 +90,11 @@ public class CogwheelBackpackModel extends BackpackModel
     public ResourceLocation getTextureLocation()
     {
         return TEXTURE;
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 }

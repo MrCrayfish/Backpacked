@@ -16,6 +16,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public class HoneyJarBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/honey_jar_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 8, -7);
 
     private final ModelRenderer backpack;
     private final ModelRenderer bag;
@@ -64,6 +65,12 @@ public class HoneyJarBackpackModel extends BackpackModel
     public ResourceLocation getTextureLocation()
     {
         return TEXTURE;
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 
     @Override

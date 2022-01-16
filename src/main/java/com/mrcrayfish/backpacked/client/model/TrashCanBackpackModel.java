@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.model;
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  * Author: MrCrayfish
@@ -10,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 public class TrashCanBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/trash_can_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 8.5, -7);
 
     private final ModelRenderer backpack;
     private final ModelRenderer bag;
@@ -56,5 +58,11 @@ public class TrashCanBackpackModel extends BackpackModel
     public ResourceLocation getTextureLocation()
     {
         return TEXTURE;
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 }
