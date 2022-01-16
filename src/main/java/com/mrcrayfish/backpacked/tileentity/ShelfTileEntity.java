@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.tileentity;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.core.ModTileEntities;
 import com.mrcrayfish.backpacked.util.TileEntityUtil;
 import mcp.MethodsReturnNonnullByDefault;
@@ -13,6 +14,9 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 
 import javax.annotation.Nullable;
 
@@ -33,6 +37,11 @@ public class ShelfTileEntity extends TileEntity
         super(ModTileEntities.SHELF.get());
     }
 
+    public ItemStack getBackpack()
+    {
+        return this.backpack;
+    }
+
     public ActionResultType interact(PlayerEntity player)
     {
         ItemStack stack = Backpacked.getBackpackStack(player);
@@ -48,8 +57,14 @@ public class ShelfTileEntity extends TileEntity
         if(!this.backpack.isEmpty() || !shelvedBackpack.isEmpty())
         {
             TileEntityUtil.sendUpdatePacket(this);
+            this.level.playSound(null, this.worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundCategory.BLOCKS, 1.0F, 0.75F);
         }
         return shelvedBackpack;
+    }
+
+    public Direction getDirection()
+    {
+        return this.getBlockState().getValue(ShelfBlock.FACING);
     }
 
     @Override

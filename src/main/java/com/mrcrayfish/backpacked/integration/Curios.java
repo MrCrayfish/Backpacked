@@ -58,8 +58,6 @@ public class Curios
             stacksOptional.ifPresent(stacksHandler ->
             {
                 stacksHandler.getStacks().setStackInSlot(0, stack.copy());
-                stacksHandler.getCosmeticStacks().setStackInSlot(0, stack.copy());
-                itemHandler.reset();
             });
         });
     }

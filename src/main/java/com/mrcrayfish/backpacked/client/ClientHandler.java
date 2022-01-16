@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.BackpackedButtonBindings;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModTileEntities;
@@ -42,6 +43,7 @@ public class ClientHandler
         ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
         ScreenManager.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntities.SHELF.get(), ShelfRenderer::new);
 
         /* Only register controller events if Controllable is loaded otherwise it will crash */
         if(Backpacked.isControllableLoaded())
