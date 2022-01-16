@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModTileEntities;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;

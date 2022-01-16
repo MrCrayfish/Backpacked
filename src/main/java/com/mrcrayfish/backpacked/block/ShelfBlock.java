@@ -2,13 +2,17 @@ package com.mrcrayfish.backpacked.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.tileentity.ShelfTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -45,9 +49,13 @@ public class ShelfBlock extends HorizontalBlock
     {
         if(!world.isClientSide())
         {
-            System.out.println("Yo");
+            TileEntity tileEntity = world.getBlockEntity(pos);
+            if(tileEntity instanceof ShelfTileEntity)
+            {
+                return ((ShelfTileEntity) tileEntity).interact(player);
+            }
         }
-        return super.use(state, world, pos, player, hand, result);
+        return ActionResultType.SUCCESS;
     }
 
     @Override
@@ -87,5 +95,18 @@ public class ShelfBlock extends HorizontalBlock
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(FACING);
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state)
+    {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world)
+    {
+        return new ShelfTileEntity();
     }
 }
