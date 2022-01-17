@@ -70,6 +70,16 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
         return this.backpack;
     }
 
+    public ItemStack getBackpackWithContents()
+    {
+        ItemStack stack = this.backpack.copy();
+        if(!stack.isEmpty())
+        {
+            this.copyInventoryToStack(stack);
+        }
+        return stack;
+    }
+
     public ActionResultType interact(PlayerEntity player)
     {
         if(player.isCrouching() || this.backpack.isEmpty())

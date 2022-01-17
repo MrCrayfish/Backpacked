@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.tileentity.ShelfTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -9,8 +10,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -121,6 +124,25 @@ public class ShelfBlock extends HorizontalBlock
             return Container.getRedstoneSignalFromContainer((IInventory) tileEntity);
         }
         return 0;
+    }
+
+    @Override
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean unknown)
+    {
+        if(!state.is(newState.getBlock()))
+        {
+            TileEntity tileEntity = world.getBlockEntity(pos);
+            if(tileEntity instanceof ShelfTileEntity)
+            {
+                boolean dropsContents = Config.SERVER.dropContentsFromShelf.get();
+                ShelfTileEntity shelf = (ShelfTileEntity) tileEntity;
+                ItemStack stack = dropsContents ? shelf.getBackpack() : shelf.getBackpackWithContents();
+                InventoryHelper.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                if(dropsContents) InventoryHelper.dropContents(world, pos, shelf);
+                world.updateNeighbourForOutputSignal(pos, this);
+            }
+            super.onRemove(state, world, pos, newState, unknown);
+        }
     }
 
     @Override

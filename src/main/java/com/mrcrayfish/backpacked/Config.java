@@ -53,6 +53,7 @@ public class Config
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> bannedItems;
         public final ForgeConfigSpec.BooleanValue unlockAllBackpacks;
         public final ForgeConfigSpec.BooleanValue lockBackpackIntoSlot;
+        public final ForgeConfigSpec.BooleanValue dropContentsFromShelf;
         public final ForgeConfigSpec.BooleanValue autoEquipBackpackOnPickup;
         public final ForgeConfigSpec.BooleanValue pickpocketBackpacks;
         public final ForgeConfigSpec.DoubleValue pickpocketMaxReachDistance;
@@ -63,7 +64,8 @@ public class Config
             builder.comment("Common configuration settings").push("common");
             this.bannedItems = builder.comment("A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!").defineList("bannedItems", Server::getDefaultBannedItems, Server::resourceLocationValidator);
             this.unlockAllBackpacks = builder.comment("Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.").define("unlockAllBackpacks", false);
-            this.lockBackpackIntoSlot = builder.comment("Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks").define("lockBackpackIntoSlot", true);
+            this.lockBackpackIntoSlot = builder.comment("Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.").define("lockBackpackIntoSlot", true);
+            this.dropContentsFromShelf = builder.comment("When breaking a shelf, the placed backpack will also drops it's items into the world. This prevents players from carrying multiple backpacks").define("dropContentsFromShelf", true);
             this.autoEquipBackpackOnPickup = builder.comment("When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.").define("autoEquipBackpackOnPickup", false);
             this.pickpocketBackpacks = builder.comment("If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.").define("pickpocketBackpacks", true);
             this.pickpocketMaxReachDistance = builder.comment("The maximum reach distance of a player to interact with another player's backpack.").defineInRange("pickpocketDistance", 1.5, 0.0, 4.0);
