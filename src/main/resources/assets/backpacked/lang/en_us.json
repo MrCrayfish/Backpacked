@@ -1,5 +1,13 @@
 {
     "item.backpacked.backpack": "Backpack",
+    "block.backpacked.oak_backpack_shelf": "Oak Backpack Shelf",
+    "block.backpacked.spruce_backpack_shelf": "Spruce Backpack Shelf",
+    "block.backpacked.birch_backpack_shelf": "Birch Backpack Shelf",
+    "block.backpacked.jungle_backpack_shelf": "Jungle Backpack Shelf",
+    "block.backpacked.dark_oak_backpack_shelf": "Dark Oak Backpack Shelf",
+    "block.backpacked.acacia_backpack_shelf": "Acacia Backpack Shelf",
+    "block.backpacked.crimson_backpack_shelf": "Crimson Backpack Shelf",
+    "block.backpacked.warped_backpack_shelf": "Warped Backpack Shelf",
     "key.backpack": "Open Backpack",
     "container.backpack": "Backpack",
     "backpacked.configgui.keepBackpackOnDeath": "Keep Backpack on Death",

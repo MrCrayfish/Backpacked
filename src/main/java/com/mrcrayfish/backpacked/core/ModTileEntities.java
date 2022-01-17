@@ -18,7 +18,7 @@ public class ModTileEntities
 {
     public static final DeferredRegister<TileEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Reference.MOD_ID);
 
-    public static final RegistryObject<TileEntityType<ShelfTileEntity>> SHELF = register("shelf", ShelfTileEntity::new, () -> new Block[]{ModBlocks.OAK_SHELF.get()});
+    public static final RegistryObject<TileEntityType<ShelfTileEntity>> SHELF = register("shelf", ShelfTileEntity::new, () -> new Block[]{ModBlocks.OAK_BACKPACK_SHELF.get(), ModBlocks.SPRUCE_BACKPACK_SHELF.get(), ModBlocks.BIRCH_BACKPACK_SHELF.get(), ModBlocks.JUNGLE_BACKPACK_SHELF.get(), ModBlocks.DARK_OAK_BACKPACK_SHELF.get(), ModBlocks.ACACIA_BACKPACK_SHELF.get(), ModBlocks.CRIMSON_BACKPACK_SHELF.get(), ModBlocks.WARPED_BACKPACK_SHELF.get()});
 
     private static <T extends TileEntity> RegistryObject<TileEntityType<T>> register(String id, Supplier<T> factoryIn, Supplier<Block[]> validBlocksSupplier)
     {
