@@ -1,11 +1,14 @@
 package com.mrcrayfish.backpacked.util;
 
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 /**
  * Author: MrCrayfish
@@ -28,7 +31,7 @@ public class InventoryHelper
         return list;
     }
 
-    public static void loadAllItems(ListNBT list, Inventory inventory, PlayerEntity player)
+    public static void loadAllItems(ListNBT list, Inventory inventory, World world, Vector3d pos)
     {
         for(int i = 0; i < list.size(); i++)
         {
@@ -38,10 +41,30 @@ public class InventoryHelper
             {
                 inventory.setItem(slot, ItemStack.of(compound));
             }
-            else if(player instanceof ServerPlayerEntity)
+            else if(!world.isClientSide())
             {
                 ItemStack stack = ItemStack.of(compound);
-                player.spawnAtLocation(inventory.addItem(stack));
+                ItemEntity entity = new ItemEntity(world, pos.x, pos.y, pos.z, inventory.addItem(stack));
+                entity.setDefaultPickUpDelay();
+                world.addFreshEntity(entity);
+            }
+        }
+    }
+
+    public static void mergeInventory(Inventory source, Inventory target, World world, Vector3d pos)
+    {
+        for(int i = 0; i < source.getContainerSize(); i++)
+        {
+            if(i < target.getContainerSize())
+            {
+                target.setItem(i, source.getItem(i).copy());
+            }
+            else if(!world.isClientSide())
+            {
+                ItemStack stack = source.getItem(i).copy();
+                ItemEntity entity = new ItemEntity(world, pos.x, pos.y, pos.z, target.addItem(stack));
+                entity.setDefaultPickUpDelay();
+                world.addFreshEntity(entity);
             }
         }
     }
