@@ -64,10 +64,9 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             this.opened = true;
         }
-        int titleWidth = minecraft.font.width(this.title);
         if(this.owner)
         {
-            this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
@@ -75,7 +74,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         }
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            this.addButton(new MiniButton(this.leftPos + titleWidth + 8 + 3 + (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10 - (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 this.openConfigScreen();
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
