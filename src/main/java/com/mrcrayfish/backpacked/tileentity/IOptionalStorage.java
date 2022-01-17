@@ -55,7 +55,7 @@ public interface IOptionalStorage extends IInventory
     @Override
     default boolean stillValid(PlayerEntity player)
     {
-        return Optional.ofNullable(this.getInventory()).map(inv -> inv.stillValid(player)).orElse(true);
+        return Optional.ofNullable(this.getInventory()).map(inv -> inv.stillValid(player)).orElse(false);
     }
 
     @Override

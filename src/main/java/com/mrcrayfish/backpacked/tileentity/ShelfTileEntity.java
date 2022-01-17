@@ -280,5 +280,11 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
             super.setChanged();
             ShelfTileEntity.this.setChanged();
         }
+
+        @Override
+        public boolean stillValid(PlayerEntity player)
+        {
+            return ShelfTileEntity.this.inventory == this && !ShelfTileEntity.this.backpack.isEmpty() && !ShelfTileEntity.this.remove;
+        }
     }
 }
