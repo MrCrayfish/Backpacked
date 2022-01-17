@@ -13,6 +13,16 @@ import java.util.List;
  */
 public class Config
 {
+    public static class Client
+    {
+        public final ForgeConfigSpec.BooleanValue hideConfigButton;
+
+        Client(ForgeConfigSpec.Builder builder)
+        {
+            this.hideConfigButton = builder.comment("If enabled, hides the config button from the backpack screen").define("hideConfigButton", false);
+        }
+    }
+
     public static class Common
     {
         public final ForgeConfigSpec.BooleanValue keepBackpackOnDeath;
@@ -122,6 +132,9 @@ public class Config
         }
     }
 
+    static final ForgeConfigSpec clientSpec;
+    public static final Config.Client CLIENT;
+
     static final ForgeConfigSpec commonSpec;
     public static final Config.Common COMMON;
 
@@ -130,6 +143,10 @@ public class Config
 
     static
     {
+        final Pair<Client, ForgeConfigSpec> clientPair = new ForgeConfigSpec.Builder().configure(Config.Client::new);
+        clientSpec = clientPair.getRight();
+        CLIENT = clientPair.getLeft();
+
         final Pair<Common, ForgeConfigSpec> commonPair = new ForgeConfigSpec.Builder().configure(Config.Common::new);
         commonSpec = commonPair.getRight();
         COMMON = commonPair.getLeft();
