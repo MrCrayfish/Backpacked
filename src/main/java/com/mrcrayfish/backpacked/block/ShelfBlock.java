@@ -8,6 +8,8 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -102,6 +104,23 @@ public class ShelfBlock extends HorizontalBlock
             return potentialState;
         }
         return null;
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, World world, BlockPos pos)
+    {
+        TileEntity tileEntity = world.getBlockEntity(pos);
+        if(tileEntity instanceof ShelfTileEntity)
+        {
+            return Container.getRedstoneSignalFromContainer((IInventory) tileEntity);
+        }
+        return 0;
     }
 
     @Override

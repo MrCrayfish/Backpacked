@@ -95,6 +95,7 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
             this.updateInventory();
             TileEntityUtil.sendUpdatePacket(this);
             this.level.playSound(null, this.worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundCategory.BLOCKS, 1.0F, 0.75F);
+            this.setChanged();
         }
         return shelvedBackpack;
     }
@@ -148,7 +149,7 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
         if(!this.backpack.isEmpty())
         {
             Inventory oldInventory = this.inventory;
-            this.inventory = new Inventory(getBackpackSize());
+            this.inventory = new ShelfInventory(getBackpackSize());
             CompoundNBT compound = this.backpack.getOrCreateTag();
             this.loadBackpackItems(compound);
             compound.remove("Items");
@@ -181,7 +182,7 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
     {
         super.load(state, tag);
         this.backpack = ItemStack.of(tag.getCompound("Backpack"));
-        this.inventory = this.backpack.isEmpty() ? null : new Inventory(getBackpackSize());
+        this.inventory = this.backpack.isEmpty() ? null : new ShelfInventory(getBackpackSize());
         this.loadBackpackItems(tag);
     }
 
@@ -263,5 +264,21 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
     private int getBackpackSize()
     {
         return this.getBackpackItem().map(item -> item.getRowCount() * item.getColumnCount()).orElse(0);
+    }
+
+    // Need this to call set changed
+    public class ShelfInventory extends Inventory
+    {
+        public ShelfInventory(int size)
+        {
+            super(size);
+        }
+
+        @Override
+        public void setChanged()
+        {
+            super.setChanged();
+            ShelfTileEntity.this.setChanged();
+        }
     }
 }

@@ -3,12 +3,10 @@ package com.mrcrayfish.backpacked.tileentity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Author: MrCrayfish
@@ -52,12 +50,6 @@ public interface IOptionalStorage extends IInventory
     default void setItem(int index, ItemStack stack)
     {
         Optional.ofNullable(this.getInventory()).ifPresent(inv -> inv.setItem(index, stack));
-    }
-
-    @Override
-    default void setChanged()
-    {
-        Optional.ofNullable(this.getInventory()).ifPresent(Inventory::setChanged);
     }
 
     @Override
