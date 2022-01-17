@@ -1,11 +1,13 @@
 package com.mrcrayfish.backpacked.datagen;
 
+import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.item.Items;
+import net.minecraft.util.IItemProvider;
 import net.minecraftforge.common.Tags;
 
 import java.util.function.Consumer;
@@ -31,6 +33,28 @@ public class RecipeGen extends RecipeProvider
                 .define('S', Tags.Items.STRING)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_hide", has(Items.RABBIT_HIDE))
+                .save(consumer);
+        
+        backpackShelf(consumer, Items.OAK_LOG, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.SPRUCE_LOG, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.BIRCH_LOG, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.JUNGLE_LOG, Items.JUNGLE_SLAB, ModBlocks.JUNGLE_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.DARK_OAK_LOG, Items.DARK_OAK_SLAB, ModBlocks.DARK_OAK_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.ACACIA_LOG, Items.ACACIA_SLAB, ModBlocks.ACACIA_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
+        backpackShelf(consumer, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
+    }
+
+    private static void backpackShelf(Consumer<IFinishedRecipe> consumer, IItemProvider log, IItemProvider slab, IItemProvider craftedItem)
+    {
+        ShapedRecipeBuilder.shaped(craftedItem, 4)
+                .pattern("LHL")
+                .pattern("S S")
+                .define('L', log)
+                .define('H', slab)
+                .define('S', Items.STICK)
+                .unlockedBy("has_slab", has(slab))
+                .unlockedBy("has_stick", has(Items.STICK))
                 .save(consumer);
     }
 }

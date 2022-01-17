@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LHL",
+    "S S"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:birch_log"
+    },
+    "H": {
+      "item": "minecraft:birch_slab"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "backpacked:birch_backpack_shelf",
+    "count": 4
+  }
+}

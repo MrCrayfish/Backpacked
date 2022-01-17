@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -32,7 +33,7 @@ public class ModBlocks
 
     private static <T extends Block> RegistryObject<T> register(String id, T block)
     {
-        return register(id, block, b -> new BlockItem(b, new Item.Properties()));
+        return register(id, block, b -> new BlockItem(b, new Item.Properties().tab(ItemGroup.TAB_DECORATIONS)));
     }
 
     private static <T extends Block> RegistryObject<T> register(String id, T block, @Nullable Function<T, BlockItem> supplier)
