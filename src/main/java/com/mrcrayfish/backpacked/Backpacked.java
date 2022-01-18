@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.core.ModTileEntities;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.Curios;
@@ -86,6 +87,7 @@ public class Backpacked
         ModItems.REGISTER.register(bus);
         ModBlocks.REGISTER.register(bus);
         ModTileEntities.REGISTER.register(bus);
+        ModSounds.REGISTER.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCommands());
         controllableLoaded = ModList.get().isLoaded("controllable");
