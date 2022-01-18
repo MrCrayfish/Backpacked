@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.core.ModTileEntities;
+import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
@@ -117,6 +118,7 @@ public class Backpacked
     private void onGatherData(GatherDataEvent event)
     {
         DataGenerator generator = event.getGenerator();
+        generator.addProvider(new LootTableGen(generator));
         generator.addProvider(new RecipeGen(generator));
     }
 
