@@ -6,14 +6,18 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
+import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModTileEntities;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
+import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -55,6 +59,13 @@ public class ClientHandler
         BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
             BackpackLayer.registerModel(backpack.getId(), backpack.getModel());
         });
+
+        EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(EntityType.WANDERING_TRADER);
+        if(renderer instanceof WanderingTraderRenderer)
+        {
+            WanderingTraderRenderer traderRenderer = (WanderingTraderRenderer) renderer;
+            traderRenderer.addLayer(new VillagerBackpackLayer<>(traderRenderer));
+        }
     }
 
     private static void addBackpackLayer(PlayerRenderer renderer)

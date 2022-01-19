@@ -3,17 +3,26 @@ package com.mrcrayfish.backpacked.common;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
+import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.tracker.CraftingProgressTracker;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SCollectItemPacket;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 /**
  * Author: MrCrayfish
@@ -63,5 +72,33 @@ public class CommonEvents
                 }
             });
         });
+    }
+
+    @SubscribeEvent
+    public static void onSpawnEntity(LivingSpawnEvent.SpecialSpawn event)
+    {
+        if(event.getSpawnReason() != SpawnReason.EVENT)
+            return;
+
+        if(event.getEntityLiving().getType() != EntityType.WANDERING_TRADER)
+            return;
+
+        WanderingTraderEntity trader = (WanderingTraderEntity) event.getEntityLiving();
+        ItemStack backpack = new ItemStack(ModItems.BACKPACK.get());
+        backpack.getOrCreateTag().putString("BackpackModel", WanderingBagBackpack.ID.toString());
+        trader.getInventory().addItem(backpack);
+    }
+
+    @SubscribeEvent
+    public static void onStartTracking(PlayerEvent.StartTracking event)
+    {
+        if(event.getTarget().getType() != EntityType.WANDERING_TRADER)
+            return;
+
+        WanderingTraderEntity trader = (WanderingTraderEntity) event.getTarget();
+        if(trader.getInventory().countItem(ModItems.BACKPACK.get()) > 0)
+        {
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
+        }
     }
 }
