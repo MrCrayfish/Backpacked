@@ -51,4 +51,9 @@ public class ProgressFormatters
         count = MathHelper.clamp(count, 0, maxCount);
         return new TranslationTextComponent("backpacked.formatter.craft_x_of_x", count, maxCount);
     };
+
+    public static final BiFunction<Integer, Integer, ITextComponent> TRADED_X_OF_X = (count, maxCount) -> {
+        count = MathHelper.clamp(count, 0, maxCount);
+        return new TranslationTextComponent("backpacked.formatter.traded_x_of_x", count, maxCount);
+    };
 }

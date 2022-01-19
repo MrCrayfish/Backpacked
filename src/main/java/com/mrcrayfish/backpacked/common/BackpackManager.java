@@ -45,6 +45,7 @@ public class BackpackManager
         this.register(new StandardBackpack());
         this.register(new TrashCanBackpack());
         this.register(new TurtleShellBackpack());
+        this.register(new WanderingBagBackpack());
         this.registerDependant("create", new CogwheelBackpack());
     }
 
