@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -8,6 +9,7 @@ import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
@@ -49,10 +51,11 @@ public class WanderingTraderEvents
     {
         if(!trader.level.isClientSide())
         {
-            ItemStack backpack = new ItemStack(ModItems.BACKPACK.get());
-            backpack.getOrCreateTag().putString("BackpackModel", WanderingBagBackpack.ID.toString());
-            trader.getInventory().addItem(backpack);
-            patchTraderAiGoals(trader);
+            if(trader.level.random.nextInt(Config.COMMON.wanderingTraderBackpackChance.get()) == 0)
+            {
+                PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
+                patchTraderAiGoals(trader);
+            }
         }
     }
 
@@ -63,10 +66,13 @@ public class WanderingTraderEvents
             return;
 
         WanderingTraderEntity trader = (WanderingTraderEntity) event.getTarget();
-        if(trader.getInventory().countItem(ModItems.BACKPACK.get()) > 0)
+        PickpocketChallenge.get(trader).ifPresent(data ->
         {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
-        }
+            if(data.isBackpackEquipped())
+            {
+                Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
+            }
+        });
     }
 
     @SubscribeEvent
@@ -96,7 +102,7 @@ public class WanderingTraderEvents
 
     private Predicate<Map.Entry<PlayerEntity, Long>> createForgetPlayerPredicate(WanderingTraderEntity trader, World world)
     {
-        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > 16.0F || world.getGameTime() - entry.getValue() > 1200;
+        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > 16.0F || world.getGameTime() - entry.getValue() > 600;
     }
 
     // Determines if the player is in the living entities vision
@@ -142,10 +148,29 @@ public class WanderingTraderEvents
                 goals.removeIf(goal -> goal.getGoal() instanceof LookAtWithoutMovingGoal);
             }
             trader.goalSelector.addGoal(2, new LootAtDetectedPlayerGoal(trader));
+            trader.goalSelector.addGoal(9, new PickpocketLookAtWithoutMovingGoal(trader, PlayerEntity.class, 3.0F, 1.0F));
         }
         catch(IllegalAccessException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    private static class PickpocketLookAtWithoutMovingGoal extends LookAtWithoutMovingGoal
+    {
+        public PickpocketLookAtWithoutMovingGoal(MobEntity entity, Class<? extends LivingEntity> entityClass, float distance, float probability)
+        {
+            super(entity, entityClass, distance, probability);
+        }
+
+        @Override
+        public boolean canUse()
+        {
+            if(PickpocketChallenge.get(this.mob).map(PickpocketChallenge::isBackpackEquipped).orElse(false))
+            {
+                return false;
+            }
+            return super.canUse();
         }
     }
 
@@ -167,7 +192,7 @@ public class WanderingTraderEvents
             if(this.lookAt instanceof PlayerEntity)
             {
                 PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
-                return data != null && data.getDetectedPlayers().containsKey((PlayerEntity) this.lookAt);
+                return data != null && data.isBackpackEquipped() && data.getDetectedPlayers().containsKey((PlayerEntity) this.lookAt);
             }
             return false;
         }

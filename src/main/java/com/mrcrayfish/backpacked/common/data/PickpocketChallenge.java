@@ -33,7 +33,18 @@ public class PickpocketChallenge
     @CapabilityInject(PickpocketChallenge.class)
     public static final Capability<PickpocketChallenge> PICKPOCKET_CAPABILITY = null;
 
+    private boolean backpack;
     private final Map<PlayerEntity, Long> detectedPlayers = new HashMap<>();
+
+    public void setBackpackEquipped(boolean equipped)
+    {
+        this.backpack = equipped;
+    }
+
+    public boolean isBackpackEquipped()
+    {
+        return this.backpack;
+    }
 
     public Map<PlayerEntity, Long> getDetectedPlayers()
     {
@@ -68,11 +79,17 @@ public class PickpocketChallenge
         @Override
         public INBT writeNBT(Capability<PickpocketChallenge> capability, PickpocketChallenge instance, Direction side)
         {
-            return null;
+            CompoundNBT tag = new CompoundNBT();
+            tag.putBoolean("EquippedBackpack", instance.backpack);
+            return tag;
         }
 
         @Override
-        public void readNBT(Capability<PickpocketChallenge> capability, PickpocketChallenge instance, Direction side, INBT nbt) {}
+        public void readNBT(Capability<PickpocketChallenge> capability, PickpocketChallenge instance, Direction side, INBT nbt)
+        {
+            CompoundNBT tag = (CompoundNBT) nbt;
+            instance.backpack = tag.getBoolean("EquippedBackpack");
+        }
     }
 
     public static class Provider implements ICapabilitySerializable<CompoundNBT>

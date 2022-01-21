@@ -28,6 +28,7 @@ public class Config
         public final ForgeConfigSpec.BooleanValue keepBackpackOnDeath;
         public final ForgeConfigSpec.IntValue backpackInventorySizeColumns;
         public final ForgeConfigSpec.IntValue backpackInventorySizeRows;
+        public final ForgeConfigSpec.IntValue wanderingTraderBackpackChance;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -44,6 +45,12 @@ public class Config
                     .comment("The amount of slot rows in the backpack inventory.")
                     .translation("backpacked.configgui.backpackInventorySizeRows")
                     .defineInRange("backpackInventorySize", 1, 1,  BackpackContainer.MAX_ROWS);
+            builder.push("wandering_trader");
+            this.wanderingTraderBackpackChance = builder
+                    .comment("The chance a Wandering Trader will spawn with a backpack. The chance is interpreted as one out of x, with x being the number given from this config option.")
+                    .translation("backpacked.configgui.wanderingTraderBackpackChance")
+                    .defineInRange("wanderingTraderBackpackChance", 2, 1, 100);
+            builder.pop();
             builder.pop();
         }
     }

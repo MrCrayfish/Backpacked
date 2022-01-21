@@ -2,7 +2,9 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -34,30 +36,26 @@ public class VillagerBackpackLayer<T extends AbstractVillagerEntity, M extends V
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int p_225628_3_, T villager, float p_225628_5_, float p_225628_6_, float partialTick, float p_225628_8_, float p_225628_9_, float p_225628_10_)
     {
-        Inventory inventory = villager.getInventory();
-        for(int i = 0; i < inventory.getContainerSize(); i++)
+        PickpocketChallenge.get(villager).ifPresent(data ->
         {
-            ItemStack stack = inventory.getItem(i);
-            if(!stack.isEmpty() && stack.getItem() instanceof BackpackItem)
+            if(data.isBackpackEquipped())
             {
                 ModelRenderer body = this.getBody(this.getParentModel());
                 if(body == null)
                     return;
 
                 matrixStack.pushPose();
-                String modelName = stack.getOrCreateTag().getString("BackpackModel");
-                BackpackModel model = BackpackLayer.getModel(modelName);
+                BackpackModel model = ModelInstances.WANDERING_BAG;
                 ModelRenderer bag = model.getBag();
                 bag.copyFrom(body);
                 bag.y -= 23.5F;
                 bag.z += 3.5F;
                 model.getStraps().visible = false;
-                IVertexBuilder builder = ItemRenderer.getFoilBuffer(buffer, model.renderType(model.getTextureLocation()), false, stack.hasFoil());
+                IVertexBuilder builder = ItemRenderer.getFoilBuffer(buffer, model.renderType(model.getTextureLocation()), false, false);
                 model.renderToBuffer(matrixStack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
                 matrixStack.popPose();
-                return;
             }
-        }
+        });
     }
 
     @Nullable

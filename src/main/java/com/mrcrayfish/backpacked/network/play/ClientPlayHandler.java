@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
+import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
@@ -91,9 +92,7 @@ public class ClientPlayHandler
         if(entity instanceof WanderingTraderEntity)
         {
             WanderingTraderEntity trader = (WanderingTraderEntity) entity;
-            ItemStack backpack = new ItemStack(ModItems.BACKPACK.get());
-            backpack.getOrCreateTag().putString("BackpackModel", WanderingBagBackpack.ID.toString());
-            trader.getInventory().addItem(backpack);
+            PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
         }
     }
 }
