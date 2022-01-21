@@ -9,33 +9,33 @@ import java.util.function.Supplier;
 /**
  * Author: MrCrayfish
  */
-public class MessagePlayerBackpack implements IMessage<MessagePlayerBackpack>
+public class MessageEntityBackpack implements IMessage<MessageEntityBackpack>
 {
     private int entityId;
 
-    public MessagePlayerBackpack() {}
+    public MessageEntityBackpack() {}
 
-    public MessagePlayerBackpack(int entityId)
+    public MessageEntityBackpack(int entityId)
     {
         this.entityId = entityId;
     }
 
     @Override
-    public void encode(MessagePlayerBackpack message, PacketBuffer buffer)
+    public void encode(MessageEntityBackpack message, PacketBuffer buffer)
     {
         buffer.writeInt(message.entityId);
     }
 
     @Override
-    public MessagePlayerBackpack decode(PacketBuffer buffer)
+    public MessageEntityBackpack decode(PacketBuffer buffer)
     {
-        return new MessagePlayerBackpack(buffer.readInt());
+        return new MessageEntityBackpack(buffer.readInt());
     }
 
     @Override
-    public void handle(MessagePlayerBackpack message, Supplier<NetworkEvent.Context> supplier)
+    public void handle(MessageEntityBackpack message, Supplier<NetworkEvent.Context> supplier)
     {
-        supplier.get().enqueueWork(() -> ServerPlayHandler.handlePlayerBackpack(message, supplier.get().getSender()));
+        supplier.get().enqueueWork(() -> ServerPlayHandler.handleEntityBackpack(message, supplier.get().getSender()));
         supplier.get().setPacketHandled(true);
     }
 

@@ -7,17 +7,21 @@ import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -25,6 +29,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -35,6 +40,8 @@ import java.util.Map;
  */
 public class ServerPlayHandler
 {
+    public static final TranslationTextComponent WANDERING_BAG_TRANSLATION = new TranslationTextComponent("backpacked.backpack.wandering_bag");
+
     public static void handleCustomiseBackpack(MessageBackpackCosmetics message, ServerPlayerEntity player)
     {
         ItemStack stack = Backpacked.getBackpackStack(player);
@@ -72,23 +79,40 @@ public class ServerPlayHandler
         BackpackItem.openBackpack(player, player);
     }
 
-    public static void handlePlayerBackpack(MessagePlayerBackpack message, ServerPlayerEntity player)
+    public static void handleEntityBackpack(MessageEntityBackpack message, ServerPlayerEntity player)
     {
         if(!Config.SERVER.pickpocketBackpacks.get())
             return;
 
         Entity entity = player.level.getEntity(message.getEntityId());
-        if(!(entity instanceof ServerPlayerEntity))
+        if(!(entity instanceof LivingEntity))
             return;
 
-        ServerPlayerEntity otherPlayer = (ServerPlayerEntity) entity;
-        if(!PickpocketUtil.canSeeBackpack(otherPlayer, player))
+        LivingEntity livingEntity = (LivingEntity) entity;
+        if(!PickpocketUtil.canSeeBackpack(livingEntity, player))
             return;
 
-        if(BackpackItem.openBackpack(otherPlayer, player))
+        //TODO eventually open to all living entities
+        if(livingEntity instanceof ServerPlayerEntity)
         {
-            otherPlayer.displayClientMessage(new TranslationTextComponent("message.backpacked.player_opened"), true);
-            player.level.playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.75F, 1.0F);
+            ServerPlayerEntity otherPlayer = (ServerPlayerEntity) livingEntity;
+            if(BackpackItem.openBackpack(otherPlayer, player))
+            {
+                otherPlayer.displayClientMessage(new TranslationTextComponent("message.backpacked.player_opened"), true);
+                player.level.playSound(player, livingEntity.getX(), livingEntity.getY() + 1.0, livingEntity.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.75F, 1.0F);
+            }
+        }
+        else if(livingEntity instanceof WanderingTraderEntity)
+        {
+            WanderingTraderEntity trader = (WanderingTraderEntity) livingEntity;
+            NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
+                return new BackpackContainer(id, entity1.inventory, trader.getInventory(), 8, 1, false);
+            }, WANDERING_BAG_TRANSLATION), buffer -> {
+                buffer.writeVarInt(8);
+                buffer.writeVarInt(1);
+                buffer.writeBoolean(false);
+            });
+            player.level.playSound(player, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.15F, 1.0F);
         }
     }
 

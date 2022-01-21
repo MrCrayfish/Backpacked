@@ -8,10 +8,11 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
+import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.network.message.MessagePlayerBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -19,6 +20,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -33,6 +35,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,21 +126,25 @@ public class ClientEvents
             return false;
 
         double range = Config.SERVER.pickpocketMaxReachDistance.get();
-        List<PlayerEntity> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
+        List<LivingEntity> entities = new ArrayList<>();
+        entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
             return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketPlayer(player, mc.player);
-        });
+        }));
+        entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(range), entity -> {
+            return PickpocketChallenge.get(entity).map(PickpocketChallenge::isBackpackEquipped).orElse(false);
+        }));
 
-        if(players.isEmpty())
+        if(entities.isEmpty())
             return false;
 
         Vector3d start = mc.player.getEyePosition(1.0F);
         Vector3d end = mc.player.getViewVector(1.0F).scale(mc.gameMode.getPickRange()).add(start);
 
         double closestDistance = Double.MAX_VALUE;
-        PlayerEntity hitPlayer = null;
-        for(PlayerEntity player : players)
+        LivingEntity hitEntity = null;
+        for(LivingEntity entity : entities)
         {
-            AxisAlignedBB box = PickpocketUtil.getBackpackBox(player, 1.0F);
+            AxisAlignedBB box = PickpocketUtil.getBackpackBox(entity, 1.0F);
             Optional<Vector3d> optionalHitVec = box.clip(start, end);
             if(!optionalHitVec.isPresent())
                 continue;
@@ -146,13 +153,13 @@ public class ClientEvents
             if(distance < closestDistance)
             {
                 closestDistance = distance;
-                hitPlayer = player;
+                hitEntity = entity;
             }
         }
 
-        if(hitPlayer != null && PickpocketUtil.canSeeBackpack(hitPlayer, mc.player))
+        if(hitEntity != null && PickpocketUtil.canSeeBackpack(hitEntity, mc.player))
         {
-            Network.getPlayChannel().sendToServer(new MessagePlayerBackpack(hitPlayer.getId()));
+            Network.getPlayChannel().sendToServer(new MessageEntityBackpack(hitEntity.getId()));
             return true;
         }
         return false;
