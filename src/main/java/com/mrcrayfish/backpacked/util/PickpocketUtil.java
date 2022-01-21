@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.util;
 
 import com.mrcrayfish.backpacked.Config;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -17,11 +18,11 @@ import java.util.Optional;
  */
 public class PickpocketUtil
 {
-    private static Vector3d getEntityPos(PlayerEntity player, float partialTick)
+    public static Vector3d getEntityPos(Entity entity, float partialTick)
     {
-        double x = MathHelper.lerp(partialTick, player.xo, player.getX());
-        double y = MathHelper.lerp(partialTick, player.yo, player.getY());
-        double z = MathHelper.lerp(partialTick, player.zo, player.getZ());
+        double x = MathHelper.lerp(partialTick, entity.xo, entity.getX());
+        double y = MathHelper.lerp(partialTick, entity.yo, entity.getY());
+        double z = MathHelper.lerp(partialTick, entity.zo, entity.getZ());
         return new Vector3d(x, y, z);
     }
 

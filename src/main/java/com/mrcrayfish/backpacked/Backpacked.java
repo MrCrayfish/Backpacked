@@ -3,7 +3,9 @@ package com.mrcrayfish.backpacked;
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
+import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
@@ -91,6 +93,7 @@ public class Backpacked
         ModSounds.REGISTER.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCommands());
+        MinecraftForge.EVENT_BUS.register(new WanderingTraderEvents());
         controllableLoaded = ModList.get().isLoaded("controllable");
         curiosLoaded = ModList.get().isLoaded("curios");
     }
@@ -98,6 +101,7 @@ public class Backpacked
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
         UnlockTracker.registerCapability();
+        PickpocketChallenge.registerCapability();
         Network.init();
         ArgumentTypes.register("backpacked:backpack", BackpackArgument.class, new ArgumentSerializer<>(BackpackArgument::backpacks));
     }

@@ -19,5 +19,9 @@ public class ModelInstances
     public static final BackpackModel SHEEP_PLUSH = new SheepPlushBackpackModel();
     public static final BackpackModel WANDERING_BAG = new WanderingBagBackpackModel();
 
+    //TODO Wandering Trader Backpack (2 versions) Trade with 5 different wandering traders
+    //TODO Nether and End Themed Backpack
+
+
     public static final BackpackModel COGWHEEL = new CogwheelBackpackModel();
 }

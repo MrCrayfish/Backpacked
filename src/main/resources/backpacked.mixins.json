@@ -8,13 +8,15 @@
         "common.BeehiveBlockMixin",
         "common.BredAnimalsTriggerMixin",
         "common.ComposterBlockMixin",
+        "common.EntityMixin",
         "common.LockableLootTileEntityMixin",
         "common.PandaEntityMixin",
         "common.PlayerEntityMixin",
         "common.PlayerInteractionManagerMixin",
         "common.ServerPlayNetHandlerMixin",
         "common.SheepEntityMixin",
-        "common.SlotMixin"
+        "common.SlotMixin",
+        "common.WanderingTraderEntityMixin"
     ],
     "client": [
         "client.CreativeScreenMixin"
