@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.data;
 
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -21,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -41,6 +43,12 @@ public class PickpocketChallenge
     public static void registerCapability()
     {
         CapabilityManager.INSTANCE.register(PickpocketChallenge.class, new Storage(), PickpocketChallenge::new);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static Optional<PickpocketChallenge> get(LivingEntity entity)
+    {
+        return entity.getCapability(PickpocketChallenge.PICKPOCKET_CAPABILITY).resolve();
     }
 
     @SubscribeEvent

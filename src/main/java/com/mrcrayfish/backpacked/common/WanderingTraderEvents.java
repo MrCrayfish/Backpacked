@@ -77,7 +77,7 @@ public class WanderingTraderEvents
         if(world.isClientSide() || entity.getType() != EntityType.WANDERING_TRADER)
             return;
 
-        entity.getCapability(PickpocketChallenge.PICKPOCKET_CAPABILITY).ifPresent(data ->
+        PickpocketChallenge.get(entity).ifPresent(data ->
         {
             Map<PlayerEntity, Long> detectedPlayers = data.getDetectedPlayers();
             WanderingTraderEntity trader = (WanderingTraderEntity) entity;
@@ -166,7 +166,7 @@ public class WanderingTraderEvents
             super.canUse();
             if(this.lookAt instanceof PlayerEntity)
             {
-                PickpocketChallenge data = this.trader.getCapability(PickpocketChallenge.PICKPOCKET_CAPABILITY).resolve().orElse(null);
+                PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
                 return data != null && data.getDetectedPlayers().containsKey((PlayerEntity) this.lookAt);
             }
             return false;
@@ -177,7 +177,7 @@ public class WanderingTraderEvents
         {
             if(this.lookAt instanceof PlayerEntity && this.lookAt.distanceTo(this.trader) <= 8.0)
             {
-                PickpocketChallenge data = this.trader.getCapability(PickpocketChallenge.PICKPOCKET_CAPABILITY).resolve().orElse(null);
+                PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
                 return data != null && data.getDetectedPlayers().containsKey((PlayerEntity) this.lookAt);
             }
             return false;
