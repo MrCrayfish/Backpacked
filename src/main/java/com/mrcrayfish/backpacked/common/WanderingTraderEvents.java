@@ -50,8 +50,8 @@ public class WanderingTraderEvents
             if(trader.level.random.nextInt(Config.COMMON.wanderingTraderBackpackChance.get()) == 0)
             {
                 PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
-                patchTraderAiGoals(trader);
             }
+            patchTraderAiGoals(trader);
         }
     }
 
