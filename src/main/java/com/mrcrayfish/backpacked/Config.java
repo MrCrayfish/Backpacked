@@ -55,7 +55,7 @@ public class Config
             this.wanderingTraderMaxDetectionDistance = builder
                     .comment("The maximum distance a Wandering Trader can detect a player. The longer the distance, the more difficult the challenge to pickpocket their backpack.")
                     .translation("backpacked.configgui.wanderingTraderMaxDetectionDistance")
-                    .defineInRange("wanderingTraderMaxDetectionDistance", 8.0, 1.0, 32.0);
+                    .defineInRange("wanderingTraderMaxDetectionDistance", 10.0, 1.0, 32.0);
             this.wanderingTraderForgetTime = builder
                     .comment("The time (in ticks) a Wandering Trader will wait before it decides to forget about a detected player. The Wandering Trader will wait indefinitely if the detected player is within the maximum detection distance.")
                     .translation("backpacked.configgui.wanderingTraderForgetTime")
