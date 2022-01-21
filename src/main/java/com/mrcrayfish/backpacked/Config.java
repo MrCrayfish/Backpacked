@@ -29,6 +29,7 @@ public class Config
         public final ForgeConfigSpec.IntValue backpackInventorySizeColumns;
         public final ForgeConfigSpec.IntValue backpackInventorySizeRows;
         public final ForgeConfigSpec.IntValue wanderingTraderBackpackChance;
+        public final ForgeConfigSpec.DoubleValue wanderingTraderMaxDetectionDistance;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -50,6 +51,10 @@ public class Config
                     .comment("The chance a Wandering Trader will spawn with a backpack. The chance is interpreted as one out of x, with x being the number given from this config option.")
                     .translation("backpacked.configgui.wanderingTraderBackpackChance")
                     .defineInRange("wanderingTraderBackpackChance", 2, 1, 100);
+            this.wanderingTraderMaxDetectionDistance = builder
+                    .comment("The maximum distance a Wandering Trader can detect a player. The longer the distance, the more difficult the challenge to pickpocket their backpack.")
+                    .translation("backpacked.configgui.wanderingTraderMaxDetectionDistance")
+                    .defineInRange("wanderingTraderMaxDetectionDistance", 8.0, 1.0, 32.0);
             builder.pop();
             builder.pop();
         }
