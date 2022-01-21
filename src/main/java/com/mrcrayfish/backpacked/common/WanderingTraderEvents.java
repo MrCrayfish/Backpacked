@@ -85,6 +85,8 @@ public class WanderingTraderEvents
 
         PickpocketChallenge.get(entity).ifPresent(data ->
         {
+            if(!data.isBackpackEquipped())
+                return;
             Map<PlayerEntity, Long> detectedPlayers = data.getDetectedPlayers();
             WanderingTraderEntity trader = (WanderingTraderEntity) entity;
             List<PlayerEntity> newDetectedPlayers = this.findDetectedPlayers(trader);
