@@ -41,7 +41,7 @@ public class PickpocketUtil
         return backpackBox;
     }
 
-    public static boolean canPickpocketPlayer(LivingEntity targetEntity, PlayerEntity thiefPlayer)
+    public static boolean canPickpocketEntity(LivingEntity targetEntity, PlayerEntity thiefPlayer)
     {
         return inRangeOfBackpack(targetEntity, thiefPlayer) && inReachOfBackpack(targetEntity, thiefPlayer);
     }

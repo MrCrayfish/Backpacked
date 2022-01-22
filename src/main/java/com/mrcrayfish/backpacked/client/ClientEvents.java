@@ -128,10 +128,10 @@ public class ClientEvents
         double range = Config.SERVER.pickpocketMaxReachDistance.get();
         List<LivingEntity> entities = new ArrayList<>();
         entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-            return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketPlayer(player, mc.player);
+            return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
         }));
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(range), entity -> {
-            return PickpocketChallenge.get(entity).map(PickpocketChallenge::isBackpackEquipped).orElse(false);
+            return PickpocketChallenge.get(entity).map(PickpocketChallenge::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player);
         }));
 
         if(entities.isEmpty())
