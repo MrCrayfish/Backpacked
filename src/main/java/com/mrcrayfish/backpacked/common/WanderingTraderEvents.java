@@ -191,7 +191,6 @@ public class WanderingTraderEvents
     {
         if(!data.isLootSpawned())
         {
-            trader.getInventory().clearContent();
             int count = trader.level.random.nextInt(2) + 6;
             List<Integer> randomSlotIndexes = IntStream.range(0, 8).boxed().collect(Collectors.toCollection(ArrayList::new));
             Collections.shuffle(randomSlotIndexes);
