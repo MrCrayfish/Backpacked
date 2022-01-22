@@ -1,9 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
@@ -16,11 +14,9 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
-import net.minecraft.entity.passive.horse.TraderLlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -89,16 +85,20 @@ public class WanderingTraderEvents
         if(world.isClientSide() || entity.getType() != EntityType.WANDERING_TRADER)
             return;
 
+        WanderingTraderEntity trader = (WanderingTraderEntity) entity;
+        if(trader.getUnhappyCounter() > 0)
+        {
+            trader.setUnhappyCounter(trader.getUnhappyCounter() - 1);
+        }
+
         PickpocketChallenge.get(entity).ifPresent(data ->
         {
             if(!data.isBackpackEquipped())
                 return;
             Map<PlayerEntity, Long> detectedPlayers = data.getDetectedPlayers();
-            WanderingTraderEntity trader = (WanderingTraderEntity) entity;
             List<PlayerEntity> newDetectedPlayers = this.findDetectedPlayers(trader);
             newDetectedPlayers.forEach(player -> detectedPlayers.put(player, world.getGameTime()));
             detectedPlayers.entrySet().removeIf(this.createForgetPlayerPredicate(trader, world));
-            //System.out.println(detectedPlayers.size());
         });
     }
 
@@ -157,6 +157,9 @@ public class WanderingTraderEvents
             {
                 trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundCategory.NEUTRAL, 1.0F, 1.5F);
                 trader.level.getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
+                ((ServerWorld) trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, trader.getX(), trader.getEyeY(), trader.getZ(), 1, 0, 0, 0, 0);
+                trader.setUnhappyCounter(20);
+                data.addDislikedPlayer(openingPlayer);
                 return;
             }
 
@@ -252,8 +255,11 @@ public class WanderingTraderEvents
         {
             if(this.trader.level instanceof ServerWorld)
             {
-                ((ServerWorld) this.trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY() + 0.5, this.trader.getZ(), 1, 0, 0, 0, 0);
-                this.trader.level.playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundCategory.NEUTRAL, 1.0F, 1.5F);
+                if(PickpocketChallenge.get(this.trader).map(data -> data.isDislikedPlayer((PlayerEntity) this.lookAt)).orElse(false))
+                {
+                    ((ServerWorld) this.trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY(), this.trader.getZ(), 1, 0, 0, 0, 0);
+                    this.trader.level.playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundCategory.NEUTRAL, 1.0F, 1.5F);
+                }
             }
         }
 

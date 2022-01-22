@@ -21,8 +21,11 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Author: MrCrayfish
@@ -35,6 +38,7 @@ public class PickpocketChallenge
 
     private boolean backpack;
     private final Map<PlayerEntity, Long> detectedPlayers = new HashMap<>();
+    private final Set<UUID> dislikedPlayers = new HashSet<>();
 
     public void setBackpackEquipped(boolean equipped)
     {
@@ -49,6 +53,16 @@ public class PickpocketChallenge
     public Map<PlayerEntity, Long> getDetectedPlayers()
     {
         return this.detectedPlayers;
+    }
+
+    public boolean isDislikedPlayer(PlayerEntity player)
+    {
+        return this.dislikedPlayers.contains(player.getUUID());
+    }
+
+    public void addDislikedPlayer(PlayerEntity player)
+    {
+        this.dislikedPlayers.add(player.getUUID());
     }
 
     public static void registerCapability()
