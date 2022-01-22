@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import net.minecraft.entity.Entity;
@@ -15,8 +16,10 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
+import net.minecraft.entity.passive.horse.TraderLlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
@@ -25,12 +28,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.reflect.Field;
@@ -46,6 +51,7 @@ import java.util.function.Predicate;
 public class WanderingTraderEvents
 {
     private static final Field goalsField = ObfuscationReflectionHelper.findField(GoalSelector.class, "field_220892_d");
+    public static final TranslationTextComponent WANDERING_BAG_TRANSLATION = new TranslationTextComponent("backpacked.backpack.wandering_bag");
 
     public static void onConstructWanderingTrader(WanderingTraderEntity trader)
     {
@@ -92,6 +98,7 @@ public class WanderingTraderEvents
             List<PlayerEntity> newDetectedPlayers = this.findDetectedPlayers(trader);
             newDetectedPlayers.forEach(player -> detectedPlayers.put(player, world.getGameTime()));
             detectedPlayers.entrySet().removeIf(this.createForgetPlayerPredicate(trader, world));
+            //System.out.println(detectedPlayers.size());
         });
     }
 
@@ -137,6 +144,31 @@ public class WanderingTraderEvents
     private static boolean isPlayerMoving(PlayerEntity player)
     {
         return ((IMovedAccess) player).backpackedMoved();
+    }
+
+    public static void openBackpack(WanderingTraderEntity trader, ServerPlayerEntity openingPlayer)
+    {
+        PickpocketChallenge.get(trader).ifPresent(data ->
+        {
+            if(!data.isBackpackEquipped())
+                return;
+
+            if(data.getDetectedPlayers().containsKey(openingPlayer))
+            {
+                trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundCategory.NEUTRAL, 1.0F, 1.5F);
+                trader.level.getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
+                return;
+            }
+
+            NetworkHooks.openGui(openingPlayer, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
+                return new BackpackContainer(id, entity1.inventory, trader.getInventory(), 8, 1, false);
+            }, WANDERING_BAG_TRANSLATION), buffer -> {
+                buffer.writeVarInt(8);
+                buffer.writeVarInt(1);
+                buffer.writeBoolean(false);
+            });
+            openingPlayer.level.playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.15F, 1.0F);
+        });
     }
 
     @SuppressWarnings("unchecked")

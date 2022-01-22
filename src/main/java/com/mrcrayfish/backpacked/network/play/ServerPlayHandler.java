@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -40,8 +41,6 @@ import java.util.Map;
  */
 public class ServerPlayHandler
 {
-    public static final TranslationTextComponent WANDERING_BAG_TRANSLATION = new TranslationTextComponent("backpacked.backpack.wandering_bag");
-
     public static void handleCustomiseBackpack(MessageBackpackCosmetics message, ServerPlayerEntity player)
     {
         ItemStack stack = Backpacked.getBackpackStack(player);
@@ -104,15 +103,7 @@ public class ServerPlayHandler
         }
         else if(livingEntity instanceof WanderingTraderEntity)
         {
-            WanderingTraderEntity trader = (WanderingTraderEntity) livingEntity;
-            NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
-                return new BackpackContainer(id, entity1.inventory, trader.getInventory(), 8, 1, false);
-            }, WANDERING_BAG_TRANSLATION), buffer -> {
-                buffer.writeVarInt(8);
-                buffer.writeVarInt(1);
-                buffer.writeBoolean(false);
-            });
-            player.level.playSound(player, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.15F, 1.0F);
+            WanderingTraderEvents.openBackpack((WanderingTraderEntity) livingEntity, player);
         }
     }
 
