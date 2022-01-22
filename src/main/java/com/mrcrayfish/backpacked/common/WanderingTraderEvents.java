@@ -99,6 +99,7 @@ public class WanderingTraderEvents
             List<PlayerEntity> newDetectedPlayers = this.findDetectedPlayers(trader);
             newDetectedPlayers.forEach(player -> detectedPlayers.put(player, world.getGameTime()));
             detectedPlayers.entrySet().removeIf(this.createForgetPlayerPredicate(trader, world));
+            data.getDislikedPlayers().entrySet().removeIf(entry -> world.getGameTime() - entry.getValue() > Config.COMMON.dislikeCooldown.get());
         });
     }
 
@@ -159,7 +160,7 @@ public class WanderingTraderEvents
                 trader.level.getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
                 ((ServerWorld) trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, trader.getX(), trader.getEyeY(), trader.getZ(), 1, 0, 0, 0, 0);
                 trader.setUnhappyCounter(20);
-                data.addDislikedPlayer(openingPlayer);
+                data.addDislikedPlayer(openingPlayer, trader.level.getGameTime());
                 return;
             }
 

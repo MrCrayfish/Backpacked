@@ -32,6 +32,7 @@ public class Config
         public final ForgeConfigSpec.DoubleValue wanderingTraderMaxDetectionDistance;
         public final ForgeConfigSpec.LongValue wanderingTraderForgetTime;
         public final ForgeConfigSpec.BooleanValue dislikedPlayersCanTrade;
+        public final ForgeConfigSpec.IntValue dislikeCooldown;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -65,6 +66,10 @@ public class Config
                     .comment("If true, allows players who are disliked by Wandering Traders to continue to trade normally with them. A player is considered disliked if they are caught when trying to pickpocket a Wandering Trader's backpack.")
                     .translation("backpacked.configgui.dislikedPlayersCanTrade")
                     .define("dislikedPlayersCanTrade", false);
+            this.dislikeCooldown = builder
+                    .comment("The amount of time (in ticks) a player has to wait before a Wandering Trader will like them again. If a player gets caught pickpocketing a Wandering Trader, the cooldown will be reset")
+                    .translation("backpacked.configgui.dislikeCooldown")
+                    .defineInRange("dislikeCooldown", 6000, 0, 24000);
             builder.pop();
             builder.pop();
         }
