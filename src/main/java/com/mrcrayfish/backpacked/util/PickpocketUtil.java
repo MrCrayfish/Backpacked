@@ -1,6 +1,8 @@
 package com.mrcrayfish.backpacked.util;
 
 import com.mrcrayfish.backpacked.Config;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -43,7 +45,12 @@ public class PickpocketUtil
 
     public static boolean canPickpocketEntity(LivingEntity targetEntity, PlayerEntity thiefPlayer)
     {
-        return inRangeOfBackpack(targetEntity, thiefPlayer) && inReachOfBackpack(targetEntity, thiefPlayer);
+        return canPickpocketEntity(targetEntity, thiefPlayer, Config.SERVER.pickpocketMaxReachDistance.get());
+    }
+
+    public static boolean canPickpocketEntity(LivingEntity targetEntity, PlayerEntity thiefPlayer, double range)
+    {
+        return inRangeOfBackpack(targetEntity, thiefPlayer) && inReachOfBackpack(targetEntity, thiefPlayer, range);
     }
 
     public static boolean inRangeOfBackpack(LivingEntity targetEntity, PlayerEntity thiefPlayer)
@@ -56,11 +63,11 @@ public class PickpocketUtil
         return difference <= Config.SERVER.pickpocketMaxRangeAngle.get();
     }
 
-    public static boolean inReachOfBackpack(LivingEntity targetPlayer, PlayerEntity thiefPlayer)
+    public static boolean inReachOfBackpack(LivingEntity targetPlayer, PlayerEntity thiefPlayer, double reachDistance)
     {
         Vector3d pos = getEntityPos(targetPlayer, 1.0F);
         pos = pos.add(Vector3d.directionFromRotation(0F, targetPlayer.yBodyRot + 180F).scale(targetPlayer.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
-        return pos.distanceTo(getEntityPos(thiefPlayer, 1.0F)) <= Config.SERVER.pickpocketMaxReachDistance.get();
+        return pos.distanceTo(getEntityPos(thiefPlayer, 1.0F)) <= reachDistance;
     }
 
     public static boolean canSeeBackpack(LivingEntity targetEntity, PlayerEntity thiefPlayer)
@@ -71,12 +78,12 @@ public class PickpocketUtil
 
         AxisAlignedBB backpackBox = getBackpackBox(targetEntity, 1.0F);
         Vector3d start = thiefPlayer.getEyePosition(1.0F);
-        Vector3d end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxReachDistance.get() + 1.0).add(start);
+        Vector3d end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxReachDistance.get()).add(start);
         Optional<Vector3d> hitPos = backpackBox.clip(start, end);
         if(!hitPos.isPresent())
             return false;
 
-        BlockRayTraceResult result = thiefPlayer.level.clip(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, thiefPlayer));
+        BlockRayTraceResult result = thiefPlayer.level.clip(new RayTraceContext(start, hitPos.get(), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, thiefPlayer));
         if(result.getType() == RayTraceResult.Type.MISS)
             return true;
 

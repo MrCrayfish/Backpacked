@@ -112,30 +112,30 @@ public class ClientEvents
     {
         if(event.isUseItem())
         {
-            if(Config.SERVER.pickpocketBackpacks.get() && this.performBackpackRaytrace())
+            if(Config.SERVER.pickpocketBackpacks.get())
             {
-                event.setCanceled(true);
+                this.performBackpackRaytrace(event);
             }
         }
     }
 
-    private boolean performBackpackRaytrace()
+    private void performBackpackRaytrace(InputEvent.ClickInputEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
         if(mc.level == null || mc.player == null || mc.gameMode == null)
-            return false;
+            return;
 
         double range = Config.SERVER.pickpocketMaxReachDistance.get();
         List<LivingEntity> entities = new ArrayList<>();
         entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
             return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
         }));
-        entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(range), entity -> {
-            return PickpocketChallenge.get(entity).map(PickpocketChallenge::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player);
+        entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.gameMode.getPickRange()), entity -> {
+            return PickpocketChallenge.get(entity).map(PickpocketChallenge::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player, mc.gameMode.getPickRange());
         }));
 
         if(entities.isEmpty())
-            return false;
+            return;
 
         Vector3d start = mc.player.getEyePosition(1.0F);
         Vector3d end = mc.player.getViewVector(1.0F).scale(mc.gameMode.getPickRange()).add(start);
@@ -157,12 +157,16 @@ public class ClientEvents
             }
         }
 
-        if(hitEntity != null && PickpocketUtil.canSeeBackpack(hitEntity, mc.player))
+        if(hitEntity != null)
         {
-            Network.getPlayChannel().sendToServer(new MessageEntityBackpack(hitEntity.getId()));
-            return true;
+            event.setCanceled(true);
+            event.setSwingHand(false);
+            if(PickpocketUtil.canSeeBackpack(hitEntity, mc.player))
+            {
+                Network.getPlayChannel().sendToServer(new MessageEntityBackpack(hitEntity.getId()));
+                event.setSwingHand(true);
+            }
         }
-        return false;
     }
 
     @SubscribeEvent
@@ -188,7 +192,7 @@ public class ClientEvents
             if(player.isLocalPlayer())
                 continue;
 
-            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player) && PickpocketUtil.canSeeBackpack(player, mc.player);
+            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player, Config.SERVER.pickpocketMaxReachDistance.get()) && PickpocketUtil.canSeeBackpack(player, mc.player);
             float boxRed = inReach ? 0.0F : 1.0F;
             float boxGreen = inReach ? 1.0F : 1.0F;
             float boxBlue = inReach ? 0.0F : 1.0F;
