@@ -1,8 +1,10 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainer;
+import com.mrcrayfish.backpacked.inventory.container.WanderingTraderContainer;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import net.minecraft.entity.Entity;
@@ -174,10 +176,19 @@ public class WanderingTraderEvents
                 return;
             }
 
-            generateBackpackLoot(trader, data);
+            if(generateBackpackLoot(trader, data))
+            {
+                UnlockTracker.get(openingPlayer).ifPresent(unlockTracker ->
+                {
+                    unlockTracker.getProgressTracker(WanderingBagBackpack.ID).ifPresent(tracker ->
+                    {
+                        ((WanderingBagBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
+                    });
+                });
+            }
 
             NetworkHooks.openGui(openingPlayer, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
-                return new BackpackContainer(id, entity1.inventory, trader.getInventory(), 8, 1, false);
+                return new WanderingTraderContainer(id, entity1.inventory, trader);
             }, WANDERING_BAG_TRANSLATION), buffer -> {
                 buffer.writeVarInt(8);
                 buffer.writeVarInt(1);
@@ -187,7 +198,7 @@ public class WanderingTraderEvents
         });
     }
 
-    private static void generateBackpackLoot(WanderingTraderEntity trader, PickpocketChallenge data)
+    private static boolean generateBackpackLoot(WanderingTraderEntity trader, PickpocketChallenge data)
     {
         if(!data.isLootSpawned())
         {
@@ -211,7 +222,9 @@ public class WanderingTraderEvents
                 }
             }
             data.setLootSpawned();
+            return true;
         }
+        return false;
     }
 
     @SuppressWarnings("unchecked")

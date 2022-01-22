@@ -44,12 +44,12 @@ public class WanderingBagBackpack extends Backpack
     @Nullable
     protected IProgressTracker createProgressTracker()
     {
-        return new TradeProgressTracker();
+        return new PickpocketProgressTracker();
     }
 
-    public static class TradeProgressTracker implements IProgressTracker
+    public static class PickpocketProgressTracker implements IProgressTracker
     {
-        private static final int COUNT = 5;
+        private static final int COUNT = 2;
         private final Set<UUID> traders = new HashSet<>();
 
         public void addTrader(WanderingTraderEntity trader, ServerPlayerEntity player)
@@ -68,7 +68,7 @@ public class WanderingBagBackpack extends Backpack
         public void read(CompoundNBT tag)
         {
             this.traders.clear();
-            ListNBT list = tag.getList("TradedTraders", Constants.NBT.TAG_COMPOUND);
+            ListNBT list = tag.getList("PickpocketTraders", Constants.NBT.TAG_COMPOUND);
             list.forEach(t -> {
                 CompoundNBT uuidTag = (CompoundNBT) t;
                 long mostBits = uuidTag.getLong("Most");
@@ -87,13 +87,13 @@ public class WanderingBagBackpack extends Backpack
                 uuidTag.putLong("Least", uuid.getLeastSignificantBits());
                 list.add(uuidTag);
             });
-            tag.put("TradedTraders", list);
+            tag.put("PickpocketTraders", list);
         }
 
         @Override
         public ITextComponent getDisplayComponent()
         {
-            return ProgressFormatters.TRADED_X_OF_X.apply(this.traders.size(), COUNT);
+            return ProgressFormatters.PICKPOCKETED_X_OF_X.apply(this.traders.size(), COUNT);
         }
     }
 }

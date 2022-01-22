@@ -45,7 +45,7 @@
     "backpacked.backpack.sheep_plush": "Sheep Plush",
     "backpacked.backpack.sheep_plush.unlock": "Shear 250 Sheep to unlock this backpack",
     "backpacked.backpack.wandering_bag": "Wandering Pack",
-    "backpacked.backpack.wandering_bag.unlock": "Trade with 5 different Wandering Traders to unlock this backpack",
+    "backpacked.backpack.wandering_bag.unlock": "Pickpocket 2 different Wandering Traders backpacks to unlock this backpack",
     "backpacked.backpack.cogwheel": "Cogwheel",
     "backpacked.backpack.cogwheel.unlock": "Craft 30 Unique Items from Create to unlock this backpack",
     "backpacked.chat.install_configured": "Install %s to access config options",
@@ -59,6 +59,6 @@
     "backpacked.formatter.cut_x_of_x": "Cut %s / %s",
     "backpacked.formatter.shear_x_sheep": "Sheared %s / %s",
     "backpacked.formatter.craft_x_of_x": "Crafted %s / %s",
-    "backpacked.formatter.traded_x_of_x": "Traded %s / %s",
+    "backpacked.formatter.pickpocketed_x_of_x": "Pickpocketed %s / %s",
     "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it"
 }
