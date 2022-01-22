@@ -36,7 +36,8 @@ public class PickpocketChallenge
     @CapabilityInject(PickpocketChallenge.class)
     public static final Capability<PickpocketChallenge> PICKPOCKET_CAPABILITY = null;
 
-    private boolean backpack;
+    private boolean backpack = false;
+    private boolean spawnedLoot = false;
     private final Map<PlayerEntity, Long> detectedPlayers = new HashMap<>();
     private final Map<UUID, Long> dislikedPlayers = new HashMap<>();
 
@@ -48,6 +49,16 @@ public class PickpocketChallenge
     public boolean isBackpackEquipped()
     {
         return this.backpack;
+    }
+
+    public boolean isLootSpawned()
+    {
+        return this.spawnedLoot;
+    }
+
+    public void setLootSpawned()
+    {
+        this.spawnedLoot = true;
     }
 
     public Map<PlayerEntity, Long> getDetectedPlayers()
@@ -100,6 +111,7 @@ public class PickpocketChallenge
         {
             CompoundNBT tag = new CompoundNBT();
             tag.putBoolean("EquippedBackpack", instance.backpack);
+            tag.putBoolean("SpawnedLoot", instance.spawnedLoot);
             return tag;
         }
 
@@ -108,6 +120,7 @@ public class PickpocketChallenge
         {
             CompoundNBT tag = (CompoundNBT) nbt;
             instance.backpack = tag.getBoolean("EquippedBackpack");
+            instance.spawnedLoot = tag.getBoolean("SpawnedLoot");
         }
     }
 

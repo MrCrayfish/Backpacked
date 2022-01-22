@@ -13,10 +13,15 @@ import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
+import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.MerchantOffer;
+import net.minecraft.item.MerchantOffers;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -35,11 +40,15 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Author: MrCrayfish
@@ -165,6 +174,8 @@ public class WanderingTraderEvents
                 return;
             }
 
+            generateBackpackLoot(trader, data);
+
             NetworkHooks.openGui(openingPlayer, new SimpleNamedContainerProvider((id, playerInventory, entity1) -> {
                 return new BackpackContainer(id, entity1.inventory, trader.getInventory(), 8, 1, false);
             }, WANDERING_BAG_TRANSLATION), buffer -> {
@@ -174,6 +185,34 @@ public class WanderingTraderEvents
             });
             openingPlayer.level.playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundCategory.PLAYERS, 0.15F, 1.0F);
         });
+    }
+
+    private static void generateBackpackLoot(WanderingTraderEntity trader, PickpocketChallenge data)
+    {
+        if(!data.isLootSpawned())
+        {
+            trader.getInventory().clearContent();
+            int count = trader.level.random.nextInt(2) + 6;
+            List<Integer> randomSlotIndexes = IntStream.range(0, 8).boxed().collect(Collectors.toCollection(ArrayList::new));
+            Collections.shuffle(randomSlotIndexes);
+            MerchantOffers offers = trader.getOffers();
+            for(int i = 0; i < 8; i++)
+            {
+                if(i < count)
+                {
+                    MerchantOffer offer = offers.get(trader.level.random.nextInt(offers.size()));
+                    ItemStack loot = offer.getResult().copy();
+                    loot.setCount(MathHelper.clamp(loot.getCount() * (trader.level.random.nextInt(Config.COMMON.maxLootMultipler.get()) + 1), 0, 64));
+                    trader.getInventory().setItem(randomSlotIndexes.get(i), loot);
+                }
+                else
+                {
+                    ItemStack stack = new ItemStack(Items.EMERALD, trader.level.random.nextInt(Config.COMMON.maxEmeraldStack.get()) + 1);
+                    trader.getInventory().setItem(randomSlotIndexes.get(i), stack);
+                }
+            }
+            data.setLootSpawned();
+        }
     }
 
     @SuppressWarnings("unchecked")
