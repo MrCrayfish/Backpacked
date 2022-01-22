@@ -155,10 +155,11 @@ public class WanderingTraderEvents
 
             if(data.getDetectedPlayers().containsKey(openingPlayer))
             {
+                trader.setUnhappyCounter(20);
+                trader.getLookControl().setLookAt(openingPlayer.getEyePosition(1.0F));
                 trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
                 trader.level.getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
                 ((ServerLevel) trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, trader.getX(), trader.getEyeY(), trader.getZ(), 1, 0, 0, 0, 0);
-                trader.setUnhappyCounter(20);
                 data.addDislikedPlayer(openingPlayer, trader.level.getGameTime());
                 return;
             }
