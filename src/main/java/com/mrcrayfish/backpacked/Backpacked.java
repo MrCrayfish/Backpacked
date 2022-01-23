@@ -68,10 +68,17 @@ import java.util.stream.Collectors;
 public class Backpacked
 {
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
-
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
     private static Set<ResourceLocation> bannedItemsList;
+    public static final ItemGroup TAB = new ItemGroup("backpacked")
+    {
+        @Override
+        public ItemStack makeIcon()
+        {
+            return new ItemStack(ModItems.BACKPACK.get());
+        }
+    };
 
     public Backpacked()
     {

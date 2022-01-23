@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.core;
 
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import net.minecraft.block.AbstractBlock;
@@ -33,7 +34,7 @@ public class ModBlocks
 
     private static <T extends Block> RegistryObject<T> register(String id, T block)
     {
-        return register(id, block, b -> new BlockItem(b, new Item.Properties().tab(ItemGroup.TAB_DECORATIONS)));
+        return register(id, block, b -> new BlockItem(b, new Item.Properties().tab(Backpacked.TAB)));
     }
 
     private static <T extends Block> RegistryObject<T> register(String id, T block, @Nullable Function<T, BlockItem> supplier)
