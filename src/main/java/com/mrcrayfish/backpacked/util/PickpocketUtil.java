@@ -1,8 +1,6 @@
 package com.mrcrayfish.backpacked.util;
 
 import com.mrcrayfish.backpacked.Config;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
