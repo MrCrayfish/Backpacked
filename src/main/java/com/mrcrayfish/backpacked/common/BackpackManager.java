@@ -38,6 +38,7 @@ public class BackpackManager
         this.register(new BambooBasketBackpack());
         this.register(new CardboardBoxBackpack());
         this.register(new ClassicBackpack());
+        this.register(new EndCrystalBackpack());
         this.register(new HoneyJarBackpack());
         this.register(new MiniChestBackpack());
         this.register(new PiglinPackBackpack());

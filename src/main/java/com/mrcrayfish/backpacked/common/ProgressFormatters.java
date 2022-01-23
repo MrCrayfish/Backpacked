@@ -61,4 +61,9 @@ public class ProgressFormatters
         count = MathHelper.clamp(count, 0, maxCount);
         return new TranslationTextComponent("backpacked.formatter.explored_x_of_x", count, maxCount);
     };
+
+    public static final BiFunction<Integer, Integer, ITextComponent> INCOMPLETE_COMPLETE = (count, maxCount) -> {
+        if(count < maxCount) return new TranslationTextComponent("backpacked.formatter.incomplete");
+        return new TranslationTextComponent("backpacked.formatter.complete");
+    };
 }
