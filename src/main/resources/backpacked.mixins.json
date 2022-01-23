@@ -14,12 +14,7 @@
         "common.PlayerEntityMixin",
         "common.PlayerInteractionManagerMixin",
         "common.ServerPlayNetHandlerMixin",
-        "common.SheepEntityMixin",
-        "common.SlotMixin",
-        "common.WanderingTraderEntityMixin"
-    ],
-    "client": [
-        "client.CreativeScreenMixin"
+        "common.SheepEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1

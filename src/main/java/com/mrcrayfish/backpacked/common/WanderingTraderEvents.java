@@ -25,6 +25,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.MerchantOffer;
 import net.minecraft.item.MerchantOffers;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
@@ -34,8 +35,10 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -60,14 +63,21 @@ public class WanderingTraderEvents
     private static final Field goalsField = ObfuscationReflectionHelper.findField(GoalSelector.class, "field_220892_d");
     public static final TranslationTextComponent WANDERING_BAG_TRANSLATION = new TranslationTextComponent("backpacked.backpack.wandering_bag");
 
-    public static void onConstructWanderingTrader(WanderingTraderEntity trader)
+    @SubscribeEvent
+    public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
-        if(!trader.level.isClientSide())
+        if(!event.getWorld().isClientSide() && event.getEntity() instanceof WanderingTraderEntity)
         {
-            if(trader.level.random.nextInt(Config.COMMON.wanderingTraderBackpackChance.get()) == 0)
+            WanderingTraderEntity trader = (WanderingTraderEntity) event.getEntity();
+            PickpocketChallenge.get(trader).ifPresent(data ->
             {
-                PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
-            }
+                if(!data.isInitialized())
+                {
+                    boolean equipped = trader.level.random.nextInt(Config.COMMON.wanderingTraderBackpackChance.get()) == 0;
+                    data.setBackpackEquipped(equipped);
+                    data.setInitialized();
+                }
+            });
             patchTraderAiGoals(trader);
         }
     }
@@ -112,6 +122,23 @@ public class WanderingTraderEvents
             detectedPlayers.entrySet().removeIf(this.createForgetPlayerPredicate(trader, world));
             data.getDislikedPlayers().entrySet().removeIf(entry -> world.getGameTime() - entry.getValue() > Config.COMMON.dislikeCooldown.get());
         });
+    }
+
+    @SubscribeEvent
+    public void onInteract(PlayerInteractEvent.EntityInteract event)
+    {
+        Entity entity = event.getTarget();
+        if(!entity.level.isClientSide() && entity instanceof WanderingTraderEntity)
+        {
+            WanderingTraderEntity trader = (WanderingTraderEntity) entity;
+            if(!Config.COMMON.dislikedPlayersCanTrade.get() && PickpocketChallenge.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(event.getPlayer())).orElse(false))
+            {
+                trader.setUnhappyCounter(20);
+                trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundCategory.NEUTRAL, 1.0F, 1.5F);
+                event.setCanceled(true);
+                event.setCancellationResult(ActionResultType.SUCCESS);
+            }
+        }
     }
 
     private List<PlayerEntity> findDetectedPlayers(LivingEntity entity)

@@ -10,20 +10,27 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.integration.Curios;
+import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
+import com.mrcrayfish.backpacked.util.ReflectionHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
@@ -33,8 +40,12 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +55,8 @@ import java.util.Optional;
  */
 public class ClientEvents
 {
+    private static ItemGroup currentGroup = null;
+
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
@@ -215,5 +228,35 @@ public class ClientEvents
         }
         source.endBatch(RenderType.lines());
         stack.popPose();
+    }
+
+    @SubscribeEvent
+    public void onRenderTickStart(TickEvent.RenderTickEvent event)
+    {
+        if(event.phase != TickEvent.Phase.START)
+            return;
+
+        if(Backpacked.isCuriosLoaded())
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if(!(mc.screen instanceof CreativeScreen)) {
+            currentGroup = null;
+            return;
+        }
+
+        CreativeScreen screen = (CreativeScreen) mc.screen;
+        ItemGroup group = ItemGroup.TABS[screen.getSelectedTab()];
+        if(currentGroup == null || currentGroup != group)
+        {
+            currentGroup = group;
+            if(currentGroup == ItemGroup.TAB_INVENTORY)
+            {
+                List<Slot> slots = screen.getMenu().slots;
+                slots.stream().filter(slot -> slot.container instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot -> {
+                    ReflectionHelper.repositionSlot(slot, 127, 20);
+                });
+            }
+        }
     }
 }
