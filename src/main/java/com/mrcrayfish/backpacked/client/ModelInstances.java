@@ -18,6 +18,7 @@ public class ModelInstances
     public static final BackpackModel CARDBOARD_BOX = new CardboardBoxBackpackModel();
     public static final BackpackModel SHEEP_PLUSH = new SheepPlushBackpackModel();
     public static final BackpackModel WANDERING_BAG = new WanderingBagBackpackModel();
+    public static final BackpackModel PIGLIN_PACK = new PiglinPackBackpackModel();
 
     //TODO Wandering Trader Backpack (2 versions) Trade with 5 different wandering traders
     //TODO Nether and End Themed Backpack

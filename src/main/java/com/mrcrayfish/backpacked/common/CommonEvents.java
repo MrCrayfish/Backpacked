@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
+import com.mrcrayfish.backpacked.common.tracker.BiomeExploreProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -16,7 +17,10 @@ import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SCollectItemPacket;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -70,6 +74,36 @@ public class CommonEvents
                 {
                     ((CraftingProgressTracker) progressTracker).processCrafted(craftedItem, player);
                 }
+            });
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event)
+    {
+        if(event.phase != TickEvent.Phase.END)
+            return;
+
+        if(event.player.level.isClientSide())
+            return;
+
+        if(event.player.tickCount % 20 != 0)
+            return;
+
+        ServerPlayerEntity player = (ServerPlayerEntity) event.player;
+        ServerWorld world = player.getLevel();
+        BlockPos playerPosition = player.blockPosition();
+        world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(world.getBiome(playerPosition)).ifPresent(key ->
+        {
+            UnlockTracker.get(player).ifPresent(unlockTracker ->
+            {
+                unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
+                {
+                    if(progressTracker instanceof BiomeExploreProgressTracker && !progressTracker.isComplete())
+                    {
+                        ((BiomeExploreProgressTracker) progressTracker).explore(key, player);
+                    }
+                });
             });
         });
     }

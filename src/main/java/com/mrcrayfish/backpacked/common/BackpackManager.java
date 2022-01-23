@@ -40,6 +40,7 @@ public class BackpackManager
         this.register(new ClassicBackpack());
         this.register(new HoneyJarBackpack());
         this.register(new MiniChestBackpack());
+        this.register(new PiglinPackBackpack());
         this.register(new RocketBackpack());
         this.register(new SheepPlushBackpack());
         this.register(new StandardBackpack());

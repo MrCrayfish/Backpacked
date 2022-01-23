@@ -56,4 +56,9 @@ public class ProgressFormatters
         count = MathHelper.clamp(count, 0, maxCount);
         return new TranslationTextComponent("backpacked.formatter.pickpocketed_x_of_x", count, maxCount);
     };
+
+    public static final BiFunction<Integer, Integer, ITextComponent> EXPLORED_X_OF_X = (count, maxCount) -> {
+        count = MathHelper.clamp(count, 0, maxCount);
+        return new TranslationTextComponent("backpacked.formatter.explored_x_of_x", count, maxCount);
+    };
 }

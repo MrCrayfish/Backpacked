@@ -46,6 +46,8 @@
     "backpacked.backpack.sheep_plush.unlock": "Shear 250 Sheep to unlock this backpack",
     "backpacked.backpack.wandering_bag": "Wandering Pack",
     "backpacked.backpack.wandering_bag.unlock": "Pickpocket 2 different Wandering Traders backpacks to unlock this backpack",
+    "backpacked.backpack.piglin_pack": "Piglin Pack",
+    "backpacked.backpack.piglin_pack.unlock": "Explore all biomes in The Nether to unlock this backpack",
     "backpacked.backpack.cogwheel": "Cogwheel",
     "backpacked.backpack.cogwheel.unlock": "Craft 30 Unique Items from Create to unlock this backpack",
     "backpacked.chat.install_configured": "Install %s to access config options",
@@ -60,6 +62,7 @@
     "backpacked.formatter.shear_x_sheep": "Sheared %s / %s",
     "backpacked.formatter.craft_x_of_x": "Crafted %s / %s",
     "backpacked.formatter.pickpocketed_x_of_x": "Pickpocketed %s / %s",
+    "backpacked.formatter.explored_x_of_x": "Explored %s / %s",
     "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it",
     "itemGroup.backpacked": "Backpacked"
 }
