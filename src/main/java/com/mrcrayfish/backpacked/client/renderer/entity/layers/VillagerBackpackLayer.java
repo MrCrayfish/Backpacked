@@ -41,7 +41,6 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
                 BackpackModel model = ClientHandler.getModelInstances().getWanderingBag();
                 ModelPart bag = model.getBag();
                 bag.copyFrom(body);
-                bag.y -= 23.5F;
                 bag.z += 3.5F;
                 model.getStraps().visible = false;
                 VertexConsumer builder = ItemRenderer.getFoilBuffer(buffer, model.renderType(model.getTextureLocation()), false, false);
