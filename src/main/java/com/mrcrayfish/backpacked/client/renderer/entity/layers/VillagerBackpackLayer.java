@@ -45,11 +45,10 @@ public class VillagerBackpackLayer<T extends AbstractVillagerEntity, M extends V
                 BackpackModel model = ModelInstances.WANDERING_BAG;
                 ModelRenderer bag = model.getBag();
                 bag.copyFrom(body);
-                bag.y -= 23.5F;
                 bag.z += 3.5F;
                 model.getStraps().visible = false;
                 IVertexBuilder builder = ItemRenderer.getFoilBuffer(buffer, model.renderType(model.getTextureLocation()), false, false);
-                model.renderToBuffer(matrixStack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
+                bag.render(matrixStack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
                 matrixStack.popPose();
             }
         });
