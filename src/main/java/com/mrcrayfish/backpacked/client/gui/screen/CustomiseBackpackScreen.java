@@ -41,6 +41,7 @@ import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.util.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -79,6 +80,7 @@ public class CustomiseBackpackScreen extends Screen
     private boolean displayShowEffects;
     private final List<BackpackModelEntry> models;
     private int scroll;
+    private int animationTick;
 
     public CustomiseBackpackScreen(Map<ResourceLocation, ITextComponent> progressMap)
     {
@@ -162,6 +164,7 @@ public class CustomiseBackpackScreen extends Screen
     {
         super.tick();
         this.updateButtons();
+        this.animationTick++;
     }
 
     @Override
@@ -196,7 +199,7 @@ public class CustomiseBackpackScreen extends Screen
         int startIndex = (int) (Math.max(0, this.models.size() - 7) * MathHelper.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
         for(int i = startIndex; i < this.models.size() && i < startIndex + 7; i++)
         {
-            this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, this.models.get(i));
+            this.drawBackpackItem(matrixStack, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, partialTick, this.models.get(i));
         }
 
         int hoveredIndex = this.getHoveredIndex(mouseX, mouseY);
@@ -217,7 +220,7 @@ public class CustomiseBackpackScreen extends Screen
         });
     }
 
-    private void drawBackpackItem(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, BackpackModelEntry entry)
+    private void drawBackpackItem(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, float partialTick, BackpackModelEntry entry)
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
         boolean selected = unlocked && entry.getId().equals(this.displayBackpackModel);
@@ -234,10 +237,10 @@ public class CustomiseBackpackScreen extends Screen
         this.font.draw(matrixStack, entry.getLabel(), x + 20, y + 6, color);
 
         // Draw backpack model
-        drawBackpackModel(matrixStack, entry.getBackpack().getModel(), x + 8, y + 4, 20);
+        drawBackpackModel(matrixStack, entry.getBackpack().getModel(), x + 8, y + 4, 20, this.animationTick, partialTick);
     }
 
-    public static void drawBackpackModel(MatrixStack matrixStack, BackpackModel model, int x, int y, float scale)
+    public static void drawBackpackModel(MatrixStack matrixStack, BackpackModel model, int x, int y, float scale, int animationTick, float partialTick)
     {
         matrixStack.pushPose();
         matrixStack.translate(x, y, 50);
@@ -249,6 +252,7 @@ public class CustomiseBackpackScreen extends Screen
         RenderSystem.pushMatrix();
         IRenderTypeBuffer.Impl source = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
         IVertexBuilder builder = source.getBuffer(model.renderType(model.getTextureLocation()));
+        model.setupAngles(null, animationTick, Animation.getPartialTickTime());
         model.getStraps().visible = false;
         ModelRenderer bag = model.getBag();
         bag.setPos(0, 0, 0);
@@ -432,8 +436,11 @@ public class CustomiseBackpackScreen extends Screen
         boolean origShowWithElytra = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA);
         boolean origShowEffects = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS);
         player.yBodyRot = 0.0F;
+        player.yBodyRotO = 0.0F;
         player.yRot = 0.0F;
-        player.xRot = 0.0F;
+        player.yRotO = 0.0F;
+        player.xRot = 15F;
+        player.xRotO = 15F;
         player.yHeadRot = player.yRot;
         player.yHeadRotO = player.yRot;
         this.setLocalBackpackModel(this.displayBackpackModel);
@@ -444,7 +451,7 @@ public class CustomiseBackpackScreen extends Screen
         manager.overrideCameraOrientation(cameraRotation);
         manager.setRenderShadow(false);
         IRenderTypeBuffer.Impl source = Minecraft.getInstance().renderBuffers().bufferSource();
-        RenderSystem.runAsFancy(() -> manager.render(player, 0, 0.0625, 0.35, 0, 1, matrixStack, source, 15728880));
+        RenderSystem.runAsFancy(() -> manager.render(player, 0, 0.0625, 0.35, 0, Animation.getPartialTickTime(), matrixStack, source, 15728880));
         source.endBatch();
         manager.setRenderShadow(true);
         player.yBodyRot = origBodyRot;

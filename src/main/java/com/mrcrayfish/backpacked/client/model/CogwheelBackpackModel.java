@@ -6,6 +6,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 
+import javax.annotation.Nullable;
+
 /**
  * Author: MrCrayfish
  */
@@ -62,10 +64,11 @@ public class CogwheelBackpackModel extends BackpackModel
     }
 
     @Override
-    public void setupAngles(PlayerEntity player, ModelRenderer body, boolean armour, float partialTick)
+    public void setupAngles(@Nullable PlayerEntity player, int animationTick, float partialTick)
     {
-        super.setupAngles(player, body, armour, partialTick);
-        this.gear.zRot = (float) Math.toRadians((player.tickCount + partialTick) * 4.0F + (player.animationPosition - player.animationSpeed * (1.0F - partialTick)) * 16.0F);
+        float position = player != null ? player.animationPosition : 0F;
+        float speed = player != null ? player.animationSpeed : 0F;
+        this.gear.zRot = (float) Math.toRadians((animationTick + partialTick) * 4.0F + (position - speed * (1.0F - partialTick)) * 16.0F);
     }
 
     @Override

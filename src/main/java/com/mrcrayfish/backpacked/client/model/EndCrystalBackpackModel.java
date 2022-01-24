@@ -1,9 +1,13 @@
 package com.mrcrayfish.backpacked.client.model;
 
 import com.mrcrayfish.backpacked.Reference;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
+
+import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -11,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 public class EndCrystalBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/crystal_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 8, -6);
 
     private final ModelRenderer backpack;
     private final ModelRenderer bag;
@@ -46,10 +51,9 @@ public class EndCrystalBackpackModel extends BackpackModel
     }
 
     @Override
-    public void setupAngles(PlayerEntity player, ModelRenderer body, boolean armour, float partialTick)
+    public void setupAngles(@Nullable PlayerEntity player, int animationTick, float partialTick)
     {
-        super.setupAngles(player, body, armour, partialTick);
-        double rotation = player.tickCount + partialTick;
+        double rotation = animationTick + partialTick;
         this.crystal.y = 4.0F;
         this.crystal.y += Math.sin(rotation / 4.0);
         this.crystal.yRot = (float) Math.toRadians(rotation * 3);
@@ -77,5 +81,11 @@ public class EndCrystalBackpackModel extends BackpackModel
     public ResourceLocation getTextureLocation()
     {
         return TEXTURE;
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 }

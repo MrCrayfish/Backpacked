@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.tileentity.ShelfTileEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -13,6 +14,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -47,7 +50,9 @@ public class ShelfRenderer extends TileEntityRenderer<ShelfTileEntity>
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(180F));
         matrixStack.mulPose(Vector3f.XP.rotationDegrees(-90F));
 
+        int animationTick = Optional.ofNullable(Minecraft.getInstance().player).map(player -> player.tickCount).orElse(0);
         IVertexBuilder builder = buffer.getBuffer(model.renderType(model.getTextureLocation()));
+        model.setupAngles(null, animationTick, partialTick);
         model.getStraps().visible = false;
         model.getBag().setPos(0F, 0F, 0F);
         model.getBag().render(matrixStack, builder, light, overlay);
