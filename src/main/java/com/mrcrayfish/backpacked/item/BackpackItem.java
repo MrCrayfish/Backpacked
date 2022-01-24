@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -29,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -121,5 +123,23 @@ public class BackpackItem extends Item
     public BackpackModel getDefaultModel()
     {
         return ModelInstances.STANDARD;
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack)
+    {
+        CompoundNBT realTag = stack.getOrCreateTag();
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("BackpackModel", realTag.getString("BackpackModel"));
+        for(BackpackModelProperty property : BackpackModelProperty.values())
+        {
+            String tagName = property.getTagName();
+            boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+            tag.putBoolean(tagName, value);
+        }
+        tag.put("Enchantments", stack.getEnchantmentTags());
+        tag.put("display", stack.getOrCreateTagElement("display"));
+        return tag;
     }
 }

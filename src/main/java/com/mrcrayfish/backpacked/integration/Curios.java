@@ -100,34 +100,6 @@ public class Curios
                 return tag == null || tag.getList("Items", Constants.NBT.TAG_COMPOUND).isEmpty();
             }
 
-            @Override
-            public boolean canSync(String identifier, int index, LivingEntity livingEntity)
-            {
-                return true;
-            }
-
-            @Nullable
-            @Override
-            public CompoundNBT writeSyncData()
-            {
-                CompoundNBT realTag = stack.getOrCreateTag();
-                CompoundNBT tag = new CompoundNBT();
-                tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
-                for(BackpackModelProperty property : BackpackModelProperty.values())
-                {
-                    String tagName = property.getTagName();
-                    boolean value = realTag.contains(tagName, Constants.NBT.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
-                    tag.putBoolean(tagName, value);
-                }
-                return tag;
-            }
-
-            @Override
-            public void readSyncData(CompoundNBT compound)
-            {
-                stack.getOrCreateTag().putString("BackpackModel", compound.getString("BackpackModel"));
-            }
-
             @Nonnull
             @Override
             public DropRule getDropRule(LivingEntity livingEntity)
