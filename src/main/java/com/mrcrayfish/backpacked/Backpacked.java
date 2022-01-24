@@ -9,9 +9,11 @@ import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.core.ModTileEntities;
+import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.Curios;
@@ -26,6 +28,7 @@ import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemGroup;
@@ -37,6 +40,8 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -68,6 +73,7 @@ import java.util.stream.Collectors;
 public class Backpacked
 {
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
+    public static final EnchantmentType ENCHANTMENT_TYPE = EnchantmentType.create("backpack", item -> item instanceof BackpackItem);
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
     private static Set<ResourceLocation> bannedItemsList;
@@ -94,6 +100,7 @@ public class Backpacked
         bus.addListener(this::onConfigReload);
         bus.addListener(this::onGatherData);
         ModContainers.REGISTER.register(bus);
+        ModEnchantments.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
         ModBlocks.REGISTER.register(bus);
         ModTileEntities.REGISTER.register(bus);
@@ -128,9 +135,11 @@ public class Backpacked
 
     private void onGatherData(GatherDataEvent event)
     {
+        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         DataGenerator generator = event.getGenerator();
         generator.addProvider(new LootTableGen(generator));
         generator.addProvider(new RecipeGen(generator));
+        generator.addProvider(new BlockTagGen(generator, existingFileHelper));
     }
 
     @SubscribeEvent
