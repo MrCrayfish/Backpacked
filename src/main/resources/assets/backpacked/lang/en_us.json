@@ -24,6 +24,7 @@
     "backpacked.button.config.tooltip": "Config Options",
     "backpacked.button.show_effects.tooltip": "Show Effects",
     "backpacked.button.show_with_elytra.tooltip": "Show with Elytra",
+    "backpacked.button.show_enchantment_glint.tooltip": "Show Enchantment Glint",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "message.backpacked.player_opened": "A player has opened your backpack",
     "backpacked.backpack.standard": "Standard",

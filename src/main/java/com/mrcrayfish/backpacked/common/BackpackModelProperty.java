@@ -6,7 +6,8 @@ package com.mrcrayfish.backpacked.common;
 public enum BackpackModelProperty
 {
     SHOW_WITH_ELYTRA("AlwaysRenderBackpack", false),
-    SHOW_EFFECTS("ShowBackpackEffects", true);
+    SHOW_EFFECTS("ShowBackpackEffects", true),
+    SHOW_GLINT("ShowEnchantmentGlint", false);
 
     private final String tagName;
     private final boolean defaultValue;

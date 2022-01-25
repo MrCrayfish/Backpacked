@@ -53,6 +53,7 @@ public class ServerPlayHandler
 
             CompoundNBT tag = stack.getOrCreateTag();
             tag.putString("BackpackModel", id.toString());
+            tag.putBoolean(BackpackModelProperty.SHOW_GLINT.getTagName(), message.isShowGlint());
             tag.putBoolean(BackpackModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.isShowWithElytra());
             tag.putBoolean(BackpackModelProperty.SHOW_EFFECTS.getTagName(), message.isShowEffects());
 

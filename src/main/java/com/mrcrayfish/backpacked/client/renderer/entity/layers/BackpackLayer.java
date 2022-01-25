@@ -55,7 +55,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
             BackpackModel model = VARIANTS.getOrDefault(modelName, backpackItem.getDefaultModel());
             model.transformToPlayerBody(this.getParentModel().body, !chestStack.isEmpty());
             model.setupAngles(player, player.tickCount, partialTick);
-            IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, backpack.hasFoil());
+            IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, canShowEnchantmentGlint(backpack) && backpack.hasFoil());
             model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
             stack.popPose();
         }
@@ -64,6 +64,11 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
     public static boolean canRenderWithElytra(ItemStack stack)
     {
         return stack.getOrCreateTag().getBoolean(BackpackModelProperty.SHOW_WITH_ELYTRA.getTagName());
+    }
+
+    public static boolean canShowEnchantmentGlint(ItemStack stack)
+    {
+        return stack.getOrCreateTag().getBoolean(BackpackModelProperty.SHOW_GLINT.getTagName());
     }
 
     public synchronized static <T extends BackpackModel> void registerModel(ResourceLocation id, T model)
