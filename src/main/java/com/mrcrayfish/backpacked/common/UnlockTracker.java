@@ -121,6 +121,27 @@ public class UnlockTracker
     }
 
     @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event)
+    {
+        Player originalPlayer = event.getPlayer();
+        originalPlayer.reviveCaps();
+        get(originalPlayer).ifPresent(originalTracker ->
+        {
+            get(event.getPlayer()).ifPresent(newTracker ->
+            {
+                newTracker.unlockedBackpacks.addAll(originalTracker.unlockedBackpacks);
+                originalTracker.progressTrackerMap.forEach((location, progressTracker) ->
+                {
+                    CompoundTag tag = new CompoundTag();
+                    progressTracker.write(tag);
+                    Optional.ofNullable(newTracker.progressTrackerMap.get(location)).ifPresent(t -> t.read(tag));
+                });
+            });
+        });
+        originalPlayer.invalidateCaps();
+    }
+
+    @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
     {
         get(event.getPlayer()).ifPresent(unlockTracker -> {
