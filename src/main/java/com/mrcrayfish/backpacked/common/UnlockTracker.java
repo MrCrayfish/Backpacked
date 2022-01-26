@@ -115,9 +115,13 @@ public class UnlockTracker
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event)
     {
-        Provider provider = new Provider();
-        event.addCapability(ID, provider);
-        event.addListener(provider::invalidate);
+        Entity entity = event.getObject();
+        if(entity instanceof PlayerEntity)
+        {
+            Provider provider = new Provider();
+            event.addCapability(ID, provider);
+            event.addListener(provider::invalidate);
+        }
     }
 
     @SubscribeEvent
