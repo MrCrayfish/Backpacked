@@ -127,7 +127,7 @@ public class UnlockTracker
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event)
     {
-        PlayerEntity originalPlayer = event.getPlayer();
+        PlayerEntity originalPlayer = event.getOriginal();
         originalPlayer.revive();
         get(originalPlayer).ifPresent(originalTracker ->
         {
