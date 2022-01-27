@@ -123,7 +123,7 @@ public class UnlockTracker
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event)
     {
-        Player originalPlayer = event.getPlayer();
+        Player originalPlayer = event.getOriginal();
         originalPlayer.reviveCaps();
         get(originalPlayer).ifPresent(originalTracker ->
         {
@@ -183,7 +183,7 @@ public class UnlockTracker
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
         {
-            return UNLOCK_TRACKER_CAPABILITY.orEmpty(cap, this.optional.cast());
+            return UNLOCK_TRACKER_CAPABILITY.orEmpty(cap, this.optional);
         }
 
         @Override
