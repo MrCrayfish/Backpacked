@@ -47,9 +47,12 @@ public class LootedEnchantment extends Enchantment
         if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.LOOTED.get(), backpack) <= 0)
             return;
 
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        if(inventory == null)
+            return;
+
         event.setCanceled(true);
 
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
         event.getDrops().forEach(itemEntity ->
         {
             ItemStack stack = itemEntity.getItem();
