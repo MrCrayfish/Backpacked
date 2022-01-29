@@ -10,6 +10,7 @@
         "common.BredAnimalsTriggerMixin",
         "common.ComposterBlockMixin",
         "common.EntityMixin",
+        "common.ItemEntityMixin",
         "common.LockableLootTileEntityMixin",
         "common.PandaEntityMixin",
         "common.PlayerEntityMixin",

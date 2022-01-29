@@ -75,5 +75,7 @@
     "enchantment.backpacked.repairman": "Repairman",
     "enchantment.backpacked.repairman.desc": "Repairs all items with Mending in a Backpack when collecting experience",
     "enchantment.backpacked.looted": "Looted",
-    "enchantment.backpacked.looted.desc": "Loot dropped from killing a mob is placed directly into a Backpack"
+    "enchantment.backpacked.looted.desc": "Loot dropped from killing a mob is placed directly into a Backpack",
+    "enchantment.backpacked.imbued_hide": "Imbued Hide",
+    "enchantment.backpacked.imbued_hide.desc": "Strengthens the material of a Backpack to prevent it from fire damage"
 }
