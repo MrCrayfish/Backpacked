@@ -84,7 +84,7 @@ public class Backpacked
         {
             return new ItemStack(ModItems.BACKPACK.get());
         }
-    };
+    }.setEnchantmentCategories(ENCHANTMENT_TYPE);
 
     public Backpacked()
     {
