@@ -153,6 +153,14 @@ public class UnlockTracker
     }
 
     @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
+    {
+        get(event.getPlayer()).ifPresent(unlockTracker -> {
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+        });
+    }
+
+    @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event)
     {
         if(event.phase != TickEvent.Phase.END)
