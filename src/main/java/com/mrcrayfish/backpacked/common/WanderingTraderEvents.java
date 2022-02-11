@@ -306,7 +306,7 @@ public class WanderingTraderEvents
         public boolean canUse()
         {
             super.canUse();
-            if(this.lookAt instanceof Player)
+            if(this.trader.getLastHurtByMob() == null && this.lookAt instanceof Player)
             {
                 PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
                 return data != null && data.isBackpackEquipped() && data.getDetectedPlayers().containsKey((Player) this.lookAt);
