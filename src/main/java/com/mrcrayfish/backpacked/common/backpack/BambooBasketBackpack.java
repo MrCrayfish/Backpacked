@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -34,10 +35,9 @@ public class BambooBasketBackpack extends Backpack
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ModelInstances.BAMBOO_BASKET;
+        return () -> ModelInstances.BAMBOO_BASKET;
     }
 
     @Override

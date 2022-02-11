@@ -35,6 +35,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -119,10 +120,9 @@ public class BackpackItem extends Item
         return Config.COMMON.backpackInventorySizeRows.get();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public BackpackModel getDefaultModel()
+    public Supplier<BackpackModel> getDefaultModel()
     {
-        return ModelInstances.STANDARD;
+        return () -> ModelInstances.STANDARD;
     }
 
     @Nullable

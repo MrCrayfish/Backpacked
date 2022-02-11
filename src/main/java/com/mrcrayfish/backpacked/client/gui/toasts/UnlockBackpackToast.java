@@ -24,7 +24,7 @@ public class UnlockBackpackToast implements IToast
     public UnlockBackpackToast(Backpack backpack)
     {
         this.name = new TranslationTextComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
-        this.model = backpack.getModel();
+        this.model = backpack.getModelSupplier().get();
     }
 
     @Override

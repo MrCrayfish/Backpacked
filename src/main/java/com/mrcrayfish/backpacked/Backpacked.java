@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
+import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
@@ -21,27 +22,18 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.GuiContainerEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -72,7 +64,6 @@ import java.util.stream.Collectors;
 @Mod(Reference.MOD_ID)
 public class Backpacked
 {
-    public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
     public static final EnchantmentType ENCHANTMENT_TYPE = EnchantmentType.create("backpack", item -> item instanceof BackpackItem);
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
@@ -92,7 +83,7 @@ public class Backpacked
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> bus.addListener(this::onTextureStitch));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> bus.addListener(ClientEvents::onTextureStitch));
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
         bus.addListener(this::onEnqueueIMC);
@@ -140,44 +131,6 @@ public class Backpacked
         generator.addProvider(new LootTableGen(generator));
         generator.addProvider(new RecipeGen(generator));
         generator.addProvider(new BlockTagGen(generator, existingFileHelper));
-    }
-
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
-    {
-        if(curiosLoaded)
-            return;
-
-        ContainerScreen<?> screen = event.getGuiContainer();
-        if(screen instanceof InventoryScreen)
-        {
-            InventoryScreen inventoryScreen = (InventoryScreen) screen;
-            int left = inventoryScreen.getGuiLeft();
-            int top = inventoryScreen.getGuiTop();
-            inventoryScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
-            Screen.blit(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
-        }
-        else if(screen instanceof CreativeScreen)
-        {
-            CreativeScreen creativeScreen = (CreativeScreen) screen;
-            if(creativeScreen.getSelectedTab() == ItemGroup.TAB_INVENTORY.getId())
-            {
-                int left = creativeScreen.getGuiLeft();
-                int top = creativeScreen.getGuiTop();
-                creativeScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
-                Screen.blit(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
-            }
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event)
-    {
-        if(event.getMap().location().equals(PlayerContainer.BLOCK_ATLAS))
-        {
-            event.addSprite(EMPTY_BACKPACK_SLOT);
-        }
     }
 
     @SubscribeEvent
@@ -283,7 +236,7 @@ public class Backpacked
         ModConfig config = event.getConfig();
         if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
         {
-            this.updateBannedItemsList();
+            updateBannedItemsList();
         }
     }
 
@@ -292,18 +245,11 @@ public class Backpacked
         ModConfig config = event.getConfig();
         if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
         {
-            this.updateBannedItemsList();
+            updateBannedItemsList();
         }
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
-    {
-        this.updateBannedItemsList();
-    }
-
-    private void updateBannedItemsList()
+    public static void updateBannedItemsList()
     {
         bannedItemsList = ImmutableSet.copyOf(Config.SERVER.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
     }
@@ -312,5 +258,4 @@ public class Backpacked
     {
         return bannedItemsList;
     }
-
 }

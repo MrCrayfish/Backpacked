@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
@@ -18,23 +19,33 @@ import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.backpacked.util.ReflectionHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,7 +60,50 @@ import java.util.Optional;
  */
 public class ClientEvents
 {
+    public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
     private static ItemGroup currentGroup = null;
+
+    @SubscribeEvent
+    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        Backpacked.updateBannedItemsList();
+    }
+
+    @SubscribeEvent
+    public void onPlayerRenderScreen(GuiContainerEvent.DrawBackground event)
+    {
+        if(Backpacked.isCuriosLoaded())
+            return;
+
+        ContainerScreen<?> screen = event.getGuiContainer();
+        if(screen instanceof InventoryScreen)
+        {
+            InventoryScreen inventoryScreen = (InventoryScreen) screen;
+            int left = inventoryScreen.getGuiLeft();
+            int top = inventoryScreen.getGuiTop();
+            inventoryScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
+            Screen.blit(event.getMatrixStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
+        }
+        else if(screen instanceof CreativeScreen)
+        {
+            CreativeScreen creativeScreen = (CreativeScreen) screen;
+            if(creativeScreen.getSelectedTab() == ItemGroup.TAB_INVENTORY.getId())
+            {
+                int left = creativeScreen.getGuiLeft();
+                int top = creativeScreen.getGuiTop();
+                creativeScreen.getMinecraft().getTextureManager().bind(ContainerScreen.INVENTORY_LOCATION);
+                Screen.blit(event.getMatrixStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
+            }
+        }
+    }
+
+    public static void onTextureStitch(TextureStitchEvent.Pre event)
+    {
+        if(event.getMap().location().equals(PlayerContainer.BLOCK_ATLAS))
+        {
+            event.addSprite(EMPTY_BACKPACK_SLOT);
+        }
+    }
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event)

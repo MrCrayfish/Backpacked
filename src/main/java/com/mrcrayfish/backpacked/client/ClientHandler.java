@@ -57,7 +57,7 @@ public class ClientHandler
         }
 
         BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
-            BackpackLayer.registerModel(backpack.getId(), backpack.getModel());
+            BackpackLayer.registerModel(backpack.getId(), backpack.getModelSupplier().get());
         });
 
         EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(EntityType.WANDERING_TRADER);

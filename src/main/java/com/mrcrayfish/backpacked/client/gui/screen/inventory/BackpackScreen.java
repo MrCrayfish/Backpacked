@@ -31,7 +31,6 @@ import org.lwjgl.opengl.GL11;
 /**
  * Author: MrCrayfish
  */
-@OnlyIn(Dist.CLIENT)
 public class BackpackScreen extends ContainerScreen<BackpackContainer>
 {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/backpack.png");

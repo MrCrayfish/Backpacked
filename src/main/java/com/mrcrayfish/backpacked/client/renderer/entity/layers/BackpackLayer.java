@@ -52,7 +52,7 @@ public class BackpackLayer<T extends PlayerEntity, M extends BipedModel<T>> exte
             stack.pushPose();
             BackpackItem backpackItem = (BackpackItem) backpack.getItem();
             String modelName = backpack.getOrCreateTag().getString("BackpackModel");
-            BackpackModel model = VARIANTS.getOrDefault(modelName, backpackItem.getDefaultModel());
+            BackpackModel model = VARIANTS.getOrDefault(modelName, backpackItem.getDefaultModel().get());
             model.transformToPlayerBody(this.getParentModel().body, !chestStack.isEmpty());
             model.setupAngles(player, player.tickCount, partialTick);
             IVertexBuilder builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, canShowEnchantmentGlint(backpack) && backpack.hasFoil());
