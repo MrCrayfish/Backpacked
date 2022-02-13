@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -46,6 +45,7 @@ public class BackpackManager
         this.register(new StandardBackpack());
         this.register(new TrashCanBackpack());
         this.register(new TurtleShellBackpack());
+        this.register(new WanderingPackBackpack());
         this.registerDependant("create", new CogwheelBackpack());
     }
 
