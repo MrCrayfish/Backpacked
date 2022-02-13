@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -40,6 +42,11 @@ public class PickpocketChallenge
     public static void register(RegisterCapabilitiesEvent event)
     {
         event.register(PickpocketChallenge.class);
+    }
+
+    public static Optional<PickpocketChallenge> get(LivingEntity entity)
+    {
+        return entity.getCapability(PickpocketChallenge.PICKPOCKET_CAPABILITY).resolve();
     }
 
     @SubscribeEvent
