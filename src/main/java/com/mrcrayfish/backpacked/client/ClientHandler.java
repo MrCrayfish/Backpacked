@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
+import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
@@ -15,13 +16,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
@@ -58,6 +62,12 @@ public class ClientHandler
         BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
             BackpackLayer.registerModel(backpack.getId(), backpack::getModel);
         });
+
+        EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(EntityType.WANDERING_TRADER);
+        if(renderer instanceof WanderingTraderRenderer traderRenderer)
+        {
+            traderRenderer.addLayer(new VillagerBackpackLayer<>(traderRenderer));
+        }
     }
 
     public static ModelInstances getModelInstances()
