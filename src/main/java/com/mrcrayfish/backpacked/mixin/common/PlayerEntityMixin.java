@@ -5,11 +5,13 @@ import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.backpack.RocketBackpack;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
+import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -30,7 +32,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import javax.annotation.Nullable;
-import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -107,6 +108,13 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
     public void locateAmmo(ItemStack stack, CallbackInfoReturnable<ItemStack> cir, Predicate<ItemStack> predicate)
     {
         PlayerEntity player = (PlayerEntity) (Object) this;
+        ItemStack backpack = Backpacked.getBackpackStack(player);
+        if(backpack.isEmpty())
+            return;
+
+        if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MARKSMAN.get(), backpack) <= 0)
+            return;
+
         BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
         if(inventory == null)
             return;
