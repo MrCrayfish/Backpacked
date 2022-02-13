@@ -71,7 +71,7 @@
     "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it",
     "itemGroup.backpacked": "Backpacked",
     "enchantment.backpacked.funnelling": "Funnelling",
-    "enchantment.backpacked.funnelling.desc": "Funnels certain resources directly into a Backpack after harvesting them",
+    "enchantment.backpacked.funnelling.desc": "Funnels drops from mining or harvesting certain resources directly into a Backpack",
     "enchantment.backpacked.repairman": "Repairman",
     "enchantment.backpacked.repairman.desc": "Repairs all items with Mending in a Backpack when collecting experience",
     "enchantment.backpacked.looted": "Looted",
