@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.tileentity;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
@@ -100,9 +101,10 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         this.backpack = stack.copy();
         if(!this.backpack.isEmpty() || !shelvedBackpack.isEmpty())
         {
+            boolean removed = this.backpack.isEmpty();
             this.updateInventory();
             BlockEntityUtil.sendUpdatePacket(this);
-            this.level.playSound(null, this.worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.BLOCKS, 1.0F, 0.75F);
+            this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, removed ? 0.75F : 1.0F);
             this.setChanged();
         }
         return shelvedBackpack;
