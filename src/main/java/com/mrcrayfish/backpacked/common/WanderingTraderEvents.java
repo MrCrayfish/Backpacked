@@ -100,7 +100,7 @@ public class WanderingTraderEvents
 
     private Predicate<Map.Entry<Player, Long>> createForgetPlayerPredicate(WanderingTrader trader, Level world)
     {
-        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > 16.0F || world.getGameTime() - entry.getValue() > Config.COMMON.wanderingTraderForgetTime.get();
+        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > Config.COMMON.wanderingTraderMaxDetectionDistance.get() * 2.0 || (world.getGameTime() - entry.getValue() > Config.COMMON.wanderingTraderForgetTime.get() && entry.getKey().distanceTo(trader) >= Config.COMMON.wanderingTraderMaxDetectionDistance.get());
     }
 
     // Determines if the player is in the living entities vision

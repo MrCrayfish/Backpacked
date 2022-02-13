@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.util;
 import com.mrcrayfish.backpacked.Config;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -26,49 +27,49 @@ public class PickpocketUtil
         return new Vec3(x, y, z);
     }
 
-    public static AABB getBackpackBox(Player player, float partialTick)
+    public static AABB getBackpackBox(LivingEntity entity, float partialTick)
     {
         AABB backpackBox = new AABB(-0.25, 0.0, -0.25, 0.25, 0.5625, 0.25);
-        backpackBox = backpackBox.move(player.getPosition(partialTick));
-        backpackBox = backpackBox.move(0, player.getPose() != Pose.SWIMMING ? 0.875 : 0.3125, 0);
-        if(player.getPose() == Pose.CROUCHING)
+        backpackBox = backpackBox.move(getEntityPos(entity, partialTick));
+        backpackBox = backpackBox.move(0, entity.getPose() != Pose.SWIMMING ? 0.875 : 0.3125, 0);
+        if(entity.getPose() == Pose.CROUCHING)
         {
             backpackBox = backpackBox.move(0, -0.1875, 0);
         }
-        float bodyRotation = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-        backpackBox = backpackBox.move(Vec3.directionFromRotation(0F, bodyRotation + 180F).scale(player.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
+        float bodyRotation = Mth.lerp(partialTick, entity.yBodyRotO, entity.yBodyRot);
+        backpackBox = backpackBox.move(Vec3.directionFromRotation(0F, bodyRotation + 180F).scale(entity.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
         return backpackBox;
     }
 
-    public static boolean canPickpocketPlayer(Player targetPlayer, Player thiefPlayer)
+    public static boolean canPickpocketPlayer(LivingEntity targetEntity, Player thiefPlayer)
     {
-        return inRangeOfBackpack(targetPlayer, thiefPlayer) && inReachOfBackpack(targetPlayer, thiefPlayer);
+        return inRangeOfBackpack(targetEntity, thiefPlayer) && inReachOfBackpack(targetEntity, thiefPlayer);
     }
 
-    public static boolean inRangeOfBackpack(Player targetPlayer, Player thiefPlayer)
+    public static boolean inRangeOfBackpack(LivingEntity livingEntity, Player thiefPlayer)
     {
-        if(targetPlayer.getPose() == Pose.SWIMMING) // Backpack is exposed at any direction
+        if(livingEntity.getPose() == Pose.SWIMMING) // Backpack is exposed at any direction
             return true;
-        Vec3 between = thiefPlayer.getPosition(1.0F).subtract(targetPlayer.getPosition(1.0F));
+        Vec3 between = getEntityPos(thiefPlayer, 1.0F).subtract(getEntityPos(livingEntity, 1.0F));
         float angle = (float) Math.toDegrees(Math.atan2(between.z, between.x)) - 90F;
-        float difference = Mth.degreesDifferenceAbs(targetPlayer.yBodyRot + 180F, angle);
+        float difference = Mth.degreesDifferenceAbs(livingEntity.yBodyRot + 180F, angle);
         return difference <= Config.SERVER.pickpocketMaxRangeAngle.get();
     }
 
-    public static boolean inReachOfBackpack(Player targetPlayer, Player thiefPlayer)
+    public static boolean inReachOfBackpack(LivingEntity targetPlayer, LivingEntity thiefPlayer)
     {
         Vec3 pos = targetPlayer.getPosition(1.0F);
         pos = pos.add(Vec3.directionFromRotation(0F, targetPlayer.yBodyRot + 180F).scale(targetPlayer.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
         return pos.distanceTo(thiefPlayer.getPosition(1.0F)) <= Config.SERVER.pickpocketMaxReachDistance.get();
     }
 
-    public static boolean canSeeBackpack(Player targetPlayer, Player thiefPlayer)
+    public static boolean canSeeBackpack(LivingEntity targetEntity, Player thiefPlayer)
     {
         // Out of range for a valid reach and saves expensive computation
-        if(targetPlayer.distanceTo(targetPlayer) > 4.0)
+        if(targetEntity.distanceTo(thiefPlayer) > 4.0)
             return false;
 
-        AABB backpackBox = getBackpackBox(targetPlayer, 1.0F);
+        AABB backpackBox = getBackpackBox(targetEntity, 1.0F);
         Vec3 start = thiefPlayer.getEyePosition(1.0F);
         Vec3 end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxReachDistance.get() + 1.0).add(start);
         Optional<Vec3> hitPos = backpackBox.clip(start, end);
