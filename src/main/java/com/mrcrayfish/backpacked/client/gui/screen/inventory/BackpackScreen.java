@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
@@ -30,7 +31,6 @@ import net.minecraftforge.fml.ModList;
 /**
  * Author: MrCrayfish
  */
-@OnlyIn(Dist.CLIENT)
 public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
 {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/backpack.png");
@@ -72,11 +72,14 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
                 this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
             }));
         }
-        this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3 + (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
-            this.openConfigScreen();
-        }, (button, matrixStack, mouseX, mouseY) -> {
-            this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
-        }));
+        if(!Config.CLIENT.hideConfigButton.get())
+        {
+            this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3 + (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+                this.openConfigScreen();
+            }, (button, matrixStack, mouseX, mouseY) -> {
+                this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
+            }));
+        }
     }
 
     @Override
