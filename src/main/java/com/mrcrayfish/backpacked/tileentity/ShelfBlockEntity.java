@@ -68,6 +68,16 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return this.inventory;
     }
 
+    public ItemStack getBackpackWithContents()
+    {
+        ItemStack stack = this.backpack.copy();
+        if(!stack.isEmpty())
+        {
+            this.copyInventoryToStack(stack);
+        }
+        return stack;
+    }
+
     public InteractionResult interact(Player player)
     {
         if(player.isCrouching() || this.backpack.isEmpty())

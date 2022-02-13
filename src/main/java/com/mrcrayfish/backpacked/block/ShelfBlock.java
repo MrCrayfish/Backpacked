@@ -2,13 +2,17 @@ package com.mrcrayfish.backpacked.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.tileentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -121,6 +125,23 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
             return AbstractContainerMenu.getRedstoneSignalFromContainer(shelfBlockEntity);
         }
         return 0;
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean unknown)
+    {
+        if(!state.is(newState.getBlock()))
+        {
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            {
+                boolean dropsContents = Config.SERVER.dropContentsFromShelf.get();
+                ItemStack stack = dropsContents ? shelfBlockEntity.getBackpack() : shelfBlockEntity.getBackpackWithContents();
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+                if(dropsContents) Containers.dropContents(level, pos, shelfBlockEntity);
+                level.updateNeighbourForOutputSignal(pos, this);
+            }
+            super.onRemove(state, level, pos, newState, unknown);
+        }
     }
 
     @Override
