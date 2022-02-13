@@ -32,7 +32,18 @@ public class PickpocketChallenge
 {
     public static final Capability<PickpocketChallenge> PICKPOCKET_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
+    private boolean backpack;
     private final Map<Player, Long> detectedPlayers = new HashMap<>();
+
+    public void setBackpackEquipped(boolean equipped)
+    {
+        this.backpack = equipped;
+    }
+
+    public boolean isBackpackEquipped()
+    {
+        return this.backpack;
+    }
 
     public Map<Player, Long> getDetectedPlayers()
     {
@@ -75,11 +86,16 @@ public class PickpocketChallenge
         @Override
         public CompoundTag serializeNBT()
         {
-            return new CompoundTag();
+            CompoundTag tag = new CompoundTag();
+            tag.putBoolean("EquippedBackpack", this.instance.backpack);
+            return tag;
         }
 
         @Override
-        public void deserializeNBT(CompoundTag tag) {}
+        public void deserializeNBT(CompoundTag tag)
+        {
+            this.instance.backpack = tag.getBoolean("EquippedBackpack");
+        }
 
         public void invalidate()
         {

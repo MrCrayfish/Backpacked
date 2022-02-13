@@ -1,8 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
-import com.mrcrayfish.backpacked.common.backpack.WanderingPackBackpack;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,12 +13,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -48,10 +47,11 @@ public class WanderingTraderEvents
     {
         if(!trader.level.isClientSide())
         {
-            ItemStack backpack = new ItemStack(ModItems.BACKPACK.get());
-            backpack.getOrCreateTag().putString("BackpackModel", WanderingPackBackpack.ID.toString());
-            trader.getInventory().addItem(backpack);
-            patchTraderAiGoals(trader);
+            if(trader.level.random.nextInt(Config.COMMON.wanderingTraderBackpackChance.get()) == 0)
+            {
+                PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
+                patchTraderAiGoals(trader);
+            }
         }
     }
 
@@ -62,10 +62,13 @@ public class WanderingTraderEvents
             return;
 
         WanderingTrader trader = (WanderingTrader) event.getTarget();
-        if(trader.getInventory().countItem(ModItems.BACKPACK.get()) > 0)
+        PickpocketChallenge.get(trader).ifPresent(data ->
         {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
-        }
+            if(data.isBackpackEquipped())
+            {
+                Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
+            }
+        });
     }
 
     @SubscribeEvent
@@ -95,7 +98,7 @@ public class WanderingTraderEvents
 
     private Predicate<Map.Entry<Player, Long>> createForgetPlayerPredicate(WanderingTrader trader, Level world)
     {
-        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > 16.0F || world.getGameTime() - entry.getValue() > 1200;
+        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > 16.0F || world.getGameTime() - entry.getValue() > 600;
     }
 
     // Determines if the player is in the living entities vision
@@ -141,10 +144,29 @@ public class WanderingTraderEvents
                 goals.removeIf(goal -> goal.getGoal() instanceof LookAtPlayerGoal);
             }
             trader.goalSelector.addGoal(2, new LootAtDetectedPlayerGoal(trader));
+            trader.goalSelector.addGoal(9, new PickpocketLookAtPlayerGoal(trader, Player.class, 3.0F, 1.0F));
         }
         catch(IllegalAccessException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    private static class PickpocketLookAtPlayerGoal extends LookAtPlayerGoal
+    {
+        public PickpocketLookAtPlayerGoal(Mob entity, Class<? extends LivingEntity> entityClass, float distance, float probability)
+        {
+            super(entity, entityClass, distance, probability);
+        }
+
+        @Override
+        public boolean canUse()
+        {
+            if(PickpocketChallenge.get(this.mob).map(PickpocketChallenge::isBackpackEquipped).orElse(false))
+            {
+                return false;
+            }
+            return super.canUse();
         }
     }
 
@@ -166,7 +188,7 @@ public class WanderingTraderEvents
             if(this.lookAt instanceof Player)
             {
                 PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
-                return data != null && data.getDetectedPlayers().containsKey((Player) this.lookAt);
+                return data != null && data.isBackpackEquipped() && data.getDetectedPlayers().containsKey((Player) this.lookAt);
             }
             return false;
         }
