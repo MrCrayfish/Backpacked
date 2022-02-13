@@ -23,7 +23,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -281,6 +280,12 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             super.setChanged();
             ShelfBlockEntity.this.setChanged();
+        }
+
+        @Override
+        public boolean stillValid(Player player)
+        {
+            return ShelfBlockEntity.this.inventory == this && !ShelfBlockEntity.this.backpack.isEmpty() && !ShelfBlockEntity.this.remove;
         }
     }
 }

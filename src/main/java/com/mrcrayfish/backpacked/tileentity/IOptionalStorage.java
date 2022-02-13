@@ -55,7 +55,7 @@ public interface IOptionalStorage extends Container
     @Override
     default boolean stillValid(Player player)
     {
-        return Optional.ofNullable(this.getInventory()).map(inv -> inv.stillValid(player)).orElse(true);
+        return Optional.ofNullable(this.getInventory()).map(inv -> inv.stillValid(player)).orElse(false);
     }
 
     @Override
