@@ -1,5 +1,5 @@
 {
-    "parent": "backpacked:block/shelf",
+    "parent": "backpacked:block/backpack_shelf",
     "textures": {
         "log": "minecraft:block/oak_log_top"
     }

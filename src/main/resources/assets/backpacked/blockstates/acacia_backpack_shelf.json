@@ -1,0 +1,19 @@
+{
+    "variants": {
+        "facing=north": {
+            "model": "backpacked:block/acacia_backpack_shelf"
+        },
+        "facing=east": {
+            "model": "backpacked:block/acacia_backpack_shelf",
+            "y": 90
+        },
+        "facing=south": {
+            "model": "backpacked:block/acacia_backpack_shelf",
+            "y": 180
+        },
+        "facing=west": {
+            "model": "backpacked:block/acacia_backpack_shelf",
+            "y": 270
+        }
+    }
+}
