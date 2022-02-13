@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.model;
 
+import com.mojang.math.Vector3d;
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 public class CogwheelBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/cogwheel_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 9, -7);
     private final ModelPart gear;
 
 
@@ -45,5 +47,11 @@ public class CogwheelBackpackModel extends BackpackModel
     {
         super.setupAngles(player, body, armour, partialTick);
         this.gear.zRot = (float) Math.toRadians((player.tickCount + partialTick) * 4.0F + (player.animationPosition - player.animationSpeed * (1.0F - partialTick)) * 16.0F);
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 }

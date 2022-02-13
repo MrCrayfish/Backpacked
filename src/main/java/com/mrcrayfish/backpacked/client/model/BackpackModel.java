@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3d;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
@@ -13,6 +14,8 @@ import java.util.function.Function;
 
 public abstract class BackpackModel extends Model
 {
+    private static final Vector3d DEFAULT_OFFSET = new Vector3d(0, 9, -6);
+
     protected final ResourceLocation texture;
     protected final ModelPart backpack;
     protected final ModelPart bag;
@@ -84,5 +87,10 @@ public abstract class BackpackModel extends Model
     public ResourceLocation getTextureLocation()
     {
         return this.texture;
+    }
+
+    public Vector3d getShelfOffset()
+    {
+        return DEFAULT_OFFSET;
     }
 }

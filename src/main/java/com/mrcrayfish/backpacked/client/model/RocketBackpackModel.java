@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.model;
 
+import com.mojang.math.Vector3d;
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 public class RocketBackpackModel extends BackpackModel
 {
     public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/rocket_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 10, -6);
 
     public RocketBackpackModel(ModelPart root)
     {
@@ -42,5 +44,11 @@ public class RocketBackpackModel extends BackpackModel
         {
             player.level.addParticle(ParticleTypes.LARGE_SMOKE, player.getX(), player.getY(), player.getZ(), 0, 0, 0);
         }
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 }

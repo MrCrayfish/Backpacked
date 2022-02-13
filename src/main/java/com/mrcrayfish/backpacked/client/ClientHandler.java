@@ -6,7 +6,9 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
+import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
 import com.mrcrayfish.backpacked.common.BackpackManager;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.ChatFormatting;
@@ -94,5 +96,10 @@ public class ClientHandler
                 });
             }
         }
+    }
+
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
+    {
+        event.registerBlockEntityRenderer(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
     }
 }

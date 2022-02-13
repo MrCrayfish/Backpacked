@@ -1,9 +1,11 @@
 package com.mrcrayfish.backpacked.tileentity;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -89,5 +91,10 @@ public class ShelfBlockEntity extends BlockEntity
     public ItemStack getBackpack()
     {
         return this.backpack;
+    }
+
+    public Direction getDirection()
+    {
+        return this.getBlockState().getValue(ShelfBlock.FACING);
     }
 }
