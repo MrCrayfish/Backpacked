@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.Shapes;
 
 import javax.annotation.Nullable;
 
@@ -96,5 +98,11 @@ public class ShelfBlockEntity extends BlockEntity
     public Direction getDirection()
     {
         return this.getBlockState().getValue(ShelfBlock.FACING);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox()
+    {
+        return Shapes.block().bounds().inflate(0.5).move(this.worldPosition);
     }
 }
