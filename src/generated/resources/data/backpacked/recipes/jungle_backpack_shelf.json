@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LHL",
+    "S S"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:jungle_log"
+    },
+    "H": {
+      "item": "minecraft:jungle_slab"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "backpacked:jungle_backpack_shelf",
+    "count": 4
+  }
+}
