@@ -93,7 +93,7 @@ public class WanderingTraderEvents
 
     private List<Player> findDetectedPlayers(LivingEntity entity)
     {
-        return entity.level.getEntities(EntityType.PLAYER, entity.getBoundingBox().inflate(8.0), player -> {
+        return entity.level.getEntities(EntityType.PLAYER, entity.getBoundingBox().inflate(getMaxDetectionDistance()), player -> {
             return isPlayerInLivingEntityVision(entity, player) && isPlayerSeenByLivingEntity(entity, player) || !player.isCrouching() && isPlayerMoving(player);
         });
     }
@@ -154,6 +154,11 @@ public class WanderingTraderEvents
         }
     }
 
+    private static double getMaxDetectionDistance()
+    {
+        return Config.COMMON.wanderingTraderMaxDetectionDistance.get();
+    }
+
     private static class PickpocketLookAtPlayerGoal extends LookAtPlayerGoal
     {
         public PickpocketLookAtPlayerGoal(Mob entity, Class<? extends LivingEntity> entityClass, float distance, float probability)
@@ -178,7 +183,7 @@ public class WanderingTraderEvents
 
         public LootAtDetectedPlayerGoal(WanderingTrader trader)
         {
-            super(trader, Player.class, 8.0F, 1.0F);
+            super(trader, Player.class, (float) getMaxDetectionDistance(), 1.0F);
             this.trader = trader;
             this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
         }
@@ -198,7 +203,7 @@ public class WanderingTraderEvents
         @Override
         public boolean canContinueToUse()
         {
-            if(this.lookAt instanceof Player && this.lookAt.distanceTo(this.trader) <= 8.0)
+            if(this.lookAt instanceof Player && this.lookAt.distanceTo(this.trader) <= getMaxDetectionDistance())
             {
                 PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
                 return data != null && data.getDetectedPlayers().containsKey((Player) this.lookAt);
