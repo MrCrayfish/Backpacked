@@ -31,7 +31,7 @@ public class BackpackInventory extends SimpleContainer
         CompoundTag compound = this.stack.getOrCreateTag();
         if(compound.contains("Items", Tag.TAG_LIST))
         {
-            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this, player);
+            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this, player.level, player.position());
         }
     }
 

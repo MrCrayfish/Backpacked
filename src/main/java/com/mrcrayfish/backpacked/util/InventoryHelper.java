@@ -1,23 +1,27 @@
 package com.mrcrayfish.backpacked.util;
 
+import com.mojang.math.Vector3d;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Author: MrCrayfish
  */
 public class InventoryHelper
 {
-    public static ListTag saveAllItems(ListTag list, SimpleContainer inventory)
+    public static ListTag saveAllItems(ListTag list, SimpleContainer container)
     {
-        for(int i = 0; i < inventory.getContainerSize(); ++i)
+        for(int i = 0; i < container.getContainerSize(); ++i)
         {
-            ItemStack itemstack = inventory.getItem(i);
+            ItemStack itemstack = container.getItem(i);
             if(!itemstack.isEmpty())
             {
                 CompoundTag compound = new CompoundTag();
@@ -29,20 +33,40 @@ public class InventoryHelper
         return list;
     }
 
-    public static void loadAllItems(ListTag list, SimpleContainer inventory, Player player)
+    public static void loadAllItems(ListTag list, SimpleContainer container, Level level, Vec3 pos)
     {
         for(int i = 0; i < list.size(); i++)
         {
             CompoundTag compound = list.getCompound(i);
             int slot = compound.getByte("Slot") & 255;
-            if(slot < inventory.getContainerSize())
+            if(slot < container.getContainerSize())
             {
-                inventory.setItem(slot, ItemStack.of(compound));
+                container.setItem(slot, ItemStack.of(compound));
             }
-            else if(player instanceof ServerPlayer)
+            else if(!level.isClientSide())
             {
                 ItemStack stack = ItemStack.of(compound);
-                player.spawnAtLocation(inventory.addItem(stack));
+                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, container.addItem(stack));
+                entity.setDefaultPickUpDelay();
+                level.addFreshEntity(entity);
+            }
+        }
+    }
+
+    public static void mergeInventory(SimpleContainer source, SimpleContainer target, Level level, Vec3 pos)
+    {
+        for(int i = 0; i < source.getContainerSize(); i++)
+        {
+            if(i < target.getContainerSize())
+            {
+                target.setItem(i, source.getItem(i).copy());
+            }
+            else if(!level.isClientSide())
+            {
+                ItemStack stack = source.getItem(i).copy();
+                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, target.addItem(stack));
+                entity.setDefaultPickUpDelay();
+                level.addFreshEntity(entity);
             }
         }
     }
