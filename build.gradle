@@ -79,7 +79,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.10'
+    minecraft 'net.minecraftforge:forge:1.18.1-39.0.45'
     implementation fg.deobf('curse.maven:curios-309927:3581722')
     compileOnly fg.deobf('curse.maven:controllable-317269:3546297')
     runtimeOnly fg.deobf('curse.maven:configured-457570:3559398')

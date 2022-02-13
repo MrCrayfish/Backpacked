@@ -32,7 +32,7 @@ public abstract class BackpackModel extends Model
         this.strap = this.bag.getChild("strap");
     }
 
-    public void setupAngles(ModelPart body, boolean armour)
+    public void setupAngles(Player player, ModelPart body, boolean armour, float partialTick)
     {
         ModelPart root = this.getRoot();
         root.copyFrom(body);

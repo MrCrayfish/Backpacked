@@ -46,4 +46,9 @@ public class ProgressFormatters
         int percent = (int) (100 * (double) numerator / (double) denominator);
         return new TranslatableComponent("backpacked.formatter.int_percent", percent, "%");
     };
+
+    public static final BiFunction<Integer, Integer, Component> CRAFT_X_OF_X = (count, maxCount) -> {
+        count = Mth.clamp(count, 0, maxCount);
+        return new TranslatableComponent("backpacked.formatter.craft_x_of_x", count, maxCount);
+    };
 }

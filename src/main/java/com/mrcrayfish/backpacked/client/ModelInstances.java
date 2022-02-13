@@ -22,6 +22,8 @@ public class ModelInstances
     private BackpackModel cardboardBox;
     private BackpackModel sheepPlush;
 
+    private BackpackModel cogwheel;
+
     @SubscribeEvent
     public void onLoadModels(EntityRenderersEvent.AddLayers event)
     {
@@ -36,6 +38,7 @@ public class ModelInstances
         this.turtleShell = new TurtleShellBackpackModel(models.bakeLayer(ModLayerDefinitions.TURTLE_SHELL));
         this.cardboardBox = new CardboardBoxBackpackModel(models.bakeLayer(ModLayerDefinitions.CARDBOARD_BOX));
         this.sheepPlush = new SheepPlushBackpackModel(models.bakeLayer(ModLayerDefinitions.SHEEP_PLUSH));
+        this.cogwheel = new CogwheelBackpackModel(models.bakeLayer(ModLayerDefinitions.COGWHEEL));
     }
 
     public BackpackModel getStandardModel()
@@ -86,5 +89,10 @@ public class ModelInstances
     public BackpackModel getSheepPlush()
     {
         return this.sheepPlush;
+    }
+
+    public BackpackModel getCogwheel()
+    {
+        return this.cogwheel;
     }
 }

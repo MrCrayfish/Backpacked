@@ -25,6 +25,7 @@ public class ModLayerDefinitions
     public static final ModelLayerLocation TURTLE_SHELL = register("turtle_shell");
     public static final ModelLayerLocation CARDBOARD_BOX = register("cardboard_box");
     public static final ModelLayerLocation SHEEP_PLUSH = register("sheep_plush");
+    public static final ModelLayerLocation COGWHEEL = register("cog_wheel");
 
     private static ModelLayerLocation register(String name)
     {
@@ -44,5 +45,6 @@ public class ModLayerDefinitions
         event.registerLayerDefinition(TURTLE_SHELL, TurtleShellBackpackModel::createLayer);
         event.registerLayerDefinition(CARDBOARD_BOX, CardboardBoxBackpackModel::createLayer);
         event.registerLayerDefinition(SHEEP_PLUSH, SheepPlushBackpackModel::createLayer);
+        event.registerLayerDefinition(COGWHEEL, CogwheelBackpackModel::createLayer);
     }
 }

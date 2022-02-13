@@ -100,6 +100,11 @@ public class UnlockTracker
         return player.getCapability(UNLOCK_TRACKER_CAPABILITY);
     }
 
+    Map<ResourceLocation, IProgressTracker> getProgressTrackerMap()
+    {
+        return this.progressTrackerMap;
+    }
+
     public static void register(RegisterCapabilitiesEvent event)
     {
         event.register(UnlockTracker.class);
