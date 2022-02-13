@@ -2,23 +2,29 @@ package com.mrcrayfish.backpacked.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import com.mrcrayfish.backpacked.tileentity.ShelfBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -26,7 +32,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public class ShelfBlock extends HorizontalBlock
+public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
     private static final Map<Direction, VoxelShape> SHAPES = Maps.newEnumMap(ImmutableMap.of(
         Direction.NORTH, Block.box(2, 1, 7, 14, 5, 16),
@@ -35,29 +41,32 @@ public class ShelfBlock extends HorizontalBlock
         Direction.EAST, Block.box(0, 1, 2, 9, 5, 14))
     );
 
-    public ShelfBlock(Properties properties)
+    public ShelfBlock(BlockBehaviour.Properties properties)
     {
         super(properties);
     }
 
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result)
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
     {
-        if(!world.isClientSide())
+        if(!level.isClientSide())
         {
-            System.out.println("Yo");
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            {
+                return shelfBlockEntity.interact(player);
+            }
         }
-        return super.use(state, world, pos, player, hand, result);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext context)
+    public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context)
     {
         return SHAPES.get(state.getValue(FACING));
     }
 
     @Override
-    public boolean canSurvive(BlockState state, IWorldReader reader, BlockPos pos)
+    public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos)
     {
         Direction facing = state.getValue(FACING);
         BlockPos relativePos = pos.relative(facing.getOpposite());
@@ -66,14 +75,14 @@ public class ShelfBlock extends HorizontalBlock
     }
 
     @Override
-    public BlockRenderType getRenderShape(BlockState state)
+    public RenderShape getRenderShape(BlockState state)
     {
-        return BlockRenderType.MODEL;
+        return RenderShape.MODEL;
     }
 
     @Override
     @Nullable
-    public BlockState getStateForPlacement(BlockItemUseContext context)
+    public BlockState getStateForPlacement(BlockPlaceContext context)
     {
         BlockState potentialState = this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
         if(this.canSurvive(potentialState, context.getLevel(), context.getClickedPos()))
@@ -84,8 +93,15 @@ public class ShelfBlock extends HorizontalBlock
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(FACING);
+    }
+
+    @Override
+    @Nullable
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
+    {
+        return new ShelfBlockEntity(pos, state);
     }
 }

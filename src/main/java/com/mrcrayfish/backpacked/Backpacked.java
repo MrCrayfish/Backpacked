@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
@@ -88,6 +89,7 @@ public class Backpacked
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
         ModBlocks.REGISTER.register(bus);
+        ModBlockEntities.REGISTER.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCommands());
         controllableLoaded = ModList.get().isLoaded("controllable");
@@ -239,7 +241,7 @@ public class Backpacked
 
     public static boolean setBackpackStack(Player player, ItemStack stack)
     {
-        if(!(stack.getItem() instanceof BackpackItem))
+        if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
             return false;
 
         if(Backpacked.isCuriosLoaded())
