@@ -79,5 +79,5 @@
     "enchantment.backpacked.imbued_hide": "Imbued Hide",
     "enchantment.backpacked.imbued_hide.desc": "Strengthens the material of a Backpack to prevent it from fire damage",
     "enchantment.backpacked.marksman": "Marksman",
-    "enchantment.backpacked.marksman.desc": "Enables a Backpack to be searched when locating a projectile for a shootable item"
+    "enchantment.backpacked.marksman.desc": "Allows bows to retrieve arrows from a Backpack. This will also work with other shootable items and their respective projectile."
 }
