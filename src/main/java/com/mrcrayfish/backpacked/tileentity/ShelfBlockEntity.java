@@ -85,4 +85,9 @@ public class ShelfBlockEntity extends BlockEntity
     {
         super.onDataPacket(net, pkt);
     }
+
+    public ItemStack getBackpack()
+    {
+        return this.backpack;
+    }
 }
