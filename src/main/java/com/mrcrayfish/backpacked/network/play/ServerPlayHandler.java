@@ -6,8 +6,8 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.BackpackManager;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
-import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -24,12 +24,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -40,8 +38,6 @@ import java.util.Map;
  */
 public class ServerPlayHandler
 {
-    public static final TranslatableComponent WANDERING_BAG_TRANSLATION = new TranslatableComponent("backpacked.backpack.wandering_bag");
-
     public static void handleCustomiseBackpack(MessageBackpackCosmetics message, ServerPlayer player)
     {
         ItemStack stack = Backpacked.getBackpackStack(player);
@@ -102,14 +98,7 @@ public class ServerPlayHandler
         }
         else if(otherEntity instanceof WanderingTrader trader)
         {
-            NetworkHooks.openGui(player, new SimpleMenuProvider((id, playerInventory, entity1) -> {
-                return new BackpackContainerMenu(id, entity1.getInventory(), trader.getInventory(), 8, 1, false);
-            }, WANDERING_BAG_TRANSLATION), buffer -> {
-                buffer.writeVarInt(8);
-                buffer.writeVarInt(1);
-                buffer.writeBoolean(false);
-            });
-            player.level.playSound(player, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.15F, 1.0F);
+            WanderingTraderEvents.openBackpack(trader, player);
         }
     }
 

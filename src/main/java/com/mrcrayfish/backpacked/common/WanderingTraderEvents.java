@@ -2,14 +2,17 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +30,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.lang.reflect.Field;
@@ -42,6 +46,7 @@ import java.util.function.Predicate;
 public class WanderingTraderEvents
 {
     private static final Field goalsField = ObfuscationReflectionHelper.findField(GoalSelector.class, "f_25345_");
+    public static final TranslatableComponent WANDERING_BAG_TRANSLATION = new TranslatableComponent("backpacked.backpack.wandering_bag");
 
     public static void onConstructWanderingTrader(WanderingTrader trader)
     {
@@ -133,6 +138,31 @@ public class WanderingTraderEvents
     private static boolean isPlayerMoving(Player player)
     {
         return ((IMovedAccess) player).backpackedMoved();
+    }
+
+    public static void openBackpack(WanderingTrader trader, ServerPlayer openingPlayer)
+    {
+        PickpocketChallenge.get(trader).ifPresent(data ->
+        {
+            if(!data.isBackpackEquipped())
+                return;
+
+            if(data.getDetectedPlayers().containsKey(openingPlayer))
+            {
+                trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
+                trader.level.getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
+                return;
+            }
+
+            NetworkHooks.openGui(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity1) -> {
+                return new BackpackContainerMenu(id, entity1.getInventory(), trader.getInventory(), 8, 1, false);
+            }, WANDERING_BAG_TRANSLATION), buffer -> {
+                buffer.writeVarInt(8);
+                buffer.writeVarInt(1);
+                buffer.writeBoolean(false);
+            });
+            openingPlayer.level.playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.15F, 1.0F);
+        });
     }
 
     @SuppressWarnings("unchecked")
