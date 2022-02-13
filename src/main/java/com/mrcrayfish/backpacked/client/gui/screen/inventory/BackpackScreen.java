@@ -66,7 +66,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         int titleWidth = this.minecraft.font.width(this.title);
         if(this.owner)
         {
-            this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            this.addRenderableWidget(new MiniButton(this.leftPos + this.imageWidth - 7 - 10, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
@@ -74,7 +74,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         }
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            this.addRenderableWidget(new MiniButton(this.leftPos + titleWidth + 8 + 3 + (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            this.addRenderableWidget(new MiniButton(this.leftPos + this.imageWidth - 7 - 10 - (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 this.openConfigScreen();
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
