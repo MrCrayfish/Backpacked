@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:jungle_slab"
+            "items": [
+              "minecraft:jungle_slab"
+            ]
           }
         ]
       }
@@ -21,7 +23,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:stick"
+            "items": [
+              "minecraft:stick"
+            ]
           }
         ]
       }

@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:dark_oak_slab"
+            "items": [
+              "minecraft:dark_oak_slab"
+            ]
           }
         ]
       }
@@ -21,7 +23,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:stick"
+            "items": [
+              "minecraft:stick"
+            ]
           }
         ]
       }

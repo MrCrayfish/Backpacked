@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:acacia_slab"
+            "items": [
+              "minecraft:acacia_slab"
+            ]
           }
         ]
       }
@@ -21,7 +23,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:stick"
+            "items": [
+              "minecraft:stick"
+            ]
           }
         ]
       }
