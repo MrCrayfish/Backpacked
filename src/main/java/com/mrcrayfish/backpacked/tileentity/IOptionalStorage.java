@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.tileentity;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -51,12 +50,6 @@ public interface IOptionalStorage extends Container
     default void setItem(int index, ItemStack stack)
     {
         Optional.ofNullable(this.getInventory()).ifPresent(inv -> inv.setItem(index, stack));
-    }
-
-    @Override
-    default void setChanged()
-    {
-        Optional.ofNullable(this.getInventory()).ifPresent(SimpleContainer::setChanged);
     }
 
     @Override

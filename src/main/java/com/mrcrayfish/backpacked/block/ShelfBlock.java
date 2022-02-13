@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -104,6 +105,22 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
             return potentialState;
         }
         return null;
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos)
+    {
+        if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+        {
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(shelfBlockEntity);
+        }
+        return 0;
     }
 
     @Override
