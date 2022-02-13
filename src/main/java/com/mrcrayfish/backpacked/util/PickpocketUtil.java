@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.util;
 
 import com.mrcrayfish.backpacked.Config;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -17,6 +18,14 @@ import java.util.Optional;
  */
 public class PickpocketUtil
 {
+    public static Vec3 getEntityPos(Entity entity, float partialTick)
+    {
+        double x = Mth.lerp(partialTick, entity.xo, entity.getX());
+        double y = Mth.lerp(partialTick, entity.yo, entity.getY());
+        double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
+        return new Vec3(x, y, z);
+    }
+
     public static AABB getBackpackBox(Player player, float partialTick)
     {
         AABB backpackBox = new AABB(-0.25, 0.0, -0.25, 0.25, 0.5625, 0.25);

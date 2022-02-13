@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
+import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
+import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
@@ -92,6 +94,7 @@ public class Backpacked
         bus.addListener(this::onConfigReload);
         bus.addListener(this::onGatherData);
         bus.addListener(UnlockTracker::register);
+        bus.addListener(PickpocketChallenge::register);
         ModContainers.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
         ModBlocks.REGISTER.register(bus);
@@ -99,6 +102,7 @@ public class Backpacked
         ModSounds.REGISTER.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCommands());
+        MinecraftForge.EVENT_BUS.register(new WanderingTraderEvents());
         controllableLoaded = ModList.get().isLoaded("controllable");
         curiosLoaded = ModList.get().isLoaded("curios");
     }

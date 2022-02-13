@@ -71,32 +71,4 @@ public class CommonEvents
             });
         });
     }
-
-    @SubscribeEvent
-    public static void onSpawnEntity(LivingSpawnEvent.SpecialSpawn event)
-    {
-        if(event.getSpawnReason() != MobSpawnType.EVENT)
-            return;
-
-        if(event.getEntityLiving().getType() != EntityType.WANDERING_TRADER)
-            return;
-
-        WanderingTrader trader = (WanderingTrader) event.getEntityLiving();
-        ItemStack backpack = new ItemStack(ModItems.BACKPACK.get());
-        backpack.getOrCreateTag().putString("BackpackModel", WanderingPackBackpack.ID.toString());
-        trader.getInventory().addItem(backpack);
-    }
-
-    @SubscribeEvent
-    public static void onStartTracking(PlayerEvent.StartTracking event)
-    {
-        if(event.getTarget().getType() != EntityType.WANDERING_TRADER)
-            return;
-
-        WanderingTrader trader = (WanderingTrader) event.getTarget();
-        if(trader.getInventory().countItem(ModItems.BACKPACK.get()) > 0)
-        {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
-        }
-    }
 }
