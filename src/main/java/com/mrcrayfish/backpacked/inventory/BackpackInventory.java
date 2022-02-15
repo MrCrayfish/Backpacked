@@ -43,7 +43,7 @@ public class BackpackInventory extends SimpleContainer
     @Override
     public boolean stillValid(Player player)
     {
-        return Backpacked.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketPlayer(this.player, player));
+        return Backpacked.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player));
     }
 
     @Override
