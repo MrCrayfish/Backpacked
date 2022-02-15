@@ -84,12 +84,17 @@ public class WanderingTraderEvents
         if(level.isClientSide() || entity.getType() != EntityType.WANDERING_TRADER)
             return;
 
+        WanderingTrader trader = (WanderingTrader) entity;
+        if(trader.getUnhappyCounter() > 0)
+        {
+            trader.setUnhappyCounter(trader.getUnhappyCounter() - 1);
+        }
+
         PickpocketChallenge.get(entity).ifPresent(data ->
         {
             if(!data.isBackpackEquipped())
                 return;
             Map<Player, Long> detectedPlayers = data.getDetectedPlayers();
-            WanderingTrader trader = (WanderingTrader) entity;
             List<Player> newDetectedPlayers = this.findDetectedPlayers(trader);
             newDetectedPlayers.forEach(player -> detectedPlayers.put(player, level.getGameTime()));
             detectedPlayers.entrySet().removeIf(this.createForgetPlayerPredicate(trader, level));
@@ -151,6 +156,9 @@ public class WanderingTraderEvents
             {
                 trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
                 trader.level.getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
+                ((ServerLevel) trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, trader.getX(), trader.getEyeY(), trader.getZ(), 1, 0, 0, 0, 0);
+                trader.setUnhappyCounter(20);
+                data.addDislikedPlayer(openingPlayer);
                 return;
             }
 
@@ -246,8 +254,11 @@ public class WanderingTraderEvents
         {
             if(this.trader.level instanceof ServerLevel)
             {
-                ((ServerLevel) this.trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY() + 0.5, this.trader.getZ(), 1, 0, 0, 0, 0);
-                this.trader.level.playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
+                if(PickpocketChallenge.get(this.trader).map(data -> data.isDislikedPlayer((Player) this.lookAt)).orElse(false))
+                {
+                    ((ServerLevel) this.trader.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY(), this.trader.getZ(), 1, 0, 0, 0, 0);
+                    this.trader.level.playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
+                }
             }
         }
 
