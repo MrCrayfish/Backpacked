@@ -11,6 +11,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -43,10 +44,11 @@ public class CogwheelBackpackModel extends BackpackModel
     }
 
     @Override
-    public void setupAngles(Player player, ModelPart body, boolean armour, float partialTick)
+    public void setupAngles(@Nullable Player player, int animationTick, float partialTick)
     {
-        super.setupAngles(player, body, armour, partialTick);
-        this.gear.zRot = (float) Math.toRadians((player.tickCount + partialTick) * 4.0F + (player.animationPosition - player.animationSpeed * (1.0F - partialTick)) * 16.0F);
+        float position = player != null ? player.animationPosition : 0F;
+        float speed = player != null ? player.animationSpeed : 0F;
+        this.gear.zRot = (float) Math.toRadians((animationTick + partialTick) * 4.0F + (position - speed * (1.0F - partialTick)) * 16.0F);
     }
 
     @Override

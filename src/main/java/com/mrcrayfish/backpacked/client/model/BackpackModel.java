@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public abstract class BackpackModel extends Model
@@ -35,18 +36,9 @@ public abstract class BackpackModel extends Model
         this.strap = this.bag.getChild("strap");
     }
 
-    public void setupAngles(Player player, ModelPart body, boolean armour, float partialTick)
-    {
-        this.setupAngles(body, armour);
-    }
+    public void setupAngles(@Nullable Player player, int animationTick, float partialTick) {}
 
-    @Deprecated
-    public void setupAngles(ModelPart body, boolean armour)
-    {
-        this.beforeRender(body, armour);
-    }
-
-    private void beforeRender(ModelPart body, boolean armour)
+    public void transformToPlayerBody(ModelPart body, boolean armour)
     {
         ModelPart root = this.getRoot();
         root.copyFrom(body);

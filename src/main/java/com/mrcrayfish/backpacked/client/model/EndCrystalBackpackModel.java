@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.model;
 
+import com.mojang.math.Vector3d;
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -11,12 +12,15 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
+
 /**
  * Author: MrCrayfish
  */
 public class EndCrystalBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/crystal_backpack.png");
+    private static final Vector3d SHELF_OFFSET = new Vector3d(0, 8, -6);
 
     private final ModelPart crystal;
 
@@ -39,12 +43,17 @@ public class EndCrystalBackpackModel extends BackpackModel
     }
 
     @Override
-    public void setupAngles(Player player, ModelPart body, boolean armour, float partialTick)
+    public void setupAngles(@Nullable Player player, int animationTick, float partialTick)
     {
-        super.setupAngles(player, body, armour, partialTick);
-        double rotation = player.tickCount + partialTick;
+        double rotation = animationTick + partialTick;
         this.crystal.y = 4.0F;
         this.crystal.y += Math.sin(rotation / 4.0);
         this.crystal.yRot = (float) Math.toRadians(rotation * 3);
+    }
+
+    @Override
+    public Vector3d getShelfOffset()
+    {
+        return SHELF_OFFSET;
     }
 }

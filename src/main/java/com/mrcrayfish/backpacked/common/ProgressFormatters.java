@@ -62,8 +62,8 @@ public class ProgressFormatters
         return new TranslatableComponent("backpacked.formatter.explored_x_of_x", count, maxCount);
     };
 
-    public static final BiFunction<Integer, Integer, ITextComponent> INCOMPLETE_COMPLETE = (count, maxCount) -> {
-        if(count < maxCount) return new TranslationTextComponent("backpacked.formatter.incomplete");
-        return new TranslationTextComponent("backpacked.formatter.complete");
+    public static final BiFunction<Integer, Integer, Component> INCOMPLETE_COMPLETE = (count, maxCount) -> {
+        if(count < maxCount) return new TranslatableComponent("backpacked.formatter.incomplete");
+        return new TranslatableComponent("backpacked.formatter.complete");
     };
 }
