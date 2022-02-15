@@ -69,6 +69,11 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         return stack.getOrCreateTag().getBoolean(BackpackModelProperty.SHOW_WITH_ELYTRA.getTagName());
     }
 
+    public static boolean canShowEnchantmentGlint(ItemStack stack)
+    {
+        return stack.getOrCreateTag().getBoolean(BackpackModelProperty.SHOW_GLINT.getTagName());
+    }
+
     public synchronized static void registerModel(ResourceLocation id, Supplier<BackpackModel> model)
     {
         VARIANTS.putIfAbsent(id.toString(), model);

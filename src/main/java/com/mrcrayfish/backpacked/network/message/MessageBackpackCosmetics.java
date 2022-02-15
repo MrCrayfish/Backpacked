@@ -13,14 +13,16 @@ import java.util.function.Supplier;
 public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmetics>
 {
     private ResourceLocation id;
+    private boolean showGlint;
     private boolean showWithElytra;
     private boolean showEffects;
 
     public MessageBackpackCosmetics() {}
 
-    public MessageBackpackCosmetics(ResourceLocation id, boolean showWithElytra, boolean showEffects)
+    public MessageBackpackCosmetics(ResourceLocation id, boolean showGlint, boolean showWithElytra, boolean showEffects)
     {
         this.id = id;
+        this.showGlint = showGlint;
         this.showWithElytra = showWithElytra;
         this.showEffects = showEffects;
     }
@@ -29,6 +31,7 @@ public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmeti
     public void encode(MessageBackpackCosmetics message, FriendlyByteBuf buffer)
     {
         buffer.writeResourceLocation(message.id);
+        buffer.writeBoolean(message.showGlint);
         buffer.writeBoolean(message.showWithElytra);
         buffer.writeBoolean(message.showEffects);
     }
@@ -36,7 +39,7 @@ public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmeti
     @Override
     public MessageBackpackCosmetics decode(FriendlyByteBuf buffer)
     {
-        return new MessageBackpackCosmetics(buffer.readResourceLocation(), buffer.readBoolean(), buffer.readBoolean());
+        return new MessageBackpackCosmetics(buffer.readResourceLocation(), buffer.readBoolean(), buffer.readBoolean(), buffer.readBoolean());
     }
 
     @Override
@@ -49,6 +52,11 @@ public class MessageBackpackCosmetics implements IMessage<MessageBackpackCosmeti
     public ResourceLocation getBackpackId()
     {
         return this.id;
+    }
+
+    public boolean isShowGlint()
+    {
+        return this.showGlint;
     }
 
     public boolean isShowWithElytra()

@@ -60,6 +60,7 @@ public class CustomiseBackpackScreen extends Screen
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/customise_backpack.png");
     private static final Component SHOW_EFFECTS_TOOLTIP = new TranslatableComponent("backpacked.button.show_effects.tooltip");
     private static final Component SHOW_WITH_ELYTRA_TOOLTIP = new TranslatableComponent("backpacked.button.show_with_elytra.tooltip");
+    private static final Component SHOW_ENCHANTMENT_GLINT = new TranslatableComponent("backpacked.button.show_enchantment_glint.tooltip");
     private static final Component LOCKED = new TranslatableComponent("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
 
     private final int windowWidth;
@@ -73,9 +74,11 @@ public class CustomiseBackpackScreen extends Screen
     private int mouseClickedX, mouseClickedY;
     private Button resetButton;
     private Button saveButton;
+    private CheckBox showEnchantmentGlintButton;
     private CheckBox showWithElytraButton;
     private CheckBox showEffectsButton;
     private String displayBackpackModel = null;
+    private boolean displayShowEnchantmentGlint;
     private boolean displayShowWithElytra;
     private boolean displayShowEffects;
     private final List<BackpackModelEntry> models;
@@ -113,7 +116,12 @@ public class CustomiseBackpackScreen extends Screen
             this.displayBackpackModel = StandardBackpack.ID.toString();
         }));
         this.saveButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslatableComponent("backpacked.button.save"), onPress -> {
-            Network.getPlayChannel().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowWithElytra, this.displayShowEffects));
+            Network.getPlayChannel().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowEnchantmentGlint, this.displayShowWithElytra, this.displayShowEffects));
+        }));
+        this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
+            this.displayShowEnchantmentGlint = !this.displayShowEnchantmentGlint;
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, SHOW_ENCHANTMENT_GLINT, mouseX, mouseY);
         }));
         this.showWithElytraButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 160, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
@@ -128,6 +136,7 @@ public class CustomiseBackpackScreen extends Screen
         ItemStack backpack = Backpacked.getBackpackStack(this.minecraft.player);
         if(!backpack.isEmpty())
         {
+            this.showEnchantmentGlintButton.setChecked(BackpackLayer.canShowEnchantmentGlint(backpack));
             this.showWithElytraButton.setChecked(BackpackLayer.canRenderWithElytra(backpack));
             this.showEffectsButton.setChecked(ClientEvents.canShowBackpackEffects(backpack));
         }
@@ -147,6 +156,10 @@ public class CustomiseBackpackScreen extends Screen
             return true;
         }
         else if (this.getLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS) != this.displayShowEffects)
+        {
+            return true;
+        }
+        else if (this.getLocalBackpackProperty(BackpackModelProperty.SHOW_GLINT) != this.displayShowEnchantmentGlint)
         {
             return true;
         }
@@ -439,6 +452,7 @@ public class CustomiseBackpackScreen extends Screen
         float origHeadYawOld = player.yHeadRotO;
         float origHeadYaw = player.yHeadRot;
         String origBackpackModel = this.getBackpackModel();
+        boolean origShowEnchantmentGlint = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_GLINT);
         boolean origShowWithElytra = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA);
         boolean origShowEffects = this.getLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS);
         player.yBodyRot = 0.0F;
@@ -450,6 +464,7 @@ public class CustomiseBackpackScreen extends Screen
         player.yHeadRot = player.getYRot();
         player.yHeadRotO = player.getYRot();
         this.setLocalBackpackModel(this.displayBackpackModel);
+        this.setLocalBackpackProperty(BackpackModelProperty.SHOW_GLINT, this.displayShowEnchantmentGlint);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA, this.displayShowWithElytra);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS, this.displayShowEffects);
         EntityRenderDispatcher manager = Minecraft.getInstance().getEntityRenderDispatcher();
@@ -466,6 +481,7 @@ public class CustomiseBackpackScreen extends Screen
         player.yHeadRotO = origHeadYawOld;
         player.yHeadRot = origHeadYaw;
         this.setLocalBackpackModel(origBackpackModel);
+        this.setLocalBackpackProperty(BackpackModelProperty.SHOW_GLINT, origShowEnchantmentGlint);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_WITH_ELYTRA, origShowWithElytra);
         this.setLocalBackpackProperty(BackpackModelProperty.SHOW_EFFECTS, origShowEffects);
         modelViewStack.popPose();
