@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 /**
  * Author: MrCrayfish
  */
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class FunnellingEnchantment extends Enchantment
 {
     public FunnellingEnchantment()
