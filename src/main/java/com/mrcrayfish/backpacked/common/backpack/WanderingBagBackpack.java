@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -32,9 +33,9 @@ public class WanderingBagBackpack extends Backpack
     }
 
     @Override
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ClientHandler.getModelInstances().getWanderingBag();
+        return ClientHandler.getModelInstances()::getWanderingBag;
     }
 
     @Override

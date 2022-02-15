@@ -12,6 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -26,10 +27,9 @@ public class TrashCanBackpack extends Backpack
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ClientHandler.getModelInstances().getTrashCan();
+        return ClientHandler.getModelInstances()::getTrashCan;
     }
 
     @Nullable

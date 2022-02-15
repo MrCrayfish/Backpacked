@@ -1,10 +1,12 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
@@ -18,24 +20,35 @@ import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.backpacked.util.ReflectionHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
@@ -49,7 +62,52 @@ import java.util.Optional;
  */
 public class ClientEvents
 {
+    public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
     private static CreativeModeTab currentTab = null;
+
+    @SubscribeEvent
+    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        Backpacked.updateBannedItemsList();
+    }
+
+    @SubscribeEvent
+    public void onPlayerRenderScreen(ContainerScreenEvent.DrawBackground event)
+    {
+        if(Backpacked.isCuriosLoaded())
+            return;
+
+        AbstractContainerScreen<?> screen = event.getContainerScreen();
+        if(screen instanceof InventoryScreen inventory)
+        {
+            int left = inventory.getGuiLeft();
+            int top = inventory.getGuiTop();
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
+            Screen.blit(event.getPoseStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
+        }
+        else if(screen instanceof CreativeModeInventoryScreen inventory)
+        {
+            if(inventory.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId())
+            {
+                int left = inventory.getGuiLeft();
+                int top = inventory.getGuiTop();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
+                Screen.blit(event.getPoseStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
+            }
+        }
+    }
+
+    public static void onTextureStitch(TextureStitchEvent.Pre event)
+    {
+        if(event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
+        {
+            event.addSprite(EMPTY_BACKPACK_SLOT);
+        }
+    }
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event)

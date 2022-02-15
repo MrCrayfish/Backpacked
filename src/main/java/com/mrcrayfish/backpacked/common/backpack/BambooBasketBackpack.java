@@ -13,13 +13,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.animal.Panda;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -34,10 +33,9 @@ public class BambooBasketBackpack extends Backpack
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ClientHandler.getModelInstances().getBambooBasketModel();
+        return ClientHandler.getModelInstances()::getBambooBasketModel;
     }
 
     @Override

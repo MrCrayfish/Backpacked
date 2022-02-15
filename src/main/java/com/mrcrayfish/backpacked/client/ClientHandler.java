@@ -60,7 +60,7 @@ public class ClientHandler
         }
 
         BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
-            BackpackLayer.registerModel(backpack.getId(), backpack::getModel);
+            BackpackLayer.registerModel(backpack.getId(), backpack.getModelSupplier());
         });
     }
 

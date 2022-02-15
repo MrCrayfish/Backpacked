@@ -9,6 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.function.Supplier;
+
 /**
  * Author: MrCrayfish
  */
@@ -26,9 +28,8 @@ public class ClassicBackpack extends Backpack
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ClientHandler.getModelInstances().getClassic();
+        return ClientHandler.getModelInstances()::getClassic;
     }
 }

@@ -9,6 +9,8 @@ import com.mrcrayfish.backpacked.common.tracker.UniqueCraftingProgressTracker;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
+
 /**
  * Author: MrCrayfish
  */
@@ -22,9 +24,9 @@ public class CogwheelBackpack extends Backpack
     }
 
     @Override
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ClientHandler.getModelInstances().getCogwheel();
+        return ClientHandler.getModelInstances()::getCogwheel;
     }
 
     @Nullable

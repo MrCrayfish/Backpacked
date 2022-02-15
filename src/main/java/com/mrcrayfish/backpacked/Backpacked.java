@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
@@ -74,7 +75,7 @@ import java.util.stream.Collectors;
 @Mod(Reference.MOD_ID)
 public class Backpacked
 {
-    public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
+
     public static final EnchantmentCategory ENCHANTMENT_TYPE = EnchantmentCategory.create("backpack", item -> item instanceof BackpackItem);
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
@@ -95,8 +96,8 @@ public class Backpacked
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            bus.addListener(this::onTextureStitch);
             bus.addListener(ClientHandler::onRegisterRenderers);
+            bus.addListener(ClientEvents::onTextureStitch);
             bus.register(ClientHandler.getModelInstances());
         });
         bus.addListener(this::onCommonSetup);
@@ -146,46 +147,6 @@ public class Backpacked
         generator.addProvider(new LootTableGen(generator));
         generator.addProvider(new RecipeGen(generator));
         generator.addProvider(new BlockTagGen(generator, existingFileHelper));
-    }
-
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onPlayerRenderScreen(ContainerScreenEvent.DrawBackground event)
-    {
-        if(curiosLoaded)
-            return;
-
-        AbstractContainerScreen<?> screen = event.getContainerScreen();
-        if(screen instanceof InventoryScreen inventory)
-        {
-            int left = inventory.getGuiLeft();
-            int top = inventory.getGuiTop();
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
-            Screen.blit(event.getPoseStack(), left + 76, top + 43, 7, 7, 18, 18, 256, 256);
-        }
-        else if(screen instanceof CreativeModeInventoryScreen inventory)
-        {
-            if(inventory.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId())
-            {
-                int left = inventory.getGuiLeft();
-                int top = inventory.getGuiTop();
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
-                Screen.blit(event.getPoseStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
-            }
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event)
-    {
-        if(event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
-        {
-            event.addSprite(EMPTY_BACKPACK_SLOT);
-        }
     }
 
     @SubscribeEvent
@@ -289,7 +250,7 @@ public class Backpacked
         ModConfig config = event.getConfig();
         if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
         {
-            this.updateBannedItemsList();
+            updateBannedItemsList();
         }
     }
 
@@ -298,18 +259,11 @@ public class Backpacked
         ModConfig config = event.getConfig();
         if(config.getType() == ModConfig.Type.SERVER && config.getModId().equals(Reference.MOD_ID))
         {
-            this.updateBannedItemsList();
+            updateBannedItemsList();
         }
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
-    {
-        this.updateBannedItemsList();
-    }
-
-    private void updateBannedItemsList()
+    public static void updateBannedItemsList()
     {
         bannedItemsList = ImmutableSet.copyOf(Config.SERVER.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
     }

@@ -16,6 +16,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -30,9 +31,9 @@ public class EndCrystalBackpack extends Backpack
     }
 
     @Override
-    public BackpackModel getModel()
+    public Supplier<BackpackModel> getModelSupplier()
     {
-        return ClientHandler.getModelInstances().getEndCrystal();
+        return ClientHandler.getModelInstances()::getEndCrystal;
     }
 
     @Nullable

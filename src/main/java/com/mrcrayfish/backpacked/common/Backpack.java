@@ -9,6 +9,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -32,11 +33,9 @@ public abstract class Backpack
         return UnlockTracker.get(player).map(impl -> impl.getUnlockedBackpacks().contains(this.id)).orElse(false) || Config.SERVER.unlockAllBackpacks.get();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void clientTick(Player player, Vec3 pos) {}
 
-    @OnlyIn(Dist.CLIENT)
-    public abstract BackpackModel getModel();
+    public abstract Supplier<BackpackModel> getModelSupplier();
 
     @Nullable
     protected IProgressTracker createProgressTracker()

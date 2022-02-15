@@ -27,13 +27,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -117,10 +116,9 @@ public class BackpackItem extends Item
         return Config.COMMON.backpackInventorySizeRows.get();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public BackpackModel getDefaultModel()
+    public Supplier<BackpackModel> getDefaultModel()
     {
-        return ClientHandler.getModelInstances().getStandardModel();
+        return () -> ClientHandler.getModelInstances().getStandardModel();
     }
 
     @Nullable
