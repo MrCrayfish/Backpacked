@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.WanderingPackBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
@@ -172,7 +173,16 @@ public class WanderingTraderEvents
                 return;
             }
 
-            generateBackpackLoot(trader, data);
+            if(generateBackpackLoot(trader, data))
+            {
+                UnlockTracker.get(openingPlayer).ifPresent(unlockTracker ->
+                {
+                    unlockTracker.getProgressTracker(WanderingPackBackpack.ID).ifPresent(tracker ->
+                    {
+                        ((WanderingPackBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
+                    });
+                });
+            }
 
             NetworkHooks.openGui(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity1) -> {
                 return new BackpackContainerMenu(id, entity1.getInventory(), trader.getInventory(), 8, 1, false);
@@ -185,7 +195,7 @@ public class WanderingTraderEvents
         });
     }
 
-    private static void generateBackpackLoot(WanderingTrader trader, PickpocketChallenge data)
+    private static boolean generateBackpackLoot(WanderingTrader trader, PickpocketChallenge data)
     {
         if(!data.isLootSpawned())
         {
@@ -209,7 +219,9 @@ public class WanderingTraderEvents
                 }
             }
             data.setLootSpawned();
+            return true;
         }
+        return false;
     }
 
     @SuppressWarnings("unchecked")

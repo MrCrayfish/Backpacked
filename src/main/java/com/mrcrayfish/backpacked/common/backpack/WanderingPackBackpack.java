@@ -41,12 +41,12 @@ public class WanderingPackBackpack extends Backpack
     @Nullable
     protected IProgressTracker createProgressTracker()
     {
-        return new TradeProgressTracker();
+        return new PickpocketProgressTracker();
     }
 
-    public static class TradeProgressTracker implements IProgressTracker
+    public static class PickpocketProgressTracker implements IProgressTracker
     {
-        private static final int COUNT = 5;
+        private static final int COUNT = 2;
         private final Set<UUID> traders = new HashSet<>();
 
         public void addTrader(WanderingTrader trader, ServerPlayer player)
@@ -65,7 +65,7 @@ public class WanderingPackBackpack extends Backpack
         public void read(CompoundTag tag)
         {
             this.traders.clear();
-            ListTag list = tag.getList("TradedTraders", Tag.TAG_COMPOUND);
+            ListTag list = tag.getList("PickpocketTraders", Tag.TAG_COMPOUND);
             list.forEach(t -> {
                 CompoundTag uuidTag = (CompoundTag) t;
                 long mostBits = uuidTag.getLong("Most");
@@ -84,13 +84,13 @@ public class WanderingPackBackpack extends Backpack
                 uuidTag.putLong("Least", uuid.getLeastSignificantBits());
                 list.add(uuidTag);
             });
-            tag.put("TradedTraders", list);
+            tag.put("PickpocketTraders", list);
         }
 
         @Override
         public Component getDisplayComponent()
         {
-            return ProgressFormatters.TRADED_X_OF_X.apply(this.traders.size(), COUNT);
+            return ProgressFormatters.PICKPOCKETED_X_OF_X.apply(this.traders.size(), COUNT);
         }
     }
 }
