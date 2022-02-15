@@ -31,6 +31,7 @@ public class Config
         public final ForgeConfigSpec.IntValue wanderingTraderBackpackChance;
         public final ForgeConfigSpec.DoubleValue wanderingTraderMaxDetectionDistance;
         public final ForgeConfigSpec.LongValue wanderingTraderForgetTime;
+        public final ForgeConfigSpec.BooleanValue dislikedPlayersCanTrade;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -60,6 +61,10 @@ public class Config
                     .comment("The time (in ticks) a Wandering Trader will wait before it decides to forget about a detected player. The Wandering Trader will wait indefinitely if the detected player is within the maximum detection distance.")
                     .translation("backpacked.configgui.wanderingTraderForgetTime")
                     .defineInRange("wanderingTraderForgetTime", 200L, 1L, 12000L);
+            this.dislikedPlayersCanTrade = builder
+                    .comment("If true, allows players who are disliked by Wandering Traders to continue to trade normally with them. A player is considered disliked if they are caught when trying to pickpocket a Wandering Trader's backpack.")
+                    .translation("backpacked.configgui.dislikedPlayersCanTrade")
+                    .define("dislikedPlayersCanTrade", false);
             builder.pop();
             builder.pop();
         }
