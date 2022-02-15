@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  */
 public class WanderingBagBackpack extends Backpack
 {
-    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "wandering_pack");
+    public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "wandering_bag");
 
     public WanderingBagBackpack()
     {

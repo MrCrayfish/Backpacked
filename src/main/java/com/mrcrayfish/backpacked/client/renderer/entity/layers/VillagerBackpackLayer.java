@@ -44,7 +44,7 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
                 bag.z += 3.5F;
                 model.getStraps().visible = false;
                 VertexConsumer builder = ItemRenderer.getFoilBuffer(buffer, model.renderType(model.getTextureLocation()), false, false);
-                model.renderToBuffer(matrixStack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
+                bag.render(matrixStack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
                 matrixStack.popPose();
             }
         });

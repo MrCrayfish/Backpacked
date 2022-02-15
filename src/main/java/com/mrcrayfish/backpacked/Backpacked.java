@@ -96,6 +96,7 @@ public class Backpacked
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverSpec);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            bus.addListener(ClientHandler::onRegisterLayers);
             bus.addListener(ClientHandler::onRegisterRenderers);
             bus.addListener(ClientEvents::onTextureStitch);
             bus.register(ClientHandler.getModelInstances());

@@ -40,7 +40,6 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientHandler
 {
     public static final KeyMapping KEY_BACKPACK = new KeyMapping("key.backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
@@ -69,8 +68,7 @@ public class ClientHandler
         return MODELS;
     }
 
-    @SubscribeEvent
-    public static void addLayersEvent(EntityRenderersEvent.AddLayers event)
+    public static void onRegisterLayers(EntityRenderersEvent.AddLayers event)
     {
         addBackpackLayer(event.getSkin("default"));
         addBackpackLayer(event.getSkin("slim"));
