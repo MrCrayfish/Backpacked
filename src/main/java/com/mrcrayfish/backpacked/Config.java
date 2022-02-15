@@ -28,6 +28,7 @@ public class Config
         public final ForgeConfigSpec.BooleanValue keepBackpackOnDeath;
         public final ForgeConfigSpec.IntValue backpackInventorySizeColumns;
         public final ForgeConfigSpec.IntValue backpackInventorySizeRows;
+        public final ForgeConfigSpec.BooleanValue spawnBackpackOnWanderingTraders;
         public final ForgeConfigSpec.IntValue wanderingTraderBackpackChance;
         public final ForgeConfigSpec.DoubleValue wanderingTraderMaxDetectionDistance;
         public final ForgeConfigSpec.LongValue wanderingTraderForgetTime;
@@ -52,6 +53,10 @@ public class Config
                     .translation("backpacked.configgui.backpackInventorySizeRows")
                     .defineInRange("backpackInventorySize", 1, 1, BackpackContainerMenu.MAX_ROWS);
             builder.push("wandering_trader");
+            this.spawnBackpackOnWanderingTraders = builder
+                    .comment("If enabled, allows wandering traders to have a backpack equipped when they spawn.")
+                    .translation("backpacked.configgui.spawnBackpackOnWanderingTraders")
+                    .define("spawnBackpackOnWanderingTraders", true);
             this.wanderingTraderBackpackChance = builder
                     .comment("The chance a Wandering Trader will spawn with a backpack. The chance is interpreted as one out of x, with x being the number given from this config option.")
                     .translation("backpacked.configgui.wanderingTraderBackpackChance")

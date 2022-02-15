@@ -63,7 +63,7 @@ public class WanderingTraderEvents
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
-        if(!event.getWorld().isClientSide() && event.getEntity() instanceof WanderingTrader trader)
+        if(!event.getWorld().isClientSide() && event.getEntity() instanceof WanderingTrader trader && Config.COMMON.spawnBackpackOnWanderingTraders.get())
         {
             PickpocketChallenge.get(trader).ifPresent(data ->
             {
