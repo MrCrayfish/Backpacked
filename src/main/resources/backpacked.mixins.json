@@ -15,6 +15,7 @@
         "common.PandaEntityMixin",
         "common.PlayerEntityMixin",
         "common.PlayerInteractionManagerMixin",
+        "common.PlayerInventoryMixin",
         "common.ServerPlayNetHandlerMixin",
         "common.SheepEntityMixin"
     ],

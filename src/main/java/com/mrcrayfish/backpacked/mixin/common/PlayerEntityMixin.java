@@ -25,8 +25,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import javax.annotation.Nullable;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 /**
  * Author: MrCrayfish
@@ -95,5 +100,25 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
                 tracker.increment(distance, (ServerPlayer) player);
             });
         });
+    }
+
+    @Inject(method = "getProjectile", at = @At(value = "RETURN", ordinal = 3), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+    public void locateAmmo(ItemStack stack, CallbackInfoReturnable<ItemStack> cir, Predicate<ItemStack> predicate)
+    {
+        PlayerEntity player = (PlayerEntity) (Object) this;
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        if(inventory == null)
+            return;
+
+        ItemStack projectile = IntStream.range(0, inventory.getContainerSize())
+                .mapToObj(inventory::getItem)
+                .filter(predicate)
+                .findFirst()
+                .orElse(ItemStack.EMPTY);
+
+        if(!projectile.isEmpty())
+        {
+            cir.setReturnValue(projectile);
+        }
     }
 }

@@ -45,6 +45,9 @@ public class FunnellingEnchantment extends Enchantment
             return false;
 
         BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        if(inventory == null)
+            return false;
+
         Block.getDrops(state, world, pos, blockEntity, player, stack).forEach((dropStack) -> {
             Block.popResource(world, pos, inventory.addItem(dropStack));
         });

@@ -47,11 +47,14 @@ public class RepairmanEnchantment extends Enchantment
         if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.REPAIRMAN.get(), backpack) <= 0)
             return;
 
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        if(inventory == null)
+            return;
+
         ExperienceOrb orb = event.getOrb();
         player.takeXpDelay = 2;
         player.take(orb, 1);
 
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
         IntStream.range(0, inventory.getContainerSize()).mapToObj(inventory::getItem).filter(stack -> {
             return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) > 0;
         }).mapToInt(stack -> {

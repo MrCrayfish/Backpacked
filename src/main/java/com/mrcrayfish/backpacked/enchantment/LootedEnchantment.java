@@ -36,19 +36,22 @@ public class LootedEnchantment extends Enchantment
     public static void onDropLoot(LivingDropsEvent event)
     {
         Entity entity = event.getSource().getEntity();
-        if(!(entity instanceof ServerPlayer serverPlayer))
+        if(!(entity instanceof ServerPlayer player))
             return;
 
-        ItemStack backpack = Backpacked.getBackpackStack(serverPlayer);
+        ItemStack backpack = Backpacked.getBackpackStack(player);
         if(backpack.isEmpty())
             return;
 
         if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.LOOTED.get(), backpack) <= 0)
             return;
 
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        if(inventory == null)
+            return;
+
         event.setCanceled(true);
 
-        BackpackInventory inventory = ((BackpackedInventoryAccess) serverPlayer).getBackpackedInventory();
         event.getDrops().forEach(itemEntity ->
         {
             ItemStack stack = itemEntity.getItem();
@@ -56,7 +59,7 @@ public class LootedEnchantment extends Enchantment
             if(!remaining.isEmpty())
             {
                 itemEntity.setItem(remaining);
-                serverPlayer.level.addFreshEntity(itemEntity);
+                player.level.addFreshEntity(itemEntity);
             }
         });
     }
