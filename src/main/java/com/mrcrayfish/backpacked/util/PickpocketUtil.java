@@ -43,7 +43,12 @@ public class PickpocketUtil
 
     public static boolean canPickpocketEntity(LivingEntity targetEntity, Player thiefPlayer)
     {
-        return inRangeOfBackpack(targetEntity, thiefPlayer) && inReachOfBackpack(targetEntity, thiefPlayer);
+        return canPickpocketEntity(targetEntity, thiefPlayer, Config.SERVER.pickpocketMaxReachDistance.get());
+    }
+
+    public static boolean canPickpocketEntity(LivingEntity targetEntity, Player thiefPlayer, double range)
+    {
+        return inRangeOfBackpack(targetEntity, thiefPlayer) && inReachOfBackpack(targetEntity, thiefPlayer, range);
     }
 
     public static boolean inRangeOfBackpack(LivingEntity livingEntity, Player thiefPlayer)
@@ -56,11 +61,11 @@ public class PickpocketUtil
         return difference <= Config.SERVER.pickpocketMaxRangeAngle.get();
     }
 
-    public static boolean inReachOfBackpack(LivingEntity targetPlayer, LivingEntity thiefPlayer)
+    public static boolean inReachOfBackpack(LivingEntity targetPlayer, Player thiefPlayer, double reachDistance)
     {
-        Vec3 pos = targetPlayer.getPosition(1.0F);
+        Vec3 pos = getEntityPos(targetPlayer, 1.0F);
         pos = pos.add(Vec3.directionFromRotation(0F, targetPlayer.yBodyRot + 180F).scale(targetPlayer.getPose() != Pose.SWIMMING ? 0.3125 : -0.125));
-        return pos.distanceTo(thiefPlayer.getPosition(1.0F)) <= Config.SERVER.pickpocketMaxReachDistance.get();
+        return pos.distanceTo(getEntityPos(thiefPlayer, 1.0F)) <= reachDistance;
     }
 
     public static boolean canSeeBackpack(LivingEntity targetEntity, Player thiefPlayer)
@@ -71,12 +76,12 @@ public class PickpocketUtil
 
         AABB backpackBox = getBackpackBox(targetEntity, 1.0F);
         Vec3 start = thiefPlayer.getEyePosition(1.0F);
-        Vec3 end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxReachDistance.get() + 1.0).add(start);
+        Vec3 end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketMaxReachDistance.get()).add(start);
         Optional<Vec3> hitPos = backpackBox.clip(start, end);
         if(!hitPos.isPresent())
             return false;
 
-        BlockHitResult result = thiefPlayer.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, thiefPlayer));
+        BlockHitResult result = thiefPlayer.level.clip(new ClipContext(start, hitPos.get(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, thiefPlayer));
         if(result.getType() == HitResult.Type.MISS)
             return true;
 

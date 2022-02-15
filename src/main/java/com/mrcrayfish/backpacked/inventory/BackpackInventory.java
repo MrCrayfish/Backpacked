@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +44,7 @@ public class BackpackInventory extends SimpleContainer
     @Override
     public boolean stillValid(Player player)
     {
-        return Backpacked.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player));
+        return Backpacked.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.SERVER.pickpocketMaxReachDistance.get() + 0.5));
     }
 
     @Override
