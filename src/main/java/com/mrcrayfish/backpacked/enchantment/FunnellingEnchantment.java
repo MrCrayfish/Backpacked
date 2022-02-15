@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.enchantment;
 
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -15,7 +14,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 
