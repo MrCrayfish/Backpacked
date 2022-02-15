@@ -11,11 +11,14 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.integration.Curios;
+import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
+import com.mrcrayfish.backpacked.util.ReflectionHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,6 +29,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +49,8 @@ import java.util.Optional;
  */
 public class ClientEvents
 {
+    private static CreativeModeTab currentTab = null;
+
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
@@ -218,5 +225,34 @@ public class ClientEvents
         }
         source.endBatch(RenderType.lines());
         stack.popPose();
+    }
+
+    @SubscribeEvent
+    public void onRenderTickStart(TickEvent.RenderTickEvent event)
+    {
+        if(event.phase != TickEvent.Phase.START)
+            return;
+
+        if(Backpacked.isCuriosLoaded())
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if(!(mc.screen instanceof CreativeModeInventoryScreen screen)) {
+            currentTab = null;
+            return;
+        }
+
+        CreativeModeTab tab = CreativeModeTab.TABS[screen.getSelectedTab()];
+        if(currentTab == null || currentTab != tab)
+        {
+            currentTab = tab;
+            if(currentTab == CreativeModeTab.TAB_INVENTORY)
+            {
+                List<Slot> slots = screen.getMenu().slots;
+                slots.stream().filter(slot -> slot.container instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot -> {
+                    ReflectionHelper.repositionSlot(slot, 127, 20);
+                });
+            }
+        }
     }
 }

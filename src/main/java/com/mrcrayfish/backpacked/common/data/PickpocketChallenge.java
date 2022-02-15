@@ -21,13 +21,8 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -38,10 +33,21 @@ public class PickpocketChallenge
 {
     public static final Capability<PickpocketChallenge> PICKPOCKET_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
-    private boolean backpack;
+    private boolean initialized = false;
+    private boolean backpack = false;
     private boolean spawnedLoot = false;
     private final Map<Player, Long> detectedPlayers = new HashMap<>();
     private final Map<UUID, Long> dislikedPlayers = new HashMap<>();
+
+    public boolean isInitialized()
+    {
+        return this.initialized;
+    }
+
+    public void setInitialized()
+    {
+        this.initialized = true;
+    }
 
     public void setBackpackEquipped(boolean equipped)
     {
@@ -120,6 +126,7 @@ public class PickpocketChallenge
         public CompoundTag serializeNBT()
         {
             CompoundTag tag = new CompoundTag();
+            tag.putBoolean("Initialized", this.instance.initialized);
             tag.putBoolean("EquippedBackpack", this.instance.backpack);
             tag.putBoolean("SpawnedLoot", this.instance.spawnedLoot);
             return tag;
@@ -128,6 +135,7 @@ public class PickpocketChallenge
         @Override
         public void deserializeNBT(CompoundTag tag)
         {
+            this.instance.initialized = tag.getBoolean("Initialized");
             this.instance.backpack = tag.getBoolean("EquippedBackpack");
             this.instance.spawnedLoot = tag.getBoolean("SpawnedLoot");
         }
