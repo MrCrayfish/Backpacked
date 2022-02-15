@@ -105,7 +105,7 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
     @Inject(method = "getProjectile", at = @At(value = "RETURN", ordinal = 3), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     public void locateAmmo(ItemStack stack, CallbackInfoReturnable<ItemStack> cir, Predicate<ItemStack> predicate)
     {
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
         BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
         if(inventory == null)
             return;
