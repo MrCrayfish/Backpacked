@@ -22,11 +22,11 @@ import java.util.UUID;
 /**
  * Author: MrCrayfish
  */
-public class WanderingPackBackpack extends Backpack
+public class WanderingBagBackpack extends Backpack
 {
     public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "wandering_pack");
 
-    public WanderingPackBackpack()
+    public WanderingBagBackpack()
     {
         super(ID);
     }
@@ -34,7 +34,7 @@ public class WanderingPackBackpack extends Backpack
     @Override
     public BackpackModel getModel()
     {
-        return ClientHandler.getModelInstances().getWanderingPack();
+        return ClientHandler.getModelInstances().getWanderingBag();
     }
 
     @Override

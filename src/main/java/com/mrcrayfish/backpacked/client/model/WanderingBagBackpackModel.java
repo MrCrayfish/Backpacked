@@ -13,11 +13,11 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class WanderingPackBackpackModel extends BackpackModel
+public class WanderingBagBackpackModel extends BackpackModel
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/wandering_bag_backpack.png");
 
-    public WanderingPackBackpackModel(ModelPart root)
+    public WanderingBagBackpackModel(ModelPart root)
     {
         super(root, TEXTURE);
     }

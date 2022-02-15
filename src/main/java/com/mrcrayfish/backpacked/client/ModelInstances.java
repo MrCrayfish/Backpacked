@@ -21,7 +21,8 @@ public class ModelInstances
     private BackpackModel turtleShell;
     private BackpackModel cardboardBox;
     private BackpackModel sheepPlush;
-    private BackpackModel wanderingPack;
+    private BackpackModel wanderingBag;
+    private BackpackModel piglinPack;
     private BackpackModel cogwheel;
 
     @SubscribeEvent
@@ -38,7 +39,8 @@ public class ModelInstances
         this.turtleShell = new TurtleShellBackpackModel(models.bakeLayer(ModLayerDefinitions.TURTLE_SHELL));
         this.cardboardBox = new CardboardBoxBackpackModel(models.bakeLayer(ModLayerDefinitions.CARDBOARD_BOX));
         this.sheepPlush = new SheepPlushBackpackModel(models.bakeLayer(ModLayerDefinitions.SHEEP_PLUSH));
-        this.wanderingPack = new WanderingPackBackpackModel(models.bakeLayer(ModLayerDefinitions.WANDERING_PACK));
+        this.wanderingBag = new WanderingBagBackpackModel(models.bakeLayer(ModLayerDefinitions.WANDERING_BAG));
+        this.piglinPack = new PiglinPackBackpackModel(models.bakeLayer(ModLayerDefinitions.PIGLIN_PACK));
         this.cogwheel = new CogwheelBackpackModel(models.bakeLayer(ModLayerDefinitions.COGWHEEL));
     }
 
@@ -92,9 +94,14 @@ public class ModelInstances
         return this.sheepPlush;
     }
 
-    public BackpackModel getWanderingPack()
+    public BackpackModel getWanderingBag()
     {
-        return this.wanderingPack;
+        return this.wanderingBag;
+    }
+
+    public BackpackModel getPiglinPack()
+    {
+        return this.piglinPack;
     }
 
     public BackpackModel getCogwheel()

@@ -3,26 +3,21 @@ package com.mrcrayfish.backpacked.common;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
-import com.mrcrayfish.backpacked.common.backpack.WanderingPackBackpack;
+import com.mrcrayfish.backpacked.common.tracker.BiomeExploreProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.CraftingProgressTracker;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Author: MrCrayfish
@@ -68,6 +63,36 @@ public class CommonEvents
                 {
                     ((CraftingProgressTracker) progressTracker).processCrafted(craftedItem, player);
                 }
+            });
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event)
+    {
+        if(event.phase != TickEvent.Phase.END)
+            return;
+
+        if(event.player.level.isClientSide())
+            return;
+
+        if(event.player.tickCount % 20 != 0)
+            return;
+
+        ServerPlayer player = (ServerPlayer) event.player;
+        ServerLevel world = player.getLevel();
+        BlockPos playerPosition = player.blockPosition();
+        world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(world.getBiome(playerPosition)).ifPresent(key ->
+        {
+            UnlockTracker.get(player).ifPresent(unlockTracker ->
+            {
+                unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
+                {
+                    if(progressTracker instanceof BiomeExploreProgressTracker && !progressTracker.isComplete())
+                    {
+                        ((BiomeExploreProgressTracker) progressTracker).explore(key, player);
+                    }
+                });
             });
         });
     }

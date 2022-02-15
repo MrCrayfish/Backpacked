@@ -40,12 +40,13 @@ public class BackpackManager
         this.register(new ClassicBackpack());
         this.register(new HoneyJarBackpack());
         this.register(new MiniChestBackpack());
+        this.register(new PiglinPackBackpack());
         this.register(new RocketBackpack());
         this.register(new SheepPlushBackpack());
         this.register(new StandardBackpack());
         this.register(new TrashCanBackpack());
         this.register(new TurtleShellBackpack());
-        this.register(new WanderingPackBackpack());
+        this.register(new WanderingBagBackpack());
         this.registerDependant("create", new CogwheelBackpack());
     }
 

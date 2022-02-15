@@ -38,7 +38,7 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
                     return;
 
                 matrixStack.pushPose();
-                BackpackModel model = ClientHandler.getModelInstances().getWanderingPack();
+                BackpackModel model = ClientHandler.getModelInstances().getWanderingBag();
                 ModelPart bag = model.getBag();
                 bag.copyFrom(body);
                 bag.y -= 23.5F;

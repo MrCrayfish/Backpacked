@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.WanderingPackBackpack;
+import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
@@ -202,9 +202,9 @@ public class WanderingTraderEvents
             {
                 UnlockTracker.get(openingPlayer).ifPresent(unlockTracker ->
                 {
-                    unlockTracker.getProgressTracker(WanderingPackBackpack.ID).ifPresent(tracker ->
+                    unlockTracker.getProgressTracker(WanderingBagBackpack.ID).ifPresent(tracker ->
                     {
-                        ((WanderingPackBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
+                        ((WanderingBagBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
                     });
                 });
             }
