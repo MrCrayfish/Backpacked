@@ -23,6 +23,7 @@ public class ModelInstances
     private BackpackModel sheepPlush;
     private BackpackModel wanderingBag;
     private BackpackModel piglinPack;
+    private BackpackModel endCrystal;
     private BackpackModel cogwheel;
 
     @SubscribeEvent
@@ -41,6 +42,7 @@ public class ModelInstances
         this.sheepPlush = new SheepPlushBackpackModel(models.bakeLayer(ModLayerDefinitions.SHEEP_PLUSH));
         this.wanderingBag = new WanderingBagBackpackModel(models.bakeLayer(ModLayerDefinitions.WANDERING_BAG));
         this.piglinPack = new PiglinPackBackpackModel(models.bakeLayer(ModLayerDefinitions.PIGLIN_PACK));
+        this.endCrystal = new EndCrystalBackpackModel(models.bakeLayer(ModLayerDefinitions.END_CRYSTAL));
         this.cogwheel = new CogwheelBackpackModel(models.bakeLayer(ModLayerDefinitions.COGWHEEL));
     }
 
@@ -102,6 +104,11 @@ public class ModelInstances
     public BackpackModel getPiglinPack()
     {
         return this.piglinPack;
+    }
+
+    public BackpackModel getEndCrystal()
+    {
+        return this.endCrystal;
     }
 
     public BackpackModel getCogwheel()
