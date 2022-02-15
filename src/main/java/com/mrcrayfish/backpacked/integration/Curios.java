@@ -112,35 +112,6 @@ public class Curios
                 return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
             }
 
-            @Nullable
-            @Override
-            public CompoundTag writeSyncData(SlotContext context)
-            {
-                CompoundTag realTag = stack.getOrCreateTag();
-                CompoundTag tag = new CompoundTag();
-                tag.putString("BackpackModel", stack.getOrCreateTag().getString("BackpackModel"));
-                for(BackpackModelProperty property : BackpackModelProperty.values())
-                {
-                    String tagName = property.getTagName();
-                    boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
-                    tag.putBoolean(tagName, value);
-                }
-                return tag;
-            }
-
-            @Override
-            public void readSyncData(SlotContext context, CompoundTag compound)
-            {
-                CompoundTag itemTag = stack.getOrCreateTag();
-                itemTag.putString("BackpackModel", compound.getString("BackpackModel"));
-                for(BackpackModelProperty property : BackpackModelProperty.values())
-                {
-                    String tagName = property.getTagName();
-                    boolean value = compound.contains(tagName, Tag.TAG_BYTE) ? compound.getBoolean(tagName) : property.getDefaultValue();
-                    itemTag.putBoolean(tagName, value);
-                }
-            }
-
             @Nonnull
             @Override
             public DropRule getDropRule(SlotContext context, DamageSource source, int lootingLevel, boolean recentlyHit)

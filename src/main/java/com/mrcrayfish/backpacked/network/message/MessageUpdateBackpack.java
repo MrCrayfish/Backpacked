@@ -31,7 +31,7 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
     public void encode(MessageUpdateBackpack message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.entityId);
-        this.writeBackpackStack(buffer, message.backpack);
+        buffer.writeItemStack(message.backpack, true);
     }
 
     @Override

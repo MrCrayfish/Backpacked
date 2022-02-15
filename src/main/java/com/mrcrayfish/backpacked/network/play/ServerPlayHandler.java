@@ -61,11 +61,7 @@ public class ServerPlayHandler
 
             if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
             {
-                ItemStack backpackStack = inventory.getBackpackItems().get(0);
-                if(!backpackStack.isEmpty() && backpackStack.getItem() instanceof BackpackItem)
-                {
-                    Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), backpackStack));
-                }
+                Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), stack));
             }
         }
     }

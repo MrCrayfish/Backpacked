@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -11,6 +12,7 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -119,5 +121,23 @@ public class BackpackItem extends Item
     public BackpackModel getDefaultModel()
     {
         return ClientHandler.getModelInstances().getStandardModel();
+    }
+
+    @Nullable
+    @Override
+    public CompoundTag getShareTag(ItemStack stack)
+    {
+        CompoundTag realTag = stack.getOrCreateTag();
+        CompoundTag tag = new CompoundTag();
+        tag.putString("BackpackModel", realTag.getString("BackpackModel"));
+        for(BackpackModelProperty property : BackpackModelProperty.values())
+        {
+            String tagName = property.getTagName();
+            boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+            tag.putBoolean(tagName, value);
+        }
+        tag.put("Enchantments", stack.getEnchantmentTags());
+        tag.put("display", stack.getOrCreateTagElement("display"));
+        return tag;
     }
 }
