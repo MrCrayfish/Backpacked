@@ -68,5 +68,7 @@
     "backpacked.formatter.incomplete": "Incomplete",
     "backpacked.formatter.complete": "Complete",
     "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it",
-    "itemGroup.backpacked": "Backpacked"
+    "itemGroup.backpacked": "Backpacked",
+    "enchantment.backpacked.funnelling": "Funnelling",
+    "enchantment.backpacked.funnelling.desc": "Funnels certain resources directly into a Backpack after harvesting them"
 }

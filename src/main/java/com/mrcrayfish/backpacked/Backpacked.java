@@ -7,12 +7,14 @@ import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.core.ModItems;
-import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModSounds;
+import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.Curios;
@@ -33,12 +35,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -71,6 +75,7 @@ import java.util.stream.Collectors;
 public class Backpacked
 {
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
+    public static final EnchantmentCategory ENCHANTMENT_TYPE = EnchantmentCategory.create("backpack", item -> item instanceof BackpackItem);
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
     private static Set<ResourceLocation> bannedItemsList;
@@ -81,7 +86,7 @@ public class Backpacked
         {
             return new ItemStack(ModItems.BACKPACK.get());
         }
-    };
+    }.setEnchantmentCategories(ENCHANTMENT_TYPE);
 
     public Backpacked()
     {
@@ -103,6 +108,7 @@ public class Backpacked
         bus.addListener(UnlockTracker::register);
         bus.addListener(PickpocketChallenge::register);
         ModContainers.REGISTER.register(bus);
+        ModEnchantments.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
         ModBlocks.REGISTER.register(bus);
         ModBlockEntities.REGISTER.register(bus);
@@ -135,9 +141,11 @@ public class Backpacked
 
     private void onGatherData(GatherDataEvent event)
     {
+        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         DataGenerator generator = event.getGenerator();
         generator.addProvider(new LootTableGen(generator));
         generator.addProvider(new RecipeGen(generator));
+        generator.addProvider(new BlockTagGen(generator, existingFileHelper));
     }
 
     @SubscribeEvent
