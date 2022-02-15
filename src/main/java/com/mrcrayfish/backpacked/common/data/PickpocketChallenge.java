@@ -40,7 +40,7 @@ public class PickpocketChallenge
 
     private boolean backpack;
     private final Map<Player, Long> detectedPlayers = new HashMap<>();
-    private final Set<UUID> dislikedPlayers = new HashSet<>();
+    private final Map<UUID, Long> dislikedPlayers = new HashMap<>();
 
     public void setBackpackEquipped(boolean equipped)
     {
@@ -59,12 +59,17 @@ public class PickpocketChallenge
 
     public boolean isDislikedPlayer(Player player)
     {
-        return this.dislikedPlayers.contains(player.getUUID());
+        return this.dislikedPlayers.containsKey(player.getUUID());
     }
 
-    public void addDislikedPlayer(Player player)
+    public void addDislikedPlayer(Player player, long time)
     {
-        this.dislikedPlayers.add(player.getUUID());
+        this.dislikedPlayers.put(player.getUUID(), time);
+    }
+
+    public Map<UUID, Long> getDislikedPlayers()
+    {
+        return this.dislikedPlayers;
     }
 
     public static void register(RegisterCapabilitiesEvent event)
