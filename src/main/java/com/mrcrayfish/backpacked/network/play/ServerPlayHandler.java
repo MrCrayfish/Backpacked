@@ -101,6 +101,9 @@ public class ServerPlayHandler
 
     public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayer player)
     {
+        if(Config.SERVER.disableCustomisation.get())
+            return;
+
         if(Backpacked.getBackpackStack(player).isEmpty())
             return;
 

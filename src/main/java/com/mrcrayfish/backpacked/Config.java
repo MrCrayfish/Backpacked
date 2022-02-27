@@ -93,6 +93,7 @@ public class Config
     public static class Server
     {
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> bannedItems;
+        public final ForgeConfigSpec.BooleanValue disableCustomisation;
         public final ForgeConfigSpec.BooleanValue unlockAllBackpacks;
         public final ForgeConfigSpec.BooleanValue lockBackpackIntoSlot;
         public final ForgeConfigSpec.BooleanValue dropContentsFromShelf;
@@ -105,6 +106,7 @@ public class Config
         {
             builder.comment("Common configuration settings").push("common");
             this.bannedItems = builder.comment("A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!").defineList("bannedItems", Server::getDefaultBannedItems, Server::resourceLocationValidator);
+            this.disableCustomisation = builder.comment("If enabled, prevents backpacks from being customised. This will remove the customise button from the backpack inventory").define("disableCustomisation", false);
             this.unlockAllBackpacks = builder.comment("Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.").define("unlockAllBackpacks", false);
             this.lockBackpackIntoSlot = builder.comment("Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.").define("lockBackpackIntoSlot", true);
             this.dropContentsFromShelf = builder.comment("When breaking a shelf, the placed backpack will also drops it's items into the world. This prevents players from carrying multiple backpacks").define("dropContentsFromShelf", true);
