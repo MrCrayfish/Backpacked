@@ -63,7 +63,8 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             this.opened = true;
         }
-        if(this.owner)
+        boolean canCustomise = this.owner && !Config.SERVER.disableCustomisation.get();
+        if(canCustomise)
         {
             this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
@@ -73,7 +74,7 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         }
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10 - (this.owner ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10 - (canCustomise ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 this.openConfigScreen();
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);

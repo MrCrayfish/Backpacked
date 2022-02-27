@@ -103,6 +103,9 @@ public class ServerPlayHandler
 
     public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayerEntity player)
     {
+        if(Config.SERVER.disableCustomisation.get())
+            return;
+
         if(Backpacked.getBackpackStack(player).isEmpty())
             return;
 
