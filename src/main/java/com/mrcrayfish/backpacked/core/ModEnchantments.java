@@ -2,10 +2,10 @@ package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.enchantment.FunnellingEnchantment;
+import com.mrcrayfish.backpacked.enchantment.ImbuedHideEnchantment;
 import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.enchantment.MarksmanEnchantment;
 import com.mrcrayfish.backpacked.enchantment.RepairmanEnchantment;
-import com.mrcrayfish.backpacked.enchantment.ImbuedHideEnchantment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;

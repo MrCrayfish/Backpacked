@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.model;
 
 import com.mrcrayfish.backpacked.Reference;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
