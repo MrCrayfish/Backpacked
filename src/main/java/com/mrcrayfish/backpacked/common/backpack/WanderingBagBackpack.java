@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ModelInstances;
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.ModelSupplier;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
@@ -12,15 +12,12 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -35,7 +32,7 @@ public class WanderingBagBackpack extends Backpack
     }
 
     @Override
-    public Supplier<BackpackModel> getModelSupplier()
+    public ModelSupplier getModelSupplier()
     {
         return () -> ModelInstances.WANDERING_BAG;
     }

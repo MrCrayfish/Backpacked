@@ -2,14 +2,10 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ModelInstances;
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.ModelSupplier;
 import com.mrcrayfish.backpacked.common.Backpack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -30,7 +26,7 @@ public class StandardBackpack extends Backpack
     }
 
     @Override
-    public Supplier<BackpackModel> getModelSupplier()
+    public ModelSupplier getModelSupplier()
     {
         return () -> ModelInstances.STANDARD;
     }

@@ -2,17 +2,14 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ModelInstances;
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.ModelSupplier;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -27,7 +24,7 @@ public class TrashCanBackpack extends Backpack
     }
 
     @Override
-    public Supplier<BackpackModel> getModelSupplier()
+    public ModelSupplier getModelSupplier()
     {
         return () -> ModelInstances.TRASH_CAN;
     }

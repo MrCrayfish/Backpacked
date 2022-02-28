@@ -1,15 +1,12 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.ModelSupplier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -35,7 +32,7 @@ public abstract class Backpack
 
     public void clientTick(PlayerEntity player, Vector3d pos) {}
 
-    public abstract Supplier<BackpackModel> getModelSupplier();
+    public abstract ModelSupplier getModelSupplier();
 
     @Nullable
     protected IProgressTracker createProgressTracker()
