@@ -1,13 +1,12 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.ModelSupplier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -33,7 +32,7 @@ public abstract class Backpack
 
     public void clientTick(Player player, Vec3 pos) {}
 
-    public abstract Supplier<BackpackModel> getModelSupplier();
+    public abstract ModelSupplier getModelSupplier();
 
     @Nullable
     protected IProgressTracker createProgressTracker()

@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ClientHandler;
-import com.mrcrayfish.backpacked.client.model.BackpackModel;
+import com.mrcrayfish.backpacked.client.ModelSupplier;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.ProgressFormatters;
@@ -16,7 +16,6 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -31,7 +30,7 @@ public class EndCrystalBackpack extends Backpack
     }
 
     @Override
-    public Supplier<BackpackModel> getModelSupplier()
+    public ModelSupplier getModelSupplier()
     {
         return ClientHandler.getModelInstances()::getEndCrystal;
     }
