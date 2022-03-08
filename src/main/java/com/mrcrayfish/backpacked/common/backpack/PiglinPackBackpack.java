@@ -8,6 +8,8 @@ import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.BiomeExploreProgressTracker;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +26,7 @@ public class PiglinPackBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public ModelSupplier getModelSupplier()
     {
         return () -> ModelInstances.PIGLIN_PACK;

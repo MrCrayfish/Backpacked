@@ -7,6 +7,8 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.UniqueCraftingProgressTracker;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -23,6 +25,7 @@ public class CogwheelBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public ModelSupplier getModelSupplier()
     {
         return () -> ModelInstances.COGWHEEL;

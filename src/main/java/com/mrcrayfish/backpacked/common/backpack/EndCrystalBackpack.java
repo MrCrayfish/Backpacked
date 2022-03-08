@@ -13,6 +13,8 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -31,6 +33,7 @@ public class EndCrystalBackpack extends Backpack
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public ModelSupplier getModelSupplier()
     {
         return () -> ModelInstances.END_CRYSTAL;

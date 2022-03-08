@@ -12,6 +12,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
@@ -32,8 +34,8 @@ public class BambooBasketBackpack extends Backpack
     }
 
     @Override
-    public ModelSupplier getModelSupplier()
-    {
+    @OnlyIn(Dist.CLIENT)
+    public ModelSupplier getModelSupplier() {
         return () -> ModelInstances.BAMBOO_BASKET;
     }
 

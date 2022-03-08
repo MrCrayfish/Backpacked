@@ -7,7 +7,9 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -33,8 +35,7 @@ public class BackpackManager
 
     private final Map<ResourceLocation, Backpack> registeredBackpacks = new HashMap<>();
 
-    private BackpackManager()
-    {
+    private BackpackManager() {
         this.register(new BambooBasketBackpack());
         this.register(new CardboardBoxBackpack());
         this.register(new ClassicBackpack());

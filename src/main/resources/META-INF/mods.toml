@@ -5,13 +5,13 @@ issueTrackerURL="https://github.com/MrCrayfish/Backpacked/issues"
 
 [[mods]]
 modId="backpacked"
-version="2.1.1"
+version="2.1.2"
 displayName="Backpacked"
 updateJSONURL="https://mrcrayfish.com/modupdatejson?id=backpacked"
 displayURL="https://mrcrayfish.com/mods?id=backpacked"
 logoFile="backpacked.png"
 authors="MrCrayfish"
-credits="JamesTheMaker, Unstellary, Zinc, and wwozniak from Discord for a few backpack ideas."
+credits="JamesTheMaker, Unstellary, Zinc, and wwozniak from Discord for a few backpack ideas.\nVadamDev for fixing the Server Side crash."
 description="Adds a simple backpack to store more items"
 
 [[dependencies.backpacked]]
