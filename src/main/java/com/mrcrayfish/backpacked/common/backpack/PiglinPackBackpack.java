@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biomes;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -24,7 +25,7 @@ public class PiglinPackBackpack extends Backpack
     }
 
     @Override
-    public ModelSupplier getModelSupplier()
+    public Supplier<Object> getModelSupplier()
     {
         return () -> ModelInstances.PIGLIN_PACK;
     }

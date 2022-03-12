@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * Prevents model class from loading on servers
  */
-public interface ModelSupplier extends Supplier<BackpackModel>
+public interface ModelSupplier
 {
-
+    <T extends BackpackModel> Supplier<T> get();
 }

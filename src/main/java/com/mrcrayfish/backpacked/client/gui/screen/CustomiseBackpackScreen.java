@@ -503,7 +503,7 @@ public class CustomiseBackpackScreen extends Screen
                 list.add(LanguageMap.getInstance().getVisualOrder(component));
             }
             this.unlockTooltip = ImmutableList.copyOf(list);
-            this.model = backpack.getModelSupplier().get();
+            this.model = (BackpackModel) backpack.getModelSupplier().get();
         }
 
         public String getId()

@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.common.tracker.CountProgressTracker;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -24,7 +25,7 @@ public class RocketBackpack extends Backpack
     }
 
     @Override
-    public ModelSupplier getModelSupplier()
+    public Supplier<Object> getModelSupplier()
     {
         return () -> ModelInstances.ROCKET;
     }

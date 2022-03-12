@@ -7,6 +7,8 @@ import com.mrcrayfish.backpacked.common.Backpack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.function.Supplier;
+
 /**
  * Author: MrCrayfish
  */
@@ -26,7 +28,7 @@ public class StandardBackpack extends Backpack
     }
 
     @Override
-    public ModelSupplier getModelSupplier()
+    public Supplier<Object> getModelSupplier()
     {
         return () -> ModelInstances.STANDARD;
     }
