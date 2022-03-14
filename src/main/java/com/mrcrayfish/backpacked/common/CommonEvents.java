@@ -82,7 +82,7 @@ public class CommonEvents
         ServerPlayer player = (ServerPlayer) event.player;
         ServerLevel world = player.getLevel();
         BlockPos playerPosition = player.blockPosition();
-        world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(world.getBiome(playerPosition)).ifPresent(key ->
+        world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(world.getBiome(playerPosition).value()).ifPresent(key ->
         {
             UnlockTracker.get(player).ifPresent(unlockTracker ->
             {

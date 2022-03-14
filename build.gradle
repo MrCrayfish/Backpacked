@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = project.property('mod.version') + "-1.18.1"
+version = project.property('mod.version') + "-1.18.2"
 group = 'com.mrcrayfish'
 archivesBaseName = project.property('mod.id')
 
@@ -27,7 +27,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.1'
+    mappings channel: 'official', version: '1.18.2'
 
     runs {
         client {
@@ -79,8 +79,8 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.88'
-    implementation fg.deobf('curse.maven:curios-309927:3581722')
+    minecraft 'net.minecraftforge:forge:1.18.2-40.0.15'
+    implementation fg.deobf('curse.maven:curios-309927:3670447')
     compileOnly fg.deobf('curse.maven:controllable-317269:3546297')
     runtimeOnly fg.deobf('curse.maven:configured-457570:3559398')
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
