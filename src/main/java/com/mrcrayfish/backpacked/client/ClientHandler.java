@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.BackpackedButtonBindings;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
+import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -55,7 +57,7 @@ public class ClientHandler
         }
 
         BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
-            BackpackLayer.registerModel(backpack.getId(), backpack.getModelSupplier());
+            BackpackLayer.registerModel(backpack.getId(), () -> (BackpackModel) backpack.getModelSupplier().get());
         });
     }
 

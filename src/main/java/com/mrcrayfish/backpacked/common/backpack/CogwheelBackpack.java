@@ -2,12 +2,13 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.client.ClientHandler;
-import com.mrcrayfish.backpacked.client.ModelSupplier;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.UniqueCraftingProgressTracker;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -22,7 +23,7 @@ public class CogwheelBackpack extends Backpack
     }
 
     @Override
-    public ModelSupplier getModelSupplier()
+    public Supplier<Object> getModelSupplier()
     {
         return ClientHandler.getModelInstances()::getCogwheel;
     }
