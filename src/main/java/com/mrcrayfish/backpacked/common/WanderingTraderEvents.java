@@ -230,11 +230,11 @@ public class WanderingTraderEvents
             MerchantOffers offers = trader.getOffers();
             for(int i = 0; i < 8; i++)
             {
-                if(i < count)
+                if(Config.COMMON.generateEmeraldsOnly.get() && i < count)
                 {
                     MerchantOffer offer = offers.get(trader.level.random.nextInt(offers.size()));
                     ItemStack loot = offer.getResult().copy();
-                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level.random.nextInt(Config.COMMON.maxLootMultipler.get()) + 1), 0, loot.getMaxStackSize()));
+                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level.random.nextInt(Config.COMMON.maxLootMultiplier.get()) + 1), 0, loot.getMaxStackSize()));
                     trader.getInventory().setItem(randomSlotIndexes.get(i), loot);
                 }
                 else

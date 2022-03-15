@@ -34,6 +34,7 @@ public class Config
         public final ForgeConfigSpec.LongValue wanderingTraderForgetTime;
         public final ForgeConfigSpec.BooleanValue dislikedPlayersCanTrade;
         public final ForgeConfigSpec.IntValue dislikeCooldown;
+        public final ForgeConfigSpec.BooleanValue generateEmeraldsOnly;
         public final ForgeConfigSpec.IntValue maxLootMultiplier;
         public final ForgeConfigSpec.IntValue maxEmeraldStack;
 
@@ -77,6 +78,9 @@ public class Config
                     .comment("The amount of time (in ticks) a player has to wait before a Wandering Trader will like them again. If a player gets caught pickpocketing a Wandering Trader, the cooldown will be reset")
                     .translation("backpacked.configgui.dislikeCooldown")
                     .defineInRange("dislikeCooldown", 6000, 0, 24000);
+            this.generateEmeraldsOnly = builder
+                    .comment("Instead of generating trades as loot in the Wandering Traders backpacks, only generate emeralds.")
+                    .define("generateEmeraldsOnly", false);
             this.maxLootMultiplier = builder
                     .comment("The maximum multiplier to apply when generating loot in the Wandering Trader backpack")
                     .translation("backpacked.configgui.maxEmeraldStack")
