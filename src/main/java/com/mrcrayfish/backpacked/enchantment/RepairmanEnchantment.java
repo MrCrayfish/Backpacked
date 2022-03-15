@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
@@ -52,23 +53,14 @@ public class RepairmanEnchantment extends Enchantment
             return;
 
         ExperienceOrb orb = event.getOrb();
-        player.takeXpDelay = 2;
-        player.take(orb, 1);
+        if(orb.isRemoved())
+            return;
 
-        IntStream.range(0, inventory.getContainerSize()).mapToObj(inventory::getItem).filter(stack -> {
-            return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) > 0;
-        }).mapToInt(stack -> {
-            if(!stack.isDamaged()) return 0;
-            int repaired = Math.min((int) (orb.value * stack.getXpRepairRatio()), stack.getDamageValue());
+        InventoryHelper.streamFor(inventory).filter(stack -> {
+            return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) > 0 && stack.isDamaged();
+        }).forEach(stack -> {
+            int repaired = Math.min((int) ((orb.value / 2) * stack.getXpRepairRatio()), stack.getDamageValue());
             stack.setDamageValue(stack.getDamageValue() - repaired);
-            return repaired;
-        }).max().ifPresent(value -> {
-            orb.value -= value / 2;
         });
-
-        if(orb.value > 0)
-        {
-            player.giveExperiencePoints(orb.value);
-        }
     }
 }

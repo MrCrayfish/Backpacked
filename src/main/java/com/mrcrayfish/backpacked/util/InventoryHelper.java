@@ -2,11 +2,15 @@ package com.mrcrayfish.backpacked.util;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Author: MrCrayfish
@@ -65,5 +69,10 @@ public class InventoryHelper
                 level.addFreshEntity(entity);
             }
         }
+    }
+
+    public static Stream<ItemStack> streamFor(Container container)
+    {
+        return IntStream.range(0, container.getContainerSize()).mapToObj(container::getItem);
     }
 }
