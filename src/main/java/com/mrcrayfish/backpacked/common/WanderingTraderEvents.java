@@ -234,7 +234,7 @@ public class WanderingTraderEvents
                 {
                     MerchantOffer offer = offers.get(trader.level.random.nextInt(offers.size()));
                     ItemStack loot = offer.getResult().copy();
-                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level.random.nextInt(Config.COMMON.maxLootMultipler.get()) + 1), 0, 64));
+                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level.random.nextInt(Config.COMMON.maxLootMultipler.get()) + 1), 0, loot.getMaxStackSize()));
                     trader.getInventory().setItem(randomSlotIndexes.get(i), loot);
                 }
                 else
