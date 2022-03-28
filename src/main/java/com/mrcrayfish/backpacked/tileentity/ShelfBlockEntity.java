@@ -15,6 +15,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -82,7 +83,15 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     {
         if(player.isCrouching() || this.backpack.isEmpty())
         {
-            ItemStack stack = Backpacked.getBackpackStack(player);
+            ItemStack stack = Backpacked.getBackStack(player);
+            if(!stack.isEmpty() && !(stack.getItem() instanceof BackpackItem))
+            {
+                if(!this.backpack.isEmpty())
+                {
+                    player.displayClientMessage(new TranslatableComponent("message.backpacked.occupied_back_slot"), true);
+                }
+                return InteractionResult.FAIL;
+            }
             ItemStack result = this.shelveBackpack(stack);
             Backpacked.setBackpackStack(player, result);
         }

@@ -27,6 +27,28 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Curios
 {
+    /**
+     * Gets the stack in the back slot
+     */
+    public static ItemStack getBackStack(Player player)
+    {
+        AtomicReference<ItemStack> back = new AtomicReference<>(ItemStack.EMPTY);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        optional.ifPresent(itemHandler ->
+        {
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
+            stacksOptional.ifPresent(stacksHandler ->
+            {
+                ItemStack stack = stacksHandler.getStacks().getStackInSlot(0);
+                if(!stack.isEmpty())
+                {
+                    back.set(stack);
+                }
+            });
+        });
+        return back.get();
+    }
+
     public static ItemStack getBackpackStack(Player player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
