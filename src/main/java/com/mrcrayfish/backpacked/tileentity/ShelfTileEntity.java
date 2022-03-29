@@ -27,6 +27,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
@@ -84,7 +85,15 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
     {
         if(player.isCrouching() || this.backpack.isEmpty())
         {
-            ItemStack stack = Backpacked.getBackpackStack(player);
+            ItemStack stack = Backpacked.getBackStack(player);
+            if(!stack.isEmpty() && !(stack.getItem() instanceof BackpackItem))
+            {
+                if(!this.backpack.isEmpty())
+                {
+                    player.displayClientMessage(new TranslationTextComponent("message.backpacked.occupied_back_slot"), true);
+                }
+                return ActionResultType.FAIL;
+            }
             ItemStack result = this.shelveBackpack(stack);
             Backpacked.setBackpackStack(player, result);
         }

@@ -193,6 +193,25 @@ public class Backpacked
         return curiosLoaded;
     }
 
+    public static ItemStack getBackStack(PlayerEntity player)
+    {
+        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
+        if(Backpacked.isCuriosLoaded())
+        {
+            backpack.set(Curios.getBackStack(player));
+        }
+        if(player.inventory instanceof ExtendedPlayerInventory)
+        {
+            ExtendedPlayerInventory inventory = (ExtendedPlayerInventory) player.inventory;
+            ItemStack stack = inventory.getBackpackItems().get(0);
+            if(!stack.isEmpty())
+            {
+                backpack.set(stack);
+            }
+        }
+        return backpack.get();
+    }
+
     public static ItemStack getBackpackStack(PlayerEntity player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
