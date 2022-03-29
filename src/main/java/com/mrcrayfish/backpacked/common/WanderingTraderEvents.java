@@ -233,7 +233,7 @@ public class WanderingTraderEvents
             MerchantOffers offers = trader.getOffers();
             for(int i = 0; i < 8; i++)
             {
-                if(i < count)
+                if(!Config.COMMON.generateEmeraldsOnly.get() && i < count)
                 {
                     MerchantOffer offer = offers.get(trader.level.random.nextInt(offers.size()));
                     ItemStack loot = offer.getResult().copy();
