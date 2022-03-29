@@ -227,11 +227,13 @@ public class WanderingTraderEvents
     {
         if(!data.isLootSpawned())
         {
-            int count = trader.level.random.nextInt(2) + 6;
-            List<Integer> randomSlotIndexes = IntStream.range(0, 8).boxed().collect(Collectors.toCollection(ArrayList::new));
+            int size = trader.getInventory().getContainerSize();
+            int reserved = size / 4; // Maybe eventually a config option
+            int count = trader.level.random.nextInt(Math.max(reserved, 1)) + (size - reserved);
+            List<Integer> randomSlotIndexes = IntStream.range(0, size).boxed().collect(Collectors.toCollection(ArrayList::new));
             Collections.shuffle(randomSlotIndexes);
             MerchantOffers offers = trader.getOffers();
-            for(int i = 0; i < 8; i++)
+            for(int i = 0; i < size; i++)
             {
                 if(!Config.COMMON.generateEmeraldsOnly.get() && i < count)
                 {
