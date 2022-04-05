@@ -120,7 +120,10 @@ public class UnlockTracker
         {
             Provider provider = new Provider();
             event.addCapability(ID, provider);
-            event.addListener(provider::invalidate);
+            if(!(entity instanceof ServerPlayerEntity))
+            {
+                event.addListener(provider::invalidate);
+            }
         }
     }
 
@@ -154,6 +157,14 @@ public class UnlockTracker
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
+    {
+        get(event.getPlayer()).ifPresent(unlockTracker -> {
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event)
     {
         get(event.getPlayer()).ifPresent(unlockTracker -> {
             Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
