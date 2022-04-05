@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.ExtendedPlayerContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -127,6 +128,24 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
         if(!projectile.isEmpty())
         {
             cir.setReturnValue(projectile);
+        }
+    }
+
+    @Inject(method = "tick", at = @At(value = "HEAD"))
+    public void tickBackpacked(CallbackInfo ci)
+    {
+        if(this.backpackedInventory != null)
+        {
+            this.backpackedInventory.tick();
+        }
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
+    public void addAdditionalSaveDataBackpacked(CompoundTag tag, CallbackInfo ci)
+    {
+        if(this.backpackedInventory != null)
+        {
+            this.backpackedInventory.saveItemsToStack();
         }
     }
 }

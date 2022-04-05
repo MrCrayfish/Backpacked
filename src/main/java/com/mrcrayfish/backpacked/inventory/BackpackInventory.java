@@ -18,6 +18,7 @@ public class BackpackInventory extends SimpleContainer
 {
     private final Player player;
     private final ItemStack stack;
+    private boolean save;
 
     public BackpackInventory(int cols, int rows, Player player, ItemStack stack)
     {
@@ -51,6 +52,20 @@ public class BackpackInventory extends SimpleContainer
     public void setChanged()
     {
         super.setChanged();
+        this.save = true;
+    }
+
+    public void tick()
+    {
+        if(this.save)
+        {
+            this.saveItemsToStack();
+            this.save = false;
+        }
+    }
+
+    public void saveItemsToStack()
+    {
         CompoundTag compound = this.stack.getOrCreateTag();
         compound.put("Items", InventoryHelper.saveAllItems(new ListTag(), this));
     }
