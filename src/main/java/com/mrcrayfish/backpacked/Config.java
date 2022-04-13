@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked;
 
+import com.mrcrayfish.backpacked.client.gui.ButtonAlignment;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -16,10 +17,12 @@ public class Config
     public static class Client
     {
         public final ForgeConfigSpec.BooleanValue hideConfigButton;
+        public final ForgeConfigSpec.EnumValue<ButtonAlignment> buttonAlignment;
 
         Client(ForgeConfigSpec.Builder builder)
         {
             this.hideConfigButton = builder.comment("If enabled, hides the config button from the backpack screen").define("hideConfigButton", false);
+            this.buttonAlignment = builder.comment("The alignment of the buttons in the backpack inventory screen").defineEnum("buttonAlignment", ButtonAlignment.RIGHT);
         }
     }
 

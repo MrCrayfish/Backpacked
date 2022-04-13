@@ -69,7 +69,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         for(int i = 0; i < buttons.size(); i++)
         {
             MiniButton button = buttons.get(i);
-            button.x = this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13;
+            switch(Config.CLIENT.buttonAlignment.get())
+            {
+                case LEFT -> {
+                    int titleWidth = this.minecraft.font.width(this.title);
+                    button.x = this.leftPos + titleWidth + 8 + 3 + i * 13;
+                }
+                case RIGHT -> {
+                    button.x = this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13;
+                }
+            }
             button.y = this.topPos + 5;
             this.addRenderableWidget(button);
         }
