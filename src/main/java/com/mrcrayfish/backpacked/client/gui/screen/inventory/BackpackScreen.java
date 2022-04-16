@@ -26,6 +26,9 @@ import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModList;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Author: MrCrayfish
  */
@@ -61,10 +64,24 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
             minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.ARMOR_EQUIP_LEATHER, 0.75F, 1.0F));
             this.opened = true;
         }
+
+        List<MiniButton> buttons = this.gatherButtons();
+        for(int i = 0; i < buttons.size(); i++)
+        {
+            MiniButton button = buttons.get(i);
+            button.x = this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13;
+            button.y = this.topPos + 5;
+            this.addButton(button);
+        }
+    }
+
+    private List<MiniButton> gatherButtons()
+    {
+        List<MiniButton> buttons = new ArrayList<>();
         boolean canCustomise = this.owner && !Config.SERVER.disableCustomisation.get();
         if(canCustomise)
         {
-            this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10, this.topPos + 5, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            buttons.add(new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
@@ -72,12 +89,13 @@ public class BackpackScreen extends ContainerScreen<BackpackContainer>
         }
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            this.addButton(new MiniButton(this.leftPos + this.imageWidth - 7 - 10 - (canCustomise ? 13 : 0), this.topPos + 5, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            buttons.add(new MiniButton(0, 0, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 this.openConfigScreen();
             }, (button, matrixStack, mouseX, mouseY) -> {
                 this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
             }));
         }
+        return buttons;
     }
 
     @Override
