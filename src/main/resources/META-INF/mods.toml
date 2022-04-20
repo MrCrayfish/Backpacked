@@ -11,7 +11,7 @@ updateJSONURL="https://mrcrayfish.com/modupdatejson?id=backpacked"
 displayURL="https://mrcrayfish.com/mods?id=backpacked"
 logoFile="backpacked.png"
 authors="MrCrayfish"
-credits="JamesTheMaker, Unstellary, Zinc, and wwozniak from Discord for a few backpack ideas."
+credits="JamesTheMaker, Unstellary, and Zinc from Discord for a few backpack ideas."
 description="Adds a simple backpack to store more items"
 
 [[dependencies.backpacked]]
