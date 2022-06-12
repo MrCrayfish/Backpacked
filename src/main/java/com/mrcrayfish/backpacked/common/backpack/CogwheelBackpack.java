@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.Backpack;
 import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.UniqueCraftingProgressTracker;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +33,6 @@ public class CogwheelBackpack extends Backpack
     @Override
     protected IProgressTracker createProgressTracker()
     {
-        return new UniqueCraftingProgressTracker(30, stack -> stack.getItem().getRegistryName().getNamespace().equals("create"));
+        return new UniqueCraftingProgressTracker(30, stack -> Registry.ITEM.getKey(stack.getItem()).getNamespace().equals("create"));
     }
 }

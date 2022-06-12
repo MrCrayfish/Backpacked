@@ -13,7 +13,7 @@
         "common.ItemEntityMixin",
         "common.LockableLootTileEntityMixin",
         "common.PandaEntityMixin",
-        "common.PlayerEntityMixin",
+        "common.PlayerMixin",
         "common.PlayerInteractionManagerMixin",
         "common.PlayerInventoryMixin",
         "common.ServerPlayNetHandlerMixin",

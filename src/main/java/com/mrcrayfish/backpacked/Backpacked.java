@@ -5,8 +5,8 @@ import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.UnlockTracker;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
-import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
+import com.mrcrayfish.backpacked.core.ModArgumentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModCommands;
@@ -22,8 +22,6 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import net.minecraft.commands.synchronization.ArgumentTypes;
-import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -98,6 +96,7 @@ public class Backpacked
         bus.addListener(this::onGatherData);
         bus.addListener(UnlockTracker::register);
         bus.addListener(PickpocketChallenge::register);
+        ModArgumentTypes.REGISTER.register(bus);
         ModContainers.REGISTER.register(bus);
         ModEnchantments.REGISTER.register(bus);
         ModItems.REGISTER.register(bus);
@@ -114,7 +113,6 @@ public class Backpacked
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
         Network.init();
-        ArgumentTypes.register("backpacked:backpack", BackpackArgument.class, new EmptyArgumentSerializer<>(BackpackArgument::backpacks));
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
@@ -134,9 +132,9 @@ public class Backpacked
     {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         DataGenerator generator = event.getGenerator();
-        generator.addProvider(new LootTableGen(generator));
-        generator.addProvider(new RecipeGen(generator));
-        generator.addProvider(new BlockTagGen(generator, existingFileHelper));
+        generator.addProvider(event.includeServer(), new LootTableGen(generator));
+        generator.addProvider(event.includeServer(), new RecipeGen(generator));
+        generator.addProvider(event.includeServer(), new BlockTagGen(generator, existingFileHelper));
     }
 
     @SubscribeEvent

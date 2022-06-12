@@ -34,9 +34,8 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
@@ -58,10 +57,10 @@ import java.util.stream.Collectors;
 public class CustomiseBackpackScreen extends Screen
 {
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/customise_backpack.png");
-    private static final Component SHOW_EFFECTS_TOOLTIP = new TranslatableComponent("backpacked.button.show_effects.tooltip");
-    private static final Component SHOW_WITH_ELYTRA_TOOLTIP = new TranslatableComponent("backpacked.button.show_with_elytra.tooltip");
-    private static final Component SHOW_ENCHANTMENT_GLINT = new TranslatableComponent("backpacked.button.show_enchantment_glint.tooltip");
-    private static final Component LOCKED = new TranslatableComponent("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+    private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
+    private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
+    private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
+    private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
 
     private final int windowWidth;
     private final int windowHeight;
@@ -87,7 +86,7 @@ public class CustomiseBackpackScreen extends Screen
 
     public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap)
     {
-        super(new TranslatableComponent("backpacked.title.customise_backpack"));
+        super(Component.translatable("backpacked.title.customise_backpack"));
         this.windowWidth = 201;
         this.windowHeight = 166;
         Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
@@ -112,23 +111,23 @@ public class CustomiseBackpackScreen extends Screen
         }
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
-        this.resetButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, new TranslatableComponent("backpacked.button.reset"), onPress -> {
+        this.resetButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, Component.translatable("backpacked.button.reset"), onPress -> {
             this.displayBackpackModel = StandardBackpack.ID.toString();
         }));
-        this.saveButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, new TranslatableComponent("backpacked.button.save"), onPress -> {
+        this.saveButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlayChannel().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowEnchantmentGlint, this.displayShowWithElytra, this.displayShowEffects));
         }));
-        this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
+        this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayShowEnchantmentGlint = !this.displayShowEnchantmentGlint;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_ENCHANTMENT_GLINT, mouseX, mouseY);
         }));
-        this.showWithElytraButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 160, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
+        this.showWithElytraButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 160, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_WITH_ELYTRA_TOOLTIP, mouseX, mouseY);
         }));
-        this.showEffectsButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 186, this.windowTop + 6, TextComponent.EMPTY, onPress -> {
+        this.showEffectsButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 186, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayShowEffects = !this.displayShowEffects;
         }, (button, matrixStack, mouseX, mouseY) -> {
             this.renderTooltip(matrixStack, SHOW_EFFECTS_TOOLTIP, mouseX, mouseY);
@@ -501,8 +500,8 @@ public class CustomiseBackpackScreen extends Screen
         {
             this.id = backpack.getId().toString();
             this.backpack = backpack;
-            this.label = new TranslatableComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
-            Component unlockMessage = new TranslatableComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
+            this.label = Component.translatable(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
+            Component unlockMessage = Component.translatable(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
             List<FormattedCharSequence> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
             list.add(0, Language.getInstance().getVisualOrder(LOCKED));
             if(progressMap.containsKey(backpack.getId()))

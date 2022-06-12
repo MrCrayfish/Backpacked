@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -53,7 +53,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -62,7 +61,7 @@ import java.util.stream.StreamSupport;
 public class WanderingTraderEvents
 {
     private static final Field goalsField = ObfuscationReflectionHelper.findField(GoalSelector.class, "f_25345_");
-    public static final TranslatableComponent WANDERING_BAG_TRANSLATION = new TranslatableComponent("backpacked.backpack.wandering_bag");
+    public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
 
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event)

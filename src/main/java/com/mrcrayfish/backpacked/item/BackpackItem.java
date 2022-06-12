@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -39,8 +38,8 @@ import java.util.function.Supplier;
  */
 public class BackpackItem extends Item
 {
-    public static final TranslatableComponent BACKPACK_TRANSLATION = new TranslatableComponent("container.backpack");
-    public static final MutableComponent REMOVE_ITEMS_TOOLTIP = new TranslatableComponent("backpacked.tooltip.remove_items").withStyle(ChatFormatting.RED);
+    public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
+    public static final MutableComponent REMOVE_ITEMS_TOOLTIP = Component.translatable("backpacked.tooltip.remove_items").withStyle(ChatFormatting.RED);
 
     public BackpackItem(Properties properties)
     {

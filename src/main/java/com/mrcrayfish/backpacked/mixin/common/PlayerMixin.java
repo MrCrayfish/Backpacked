@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.ProfilePublicKey;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -39,7 +40,7 @@ import java.util.stream.IntStream;
  * Author: MrCrayfish
  */
 @Mixin(Player.class)
-public class PlayerEntityMixin implements BackpackedInventoryAccess
+public class PlayerMixin implements BackpackedInventoryAccess
 {
     @Shadow
     @Final
@@ -55,7 +56,7 @@ public class PlayerEntityMixin implements BackpackedInventoryAccess
     public BackpackInventory backpackedInventory = null;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void constructorTail(Level world, BlockPos pos, float spawnAngle, GameProfile profile, CallbackInfo ci)
+    private void constructorTail(Level world, BlockPos pos, float spawnAngle, GameProfile profile, @Nullable ProfilePublicKey publicKey, CallbackInfo ci)
     {
         if(Backpacked.isCuriosLoaded())
             return;

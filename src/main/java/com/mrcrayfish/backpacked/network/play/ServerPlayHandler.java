@@ -19,7 +19,6 @@ import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -89,7 +88,7 @@ public class ServerPlayHandler
         {
             if(BackpackItem.openBackpack(otherPlayer, player))
             {
-                otherPlayer.displayClientMessage(new TranslatableComponent("message.backpacked.player_opened"), true);
+                otherPlayer.displayClientMessage(Component.translatable("message.backpacked.player_opened"), true);
                 player.level.playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.75F, 1.0F);
             }
         }

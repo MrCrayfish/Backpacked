@@ -18,8 +18,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -35,8 +34,8 @@ import java.util.List;
 public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
 {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/backpack.png");
-    private static final Component CUSTOMISE_TOOLTIP = new TranslatableComponent("backpacked.button.customise.tooltip");
-    private static final Component CONFIG_TOOLTIP = new TranslatableComponent("backpacked.button.config.tooltip");
+    private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
+    private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
 
     private final int cols;
     private final int rows;
@@ -178,13 +177,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             }
             else if(this.minecraft != null && this.minecraft.player != null)
             {
-                TextComponent modName = new TextComponent("Configured");
+                MutableComponent modName = Component.literal("Configured");
                 modName.setStyle(modName.getStyle()
                         .withColor(ChatFormatting.YELLOW)
                         .withUnderlined(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("backpacked.chat.open_curseforge_page")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("backpacked.chat.open_curseforge_page")))
                         .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/configured")));
-                Component message = new TranslatableComponent("backpacked.chat.install_configured", modName);
+                Component message = Component.translatable("backpacked.chat.install_configured", modName);
                 this.minecraft.player.displayClientMessage(message, false);
             }
         });

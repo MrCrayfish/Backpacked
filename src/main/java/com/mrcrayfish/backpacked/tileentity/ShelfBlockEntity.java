@@ -15,7 +15,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -88,7 +87,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             {
                 if(!this.backpack.isEmpty())
                 {
-                    player.displayClientMessage(new TranslatableComponent("message.backpacked.occupied_back_slot"), true);
+                    player.displayClientMessage(Component.translatable("message.backpacked.occupied_back_slot"), true);
                 }
                 return InteractionResult.FAIL;
             }

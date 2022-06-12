@@ -49,7 +49,7 @@ public class FunnellingEnchantment extends Enchantment
         Block.getDrops(state, world, pos, blockEntity, player, stack).forEach((dropStack) -> {
             Block.popResource(world, pos, inventory.addItem(dropStack));
         });
-        state.spawnAfterBreak(world, pos, stack);
+        state.spawnAfterBreak(world, pos, stack, true);
         return true;
     }
 }

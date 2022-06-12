@@ -24,7 +24,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.ClientRegistry;
@@ -33,7 +32,6 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -98,7 +96,7 @@ public class ClientHandler
             if(tag != null && !tag.getList("Items", Tag.TAG_COMPOUND).isEmpty())
             {
                 mc.font.getSplitter().splitLines(BackpackItem.REMOVE_ITEMS_TOOLTIP, 150, Style.EMPTY).forEach(formattedText -> {
-                    list.add(new TextComponent(formattedText.getString()).withStyle(ChatFormatting.RED));
+                    list.add(Component.literal(formattedText.getString()).withStyle(ChatFormatting.RED));
                 });
             }
         }

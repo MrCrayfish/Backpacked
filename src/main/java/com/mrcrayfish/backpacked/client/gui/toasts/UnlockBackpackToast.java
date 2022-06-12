@@ -10,21 +10,20 @@ import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Author: MrCrayfish
  */
 public class UnlockBackpackToast implements Toast
 {
-    private static final Component TITLE = new TranslatableComponent("backpacked.toast.unlocked_backpack").withStyle(ChatFormatting.YELLOW);
+    private static final Component TITLE = Component.translatable("backpacked.toast.unlocked_backpack").withStyle(ChatFormatting.YELLOW);
 
     private final Component name;
     private final BackpackModel model;
 
     public UnlockBackpackToast(Backpack backpack)
     {
-        this.name = new TranslatableComponent(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
+        this.name = Component.translatable(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
         this.model = (BackpackModel) backpack.getModelSupplier().get();
     }
 

@@ -1,18 +1,9 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.+'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = project.property('mod.version') + "-1.18.2"
 group = 'com.mrcrayfish'
@@ -27,15 +18,16 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19'
 
     runs {
         client {
             workingDirectory project.file('run')
             property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'backpacked'
             arg '-mixin.config=backpacked.mixins.json'
             mods {
                 backpacked {
@@ -48,9 +40,22 @@ minecraft {
             workingDirectory project.file('run')
             property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'backpacked'
             arg '-mixin.config=backpacked.mixins.json'
+            mods {
+                backpacked {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        gameTestServer {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'backpacked'
             mods {
                 backpacked {
                     source sourceSets.main
@@ -60,7 +65,7 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'backpacked', '--all', '--output', file('src/generated/resources/')
             mods {
@@ -79,10 +84,10 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.32'
-    implementation fg.deobf('curse.maven:curios-309927:3670447')
-    compileOnly fg.deobf('curse.maven:controllable-317269:3546297')
-    runtimeOnly fg.deobf('curse.maven:configured-457570:3559398')
+    minecraft 'net.minecraftforge:forge:1.19-41.0.17'
+    implementation fg.deobf('curse.maven:curios-309927:3825806')
+    compileOnly fg.deobf('curse.maven:controllable-317269:3824786')
+    runtimeOnly fg.deobf('curse.maven:configured-457570:3822820')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
