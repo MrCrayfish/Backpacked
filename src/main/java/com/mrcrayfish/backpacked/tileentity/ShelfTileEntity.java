@@ -112,7 +112,7 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
         if(!this.backpack.isEmpty() || !shelvedBackpack.isEmpty())
         {
             boolean removed = this.backpack.isEmpty();
-            this.updateInventory();
+            this.updateInventory(false);
             TileEntityUtil.sendUpdatePacket(this);
             this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundCategory.BLOCKS, 1.0F, removed ? 0.75F : 1.0F);
             this.setChanged();
@@ -157,14 +157,14 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
         {
             return Optional.empty();
         }
-        if(this.inventory != null && this.inventory.getContainerSize() != getBackpackSize())
+        if(this.inventory != null && this.inventory.getContainerSize() != this.getBackpackSize())
         {
-            this.updateInventory();
+            this.updateInventory(true);
         }
         return Optional.ofNullable(this.inventory);
     }
 
-    private void updateInventory()
+    private void updateInventory(boolean resized)
     {
         if(!this.backpack.isEmpty())
         {
@@ -173,7 +173,7 @@ public class ShelfTileEntity extends TileEntity implements IOptionalStorage
             CompoundNBT compound = this.backpack.getOrCreateTag();
             this.loadBackpackItems(compound);
             compound.remove("Items");
-            if(oldInventory != null)
+            if(resized && oldInventory != null)
             {
                 InventoryHelper.mergeInventory(oldInventory, this.inventory, this.level, Vector3d.atCenterOf(this.worldPosition));
             }
