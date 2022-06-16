@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.WanderingBagBackpack;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
@@ -23,6 +24,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.MerchantOffer;
 import net.minecraft.item.MerchantOffers;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -52,6 +54,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 /**
  * Author: MrCrayfish
@@ -154,6 +157,9 @@ public class WanderingTraderEvents
     // Determines if the player is in the living entities vision
     private static boolean isPlayerInLivingEntityVision(LivingEntity entity, PlayerEntity player)
     {
+        // Prevents the entity from seeing invisible players. Armour must be off too
+        if(isPlayerInvisible(player))
+            return false;
         Vector3d between = entity.position().subtract(player.position());
         float angle = (float) Math.toDegrees(MathHelper.atan2(between.z, between.x)) - 90F;
         return MathHelper.degreesDifferenceAbs(entity.yHeadRot + 180F, angle) <= 90F;
@@ -161,6 +167,10 @@ public class WanderingTraderEvents
 
     private static boolean isPlayerSeenByLivingEntity(LivingEntity entity, PlayerEntity player, double distance)
     {
+        // Prevents the entity from seeing invisible players. Armour must be off too
+        if(isPlayerInvisible(player))
+            return false;
+
         if(entity.level != player.level || entity.distanceTo(player) > distance)
             return false;
 
@@ -171,6 +181,11 @@ public class WanderingTraderEvents
 
         Vector3d playerLegPos = new Vector3d(player.getX(), player.getY() + 0.5, player.getZ());
         return performRayTrace(livingEyePos, playerLegPos, entity).getType() == RayTraceResult.Type.MISS;
+    }
+
+    private static boolean isPlayerInvisible(PlayerEntity player)
+    {
+        return player.hasEffect(Effects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && Backpacked.getBackpackStack(player).isEmpty();
     }
 
     private static RayTraceResult performRayTrace(Vector3d start, Vector3d end, Entity source)
