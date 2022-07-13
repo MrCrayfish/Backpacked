@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/MrCrayfish/Backpacked/issues"
 
 [[mods]]
 modId="backpacked"
-version="2.1.8"
+version="2.1.9"
 displayName="Backpacked"
 updateJSONURL="https://mrcrayfish.com/modupdatejson?id=backpacked"
 displayURL="https://mrcrayfish.com/mods?id=backpacked"
@@ -17,7 +17,7 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="[41.0.94,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
