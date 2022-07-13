@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  */
 public class ModBlockEntities
 {
-    public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Reference.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<ShelfBlockEntity>> SHELF = register("shelf", ShelfBlockEntity::new, () -> new Block[]{ModBlocks.OAK_BACKPACK_SHELF.get(), ModBlocks.SPRUCE_BACKPACK_SHELF.get(), ModBlocks.BIRCH_BACKPACK_SHELF.get(), ModBlocks.JUNGLE_BACKPACK_SHELF.get(), ModBlocks.DARK_OAK_BACKPACK_SHELF.get(), ModBlocks.ACACIA_BACKPACK_SHELF.get(), ModBlocks.CRIMSON_BACKPACK_SHELF.get(), ModBlocks.WARPED_BACKPACK_SHELF.get()});
 

@@ -126,7 +126,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 Component title = this.backpack.hasCustomHoverName() ? this.backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
                 int cols = backpackItem.getColumnCount();
                 int rows = backpackItem.getRowCount();
-                NetworkHooks.openGui(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
+                NetworkHooks.openScreen(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
                     return new BackpackContainerMenu(id, playerInventory, inventory, cols, rows, false);
                 }, title), buffer -> {
                     buffer.writeVarInt(cols);

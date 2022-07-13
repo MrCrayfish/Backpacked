@@ -31,6 +31,7 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -46,7 +47,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
@@ -85,6 +85,7 @@ public class Backpacked
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             bus.addListener(ClientHandler::onRegisterLayers);
             bus.addListener(ClientHandler::onRegisterRenderers);
+            bus.addListener(ClientHandler::onRegisterKeyMappings);
             bus.addListener(ClientEvents::onTextureStitch);
             bus.register(ClientHandler.getModelInstances());
         });
@@ -144,7 +145,7 @@ public class Backpacked
             return;
 
         Player oldPlayer = event.getOriginal();
-        if(oldPlayer.getInventory() instanceof ExtendedPlayerInventory inventory1 && event.getPlayer().getInventory() instanceof ExtendedPlayerInventory inventory2)
+        if(oldPlayer.getInventory() instanceof ExtendedPlayerInventory inventory1 && event.getEntity().getInventory() instanceof ExtendedPlayerInventory inventory2)
         {
             inventory2.copyBackpack(inventory1);
         }
@@ -156,7 +157,7 @@ public class Backpacked
         if(curiosLoaded)
             return;
 
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
         {
             ItemStack backpack = inventory.getBackpackItems().get(0);

@@ -46,7 +46,7 @@ public class EndCrystalBackpack extends Backpack
     public void onKillLivingEntity(LivingDeathEvent event)
     {
         Entity sourceEntity = event.getSource().getEntity();
-        if(event.getEntityLiving() instanceof EnderDragon && sourceEntity instanceof ServerPlayer player)
+        if(event.getEntity() instanceof EnderDragon && sourceEntity instanceof ServerPlayer player)
         {
             UnlockTracker.get(player).ifPresent(unlockTracker ->
             {

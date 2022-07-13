@@ -26,8 +26,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.glfw.GLFW;
 
@@ -43,7 +43,6 @@ public class ClientHandler
 
     public static void setup()
     {
-        ClientRegistry.registerKeyBinding(KEY_BACKPACK);
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
 
@@ -105,5 +104,10 @@ public class ClientHandler
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
         event.registerBlockEntityRenderer(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
+    }
+
+    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event)
+    {
+        event.register(KEY_BACKPACK);
     }
 }

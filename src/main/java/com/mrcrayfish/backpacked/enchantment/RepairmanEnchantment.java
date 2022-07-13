@@ -38,7 +38,7 @@ public class RepairmanEnchantment extends Enchantment
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPickupExperience(PlayerXpEvent.PickupXp event)
     {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         ItemStack backpack = Backpacked.getBackpackStack(player);
         if(backpack.isEmpty())
             return;

@@ -93,7 +93,7 @@ public class BackpackItem extends Item
             int cols = backpackItem.getColumnCount();
             int rows = backpackItem.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
-            NetworkHooks.openGui(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
+            NetworkHooks.openScreen(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
                 return new BackpackContainerMenu(id, openingPlayer.getInventory(), backpackInventory, cols, rows, owner);
             }, title), buffer -> {
                 buffer.writeVarInt(cols);

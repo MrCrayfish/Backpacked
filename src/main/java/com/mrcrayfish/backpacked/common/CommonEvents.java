@@ -28,7 +28,7 @@ public class CommonEvents
     @SubscribeEvent
     public static void onPickupItem(EntityItemPickupEvent event)
     {
-        if(Config.SERVER.autoEquipBackpackOnPickup.get() && event.getEntityLiving() instanceof ServerPlayer player)
+        if(Config.SERVER.autoEquipBackpackOnPickup.get() && event.getEntity() instanceof ServerPlayer player)
         {
             ItemEntity entity = event.getItem();
             ItemStack stack = entity.getItem();
@@ -51,11 +51,11 @@ public class CommonEvents
     @SubscribeEvent
     public static void onCraftedItem(PlayerEvent.ItemCraftedEvent event)
     {
-        if(!(event.getPlayer() instanceof ServerPlayer player))
+        if(!(event.getEntity() instanceof ServerPlayer player))
             return;
 
         ItemStack craftedItem = event.getCrafting();
-        UnlockTracker.get(event.getPlayer()).ifPresent(unlockTracker ->
+        UnlockTracker.get(event.getEntity()).ifPresent(unlockTracker ->
         {
             unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
             {

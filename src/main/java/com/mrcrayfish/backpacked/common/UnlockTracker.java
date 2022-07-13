@@ -132,7 +132,7 @@ public class UnlockTracker
         originalPlayer.reviveCaps();
         get(originalPlayer).ifPresent(originalTracker ->
         {
-            get(event.getPlayer()).ifPresent(newTracker ->
+            get(event.getEntity()).ifPresent(newTracker ->
             {
                 newTracker.unlockedBackpacks.addAll(originalTracker.unlockedBackpacks);
                 originalTracker.progressTrackerMap.forEach((location, progressTracker) ->
@@ -149,24 +149,24 @@ public class UnlockTracker
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
     {
-        get(event.getPlayer()).ifPresent(unlockTracker -> {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+        get(event.getEntity()).ifPresent(unlockTracker -> {
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
     {
-        get(event.getPlayer()).ifPresent(unlockTracker -> {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+        get(event.getEntity()).ifPresent(unlockTracker -> {
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event)
     {
-        get(event.getPlayer()).ifPresent(unlockTracker -> {
-            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+        get(event.getEntity()).ifPresent(unlockTracker -> {
+            Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()), new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 

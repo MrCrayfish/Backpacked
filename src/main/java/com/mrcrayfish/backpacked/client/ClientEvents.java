@@ -64,13 +64,13 @@ public class ClientEvents
     private static CreativeModeTab currentTab = null;
 
     @SubscribeEvent
-    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    public void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event)
     {
         Backpacked.updateBannedItemsList();
     }
 
     @SubscribeEvent
-    public void onPlayerRenderScreen(ContainerScreenEvent.DrawBackground event)
+    public void onPlayerRenderScreen(ContainerScreenEvent.Render.Background event)
     {
         if(Backpacked.isCuriosLoaded())
             return;
@@ -108,7 +108,7 @@ public class ClientEvents
     }
 
     @SubscribeEvent
-    public void onKeyInput(InputEvent.KeyInputEvent event)
+    public void onKeyInput(InputEvent.Key event)
     {
         Minecraft minecraft = Minecraft.getInstance();
         if(minecraft.screen instanceof BackpackScreen)
@@ -174,7 +174,7 @@ public class ClientEvents
     }
 
     @SubscribeEvent
-    public void onRightClick(InputEvent.ClickInputEvent event)
+    public void onRightClick(InputEvent.InteractionKeyMappingTriggered event)
     {
         if(event.isUseItem())
         {
@@ -185,7 +185,7 @@ public class ClientEvents
         }
     }
 
-    private void performBackpackRaytrace(InputEvent.ClickInputEvent event)
+    private void performBackpackRaytrace(InputEvent.InteractionKeyMappingTriggered event)
     {
         Minecraft mc = Minecraft.getInstance();
         if(mc.level == null || mc.player == null || mc.gameMode == null)
@@ -236,6 +236,7 @@ public class ClientEvents
     }
 
     @SubscribeEvent
+    @SuppressWarnings("removal") // Probably be removed in 1.19.1
     public void onRenderWorldLastEvent(RenderLevelLastEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
@@ -248,7 +249,7 @@ public class ClientEvents
         PoseStack stack = event.getPoseStack();
         stack.pushPose();
         Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
-        stack.translate(-view.x(), -view.y, -view.z());
+        stack.translate(-view.x(), -view.y(), -view.z());
         MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();
         for(Player player : mc.level.players())
         {

@@ -34,7 +34,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -64,9 +64,9 @@ public class WanderingTraderEvents
     public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
 
     @SubscribeEvent
-    public void onEntityJoinWorld(EntityJoinWorldEvent event)
+    public void onEntityJoinWorld(EntityJoinLevelEvent event)
     {
-        if(!event.getWorld().isClientSide() && event.getEntity() instanceof WanderingTrader trader && Config.COMMON.spawnBackpackOnWanderingTraders.get())
+        if(!event.getLevel().isClientSide() && event.getEntity() instanceof WanderingTrader trader && Config.COMMON.spawnBackpackOnWanderingTraders.get())
         {
             PickpocketChallenge.get(trader).ifPresent(data ->
             {
@@ -92,15 +92,15 @@ public class WanderingTraderEvents
         {
             if(data.isBackpackEquipped())
             {
-                Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
+                Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()), new MessageSyncVillagerBackpack(event.getTarget().getId()));
             }
         });
     }
 
     @SubscribeEvent
-    public void onTickLivingEntity(LivingEvent.LivingUpdateEvent event)
+    public void onTickLivingEntity(LivingEvent.LivingTickEvent event)
     {
-        LivingEntity entity = event.getEntityLiving();
+        LivingEntity entity = event.getEntity();
         Level level = entity.level;
         if(level.isClientSide() || entity.getType() != EntityType.WANDERING_TRADER)
             return;
@@ -129,7 +129,7 @@ public class WanderingTraderEvents
         Entity entity = event.getTarget();
         if(!entity.level.isClientSide() && entity instanceof WanderingTrader trader)
         {
-            if(!Config.COMMON.dislikedPlayersCanTrade.get() && PickpocketChallenge.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(event.getPlayer())).orElse(false))
+            if(!Config.COMMON.dislikedPlayersCanTrade.get() && PickpocketChallenge.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(event.getEntity())).orElse(false))
             {
                 trader.setUnhappyCounter(20);
                 trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
@@ -224,7 +224,7 @@ public class WanderingTraderEvents
                 });
             }
 
-            NetworkHooks.openGui(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity1) -> {
+            NetworkHooks.openScreen(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity1) -> {
                 return new BackpackContainerMenu(id, entity1.getInventory(), trader.getInventory(), 8, 1, false);
             }, WANDERING_BAG_TRANSLATION), buffer -> {
                 buffer.writeVarInt(8);
