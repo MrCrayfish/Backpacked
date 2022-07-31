@@ -26,7 +26,7 @@ public class PlayerInteractionManagerMixin
     @Final
     protected ServerPlayer player;
 
-    @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void afterBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, int exp)
     {
         if(state.is(BlockTags.LOGS))
