@@ -285,7 +285,7 @@ public class ClientEvents
     }
 
     @SubscribeEvent
-    public void onScreenInit(ScreenEvent.InitScreenEvent event)
+    public void onScreenInit(ScreenEvent.Init event)
     {
         // Fixes the slot repositioning after resizing window
         if(event.getScreen() instanceof CreativeModeInventoryScreen)
