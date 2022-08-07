@@ -62,7 +62,8 @@ public class ServerPlayHandler
 
             if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
             {
-                Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MessageUpdateBackpack(player.getId(), stack));
+                Network.getPlayChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new MessageUpdateBackpack(player.getId(), stack));
+                Network.getPlayChannel().send(PacketDistributor.PLAYER.with(() -> player), new MessageUpdateBackpack(player.getId(), stack, true));
             }
         }
     }

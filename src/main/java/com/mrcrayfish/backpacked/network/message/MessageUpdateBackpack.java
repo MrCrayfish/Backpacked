@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 /**
@@ -18,20 +19,27 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
 {
     private int entityId;
     private ItemStack backpack;
+    private boolean fullTag;
 
     public MessageUpdateBackpack() {}
 
     public MessageUpdateBackpack(int entityId, ItemStack backpack)
     {
+        this(entityId, backpack, false);
+    }
+
+    public MessageUpdateBackpack(int entityId, ItemStack backpack, boolean fullTag)
+    {
         this.entityId = entityId;
         this.backpack = backpack;
+        this.fullTag = fullTag;
     }
 
     @Override
     public void encode(MessageUpdateBackpack message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.entityId);
-        buffer.writeItemStack(message.backpack, true);
+        this.writeBackpack(buffer, message.backpack, message.fullTag);
     }
 
     @Override
@@ -47,26 +55,41 @@ public class MessageUpdateBackpack implements IMessage<MessageUpdateBackpack>
         supplier.get().setPacketHandled(true);
     }
 
-    private void writeBackpackStack(FriendlyByteBuf buffer, ItemStack stack)
+    private void writeBackpack(FriendlyByteBuf buffer, ItemStack stack, boolean fullTag)
     {
-        boolean empty = stack.isEmpty();
-        buffer.writeBoolean(!empty);
-        if(!empty)
+        if(!stack.isEmpty())
         {
-            Item item = stack.getItem();
-            buffer.writeVarInt(Item.getId(item));
+            buffer.writeBoolean(true);
+            buffer.writeVarInt(Item.getId(stack.getItem()));
             buffer.writeByte(stack.getCount());
-            CompoundTag realTag = stack.getOrCreateTag();
-            CompoundTag tag = new CompoundTag();
-            tag.putString("BackpackModel", realTag.getString("BackpackModel"));
-            for(BackpackModelProperty property : BackpackModelProperty.values())
-            {
-                String tagName = property.getTagName();
-                boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
-                tag.putBoolean(tagName, value);
-            }
-            buffer.writeNbt(tag);
+            buffer.writeNbt(this.getBackpackTag(stack, fullTag));
+            return;
         }
+        buffer.writeBoolean(false);
+    }
+
+    @Nullable
+    private CompoundTag getBackpackTag(ItemStack stack, boolean fullTag)
+    {
+        Item item = stack.getItem();
+        if(!item.isDamageable(stack) && !item.shouldOverrideMultiplayerNbt())
+            return null;
+
+        CompoundTag realTag = stack.getOrCreateTag();
+        if(fullTag)
+            return realTag;
+
+        CompoundTag tag = new CompoundTag();
+        tag.putString("BackpackModel", realTag.getString("BackpackModel"));
+        for(BackpackModelProperty property : BackpackModelProperty.values())
+        {
+            String tagName = property.getTagName();
+            boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
+            tag.putBoolean(tagName, value);
+        }
+        tag.put("Enchantments", stack.getEnchantmentTags());
+        tag.put("display", stack.getOrCreateTagElement("display"));
+        return tag;
     }
 
     public int getEntityId()
