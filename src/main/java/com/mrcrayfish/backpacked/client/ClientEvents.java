@@ -46,6 +46,7 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -285,6 +286,16 @@ public class ClientEvents
     }
 
     @SubscribeEvent
+    public void onScreenInit(ScreenEvent.InitScreenEvent event)
+    {
+        // Fixes the slot repositioning after resizing window
+        if(event.getScreen() instanceof CreativeModeInventoryScreen)
+        {
+            currentTab = null;
+        }
+    }
+
+    @SubscribeEvent
     public void onRenderTickStart(TickEvent.RenderTickEvent event)
     {
         if(event.phase != TickEvent.Phase.START)
@@ -294,7 +305,8 @@ public class ClientEvents
             return;
 
         Minecraft mc = Minecraft.getInstance();
-        if(!(mc.screen instanceof CreativeModeInventoryScreen screen)) {
+        if(!(mc.screen instanceof CreativeModeInventoryScreen screen))
+        {
             currentTab = null;
             return;
         }
