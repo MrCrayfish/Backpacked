@@ -119,22 +119,4 @@ public class BackpackItem extends Item
     {
         return () -> ClientHandler.getModelInstances().getStandardModel();
     }
-
-    @Nullable
-    @Override
-    public CompoundTag getShareTag(ItemStack stack)
-    {
-        CompoundTag realTag = stack.getOrCreateTag();
-        CompoundTag tag = new CompoundTag();
-        tag.putString("BackpackModel", realTag.getString("BackpackModel"));
-        for(BackpackModelProperty property : BackpackModelProperty.values())
-        {
-            String tagName = property.getTagName();
-            boolean value = realTag.contains(tagName, Tag.TAG_BYTE) ? realTag.getBoolean(tagName) : property.getDefaultValue();
-            tag.putBoolean(tagName, value);
-        }
-        tag.put("Enchantments", stack.getEnchantmentTags());
-        tag.put("display", stack.getOrCreateTagElement("display"));
-        return tag;
-    }
 }

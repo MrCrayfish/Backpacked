@@ -29,12 +29,12 @@ public class ExtendedPlayerInventory extends Inventory
 
     public NonNullList<ItemStack> getBackpackItems()
     {
-        return backpackInventory;
+        return this.backpackInventory;
     }
 
     public void copyBackpack(ExtendedPlayerInventory inventory)
     {
-        this.backpackInventory.set(0, inventory.backpackInventory.get(0));
+        this.backpackInventory.set(0, inventory.backpackInventory.get(0).copy());
     }
 
     @Override
