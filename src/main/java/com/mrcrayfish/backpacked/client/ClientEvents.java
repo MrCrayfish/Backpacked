@@ -179,10 +179,7 @@ public class ClientEvents
     {
         if(event.isUseItem())
         {
-            if(Config.SERVER.pickpocketBackpacks.get())
-            {
-                this.performBackpackRaytrace(event);
-            }
+            this.performBackpackRaytrace(event);
         }
     }
 
@@ -194,9 +191,11 @@ public class ClientEvents
 
         double range = Config.SERVER.pickpocketMaxReachDistance.get();
         List<LivingEntity> entities = new ArrayList<>();
-        entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-            return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
-        }));
+        if(Config.SERVER.pickpocketBackpacks.get()) {
+            entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
+                return !Backpacked.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
+            }));
+        }
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.gameMode.getPickRange()), entity -> {
             return PickpocketChallenge.get(entity).map(PickpocketChallenge::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player, mc.gameMode.getPickRange());
         }));
@@ -213,7 +212,7 @@ public class ClientEvents
         {
             AABB box = PickpocketUtil.getBackpackBox(entity, 1.0F);
             Optional<Vec3> optionalHitVec = box.clip(start, end);
-            if(!optionalHitVec.isPresent())
+            if(optionalHitVec.isEmpty())
                 continue;
 
             double distance = start.distanceTo(optionalHitVec.get());
