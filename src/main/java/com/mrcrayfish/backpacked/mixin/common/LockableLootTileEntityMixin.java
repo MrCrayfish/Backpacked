@@ -24,14 +24,9 @@ public class LockableLootTileEntityMixin
     @Shadow
     protected ResourceLocation lootTable;
 
-    @SuppressWarnings("ConstantConditions")
     @Inject(method = "unpackLootTable", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/LootTableTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/resources/ResourceLocation;)V"))
     public void onGenerateLoot(Player player, CallbackInfo ci)
     {
-        RandomizableContainerBlockEntity tileEntity = (RandomizableContainerBlockEntity) (Object) this;
-        if(!(tileEntity instanceof ChestBlockEntity))
-            return;
-
         if(!(player instanceof ServerPlayer))
             return;
 
