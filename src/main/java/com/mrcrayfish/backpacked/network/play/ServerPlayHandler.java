@@ -74,11 +74,11 @@ public class ServerPlayHandler
 
     public static void handleEntityBackpack(MessageEntityBackpack message, ServerPlayer player)
     {
-        if(!Config.SERVER.pickpocketBackpacks.get())
-            return;
-
         Entity entity = player.level.getEntity(message.getEntityId());
         if(!(entity instanceof LivingEntity otherEntity))
+            return;
+
+        if(otherEntity instanceof ServerPlayer && !Config.SERVER.pickpocketBackpacks.get())
             return;
 
         if(!PickpocketUtil.canSeeBackpack(otherEntity, player))
