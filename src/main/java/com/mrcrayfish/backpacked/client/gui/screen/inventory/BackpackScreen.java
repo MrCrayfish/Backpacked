@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -72,13 +73,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             {
                 case LEFT -> {
                     int titleWidth = this.minecraft.font.width(this.title);
-                    button.x = this.leftPos + titleWidth + 8 + 3 + i * 13;
+                    button.setX(this.leftPos + titleWidth + 8 + 3 + i * 13);
                 }
                 case RIGHT -> {
-                    button.x = this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13;
+                    button.setX(this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13);
                 }
             }
-            button.y = this.topPos + 5;
+            button.setY(this.topPos + 5);
             this.addRenderableWidget(button);
         }
     }
@@ -89,19 +90,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         boolean canCustomise = this.owner && !Config.SERVER.disableCustomisation.get();
         if(canCustomise)
         {
-            buttons.add(new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            MiniButton customiseButton = new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
                 Network.getPlayChannel().sendToServer(new MessageRequestCustomisation());
-            }, (button, matrixStack, mouseX, mouseY) -> {
-                this.renderTooltip(matrixStack, CUSTOMISE_TOOLTIP, mouseX, mouseY);
-            }));
+            });
+            customiseButton.setTooltip(Tooltip.create(CUSTOMISE_TOOLTIP));
+            buttons.add(customiseButton);
         }
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            buttons.add(new MiniButton(0, 0, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
-                this.openConfigScreen();
-            }, (button, matrixStack, mouseX, mouseY) -> {
-                this.renderTooltip(matrixStack, CONFIG_TOOLTIP, mouseX, mouseY);
-            }));
+            MiniButton configButton = new MiniButton(0, 0, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> this.openConfigScreen());
+            configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
+            buttons.add(configButton);
         }
         return buttons;
     }
@@ -112,14 +111,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.renderBackground(matrixStack); //Draw background
         super.render(matrixStack, mouseX, mouseY, partialTicks); //Super
         this.renderTooltip(matrixStack, mouseX, mouseY); //Render hovered tooltips
-
-        this.children().forEach(widget ->
-        {
-            if(widget instanceof Button button && button.isHoveredOrFocused())
-            {
-                button.renderToolTip(matrixStack, mouseX, mouseY);
-            }
-        });
     }
 
     @Override

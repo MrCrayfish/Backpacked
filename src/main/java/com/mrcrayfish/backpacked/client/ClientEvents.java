@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Reference;
@@ -14,6 +13,7 @@ import com.mrcrayfish.backpacked.common.BackpackModelProperty;
 import com.mrcrayfish.backpacked.common.data.PickpocketChallenge;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
+import com.mrcrayfish.backpacked.inventory.container.slot.InventoryBackpackSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
@@ -36,9 +36,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -47,9 +45,9 @@ import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -62,7 +60,7 @@ import java.util.Optional;
 public class ClientEvents
 {
     public static final ResourceLocation EMPTY_BACKPACK_SLOT = new ResourceLocation(Reference.MOD_ID, "item/empty_backpack_slot");
-    private static CreativeModeTab currentTab = null;
+    private static boolean initializedSlot = false;
 
     @SubscribeEvent
     public void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event)
@@ -88,7 +86,7 @@ public class ClientEvents
         }
         else if(screen instanceof CreativeModeInventoryScreen inventory)
         {
-            if(inventory.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId())
+            if(inventory.isInventoryOpen())
             {
                 int left = inventory.getGuiLeft();
                 int top = inventory.getGuiTop();
@@ -97,14 +95,6 @@ public class ClientEvents
                 RenderSystem.setShaderTexture(0, AbstractContainerScreen.INVENTORY_LOCATION);
                 Screen.blit(event.getPoseStack(), left + 126, top + 19, 7, 7, 18, 18, 256, 256);
             }
-        }
-    }
-
-    public static void onTextureStitch(TextureStitchEvent.Pre event)
-    {
-        if(event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
-        {
-            event.addSprite(EMPTY_BACKPACK_SLOT);
         }
     }
 
@@ -290,7 +280,7 @@ public class ClientEvents
         // Fixes the slot repositioning after resizing window
         if(event.getScreen() instanceof CreativeModeInventoryScreen)
         {
-            currentTab = null;
+            initializedSlot = false;
         }
     }
 
@@ -306,21 +296,29 @@ public class ClientEvents
         Minecraft mc = Minecraft.getInstance();
         if(!(mc.screen instanceof CreativeModeInventoryScreen screen))
         {
-            currentTab = null;
+            initializedSlot = false;
             return;
         }
 
-        CreativeModeTab tab = CreativeModeTab.TABS[screen.getSelectedTab()];
-        if(currentTab == null || currentTab != tab)
+        if(screen.isInventoryOpen())
         {
-            currentTab = tab;
-            if(currentTab == CreativeModeTab.TAB_INVENTORY)
+            if(!initializedSlot)
             {
+                initializedSlot = true;
                 List<Slot> slots = screen.getMenu().slots;
-                slots.stream().filter(slot -> slot.container instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().ifPresent(slot -> {
-                    ReflectionHelper.repositionSlot(slot, 127, 20);
-                });
+                Slot backpackSlot = slots.stream().filter(slot -> slot.container instanceof ExtendedPlayerInventory && slot.getSlotIndex() == 41).findFirst().orElse(null);
+                if(backpackSlot != null)
+                {
+                    int index = slots.indexOf(backpackSlot);
+                    Slot newSlot = new CreativeModeInventoryScreen.SlotWrapper(backpackSlot, index, 127, 20);
+                    backpackSlot.index = index;
+                    slots.set(index, newSlot);
+                }
             }
+        }
+        else
+        {
+            initializedSlot = false;
         }
     }
 }

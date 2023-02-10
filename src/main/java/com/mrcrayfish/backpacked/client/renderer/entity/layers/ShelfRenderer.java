@@ -2,8 +2,7 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.client.model.BackpackModel;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.tileentity.ShelfBlockEntity;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3d;
 
 import java.util.Optional;
 
@@ -44,8 +44,8 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         Vector3d offset = model.getShelfOffset();
         poseStack.translate(offset.x * 0.0625, offset.z * 0.0625, -offset.y * 0.0625);
 
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(180F));
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(-90F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(-90F));
 
         int animationTick = Optional.ofNullable(Minecraft.getInstance().player).map(player -> player.tickCount).orElse(0);
         VertexConsumer builder = buffer.getBuffer(model.renderType(model.getTextureLocation()));

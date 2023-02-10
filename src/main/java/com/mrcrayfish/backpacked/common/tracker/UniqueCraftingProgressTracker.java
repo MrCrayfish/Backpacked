@@ -8,6 +8,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
     @Override
     public void processCrafted(ItemStack stack, ServerPlayer player)
     {
-        ResourceLocation id = Registry.ITEM.getKey(stack.getItem());
+        ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
         if(!this.craftedItems.contains(id) && this.predicate.test(stack))
         {
             this.count++;

@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.model;
 
-import com.mojang.math.Vector3d;
+import org.joml.Vector3d;
 import com.mrcrayfish.backpacked.Reference;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;

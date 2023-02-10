@@ -1,0 +1,8 @@
+{
+    "sources": [
+        {
+            "type": "minecraft:single",
+            "resource": "backpacked:item/empty_backpack_slot"
+        }
+    ]
+}

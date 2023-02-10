@@ -7,6 +7,7 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
@@ -14,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public class ModArgumentTypes
 {
-    public static final DeferredRegister<ArgumentTypeInfo<?, ?>> REGISTER = DeferredRegister.create(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, Reference.MOD_ID);
+    public static final DeferredRegister<ArgumentTypeInfo<?, ?>> REGISTER = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, Reference.MOD_ID);
 
     public static final RegistryObject<SingletonArgumentInfo<BackpackArgument>> BACKPACK = REGISTER.register("backpack", () -> ArgumentTypeInfos.registerByClass(BackpackArgument.class, SingletonArgumentInfo.contextFree(BackpackArgument::backpacks)));
 }

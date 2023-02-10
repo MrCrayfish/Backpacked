@@ -7,8 +7,10 @@ import com.mrcrayfish.backpacked.common.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.UniqueCraftingProgressTracker;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -33,6 +35,6 @@ public class CogwheelBackpack extends Backpack
     @Override
     protected IProgressTracker createProgressTracker()
     {
-        return new UniqueCraftingProgressTracker(30, stack -> Registry.ITEM.getKey(stack.getItem()).getNamespace().equals("create"));
+        return new UniqueCraftingProgressTracker(30, stack -> Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(stack.getItem())).getNamespace().equals("create"));
     }
 }

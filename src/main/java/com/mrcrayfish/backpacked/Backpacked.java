@@ -22,7 +22,9 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -53,6 +55,7 @@ import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -62,19 +65,10 @@ import java.util.stream.Collectors;
 @Mod(Reference.MOD_ID)
 public class Backpacked
 {
-
     public static final EnchantmentCategory ENCHANTMENT_TYPE = EnchantmentCategory.create("backpack", item -> item instanceof BackpackItem);
     private static boolean controllableLoaded = false;
     private static boolean curiosLoaded = false;
     private static Set<ResourceLocation> bannedItemsList;
-    public static final CreativeModeTab TAB = new CreativeModeTab("backpacked")
-    {
-        @Override
-        public ItemStack makeIcon()
-        {
-            return new ItemStack(ModItems.BACKPACK.get());
-        }
-    }.setEnchantmentCategories(ENCHANTMENT_TYPE);
 
     public Backpacked()
     {
@@ -86,7 +80,7 @@ public class Backpacked
             bus.addListener(ClientHandler::onRegisterLayers);
             bus.addListener(ClientHandler::onRegisterRenderers);
             bus.addListener(ClientHandler::onRegisterKeyMappings);
-            bus.addListener(ClientEvents::onTextureStitch);
+            bus.addListener(ClientHandler::onRegisterCreativeTab);
             bus.register(ClientHandler.getModelInstances());
         });
         bus.addListener(this::onCommonSetup);
@@ -133,9 +127,11 @@ public class Backpacked
     {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         DataGenerator generator = event.getGenerator();
-        generator.addProvider(event.includeServer(), new LootTableGen(generator));
-        generator.addProvider(event.includeServer(), new RecipeGen(generator));
-        generator.addProvider(event.includeServer(), new BlockTagGen(generator, existingFileHelper));
+        PackOutput packOutput = generator.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        generator.addProvider(event.includeServer(), new LootTableGen(packOutput));
+        generator.addProvider(event.includeServer(), new RecipeGen(packOutput));
+        generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
     }
 
     @SubscribeEvent

@@ -33,7 +33,7 @@ public class ModBlocks
 
     private static <T extends Block> RegistryObject<T> register(String id, Supplier<T> block)
     {
-        return register(id, block, b -> new BlockItem(b, new Item.Properties().tab(Backpacked.TAB)));
+        return register(id, block, b -> new BlockItem(b, new Item.Properties()));
     }
 
     private static <T extends Block> RegistryObject<T> register(String id, Supplier<T> block, @Nullable Function<T, BlockItem> supplier)

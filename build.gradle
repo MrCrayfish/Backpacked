@@ -5,7 +5,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
-version = project.property('mod.version') + "-1.19"
+version = project.property('mod.version') + "-1.19.3"
 group = 'com.mrcrayfish'
 archivesBaseName = project.property('mod.id')
 
@@ -18,7 +18,9 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.19'
+    mappings channel: 'official', version: '1.19.3'
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
@@ -84,10 +86,10 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19-41.1.0'
-    implementation fg.deobf('curse.maven:curios-309927:3871347')
-    compileOnly fg.deobf('curse.maven:controllable-317269:3873303')
-    runtimeOnly fg.deobf('curse.maven:configured-457570:3872190')
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.0'
+    implementation fg.deobf('curse.maven:curios-309927:4325469')
+    compileOnly fg.deobf('curse.maven:controllable-317269:4376757')
+    runtimeOnly fg.deobf('curse.maven:configured-457570:4166861')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

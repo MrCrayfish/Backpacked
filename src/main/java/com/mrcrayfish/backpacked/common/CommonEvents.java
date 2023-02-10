@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Author: MrCrayfish
@@ -82,7 +83,7 @@ public class CommonEvents
         ServerPlayer player = (ServerPlayer) event.player;
         ServerLevel world = player.getLevel();
         BlockPos playerPosition = player.blockPosition();
-        world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(world.getBiome(playerPosition).value()).ifPresent(key ->
+        world.registryAccess().registryOrThrow(ForgeRegistries.BIOMES.getRegistryKey()).getResourceKey(world.getBiome(playerPosition).value()).ifPresent(key ->
         {
             UnlockTracker.get(player).ifPresent(unlockTracker ->
             {

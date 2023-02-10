@@ -3,7 +3,9 @@ package com.mrcrayfish.backpacked.datagen;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
@@ -17,15 +19,15 @@ import java.util.function.Consumer;
  */
 public class RecipeGen extends RecipeProvider
 {
-    public RecipeGen(DataGenerator generator)
+    public RecipeGen(PackOutput output)
     {
-        super(generator);
+        super(output);
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer)
     {
-        ShapedRecipeBuilder.shaped(ModItems.BACKPACK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BACKPACK.get())
                 .pattern("HHH")
                 .pattern("SIS")
                 .pattern("HHH")
@@ -47,7 +49,7 @@ public class RecipeGen extends RecipeProvider
 
     private static void backpackShelf(Consumer<FinishedRecipe> consumer, ItemLike log, ItemLike slab, ItemLike craftedItem)
     {
-        ShapedRecipeBuilder.shaped(craftedItem, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, craftedItem, 4)
                 .pattern("LHL")
                 .pattern("S S")
                 .define('L', log)

@@ -56,13 +56,13 @@ public class PlayerMixin implements BackpackedInventoryAccess
     public BackpackInventory backpackedInventory = null;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void constructorTail(Level world, BlockPos pos, float spawnAngle, GameProfile profile, @Nullable ProfilePublicKey publicKey, CallbackInfo ci)
+    private void constructorTail(Level level, BlockPos pos, float p_251702_, GameProfile profile, CallbackInfo ci)
     {
         if(Backpacked.isCuriosLoaded())
             return;
         Player player = (Player) (Object) this;
         this.inventory = new ExtendedPlayerInventory(player);
-        this.inventoryMenu = new ExtendedPlayerContainer(this.inventory, !world.isClientSide, player);
+        this.inventoryMenu = new ExtendedPlayerContainer(this.inventory, !level.isClientSide, player);
         player.containerMenu = this.inventoryMenu;
     }
 
