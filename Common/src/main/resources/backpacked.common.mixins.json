@@ -1,0 +1,25 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.mrcrayfish.backpacked.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "common.BeehiveBlockMixin",
+        "common.BlockMixin",
+        "common.BredAnimalsTriggerMixin",
+        "common.ComposterBlockMixin",
+        "common.EntityMixin",
+        "common.ItemEntityMixin",
+        "common.LockableLootTileEntityMixin",
+        "common.PandaEntityMixin",
+        "common.PlayerInventoryMixin",
+        "common.PlayerMixin",
+        "common.ServerPlayNetHandlerMixin"
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
+  
