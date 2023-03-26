@@ -54,7 +54,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
-            args '--mod', mod_id, '--all', '--output', file('../Common/src/generated/resources/'), '--existing', file('../Common/src/main/resources/')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources'), '--existing', file('src/main/resources')
             taskName 'Data'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
@@ -68,7 +68,7 @@ minecraft {
     }
 }
 
-sourceSets.main.resources.srcDir '../Common/src/generated/resources/'
+sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
     maven {

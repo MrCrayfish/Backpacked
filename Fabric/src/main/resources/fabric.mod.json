@@ -19,6 +19,9 @@
         ],
         "client": [
             "com.mrcrayfish.backpacked.client.ClientHandler"
+        ],
+        "fabric-datagen": [
+            "com.mrcrayfish.backpacked.datagen.DataGeneration"
         ]
     },
     "mixins": [

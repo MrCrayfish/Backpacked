@@ -5,7 +5,6 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "common.ForgePlayerMixin",
-        "common.PlayerInteractionManagerMixin",
         "common.ServerPlayerGameModeMixin",
         "common.SheepEntityMixin"
     ],

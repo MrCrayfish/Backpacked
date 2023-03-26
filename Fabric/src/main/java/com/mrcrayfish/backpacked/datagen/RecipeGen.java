@@ -1,40 +1,37 @@
 package com.mrcrayfish.backpacked.datagen;
 
-import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModItems;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.Tags;
 
 import java.util.function.Consumer;
 
 /**
  * Author: MrCrayfish
  */
-public class RecipeGen extends RecipeProvider
+public class RecipeGen extends FabricRecipeProvider
 {
-    public RecipeGen(PackOutput output)
+    public RecipeGen(FabricDataOutput output)
     {
         super(output);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer)
+    public void buildRecipes(Consumer<FinishedRecipe> consumer)
     {
-        // Since we use Forge tags, we have to do it here
+        // Per platform recipe for the backpack since the Forge version uses custom Forge tags
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BACKPACK.get())
                 .pattern("HHH")
                 .pattern("SIS")
                 .pattern("HHH")
                 .define('H', Items.RABBIT_HIDE)
-                .define('S', Tags.Items.STRING)
-                .define('I', Tags.Items.INGOTS_IRON)
+                .define('S', Items.STRING)
+                .define('I', Items.IRON_INGOT)
                 .unlockedBy("has_hide", has(Items.RABBIT_HIDE))
                 .save(consumer);
 

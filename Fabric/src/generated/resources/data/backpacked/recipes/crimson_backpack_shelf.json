@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "H": {
+      "item": "minecraft:crimson_slab"
+    },
+    "L": {
+      "item": "minecraft:crimson_stem"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "LHL",
+    "S S"
+  ],
+  "result": {
+    "count": 4,
+    "item": "backpacked:crimson_backpack_shelf"
+  }
+}

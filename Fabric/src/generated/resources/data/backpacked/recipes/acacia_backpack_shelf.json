@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "H": {
+      "item": "minecraft:acacia_slab"
+    },
+    "L": {
+      "item": "minecraft:acacia_log"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "LHL",
+    "S S"
+  ],
+  "result": {
+    "count": 4,
+    "item": "backpacked:acacia_backpack_shelf"
+  }
+}

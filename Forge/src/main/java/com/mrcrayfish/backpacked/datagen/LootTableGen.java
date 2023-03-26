@@ -43,14 +43,7 @@ public class LootTableGen extends LootTableProvider
         @Override
         protected void generate()
         {
-            this.dropSelf(ModBlocks.OAK_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.SPRUCE_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.BIRCH_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.JUNGLE_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.DARK_OAK_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.ACACIA_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.CRIMSON_BACKPACK_SHELF.get());
-            this.dropSelf(ModBlocks.WARPED_BACKPACK_SHELF.get());
+            CommonLootTableGen.generate(this::dropSelf);
         }
 
         @Override
