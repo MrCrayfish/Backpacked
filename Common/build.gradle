@@ -31,7 +31,6 @@ dependencies {
     compileOnly "org.spongepowered:mixin:0.8.5"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     compileOnly "com.mrcrayfish:framework-common:${minecraft_version}-${framework_version}"
-    compileOnly "com.mrcrayfish:configured-common:${minecraft_version}-${configured_version}"
 }
 
 processResources {

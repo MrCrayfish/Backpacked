@@ -32,19 +32,20 @@
         "fabricloader": ">=${fabric_loader_version}",
         "fabric": "*",
         "minecraft": "${minecraft_version}",
-        "java": ">=17"
+        "java": ">=17",
+        "framework": ">=${framework_version}"
     },
     "accessWidener": "backpacked.accesswidener",
     "custom": {
         "framework": {
             "containers": [
                 "com.mrcrayfish.backpacked.core"
+            ],
+            "configs": [
+                "com.mrcrayfish.backpacked.Config"
             ]
         },
         "configured": {
-            "configs": [
-                "com.mrcrayfish.backpacked.Config"
-            ],
             "background": "minecraft:textures/block/dirt.png"
         },
         "catalogue": {
