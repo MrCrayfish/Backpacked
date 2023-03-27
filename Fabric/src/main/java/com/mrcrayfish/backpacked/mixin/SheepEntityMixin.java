@@ -24,7 +24,7 @@ import java.util.List;
 @Mixin(Sheep.class)
 public class SheepEntityMixin
 {
-    @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Sheep;shear(Lnet/minecraft/sounds/SoundSource;)V"), remap = false)
+    @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Sheep;shear(Lnet/minecraft/sounds/SoundSource;)V"))
     public void trackShearProgress(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(!(player instanceof ServerPlayer))
