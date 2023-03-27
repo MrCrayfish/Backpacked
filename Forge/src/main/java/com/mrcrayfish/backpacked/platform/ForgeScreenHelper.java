@@ -6,10 +6,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModList;
 
@@ -53,5 +55,11 @@ public class ForgeScreenHelper implements IScreenHelper
     public int getScreenTopPos(AbstractContainerScreen<?> screen)
     {
         return screen.getGuiTop();
+    }
+
+    @Override
+    public Slot createCreativeSlotWrapper(Slot slot, int index, int x, int y)
+    {
+        return new CreativeModeInventoryScreen.SlotWrapper(slot, index, x, y);
     }
 }

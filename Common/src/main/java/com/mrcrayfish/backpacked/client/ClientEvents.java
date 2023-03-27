@@ -285,9 +285,9 @@ public class ClientEvents
                 if(backpackSlot != null)
                 {
                     int index = slots.indexOf(backpackSlot);
-                    /*Slot newSlot = new CreativeModeInventoryScreen.SlotWrapper(backpackSlot, index, 127, 20);
+                    Slot newSlot = ClientServices.SCREEN.createCreativeSlotWrapper(backpackSlot, index, 127, 20);
                     backpackSlot.index = index;
-                    slots.set(index, newSlot);*/
+                    slots.set(index, newSlot);
                 }
             }
         }
