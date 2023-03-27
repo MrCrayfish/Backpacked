@@ -41,13 +41,15 @@ dependencies {
 
     modCompileOnly "dev.emi:trinkets:${trinkets_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
-    modImplementation "com.mrcrayfish:configured-fabric:${minecraft_version}-${configured_version}"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":Common")
 }
 
 loom {
     accessWidenerPath = file("src/main/resources/backpacked.accesswidener")
+    mixin {
+        defaultRefmapName = "${mod_id}-refmap.json"
+    }
     runs {
         client {
             client()
