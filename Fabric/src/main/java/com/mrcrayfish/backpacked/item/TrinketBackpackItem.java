@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Wearable;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ import javax.annotation.Nonnull;
 /**
  * Author: MrCrayfish
  */
-public class TrinketBackpackItem extends BackpackItem implements Trinket
+public class TrinketBackpackItem extends FabricBackpackItem implements Trinket
 {
     public TrinketBackpackItem(Properties properties)
     {

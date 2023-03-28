@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.integration.Trinkets;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.item.FabricBackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -124,7 +125,7 @@ public class FabricBackpackHelper implements IBackpackHelper
         {
             return Trinkets.createTrinketBackpack(properties);
         }
-        return new BackpackItem(properties);
+        return new FabricBackpackItem(properties);
     }
 
     private record BackpackScreenFactory(Container inventory, int cols, int rows, boolean owner, Component title) implements ExtendedScreenHandlerFactory
