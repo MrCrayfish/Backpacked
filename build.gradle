@@ -1,7 +1,9 @@
-
-def credentialsFile = new File(System.getenv("GITHUB_CREDENTIALS"))
-def githubCredentials = new Properties()
-githubCredentials.load(new FileInputStream(credentialsFile))
+def githubFile = new File(System.getenv("GITHUB_CREDENTIALS"))
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(githubFile))
+project.ext {
+    githubCredentials = githubProperties
+}
 
 subprojects {
     

@@ -102,7 +102,7 @@ publishing {
 
             pom.withXml {
                 def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.library, this.configurations.modLibrary].each {
+                [this.configurations.library].each {
                     it.allDependencies.each {
                         def depNode = depsNode.appendNode('dependency')
                         depNode.appendNode('groupId', it.group)
@@ -117,6 +117,14 @@ publishing {
     repositories {
         maven {
             url "file://" + System.getenv("LOCAL_MAVEN")
+        }
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/MrCrayfish/Maven"
+            credentials {
+                username = rootProject.githubCredentials['GITHUB_USERNAME']
+                password = rootProject.githubCredentials['GITHUB_TOKEN']
+            }
         }
     }
 }
