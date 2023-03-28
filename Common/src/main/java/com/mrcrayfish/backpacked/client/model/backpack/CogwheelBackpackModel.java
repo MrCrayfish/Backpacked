@@ -46,8 +46,8 @@ public class CogwheelBackpackModel extends BackpackModel
     @Override
     public void setupAngles(@Nullable Player player, int animationTick, float partialTick)
     {
-        float position = player != null ? player.animationPosition : 0F;
-        float speed = player != null ? player.animationSpeed : 0F;
+        float position = player != null ? player.walkAnimation.position() : 0F;
+        float speed = player != null ? player.walkAnimation.speed() : 0F;
         this.gear.zRot = (float) Math.toRadians((animationTick + partialTick) * 4.0F + (position - speed * (1.0F - partialTick)) * 16.0F);
     }
 

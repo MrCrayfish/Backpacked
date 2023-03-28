@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.data.tracker.ForgeUnlockTracker;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
+import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
@@ -22,7 +23,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -149,6 +152,15 @@ public class Backpacked
                 Network.getPlay().sendToTracking(() -> player, new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0)));
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onDropLoot(LivingDropsEvent event)
+    {
+        if(LootedEnchantment.onDropLoot(event.getDrops(), event.getSource()))
+        {
+            event.setCanceled(true);
         }
     }
 

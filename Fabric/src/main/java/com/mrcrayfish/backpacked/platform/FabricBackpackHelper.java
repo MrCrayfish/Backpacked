@@ -84,7 +84,7 @@ public class FabricBackpackHelper implements IBackpackHelper
     @Override
     public EnchantmentCategory getEnchantmentCategory()
     {
-        return EnchantmentCategory.WEARABLE;
+        return EnchantmentCategory.VANISHABLE;
     }
 
     @Override

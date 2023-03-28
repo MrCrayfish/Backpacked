@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
@@ -21,7 +22,7 @@ public class MiniButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTick)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -29,10 +30,10 @@ public class MiniButton extends Button
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(matrixStack, this.getX(), this.getY(), this.u, this.v, this.width, this.height);
+        blit(matrixStack, this.getX(), this.getY(), this.u, this.v, this.width, this.height);
         if(this.isHovered)
         {
-            this.fillGradient(matrixStack, this.getX(), this.getY(), this.getX() + 10, this.getY() + 10, -2130706433, -2130706433);
+            fillGradient(matrixStack, this.getX(), this.getY(), this.getX() + 10, this.getY() + 10, -2130706433, -2130706433);
         }
     }
 }

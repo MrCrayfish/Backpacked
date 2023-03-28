@@ -27,6 +27,10 @@ public class BackpackSlot extends Slot
         {
             return false;
         }
+        if(!stack.getItem().canFitInsideContainerItems())
+        {
+            return false;
+        }
         return !(stack.getItem() instanceof BackpackItem) && !(Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock) && stack.getItem() != Items.BUNDLE;
     }
 }

@@ -39,7 +39,7 @@ description="${mod_desc}"
 [[dependencies."${mod_id}"]]
     modId="curios"
     mandatory=false
-    versionRange="[1.19.3-5.1.2.0,)"
+    versionRange="[${curios_version},)"
     ordering="AFTER"
     side="BOTH"
 

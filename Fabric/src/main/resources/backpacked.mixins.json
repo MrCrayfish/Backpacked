@@ -5,7 +5,9 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "backpacked-refmap.json",
     "mixins": [
+        "EntityMixin",
         "FabricPlayerMixin",
+        "LivingEntityMixin",
         "ServerPlayerGameModeMixin",
         "SheepEntityMixin",
         "WanderingTraderMixin"

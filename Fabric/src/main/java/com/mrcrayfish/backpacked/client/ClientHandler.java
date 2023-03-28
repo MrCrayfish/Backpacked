@@ -80,7 +80,7 @@ public class ClientHandler implements ClientModInitializer
         FabricItemGroup.builder(new ResourceLocation(Constants.MOD_ID, "creative_tab"))
             .title(Component.translatable("itemGroup." + Constants.MOD_ID))
             .icon(() -> new ItemStack(ModItems.BACKPACK.get()))
-            .displayItems((flags, output, permission) -> {
+            .displayItems((params, output) -> {
                 Registration.get(Registries.ITEM).stream().filter(entry -> entry.getId().getNamespace().equals(Constants.MOD_ID)).forEach(entry -> {
                     output.accept((ItemLike) entry.get());
                 });

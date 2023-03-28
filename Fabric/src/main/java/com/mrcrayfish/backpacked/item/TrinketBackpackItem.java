@@ -5,21 +5,15 @@ import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.Trinket;
 import dev.emi.trinkets.api.TrinketEnums;
 import dev.emi.trinkets.api.TrinketItem;
-import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Wearable;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 
 /**
  * Author: MrCrayfish
@@ -32,10 +26,10 @@ public class TrinketBackpackItem extends FabricBackpackItem implements Trinket
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand)
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
-        ItemStack stack = user.getItemInHand(hand);
-        return TrinketItem.equipItem(user, stack) ? InteractionResultHolder.sidedSuccess(stack, world.isClientSide()) : super.use(world, user, hand);
+        ItemStack stack = player.getItemInHand(hand);
+        return TrinketItem.equipItem(player, stack) ? InteractionResultHolder.sidedSuccess(stack, level.isClientSide()) : super.use(level, player, hand);
     }
 
     @Override
@@ -47,11 +41,10 @@ public class TrinketBackpackItem extends FabricBackpackItem implements Trinket
         return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
     }
 
-    @Nullable
     @Override
-    public SoundEvent getEquipSound()
+    public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity)
     {
-        return SoundEvents.ARMOR_EQUIP_LEATHER;
+        entity.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
     }
 
     @Override

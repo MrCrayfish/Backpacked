@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Backpacked implements ModInitializer
@@ -9,9 +10,7 @@ public class Backpacked implements ModInitializer
 
     public Backpacked()
     {
-        // TODO is this too early?
         trinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
-        Constants.LOG.info("Is trinkets loaded? " + trinketsLoaded);
     }
 
     @Override

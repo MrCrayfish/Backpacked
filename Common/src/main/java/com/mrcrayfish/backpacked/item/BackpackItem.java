@@ -95,4 +95,10 @@ public class BackpackItem extends Item
     {
         return () -> ModelInstances.get().getStandardModel();
     }
+
+    @Override
+    public boolean canFitInsideContainerItems()
+    {
+        return false;
+    }
 }

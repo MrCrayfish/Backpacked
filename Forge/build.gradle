@@ -74,6 +74,9 @@ repositories {
     maven {
         url = "https://www.cursemaven.com"
     }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 configurations {
@@ -83,8 +86,8 @@ configurations {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("com.mrcrayfish:framework-forge:${minecraft_version}-${framework_version}")
-    implementation fg.deobf('curse.maven:curios-309927:4325469')
-    compileOnly fg.deobf('curse.maven:controllable-317269:4376757')
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    compileOnly fg.deobf('curse.maven:controllable-317269:4445143')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     compileOnly project(":Common")
 }
