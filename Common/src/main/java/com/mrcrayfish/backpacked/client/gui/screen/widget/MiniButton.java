@@ -15,14 +15,19 @@ public class MiniButton extends Button
 
     public MiniButton(int x, int y, int u, int v, ResourceLocation texture, OnPress onPress)
     {
-        super(x, y, 10, 10, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
+        this(x, y, u, v, texture, onPress, (var1, var2, var3, var4) -> {});
+    }
+
+    public MiniButton(int x, int y, int u, int v, ResourceLocation texture, OnPress onPress, OnTooltip tooltip)
+    {
+        super(x, y, 10, 10, CommonComponents.EMPTY, onPress, tooltip);
         this.u = u;
         this.v = v;
         this.texture = texture;
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTick)
+    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTick)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -30,10 +35,10 @@ public class MiniButton extends Button
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        blit(matrixStack, this.getX(), this.getY(), this.u, this.v, this.width, this.height);
+        blit(matrixStack, this.x, this.y, this.u, this.v, this.width, this.height);
         if(this.isHovered)
         {
-            fillGradient(matrixStack, this.getX(), this.getY(), this.getX() + 10, this.getY() + 10, -2130706433, -2130706433);
+            fillGradient(matrixStack, this.x, this.y, this.x + 10, this.y + 10, -2130706433, -2130706433);
         }
     }
 }

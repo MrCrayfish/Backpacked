@@ -12,5 +12,5 @@ import net.minecraft.sounds.SoundEvent;
 @RegistryContainer
 public class ModSounds
 {
-    public static final RegistryEntry<SoundEvent> ITEM_BACKPACK_PLACE = RegistryEntry.soundEvent(new ResourceLocation(Constants.MOD_ID, "item.backpack.place"), id -> () -> SoundEvent.createVariableRangeEvent(id));
+    public static final RegistryEntry<SoundEvent> ITEM_BACKPACK_PLACE = RegistryEntry.soundEvent(new ResourceLocation(Constants.MOD_ID, "item.backpack.place"), id -> () -> new SoundEvent(id));
 }

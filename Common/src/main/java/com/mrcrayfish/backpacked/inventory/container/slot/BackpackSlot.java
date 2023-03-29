@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ public class BackpackSlot extends Slot
     @Override
     public boolean mayPlace(ItemStack stack)
     {
-        if(Config.getBannedItemsList().contains(BuiltInRegistries.ITEM.getKey(stack.getItem())))
+        if(Config.getBannedItemsList().contains(Registry.ITEM.getKey(stack.getItem())))
         {
             return false;
         }

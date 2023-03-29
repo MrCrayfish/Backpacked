@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.1-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
 }
@@ -37,9 +37,23 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modCompileOnlyApi "com.terraformersmc:modmenu:5.0.2"
+    modCompileOnlyApi("com.terraformersmc:modmenu:4.1.2") {
+        exclude group: "net.fabricmc", module: "fabric-loader"
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+    }
+    modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.0-beta.1") {
+        exclude group: "net.fabricmc", module: "fabric-loader"
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+    }
+    modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.0.0-beta.1") {
+        exclude group: "net.fabricmc", module: "fabric-loader"
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+    }
+    modCompileOnly("dev.emi:trinkets:${trinkets_version}") {
+        exclude group: "net.fabricmc", module: "fabric-loader"
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+    }
 
-    modCompileOnly "dev.emi:trinkets:${trinkets_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":Common")

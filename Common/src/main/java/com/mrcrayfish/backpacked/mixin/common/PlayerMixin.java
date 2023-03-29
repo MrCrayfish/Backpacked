@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.ProfilePublicKey;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -49,7 +50,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     public BackpackInventory backpackedInventory = null;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void constructorTail(Level level, BlockPos pos, float p_251702_, GameProfile profile, CallbackInfo ci)
+    private void constructorTail(Level level, BlockPos pos, float spawnAngle, GameProfile profile, ProfilePublicKey key, CallbackInfo ci)
     {
         if(Services.BACKPACK.isUsingThirdPartySlot())
             return;

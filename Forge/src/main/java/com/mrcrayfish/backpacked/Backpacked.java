@@ -12,9 +12,7 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -40,8 +38,6 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.SlotTypePreset;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * Author: MrCrayfish
  */
@@ -59,7 +55,6 @@ public class Backpacked
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             bus.addListener(ClientHandler::onRegisterLayerDefinitions);
             bus.addListener(ClientHandler::onRegisterRenderers);
-            bus.addListener(ClientHandler::onRegisterCreativeTab);
             bus.addListener(ClientHandler::onAddLayers);
         });
         bus.addListener(this::onCommonSetup);
@@ -98,11 +93,9 @@ public class Backpacked
     {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        generator.addProvider(event.includeServer(), new LootTableGen(packOutput));
-        generator.addProvider(event.includeServer(), new RecipeGen(packOutput));
-        generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new LootTableGen(generator));
+        generator.addProvider(event.includeServer(), new RecipeGen(generator));
+        generator.addProvider(event.includeServer(), new BlockTagGen(generator, existingFileHelper));
     }
 
     @SubscribeEvent

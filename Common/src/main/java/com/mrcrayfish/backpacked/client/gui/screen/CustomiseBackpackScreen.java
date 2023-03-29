@@ -6,7 +6,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
@@ -23,7 +24,6 @@ import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.GameRenderer;
@@ -42,7 +42,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -112,24 +111,27 @@ public class CustomiseBackpackScreen extends Screen
         }
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
-        this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.reset"), onPress -> {
+        this.resetButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 114, 71, 20, Component.translatable("backpacked.button.reset"), onPress -> {
             this.displayBackpackModel = StandardBackpack.ID.toString();
-        }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
-        this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
+        }));
+        this.saveButton = this.addRenderableWidget(new Button(this.windowLeft + 7, this.windowTop + 137, 71, 20, Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowEnchantmentGlint, this.displayShowWithElytra, this.displayShowEffects));
-        }).pos(this.windowLeft + 7, this.windowTop + 137).size(71, 20).build());
+        }));
         this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayShowEnchantmentGlint = !this.displayShowEnchantmentGlint;
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, SHOW_ENCHANTMENT_GLINT, mouseX, mouseY);
         }));
-        this.showEnchantmentGlintButton.setTooltip(Tooltip.create(SHOW_ENCHANTMENT_GLINT));
         this.showWithElytraButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 160, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayShowWithElytra = !this.displayShowWithElytra;
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, SHOW_WITH_ELYTRA_TOOLTIP, mouseX, mouseY);
         }));
-        this.showWithElytraButton.setTooltip(Tooltip.create(SHOW_WITH_ELYTRA_TOOLTIP));
         this.showEffectsButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 186, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayShowEffects = !this.displayShowEffects;
+        }, (button, matrixStack, mouseX, mouseY) -> {
+            this.renderTooltip(matrixStack, SHOW_EFFECTS_TOOLTIP, mouseX, mouseY);
         }));
-        this.showEffectsButton.setTooltip(Tooltip.create(SHOW_EFFECTS_TOOLTIP));
         ItemStack backpack = Services.BACKPACK.getBackpackStack(this.minecraft.player);
         if(!backpack.isEmpty())
         {
@@ -251,8 +253,8 @@ public class CustomiseBackpackScreen extends Screen
     {
         matrixStack.pushPose();
         matrixStack.translate(x, y, 50);
-        matrixStack.mulPose(Axis.XP.rotationDegrees(-10F));
-        matrixStack.mulPose(Axis.YP.rotationDegrees(35F));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(-10F));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(35F));
         matrixStack.scale(scale, scale, scale);
         Lighting.setupForFlatItems();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -426,10 +428,10 @@ public class CustomiseBackpackScreen extends Screen
         PoseStack matrixStack = new PoseStack();
         matrixStack.translate(0, 0, 1000);
         matrixStack.translate(0, -15, 0);
-        Quaternionf playerRotation = new Quaternionf().rotateZ((float) Math.PI);
-        Quaternionf cameraRotation = new Quaternionf();
-        cameraRotation.mul(Axis.XN.rotationDegrees(this.windowRotationY + (this.windowGrabbed ? mouseY - this.mouseClickedY : 0)));
-        cameraRotation.mul(Axis.YP.rotationDegrees(this.windowRotationX + (this.windowGrabbed ? mouseX - this.mouseClickedX : 0)));
+        Quaternion playerRotation = Vector3f.ZP.rotationDegrees(180.0F);
+        Quaternion cameraRotation = new Quaternion(0F, 0F, 0F, true);
+        cameraRotation.mul(Vector3f.XN.rotationDegrees(this.windowRotationY + (this.windowGrabbed ? mouseY - this.mouseClickedY : 0)));
+        cameraRotation.mul(Vector3f.YP.rotationDegrees(this.windowRotationX + (this.windowGrabbed ? mouseX - this.mouseClickedX : 0)));
         playerRotation.mul(cameraRotation);
         matrixStack.mulPose(playerRotation);
         matrixStack.translate(0, -this.windowHeight / 2, 0);
@@ -456,7 +458,7 @@ public class CustomiseBackpackScreen extends Screen
         this.setLocalBackpackProperty(ModelProperty.SHOW_WITH_ELYTRA, this.displayShowWithElytra);
         this.setLocalBackpackProperty(ModelProperty.SHOW_EFFECTS, this.displayShowEffects);
         EntityRenderDispatcher manager = Minecraft.getInstance().getEntityRenderDispatcher();
-        cameraRotation.conjugate();
+        cameraRotation.conj();
         //manager.overrideCameraOrientation(cameraRotation);
         manager.setRenderShadow(false);
         MultiBufferSource.BufferSource source = Minecraft.getInstance().renderBuffers().bufferSource();

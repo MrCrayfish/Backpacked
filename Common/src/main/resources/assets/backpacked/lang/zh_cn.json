@@ -69,7 +69,7 @@
     "backpacked.formatter.incomplete": "未完成",
     "backpacked.formatter.complete": "完成",
     "backpacked.tooltip.remove_items": "背包必须是空的才能移除",
-    "itemGroup.backpacked": "背包 (Backpacked)",
+    "itemGroup.backpacked.creative_tab": "背包 (Backpacked)",
     "enchantment.backpacked.funnelling": "汇集",
     "enchantment.backpacked.funnelling.desc": "挖矿或收割的掉落物品将被直接存入背包",
     "enchantment.backpacked.repairman": "修理匠",

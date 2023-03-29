@@ -1,10 +1,9 @@
 package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModItems;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
@@ -16,16 +15,16 @@ import java.util.function.Consumer;
  */
 public class RecipeGen extends FabricRecipeProvider
 {
-    public RecipeGen(FabricDataOutput output)
+    public RecipeGen(FabricDataGenerator generator)
     {
-        super(output);
+        super(generator);
     }
 
     @Override
-    public void buildRecipes(Consumer<FinishedRecipe> consumer)
+    public void generateRecipes(Consumer<FinishedRecipe> consumer)
     {
         // Per platform recipe for the backpack since the Forge version uses custom Forge tags
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BACKPACK.get())
+        ShapedRecipeBuilder.shaped(ModItems.BACKPACK.get())
                 .pattern("HHH")
                 .pattern("SIS")
                 .pattern("HHH")

@@ -1,15 +1,11 @@
 package com.mrcrayfish.backpacked.datagen;
 
-import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 
 import java.util.function.Consumer;
@@ -19,16 +15,16 @@ import java.util.function.Consumer;
  */
 public class RecipeGen extends RecipeProvider
 {
-    public RecipeGen(PackOutput output)
+    public RecipeGen(DataGenerator generator)
     {
-        super(output);
+        super(generator);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer)
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
     {
         // Since we use Forge tags, we have to do it here
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BACKPACK.get())
+        ShapedRecipeBuilder.shaped(ModItems.BACKPACK.get())
                 .pattern("HHH")
                 .pattern("SIS")
                 .pattern("HHH")

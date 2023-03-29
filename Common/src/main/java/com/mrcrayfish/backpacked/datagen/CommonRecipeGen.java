@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.datagen;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -30,7 +29,7 @@ public class CommonRecipeGen
 
     private static void backpackShelf(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> has, ItemLike log, ItemLike slab, ItemLike craftedItem)
     {
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, craftedItem, 4)
+        ShapedRecipeBuilder.shaped(craftedItem, 4)
                 .pattern("LHL")
                 .pattern("S S")
                 .define('L', log)

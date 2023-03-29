@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.model.backpack;
 
+import com.mojang.math.Vector3d;
 import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,7 +11,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -46,8 +46,8 @@ public class CogwheelBackpackModel extends BackpackModel
     @Override
     public void setupAngles(@Nullable Player player, int animationTick, float partialTick)
     {
-        float position = player != null ? player.walkAnimation.position() : 0F;
-        float speed = player != null ? player.walkAnimation.speed() : 0F;
+        float position = player != null ? player.animationPosition : 0F;
+        float speed = player != null ? player.animationSpeed : 0F;
         this.gear.zRot = (float) Math.toRadians((animationTick + partialTick) * 4.0F + (position - speed * (1.0F - partialTick)) * 16.0F);
     }
 

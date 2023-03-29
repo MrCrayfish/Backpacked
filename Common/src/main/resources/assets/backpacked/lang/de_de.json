@@ -70,7 +70,7 @@
     "backpacked.formatter.incomplete": "Unvollständig",
     "backpacked.formatter.complete": "Vollständig",
     "backpacked.tooltip.remove_items": "Rucksack muss leer sein bevor er abgelegt werden kann",
-    "itemGroup.backpacked": "Backpacked",
+    "itemGroup.backpacked.creative_tab": "Backpacked",
     "enchantment.backpacked.funnelling": "Weiterleitung",
     "enchantment.backpacked.funnelling.desc": "Bestimmte Gegenstände, die gesammelt oder abgebaut werden können, werden nach dem Aufheben direkt in den Rucksack weitergeleitet",
     "enchantment.backpacked.repairman": "Instandsetzung",

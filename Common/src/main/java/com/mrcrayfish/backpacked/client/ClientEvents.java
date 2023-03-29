@@ -37,6 +37,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -86,7 +87,7 @@ public class ClientEvents
         }
         else if(screen instanceof CreativeModeInventoryScreen inventory)
         {
-            if(inventory.isInventoryOpen())
+            if(inventory.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId())
             {
                 int left = ClientServices.SCREEN.getScreenLeftPos(inventory);
                 int top = ClientServices.SCREEN.getScreenTopPos(inventory);
@@ -275,7 +276,7 @@ public class ClientEvents
             return;
         }
 
-        if(creativeScreen.isInventoryOpen())
+        if(creativeScreen.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId())
         {
             if(!initializedSlot)
             {

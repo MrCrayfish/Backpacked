@@ -1,23 +1,25 @@
 package com.mrcrayfish.backpacked.datagen;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.core.ModBlocks;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.core.Registry;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -25,23 +27,26 @@ import java.util.stream.Collectors;
  */
 public class LootTableGen extends LootTableProvider
 {
-    public LootTableGen(PackOutput output)
+    private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> tables = ImmutableList.of(Pair.of(BlockProvider::new, LootContextParamSets.BLOCK));
+
+    public LootTableGen(DataGenerator generator)
     {
-        super(output, Collections.emptySet(), ImmutableList.of(new SubProviderEntry(BlockProvider::new, LootContextParamSets.BLOCK)));
+        super(generator);
     }
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext context) {}
 
-    private static class BlockProvider extends BlockLootSubProvider
+    @Override
+    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
     {
-        protected BlockProvider()
-        {
-            super(ImmutableSet.of(), FeatureFlags.REGISTRY.allFlags());
-        }
+        return this.tables;
+    }
 
+    private static class BlockProvider extends BlockLoot
+    {
         @Override
-        protected void generate()
+        protected void addTables()
         {
             CommonLootTableGen.generate(this::dropSelf);
         }
@@ -49,7 +54,7 @@ public class LootTableGen extends LootTableProvider
         @Override
         protected Iterable<Block> getKnownBlocks()
         {
-            return ForgeRegistries.BLOCKS.getValues().stream().filter(block -> Constants.MOD_ID.equals(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getNamespace())).collect(Collectors.toSet());
+            return ForgeRegistries.BLOCKS.getValues().stream().filter(block -> Constants.MOD_ID.equals(Registry.BLOCK.getKey(block).getNamespace())).collect(Collectors.toSet());
         }
     }
 }

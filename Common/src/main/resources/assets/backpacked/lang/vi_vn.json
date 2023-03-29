@@ -70,7 +70,7 @@
     "backpacked.formatter.incomplete": "Chưa hoàn thành",
     "backpacked.formatter.complete": "Hoàn thành",
     "backpacked.tooltip.remove_items": "Ba lô phải trống trước khi bạn có thể lấy nó ra",
-    "itemGroup.backpacked": "Backpacked",
+    "itemGroup.backpacked.creative_tab": "Backpacked",
     "enchantment.backpacked.funnelling": "Phễu",
     "enchantment.backpacked.funnelling.desc": "Lọc những tài nguyên nhất định rơi ra từ việc đào hang hoặc thu hoạch trực tiếp vào Ba lô",
     "enchantment.backpacked.repairman": "Thợ sửa chữa",

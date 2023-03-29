@@ -69,7 +69,7 @@
     "backpacked.formatter.incomplete": "Невыполнено",
     "backpacked.formatter.complete": "Выполнено",
     "backpacked.tooltip.remove_items": "Рюкзак должен быть пуст, прежде чем вы сможете его снять",
-    "itemGroup.backpacked": "Рюкзак",
+    "itemGroup.backpacked.creative_tab": "Рюкзак",
     "enchantment.backpacked.funnelling": "Воронка",
     "enchantment.backpacked.funnelling.desc": "Направляет дроп с добычи или сбора определённых ресурсов прямо в рюкзак",
     "enchantment.backpacked.repairman": "Ремонтник",

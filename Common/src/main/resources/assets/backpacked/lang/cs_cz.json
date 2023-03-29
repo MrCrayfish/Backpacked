@@ -70,7 +70,7 @@
     "backpacked.formatter.incomplete": "Nedokončeno",
     "backpacked.formatter.complete": "Dokončeno",
     "backpacked.tooltip.remove_items": "Batoh musí být prázdný, abyste ho mohli odstranit",
-    "itemGroup.backpacked": "Batoh na zádech",
+    "itemGroup.backpacked.creative_tab": "Batoh na zádech",
     "enchantment.backpacked.funnelling": "Trychtýř",
     "enchantment.backpacked.funnelling.desc": "Přenáší suroviny z těžby nebo sklizně určitých zdrojů přímo do Batohu",
     "enchantment.backpacked.repairman": "Opravář",

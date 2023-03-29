@@ -19,9 +19,9 @@ public class CheckBox extends Button
 
     private boolean toggled = false;
 
-    public CheckBox(int x, int y, Component title, OnPress onPress)
+    public CheckBox(int x, int y, Component title, OnPress onPress, OnTooltip tooltip)
     {
-        super(x, y, 8, 8, title, onPress, DEFAULT_NARRATION);
+        super(x, y, 8, 8, title, onPress, tooltip);
     }
 
     public void setChecked(boolean toggled)
@@ -35,17 +35,17 @@ public class CheckBox extends Button
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI);
-        blit(matrixStack, this.getX(), this.getY(), 0, 0, 8, 8);
+        blit(matrixStack, this.x, this.y, 0, 0, 8, 8);
         if(this.toggled)
         {
-            blit(matrixStack, this.getX(), this.getY() - 1, 8, 0, 9, 8);
+            blit(matrixStack, this.x, this.y - 1, 8, 0, 9, 8);
         }
-        Minecraft.getInstance().font.draw(matrixStack, this.getMessage().getString(), this.getX() + 12, this.getY(), 0xFFFFFF);
+        Minecraft.getInstance().font.draw(matrixStack, this.getMessage().getString(), this.x + 12, this.y, 0xFFFFFF);
     }
 
     @Override

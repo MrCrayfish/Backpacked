@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.event.TickEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -77,7 +77,7 @@ public class BackpackEvents
         ServerPlayer serverPlayer = (ServerPlayer) player;
         ServerLevel world = serverPlayer.getLevel();
         BlockPos playerPosition = serverPlayer.blockPosition();
-        world.registryAccess().registryOrThrow(Registries.BIOME).getResourceKey(world.getBiome(playerPosition).value()).ifPresent(key ->
+        world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(world.getBiome(playerPosition).value()).ifPresent(key ->
         {
             UnlockManager.get(serverPlayer).ifPresent(unlockTracker ->
             {

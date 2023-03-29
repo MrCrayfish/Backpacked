@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.data.tracker.impl;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -28,7 +28,7 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
     @Override
     public void processCrafted(ItemStack stack, ServerPlayer player)
     {
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        ResourceLocation id = Registry.ITEM.getKey(stack.getItem());
         if(!this.craftedItems.contains(id) && this.predicate.test(stack))
         {
             this.count++;
