@@ -126,7 +126,7 @@ public class Config
             public final BoolProperty pickpocketBackpacks = BoolProperty.create(true);
 
             @ConfigProperty(name = "pickpocketDistance", comment = "The maximum reach distance of a player to interact with another player's backpack.")
-            public final DoubleProperty pickpocketMaxReachDistance = DoubleProperty.create(1.5, 0.0, 4.0);
+            public final DoubleProperty pickpocketMaxReachDistance = DoubleProperty.create(2.0, 0.0, 4.0);
 
             @ConfigProperty(name = "pickpocketMaxRangeAngle", comment = "The maximum angle at which another player's backpack can be accessed")
             public final DoubleProperty pickpocketMaxRangeAngle = DoubleProperty.create(80.0, 0.0, 90.0);
