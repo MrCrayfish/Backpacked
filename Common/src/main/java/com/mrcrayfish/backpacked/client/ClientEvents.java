@@ -156,7 +156,8 @@ public class ClientEvents
 
     private static boolean onInteraction(boolean attack, boolean use, boolean pick, InteractionHand hand)
     {
-        if(!attack) return false;
+        if(!use)
+            return false;
 
         Minecraft mc = Minecraft.getInstance();
         if(mc.level == null || mc.player == null || mc.gameMode == null)
