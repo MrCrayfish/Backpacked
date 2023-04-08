@@ -57,6 +57,11 @@ loom {
             ideConfigGenerated(true)
             runDir("run")
         }
+        clientPlayerTwo {
+            inherit client
+            setConfigName("Fabric Client (Player 2)")
+            runDir("runPlayerTwo")
+        }
         server {
             server()
             setConfigName("Fabric Server")
