@@ -126,7 +126,7 @@ public class ClientHandler
         event.registerCreativeModeTab(new ResourceLocation(Reference.MOD_ID, "creative_tab"), builder -> {
             builder.title(Component.translatable("itemGroup." + Reference.MOD_ID));
             builder.icon(() -> new ItemStack(ModItems.BACKPACK.get()));
-            builder.displayItems((flags, output, permission) -> {
+            builder.displayItems((flags, output) -> {
                 ModItems.REGISTER.getEntries().forEach(registryObject -> output.accept(registryObject.get()));
                 for(Enchantment enchantment : ForgeRegistries.ENCHANTMENTS) {
                     if(enchantment.category == Backpacked.ENCHANTMENT_TYPE) {

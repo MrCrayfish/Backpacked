@@ -34,15 +34,15 @@ public class CheckBox extends Button
     }
 
     @Override
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI);
-        this.blit(matrixStack, this.getX(), this.getY(), 0, 0, 8, 8);
+        blit(matrixStack, this.getX(), this.getY(), 0, 0, 8, 8);
         if(this.toggled)
         {
-            this.blit(matrixStack, this.getX(), this.getY() - 1, 8, 0, 9, 8);
+           blit(matrixStack, this.getX(), this.getY() - 1, 8, 0, 9, 8);
         }
         Minecraft.getInstance().font.draw(matrixStack, this.getMessage().getString(), this.getX() + 12, this.getY(), 0xFFFFFF);
     }

@@ -17,19 +17,19 @@ description="Adds a simple backpack to store more items"
 [[dependencies.backpacked]]
     modId="forge"
     mandatory=true
-    versionRange="[44.1.0,)"
+    versionRange="[45,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.3,1.20)"
+    versionRange="[1.19.4,1.20)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.backpacked]]
     modId="curios"
     mandatory=false
-    versionRange="[1.19.3-5.1.2.0,)"
+    versionRange="[1.19.4-5.1.4.3,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.backpacked]]

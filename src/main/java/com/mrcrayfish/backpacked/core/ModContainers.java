@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Reference;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.network.IContainerFactory;
@@ -20,6 +21,6 @@ public class ModContainers
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String id, MenuType.MenuSupplier<T> factory)
     {
-        return REGISTER.register(id, () -> new MenuType<>(factory));
+        return REGISTER.register(id, () -> new MenuType<>(factory, FeatureFlags.DEFAULT_FLAGS));
     }
 }
