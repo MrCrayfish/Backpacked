@@ -37,6 +37,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -51,6 +52,11 @@ public class ClientHandler
 {
     public static final KeyMapping KEY_BACKPACK = new KeyMapping("key.backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
     public static final ModelInstances MODELS = new ModelInstances();
+
+    static
+    {
+        KEY_BACKPACK.setKeyConflictContext(KeyConflictContext.IN_GAME);
+    }
 
     public static void setup()
     {
