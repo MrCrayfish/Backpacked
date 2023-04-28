@@ -88,7 +88,7 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.4-45.0.43'
     implementation fg.deobf('curse.maven:curios-309927:4478589')
-    compileOnly fg.deobf('curse.maven:controllable-317269:4445143')
+    compileOnly fg.deobf('curse.maven:controllable-317269:4509026')
     runtimeOnly fg.deobf('curse.maven:configured-457570:4462894')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
