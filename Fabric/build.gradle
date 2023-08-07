@@ -29,6 +29,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://maven.ladysnake.org/releases'
+    }
 }
 
 configurations {
@@ -42,6 +46,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
     modCompileOnlyApi "com.terraformersmc:modmenu:5.0.2"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.2"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.0.2"
     modImplementation "curse.maven:trinkets-341284:4343755"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":Common")
