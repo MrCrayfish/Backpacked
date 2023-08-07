@@ -35,6 +35,9 @@
         "java": ">=17",
         "framework": ">=${framework_version}"
     },
+    "suggests": {
+        "trinkets": ">=${trinkets_version}"
+    },
     "accessWidener": "backpacked.accesswidener",
     "custom": {
         "framework": {
