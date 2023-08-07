@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.1-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
 }
@@ -23,8 +23,11 @@ repositories {
         url = "https://maven.terraformersmc.com/"
     }
     maven {
-        name = "Ladysnake Libs"
-        url = "https://ladysnake.jfrog.io/artifactory/mods"
+        name = "CurseMaven"
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 }
 
@@ -37,10 +40,9 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modCompileOnlyApi "com.terraformersmc:modmenu:5.0.2"
-
-    modCompileOnly "dev.emi:trinkets:${trinkets_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
+    modCompileOnlyApi "com.terraformersmc:modmenu:5.0.2"
+    modImplementation "curse.maven:trinkets-341284:4343755"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":Common")
 }
@@ -120,18 +122,30 @@ publishing {
     }
 
     repositories {
-        maven {
-            url "file://" + System.getenv("LOCAL_MAVEN")
-        }
-        maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/MrCrayfish/Maven"
-            credentials {
-                username = rootProject.githubCredentials['GITHUB_USERNAME']
-                password = rootProject.githubCredentials['GITHUB_TOKEN']
+        if (System.getenv("CI")) {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/MrCrayfish/Maven"
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
+                    password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
+                }
+            }
+        } else {
+            maven {
+                url "file://" + System.getenv("LOCAL_MAVEN")
             }
         }
     }
+}
+
+signing {
+    if (System.getenv("SIGNING_KEY")) {
+        def signingKey = System.getenv("SIGNING_KEY")
+        def signingPassword = System.getenv("SIGNING_PASSPHRASE")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
+    sign publishing.publications.mavenJava
 }
 
 loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
