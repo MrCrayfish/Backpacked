@@ -1,11 +1,9 @@
 package com.mrcrayfish.backpacked.integration;
 
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.item.TrinketBackpackItem;
 import dev.emi.trinkets.api.Trinket;
 import dev.emi.trinkets.api.TrinketsApi;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,9 +18,10 @@ public class Trinkets
     public static ItemStack getBackpackStack(Player player)
     {
         return TrinketsApi.getTrinketComponent(player)
-            .map(c -> c.getEquipped(ModItems.BACKPACK.get()))
-            .flatMap(tuples -> tuples.stream().findFirst().map(Tuple::getB))
-            .orElse(ItemStack.EMPTY);
+                .flatMap(component -> Optional.ofNullable(component.getInventory().get("chest")))
+                .flatMap(map -> Optional.ofNullable(map.get("back")))
+                .map(inventory -> inventory.getItem(0))
+                .orElse(ItemStack.EMPTY);
     }
 
     public static void setBackpackStack(Player player, ItemStack stack)

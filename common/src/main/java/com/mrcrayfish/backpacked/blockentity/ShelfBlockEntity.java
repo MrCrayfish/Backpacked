@@ -70,7 +70,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         if(player.isCrouching() || this.backpack.isEmpty())
         {
             ItemStack stack = Services.BACKPACK.getBackpackStack(player);
-            //ItemStack stack = Backpacked.getBackStack(player); //TODO test
             if(!stack.isEmpty() && !(stack.getItem() instanceof BackpackItem))
             {
                 if(!this.backpack.isEmpty())
