@@ -2,7 +2,9 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.client.ClientHandler;
+import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.data.pickpocket.ForgePickpocketChallenge;
+import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
 import com.mrcrayfish.backpacked.data.tracker.ForgeUnlockTracker;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
@@ -15,6 +17,11 @@ import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -25,6 +32,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -150,6 +158,16 @@ public class Backpacked
     {
         if(LootedEnchantment.onDropLoot(event.getDrops(), event.getSource()))
         {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onInteract(PlayerInteractEvent.EntityInteract event)
+    {
+        if(WanderingTraderEvents.onInteract(event.getTarget(), event.getEntity()))
+        {
+            event.setCancellationResult(InteractionResult.SUCCESS);
             event.setCanceled(true);
         }
     }

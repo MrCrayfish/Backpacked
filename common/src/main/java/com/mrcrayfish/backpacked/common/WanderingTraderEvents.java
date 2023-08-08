@@ -22,6 +22,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
@@ -49,7 +50,6 @@ import java.util.stream.StreamSupport;
  */
 public class WanderingTraderEvents
 {
-    //private static final Field goalsField = ObfuscationReflectionHelper.findField(GoalSelector.class, "f_25345_");
     public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
 
     public static void init()
@@ -115,33 +115,31 @@ public class WanderingTraderEvents
         });
     }
 
-    //TODO reimplement
-    /*@SubscribeEvent
-    public void onInteract(PlayerInteractEvent.EntityInteract event)
+    public static boolean onInteract(Entity target, Player player)
     {
-        Entity entity = event.getTarget();
-        if(!entity.level.isClientSide() && entity instanceof WanderingTrader trader)
+        Level level = target.level();
+        if(!level.isClientSide() && target instanceof WanderingTrader trader)
         {
-            if(!Config.COMMON.common.wanderingTrader.dislikedPlayersCanTrade.get() && PickpocketChallenge.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(event.getEntity())).orElse(false))
+            if(!Config.COMMON.common.wanderingTrader.dislikedPlayersCanTrade.get() && PickpocketChallenge.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(player)).orElse(false))
             {
                 trader.setUnhappyCounter(20);
-                trader.level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
+                level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
+                return true;
             }
         }
-    }*/
+        return false;
+    }
 
     private static List<Player> findDetectedPlayers(LivingEntity entity)
     {
         return entity.level().getEntities(EntityType.PLAYER, entity.getBoundingBox().inflate(getMaxDetectionDistance()), player -> {
-            return isPlayerInLivingEntityVision(entity, player) && isPlayerSeenByLivingEntity(entity, player, Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get()) || !player.isCrouching() && isPlayerMoving(player);
+            return isPlayerInLivingEntityVision(entity, player) && isPlayerSeenByLivingEntity(entity, player, getMaxDetectionDistance()) || !player.isCrouching() && isPlayerMoving(player);
         });
     }
 
     private static Predicate<Map.Entry<Player, Long>> createForgetPlayerPredicate(WanderingTrader trader, Level world)
     {
-        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get() * 2.0 || (world.getGameTime() - entry.getValue() > Config.COMMON.common.wanderingTrader.wanderingTraderForgetTime.get() && entry.getKey().distanceTo(trader) >= Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get());
+        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > getMaxDetectionDistance() * 2.0 || (world.getGameTime() - entry.getValue() > Config.COMMON.common.wanderingTrader.wanderingTraderForgetTime.get() && entry.getKey().distanceTo(trader) >= Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get());
     }
 
     // Determines if the player is in the living entities vision
@@ -248,25 +246,12 @@ public class WanderingTraderEvents
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     private static void patchTraderAiGoals(WanderingTrader trader)
     {
-        //TODO reimplement
-        /*try
-        {
-            GoalSelector selector = Services.ENTITY.getGoalSelector(trader);
-            Set<WrappedGoal> goals = (Set<WrappedGoal>) goalsField.get(selector);
-            if(goals != null)
-            {
-                goals.removeIf(goal -> goal.getGoal() instanceof LookAtPlayerGoal);
-            }
-            selector.addGoal(2, new LootAtDetectedPlayerGoal(trader));
-            selector.addGoal(9, new PickpocketLookAtPlayerGoal(trader, Player.class, 3.0F, 1.0F));
-        }
-        catch(IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }*/
+        GoalSelector selector = Services.ENTITY.getGoalSelector(trader);
+        trader.removeAllGoals(goal -> goal instanceof LookAtPlayerGoal);
+        selector.addGoal(2, new LootAtDetectedPlayerGoal(trader));
+        selector.addGoal(9, new PickpocketLookAtPlayerGoal(trader, Player.class, 3.0F, 1.0F));
     }
 
     private static double getMaxDetectionDistance()
@@ -329,12 +314,12 @@ public class WanderingTraderEvents
         @Override
         public void start()
         {
-            if(this.trader.level() instanceof ServerLevel)
+            if(this.trader.level() instanceof ServerLevel serverLevel && this.lookAt instanceof Player player)
             {
-                if(PickpocketChallenge.get(this.trader).map(data -> data.isDislikedPlayer((Player) this.lookAt)).orElse(false))
+                if(PickpocketChallenge.get(this.trader).map(data -> data.isDislikedPlayer(player)).orElse(false))
                 {
-                    ((ServerLevel) this.trader.level()).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY(), this.trader.getZ(), 1, 0, 0, 0, 0);
-                    this.trader.level().playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
+                    serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY(), this.trader.getZ(), 1, 0, 0, 0, 0);
+                    serverLevel.playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
                 }
             }
         }
@@ -342,7 +327,7 @@ public class WanderingTraderEvents
         @Override
         public void tick()
         {
-            if(isPlayerSeenByLivingEntity(this.trader, (Player) this.lookAt, Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get() * 2))
+            if(this.lookAt instanceof Player && isPlayerSeenByLivingEntity(this.trader, (Player) this.lookAt, Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get() * 2))
             {
                 this.trader.getLookControl().setLookAt(this.lookAt.getX(), this.lookAt.getEyeY(), this.lookAt.getZ());
             }
