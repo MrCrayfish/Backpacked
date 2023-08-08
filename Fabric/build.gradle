@@ -1,7 +1,8 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
-    id 'maven-publish'
+    id 'java'
     id 'idea'
+    id 'maven-publish'
+    id 'fabric-loom'
 }
 
 archivesBaseName = "${mod_id}-fabric"
@@ -11,7 +12,7 @@ sourceSets {
     main {
         resources {
             srcDirs += [
-                'src/generated/resources'
+                    'src/generated/resources'
             ]
         }
     }
@@ -45,18 +46,20 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
-    modCompileOnlyApi "com.terraformersmc:modmenu:5.0.2"
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.2"
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.0.2"
-    modImplementation "curse.maven:trinkets-341284:4343755"
+    modCompileOnlyApi "com.terraformersmc:modmenu:7.2.1"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
+    modImplementation "curse.maven:trinkets-341284:4657534"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
-    implementation project(":Common")
+    implementation project(":common")
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/backpacked.accesswidener")
+    if (file("src/main/resources/${mod_id}.accesswidener").exists()) {
+        accessWidenerPath.set(file("src/main/resources/${mod_id}.accesswidener"))
+    }
     mixin {
-        defaultRefmapName = "${mod_id}-refmap.json"
+        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
         client {
@@ -88,17 +91,18 @@ loom {
     }
 }
 
-processResources {
-    from project(":Common").sourceSets.main.resources
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand project.properties
-    }
+tasks.withType(JavaCompile).configureEach {
+    source(project(":common").sourceSets.main.allSource)
+}
+tasks.withType(Javadoc).configureEach {
+    source(project(":common").sourceSets.main.allJava)
+}
+tasks.named("sourcesJar", Jar) {
+    from(project(":common").sourceSets.main.allSource)
 }
 
-tasks.withType(JavaCompile) {
-    source(project(":Common").sourceSets.main.allSource)
+processResources {
+    from project(":common").sourceSets.main.resources
 }
 
 publishing {
