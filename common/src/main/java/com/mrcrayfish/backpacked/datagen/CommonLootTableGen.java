@@ -20,5 +20,6 @@ public class CommonLootTableGen
         dropSelf.accept(ModBlocks.ACACIA_BACKPACK_SHELF.get());
         dropSelf.accept(ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         dropSelf.accept(ModBlocks.WARPED_BACKPACK_SHELF.get());
+        dropSelf.accept(ModBlocks.CHERRY_BACKPACK_SHELF.get());
     }
 }

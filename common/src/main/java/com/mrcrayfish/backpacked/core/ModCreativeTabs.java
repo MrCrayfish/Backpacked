@@ -24,6 +24,9 @@ public class ModCreativeTabs
         builder.title(Component.translatable("itemGroup." + Constants.MOD_ID));
         builder.icon(() -> new ItemStack(ModItems.BACKPACK.get()));
         builder.displayItems((params, output) -> {
+            Registration.get(Registries.BLOCK).stream().filter(entry -> entry.getId().getNamespace().equals(Constants.MOD_ID)).forEach(entry -> {
+                output.accept((ItemLike) entry.get());
+            });
             Registration.get(Registries.ITEM).stream().filter(entry -> entry.getId().getNamespace().equals(Constants.MOD_ID)).forEach(entry -> {
                 output.accept((ItemLike) entry.get());
             });

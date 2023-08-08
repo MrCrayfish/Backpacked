@@ -1,0 +1,6 @@
+{
+    "parent": "backpacked:block/backpack_shelf",
+    "textures": {
+        "log": "minecraft:block/cherry_log_top"
+    }
+}

@@ -26,6 +26,7 @@ public class CommonRecipeGen
         backpackShelf(consumer, has, Items.ACACIA_LOG, Items.ACACIA_SLAB, ModBlocks.ACACIA_BACKPACK_SHELF.get());
         backpackShelf(consumer, has, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         backpackShelf(consumer, has, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
+        backpackShelf(consumer, has, Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
     }
 
     private static void backpackShelf(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> has, ItemLike log, ItemLike slab, ItemLike craftedItem)
