@@ -98,8 +98,8 @@ public class Curios
                 return result.map(slotResult -> {
                     return slotResult.stack().isEmpty() || CuriosApi.getCuriosHelper().getCurio(slotResult.stack()).map(iCurio -> {
                         return iCurio.canUnequip(slotResult.slotContext());
-                    }).orElse(false);
-                }).orElse(false);
+                    }).orElse(true);
+                }).orElse(true);
             }
 
             @Override
