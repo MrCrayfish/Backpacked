@@ -11,7 +11,7 @@ import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.item.ForgeBackpackItem;
+import com.mrcrayfish.backpacked.integration.item.ForgeBackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

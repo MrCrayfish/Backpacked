@@ -1,7 +1,8 @@
-package com.mrcrayfish.backpacked.item;
+package com.mrcrayfish.backpacked.integration.item;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.integration.Curios;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;

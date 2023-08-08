@@ -108,6 +108,7 @@ public class CustomiseBackpackScreen extends Screen
         if(this.displayBackpackModel == null)
         {
             this.displayBackpackModel = this.getBackpackModel();
+            this.displayShowEnchantmentGlint = this.getLocalBackpackProperty(ModelProperty.SHOW_GLINT);
             this.displayShowWithElytra = this.getLocalBackpackProperty(ModelProperty.SHOW_WITH_ELYTRA);
             this.displayShowEffects = this.getLocalBackpackProperty(ModelProperty.SHOW_EFFECTS);
         }

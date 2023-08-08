@@ -57,7 +57,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             stack.pushPose();
             model.transformToPlayerBody(this.getParentModel().body, !chestStack.isEmpty());
             model.setupAngles(player, player.tickCount, partialTick);
-            VertexConsumer builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, backpack.hasFoil());
+            VertexConsumer builder = ItemRenderer.getFoilBuffer(renderTypeBuffer, model.renderType(model.getTextureLocation()), false, backpack.hasFoil() && canShowEnchantmentGlint(backpack));
             model.renderToBuffer(stack, builder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 2.0F, 2.0F, 2.0F);
             stack.popPose();
         }
