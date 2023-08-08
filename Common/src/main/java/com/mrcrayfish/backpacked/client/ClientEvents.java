@@ -156,7 +156,7 @@ public class ClientEvents
 
     private static boolean onInteraction(boolean attack, boolean use, boolean pick, InteractionHand hand)
     {
-        if(!use)
+        if(!use || hand != InteractionHand.MAIN_HAND)
             return false;
 
         Minecraft mc = Minecraft.getInstance();
