@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 
+import java.util.Optional;
+
 /**
  * Author: MrCrayfish
  */
@@ -31,9 +33,11 @@ public class ModCreativeTabs
                 output.accept((ItemLike) entry.get());
             });
             for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
-                if(enchantment.category == Services.BACKPACK.getEnchantmentCategory()) {
-                    Services.REGISTRATION.addEnchantedBookToCreativeTab(output, enchantment);
-                }
+                Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.getKey(enchantment)).ifPresent(id -> {
+                    if(id.getNamespace().equals(Constants.MOD_ID) && enchantment.category == Services.BACKPACK.getEnchantmentCategory()) {
+                        Services.REGISTRATION.addEnchantedBookToCreativeTab(output, enchantment);
+                    }
+                });
             }
         });
     });
