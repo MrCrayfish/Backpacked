@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PandaEntityMixin
 {
     @Inject(method = "mobInteract", at = @At(value = "RETURN", ordinal = 3))
-    public void onFeedPanda(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
+    public void backpackedOnFeedPanda(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(!(player instanceof ServerPlayer))
             return;

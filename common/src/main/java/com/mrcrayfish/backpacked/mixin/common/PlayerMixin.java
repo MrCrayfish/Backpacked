@@ -49,7 +49,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     public BackpackInventory backpackedInventory = null;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void constructorTail(Level level, BlockPos pos, float p_251702_, GameProfile profile, CallbackInfo ci)
+    private void backpackedConstructorTail(Level level, BlockPos pos, float p_251702_, GameProfile profile, CallbackInfo ci)
     {
         if(Services.BACKPACK.isUsingThirdPartySlot())
             return;
@@ -81,7 +81,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
 
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 7))
-    public void onFallFlying(double dx, double dy, double dz, CallbackInfo ci)
+    public void backpackedOnFallFlying(double dx, double dy, double dz, CallbackInfo ci)
     {
         Player player = (Player) (Object) this;
         if(!(player instanceof ServerPlayer))
@@ -95,7 +95,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void tickBackpacked(CallbackInfo ci)
+    public void backpackedTickHead(CallbackInfo ci)
     {
         if(this.backpackedInventory != null)
         {
@@ -104,7 +104,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
-    public void addAdditionalSaveDataBackpacked(CompoundTag tag, CallbackInfo ci)
+    public void backpackedAddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
     {
         if(this.backpackedInventory != null)
         {

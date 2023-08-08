@@ -60,7 +60,7 @@ public class FabricPlayerMixin implements IUnlockTrackerHolder
     }
 
     @Inject(method = "getProjectile", at = @At(value = "RETURN", ordinal = 3), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    public void locateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
+    public void backpackedLocateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
     {
         Player player = (Player) (Object) this;
         ItemStack backpack = Services.BACKPACK.getBackpackStack(player);

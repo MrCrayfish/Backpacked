@@ -24,7 +24,7 @@ public class LockableLootTileEntityMixin
     protected ResourceLocation lootTable;
 
     @Inject(method = "unpackLootTable", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/LootTableTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/resources/ResourceLocation;)V"))
-    public void onGenerateLoot(Player player, CallbackInfo ci)
+    public void backpackedOnGenerateLoot(Player player, CallbackInfo ci)
     {
         if(!(player instanceof ServerPlayer))
             return;

@@ -20,13 +20,13 @@ public class EntityMixin implements IMovedAccess
     public boolean backpackedMoved;
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void tickHead(CallbackInfo ci)
+    public void backpackedTickHead(CallbackInfo ci)
     {
         this.backpackedMoved = false;
     }
 
     @Inject(method = "move", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/Entity;nextStep()F"))
-    public void moveStep(MoverType type, Vec3 delta, CallbackInfo ci)
+    public void backpackedMoveStep(MoverType type, Vec3 delta, CallbackInfo ci)
     {
         this.backpackedMoved = true;
     }

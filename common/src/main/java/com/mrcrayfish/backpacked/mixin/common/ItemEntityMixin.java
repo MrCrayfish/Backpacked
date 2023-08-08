@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ItemEntityMixin
 {
     @Inject(method = "fireImmune", at = @At(value = "HEAD"), cancellable = true)
-    public void fireImmuneHead(CallbackInfoReturnable<Boolean> cir)
+    public void backpackedFireImmuneHead(CallbackInfoReturnable<Boolean> cir)
     {
         ItemEntity entity = (ItemEntity) (Object) this;
         ItemStack stack = entity.getItem();
