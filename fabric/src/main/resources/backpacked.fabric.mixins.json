@@ -1,0 +1,21 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.mrcrayfish.backpacked.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "backpacked.refmap.json",
+    "mixins": [
+        "BlockMixin",
+        "EntityMixin",
+        "FabricPlayerMixin",
+        "LivingEntityMixin",
+        "ServerPlayerGameModeMixin",
+        "SheepEntityMixin",
+        "WanderingTraderMixin"
+    ],
+    "client": [ "EntityModelSetMixin" ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
+  
