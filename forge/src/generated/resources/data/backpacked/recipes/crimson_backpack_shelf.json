@@ -19,5 +19,6 @@
   "result": {
     "count": 4,
     "item": "backpacked:crimson_backpack_shelf"
-  }
+  },
+  "show_notification": true
 }

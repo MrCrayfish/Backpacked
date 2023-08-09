@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "backpacked:backpack"
-  }
+  },
+  "show_notification": true
 }

@@ -19,5 +19,6 @@
   "result": {
     "count": 4,
     "item": "backpacked:dark_oak_backpack_shelf"
-  }
+  },
+  "show_notification": true
 }

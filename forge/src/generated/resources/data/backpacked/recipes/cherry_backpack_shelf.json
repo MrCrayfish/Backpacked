@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "H": {
-      "item": "minecraft:birch_slab"
+      "item": "minecraft:cherry_slab"
     },
     "L": {
-      "item": "minecraft:birch_log"
+      "item": "minecraft:cherry_log"
     },
     "S": {
       "item": "minecraft:stick"
@@ -18,7 +18,7 @@
   ],
   "result": {
     "count": 4,
-    "item": "backpacked:birch_backpack_shelf"
+    "item": "backpacked:cherry_backpack_shelf"
   },
   "show_notification": true
 }

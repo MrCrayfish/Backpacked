@@ -11,11 +11,10 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "backpacked:dark_oak_backpack_shelf"
+          "name": "backpacked:oak_backpack_shelf"
         }
       ],
       "rolls": 1.0
     }
-  ],
-  "random_sequence": "backpacked:blocks/dark_oak_backpack_shelf"
+  ]
 }

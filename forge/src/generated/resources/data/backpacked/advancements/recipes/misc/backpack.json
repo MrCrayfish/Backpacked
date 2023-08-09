@@ -30,5 +30,6 @@
     "recipes": [
       "backpacked:backpack"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

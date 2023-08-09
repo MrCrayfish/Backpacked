@@ -43,5 +43,6 @@
     "recipes": [
       "backpacked:dark_oak_backpack_shelf"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

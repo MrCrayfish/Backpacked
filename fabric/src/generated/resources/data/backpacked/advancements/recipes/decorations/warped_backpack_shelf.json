@@ -43,5 +43,6 @@
     "recipes": [
       "backpacked:warped_backpack_shelf"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

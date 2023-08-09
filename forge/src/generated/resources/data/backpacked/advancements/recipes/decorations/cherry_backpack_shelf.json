@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:birch_slab"
+              "minecraft:cherry_slab"
             ]
           }
         ]
@@ -27,7 +27,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "backpacked:birch_backpack_shelf"
+        "recipe": "backpacked:cherry_backpack_shelf"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -41,7 +41,7 @@
   ],
   "rewards": {
     "recipes": [
-      "backpacked:birch_backpack_shelf"
+      "backpacked:cherry_backpack_shelf"
     ]
   },
   "sends_telemetry_event": false
