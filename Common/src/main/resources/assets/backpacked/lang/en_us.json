@@ -69,7 +69,7 @@
     "backpacked.formatter.explored_x_of_x": "Explored %s / %s",
     "backpacked.formatter.incomplete": "Incomplete",
     "backpacked.formatter.complete": "Complete",
-    "backpacked.tooltip.remove_items": "Backpack must be empty before you can remove it",
+    "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
     "itemGroup.backpacked": "Backpacked",
     "enchantment.backpacked.funnelling": "Funnelling",
     "enchantment.backpacked.funnelling.desc": "Funnels drops from mining or harvesting certain resources directly into a Backpack",
