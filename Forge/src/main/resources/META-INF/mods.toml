@@ -46,7 +46,7 @@ description="${mod_desc}"
 [[dependencies."${mod_id}"]]
     modId="controllable"
     mandatory=false
-    versionRange="[0.17.0,)"
+    versionRange="[0.19.3,)"
     ordering="AFTER"
     side="CLIENT"
 
