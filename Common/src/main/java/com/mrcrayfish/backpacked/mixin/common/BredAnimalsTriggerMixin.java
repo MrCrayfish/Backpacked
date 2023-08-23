@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BredAnimalsTriggerMixin
 {
     @Inject(method = "trigger", at = @At(value = "HEAD"))
-    public void onPlayerBreedTurtle(ServerPlayer player, Animal animal, Animal partner, AgeableMob ageableEntity, CallbackInfo ci)
+    public void backpackedOnPlayerBreedTurtle(ServerPlayer player, Animal animal, Animal partner, AgeableMob ageableEntity, CallbackInfo ci)
     {
         if((!(animal instanceof Turtle)))
             return;

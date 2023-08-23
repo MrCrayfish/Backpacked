@@ -185,7 +185,7 @@ public class WanderingTraderEvents
 
     private static boolean isPlayerMoving(Player player)
     {
-        return ((IMovedAccess) player).backpackedMoved();
+        return ((IMovedAccess) player).backpacked$moved();
     }
 
     public static void openBackpack(WanderingTrader trader, ServerPlayer openingPlayer)

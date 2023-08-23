@@ -46,10 +46,10 @@ public class PlayerMixin implements BackpackedInventoryAccess
     public InventoryMenu inventoryMenu;
 
     @Unique
-    public BackpackInventory backpackedInventory = null;
+    public BackpackInventory backpacked$inventory = null;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void constructorTail(Level level, BlockPos pos, float p_251702_, GameProfile profile, CallbackInfo ci)
+    private void backpackedConstructorTail(Level level, BlockPos pos, float p_251702_, GameProfile profile, CallbackInfo ci)
     {
         if(Services.BACKPACK.isUsingThirdPartySlot())
             return;
@@ -67,21 +67,21 @@ public class PlayerMixin implements BackpackedInventoryAccess
         ItemStack stack = Services.BACKPACK.getBackpackStack(player);
         if(stack.isEmpty())
         {
-            this.backpackedInventory = null;
+            this.backpacked$inventory = null;
             return null;
         }
 
         BackpackItem backpackItem = (BackpackItem) stack.getItem();
-        if(this.backpackedInventory == null || !this.backpackedInventory.getBackpackStack().equals(stack) || this.backpackedInventory.getContainerSize() != backpackItem.getRowCount() * backpackItem.getColumnCount())
+        if(this.backpacked$inventory == null || !this.backpacked$inventory.getBackpackStack().equals(stack) || this.backpacked$inventory.getContainerSize() != backpackItem.getRowCount() * backpackItem.getColumnCount())
         {
-            this.backpackedInventory = new BackpackInventory(backpackItem.getColumnCount(), backpackItem.getRowCount(), player, stack);
+            this.backpacked$inventory = new BackpackInventory(backpackItem.getColumnCount(), backpackItem.getRowCount(), player, stack);
         }
-        return this.backpackedInventory;
+        return this.backpacked$inventory;
     }
 
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 7))
-    public void onFallFlying(double dx, double dy, double dz, CallbackInfo ci)
+    public void backpackedOnFallFlying(double dx, double dy, double dz, CallbackInfo ci)
     {
         Player player = (Player) (Object) this;
         if(!(player instanceof ServerPlayer))
@@ -95,20 +95,20 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void tickBackpacked(CallbackInfo ci)
+    public void backpackedTickHead(CallbackInfo ci)
     {
-        if(this.backpackedInventory != null)
+        if(this.backpacked$inventory != null)
         {
-            this.backpackedInventory.tick();
+            this.backpacked$inventory.tick();
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
-    public void addAdditionalSaveDataBackpacked(CompoundTag tag, CallbackInfo ci)
+    public void backpackedAddAdditionalSaveDataBackpacked(CompoundTag tag, CallbackInfo ci)
     {
-        if(this.backpackedInventory != null)
+        if(this.backpacked$inventory != null)
         {
-            this.backpackedInventory.saveItemsToStack();
+            this.backpacked$inventory.saveItemsToStack();
         }
     }
 }

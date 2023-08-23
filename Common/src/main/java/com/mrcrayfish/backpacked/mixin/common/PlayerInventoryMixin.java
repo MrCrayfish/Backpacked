@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerInventoryMixin
 {
     @Inject(method = "removeItem(Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "TAIL"))
-    public void removeItemTail(ItemStack stack, CallbackInfo ci)
+    public void backpackedRemoveItemTail(ItemStack stack, CallbackInfo ci)
     {
         Inventory playerInventory = (Inventory) (Object) this;
         Player player = playerInventory.player;

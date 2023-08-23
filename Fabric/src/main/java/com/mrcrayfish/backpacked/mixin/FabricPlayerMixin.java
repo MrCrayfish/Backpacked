@@ -32,35 +32,35 @@ public class FabricPlayerMixin implements IUnlockTrackerHolder
 {
     @Unique
     @Nullable
-    private LazyHolder<UnlockTracker> backpackedUnlockTrackerHolder;
+    private LazyHolder<UnlockTracker> backpacked$unlockTrackerHolder;
 
     @Override
     public UnlockTracker backpackedGetUnlockTracker()
     {
-        if(this.backpackedUnlockTrackerHolder == null)
+        if(this.backpacked$unlockTrackerHolder == null)
         {
-            this.backpackedUnlockTrackerHolder = new LazyHolder<>(new CompoundTag(), UnlockTracker::new);
+            this.backpacked$unlockTrackerHolder = new LazyHolder<>(new CompoundTag(), UnlockTracker::new);
         }
-        return this.backpackedUnlockTrackerHolder.get();
+        return this.backpacked$unlockTrackerHolder.get();
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At(value = "TAIL"))
     private void backpackedOnLoadUnlockTracker(CompoundTag tag, CallbackInfo ci)
     {
-        this.backpackedUnlockTrackerHolder = new LazyHolder<>(tag.getCompound("BackpackedUnlockTracker"), UnlockTracker::new);
+        this.backpacked$unlockTrackerHolder = new LazyHolder<>(tag.getCompound("BackpackedUnlockTracker"), UnlockTracker::new);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "TAIL"))
     private void backpackedOnSaveUnlockTracker(CompoundTag tag, CallbackInfo ci)
     {
-        if(this.backpackedUnlockTrackerHolder != null)
+        if(this.backpacked$unlockTrackerHolder != null)
         {
-            tag.put("BackpackedUnlockTracker", this.backpackedUnlockTrackerHolder.serialize());
+            tag.put("BackpackedUnlockTracker", this.backpacked$unlockTrackerHolder.serialize());
         }
     }
 
     @Inject(method = "getProjectile", at = @At(value = "RETURN", ordinal = 3), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    public void locateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
+    public void backapckedLocateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
     {
         Player player = (Player) (Object) this;
         ItemStack backpack = Services.BACKPACK.getBackpackStack(player);

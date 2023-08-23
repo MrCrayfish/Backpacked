@@ -22,7 +22,7 @@ public class ServerPlayNetHandlerMixin
     public ServerPlayer player;
 
     @Inject(method = "handleSetCreativeModeSlot", at = @At(value = "TAIL"))
-    private void patchBackpackAction(ServerboundSetCreativeModeSlotPacket packetIn, CallbackInfo ci)
+    private void backpackedPatchBackpackAction(ServerboundSetCreativeModeSlotPacket packetIn, CallbackInfo ci)
     {
         if(!this.player.isCreative())
             return;

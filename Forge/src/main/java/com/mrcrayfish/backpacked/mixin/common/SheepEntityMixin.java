@@ -23,7 +23,7 @@ import java.util.List;
 public class SheepEntityMixin
 {
     @Inject(method = "onSheared", at = @At(value = "HEAD"), remap = false)
-    public void trackShearProgress(Player player, ItemStack item, Level world, BlockPos pos, int fortune, CallbackInfoReturnable<List<ItemStack>> cir)
+    public void backpackedTrackShearProgress(Player player, ItemStack item, Level world, BlockPos pos, int fortune, CallbackInfoReturnable<List<ItemStack>> cir)
     {
         if(!(player instanceof ServerPlayer))
             return;

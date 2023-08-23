@@ -7,5 +7,5 @@ import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
  */
 public interface IPickpocketChallengeHolder
 {
-    PickpocketChallenge backpackedGetPickpocketChallenge();
+    PickpocketChallenge getPickpocketChallenge();
 }

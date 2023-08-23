@@ -5,5 +5,5 @@ package com.mrcrayfish.backpacked.common;
  */
 public interface IMovedAccess
 {
-    boolean backpackedMoved();
+    boolean backpacked$moved();
 }
