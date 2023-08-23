@@ -92,7 +92,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("com.mrcrayfish:framework-forge:${minecraft_version}-${framework_version}")
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    compileOnly fg.deobf('curse.maven:controllable-317269:4598985')
+    compileOnly fg.deobf('curse.maven:controllable-317269:4445137')
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     compileOnly project(":common")
 }
