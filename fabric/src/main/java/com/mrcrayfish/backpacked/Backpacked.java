@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.framework.FrameworkSetup;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -14,6 +15,7 @@ public class Backpacked implements ModInitializer
 
     public Backpacked()
     {
+        FrameworkSetup.run();
         trinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
     }
 
