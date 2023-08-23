@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ComposterBlockMixin
 {
     @Inject(method = "use", at = @At(value = "HEAD"))
-    public void beforeCollect(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    public void backpackedBeforeCollect(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(state.getValue(ComposterBlock.LEVEL) != 8)
             return;

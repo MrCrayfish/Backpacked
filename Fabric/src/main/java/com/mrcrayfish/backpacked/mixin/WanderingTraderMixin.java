@@ -21,30 +21,30 @@ public class WanderingTraderMixin implements IPickpocketChallengeHolder
 {
     @Unique
     @Nullable
-    private LazyHolder<PickpocketChallenge> backpackedPickpocketChallengeHolder;
+    private LazyHolder<PickpocketChallenge> backpacked$pickpocketChallengeHolder;
 
     @Override
-    public PickpocketChallenge backpackedGetPickpocketChallenge()
+    public PickpocketChallenge getPickpocketChallenge()
     {
-        if(this.backpackedPickpocketChallengeHolder == null)
+        if(this.backpacked$pickpocketChallengeHolder == null)
         {
-            this.backpackedPickpocketChallengeHolder = new LazyHolder<>(new CompoundTag(), PickpocketChallenge::new);
+            this.backpacked$pickpocketChallengeHolder = new LazyHolder<>(new CompoundTag(), PickpocketChallenge::new);
         }
-        return this.backpackedPickpocketChallengeHolder.get();
+        return this.backpacked$pickpocketChallengeHolder.get();
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At(value = "TAIL"))
     private void backpackedOnLoadUnlockTracker(CompoundTag tag, CallbackInfo ci)
     {
-        this.backpackedPickpocketChallengeHolder = new LazyHolder<>(tag.getCompound("BackpackedUnlockTracker"), PickpocketChallenge::new);
+        this.backpacked$pickpocketChallengeHolder = new LazyHolder<>(tag.getCompound("BackpackedUnlockTracker"), PickpocketChallenge::new);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "TAIL"))
     private void backpackedOnSaveUnlockTracker(CompoundTag tag, CallbackInfo ci)
     {
-        if(this.backpackedPickpocketChallengeHolder != null)
+        if(this.backpacked$pickpocketChallengeHolder != null)
         {
-            tag.put("BackpackedUnlockTracker", this.backpackedPickpocketChallengeHolder.serialize());
+            tag.put("BackpackedUnlockTracker", this.backpacked$pickpocketChallengeHolder.serialize());
         }
     }
 }

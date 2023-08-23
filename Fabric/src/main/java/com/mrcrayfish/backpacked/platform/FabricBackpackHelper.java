@@ -103,7 +103,7 @@ public class FabricBackpackHelper implements IBackpackHelper
     @Override
     public PickpocketChallenge getPickpocketChallenge(Entity entity)
     {
-        return entity instanceof WanderingTrader trader ? ((IPickpocketChallengeHolder) trader).backpackedGetPickpocketChallenge() : null;
+        return entity instanceof WanderingTrader trader ? ((IPickpocketChallengeHolder) trader).getPickpocketChallenge() : null;
     }
 
     @Override

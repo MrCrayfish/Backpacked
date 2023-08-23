@@ -27,7 +27,7 @@ public class ServerPlayerGameModeMixin
     protected ServerPlayer player;
 
     @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void afterBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, int exp)
+    public void backapckedAfterBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, int exp)
     {
         if(state.is(BlockTags.LOGS))
         {
