@@ -1,12 +1,15 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.block.Block;
+import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Author: MrCrayfish
@@ -21,10 +24,24 @@ public class BackpackSlot extends Slot
     @Override
     public boolean mayPlace(ItemStack stack)
     {
-        if(Backpacked.getBannedItemsList().contains(stack.getItem().getRegistryName()))
+        return !isBannedItem(stack);
+    }
+
+    public static boolean isBannedItem(ItemStack stack)
+    {
+        ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        if(Backpacked.getBannedItemsList().contains(id))
         {
-            return false;
+            return true;
         }
-        return !(stack.getItem() instanceof BackpackItem) && !(Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock);
+        if(stack.getItem() instanceof BlockItem)
+        {
+            BlockItem blockItem = (BlockItem) stack.getItem();
+            if(blockItem.getBlock() instanceof ShulkerBoxBlock)
+            {
+                return true;
+            }
+        }
+        return stack.getItem() == ModItems.BACKPACK.get();
     }
 }
