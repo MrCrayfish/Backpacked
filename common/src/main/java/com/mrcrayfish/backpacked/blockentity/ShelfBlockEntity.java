@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.blockentity;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModSounds;
+import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
@@ -232,6 +233,12 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     private int getBackpackSize()
     {
         return this.getBackpackItem().map(item -> item.getRowCount() * item.getColumnCount()).orElse(0);
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack)
+    {
+        return !BackpackSlot.isBannedItem(stack);
     }
 
     // Need this to call set changed
