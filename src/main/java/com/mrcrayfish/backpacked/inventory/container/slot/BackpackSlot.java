@@ -1,13 +1,12 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mrcrayfish.backpacked.Backpacked;
-import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Author: MrCrayfish
@@ -22,10 +21,21 @@ public class BackpackSlot extends Slot
     @Override
     public boolean mayPlace(ItemStack stack)
     {
-        if(Backpacked.getBannedItemsList().contains(stack.getItem().getRegistryName()))
+        return !isBannedItem(stack);
+    }
+
+    public static boolean isBannedItem(ItemStack stack)
+    {
+        // Special case for bundles
+        if(stack.getItem() == Items.BUNDLE)
         {
-            return false;
+            return true;
         }
-        return !(stack.getItem() instanceof BackpackItem) && !(Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock) && stack.getItem() != Items.BUNDLE;
+        ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        if(Backpacked.getBannedItemsList().contains(id))
+        {
+            return true;
+        }
+        return !stack.getItem().canFitInsideContainerItems();
     }
 }
