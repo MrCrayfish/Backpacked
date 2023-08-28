@@ -100,10 +100,14 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context)
     {
-        BlockState potentialState = this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
-        if(this.canSurvive(potentialState, context.getLevel(), context.getClickedPos()))
+        Direction clickedFace = context.getClickedFace();
+        if(clickedFace.getAxis().isHorizontal())
         {
-            return potentialState;
+            BlockState potentialState = this.defaultBlockState().setValue(FACING, clickedFace);
+            if(this.canSurvive(potentialState, context.getLevel(), context.getClickedPos()))
+            {
+                return potentialState;
+            }
         }
         return null;
     }
