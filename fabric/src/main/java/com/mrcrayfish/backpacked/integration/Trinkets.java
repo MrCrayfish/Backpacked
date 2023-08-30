@@ -17,11 +17,12 @@ public class Trinkets
 {
     public static ItemStack getBackpackStack(Player player)
     {
-        return TrinketsApi.getTrinketComponent(player)
+        ItemStack stack = TrinketsApi.getTrinketComponent(player)
                 .flatMap(component -> Optional.ofNullable(component.getInventory().get("chest")))
                 .flatMap(map -> Optional.ofNullable(map.get("back")))
                 .map(inventory -> inventory.getItem(0))
                 .orElse(ItemStack.EMPTY);
+        return stack.getItem() instanceof BackpackItem ? stack : ItemStack.EMPTY;
     }
 
     public static void setBackpackStack(Player player, ItemStack stack)
