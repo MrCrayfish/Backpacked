@@ -3,7 +3,7 @@
     "minVersion": "0.8",
     "package": "com.mrcrayfish.backpacked.mixin",
     "compatibilityLevel": "JAVA_17",
-    "refmap": "backpacked-refmap.json",
+    "refmap": "backpacked.refmap.json",
     "mixins": [
         "EntityMixin",
         "FabricPlayerMixin",
