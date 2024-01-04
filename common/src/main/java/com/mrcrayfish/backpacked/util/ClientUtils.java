@@ -20,10 +20,11 @@ public class ClientUtils
 {
     public static void createBackpackTooltip(ItemStack stack, List<Component> list)
     {
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.level == null) return; //Prevents crash when reloading resource packs
         if(!Config.SERVER.common.lockBackpackIntoSlot.get())
             return;
 
-        Minecraft mc = Minecraft.getInstance();
         if(mc.player != null && Services.BACKPACK.getBackpackStack(mc.player).equals(stack))
         {
             CompoundTag tag = stack.getTag();
