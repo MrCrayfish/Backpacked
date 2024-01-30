@@ -10,12 +10,16 @@ import com.mrcrayfish.framework.api.event.InputEvents;
  */
 public class ClientBootstrap
 {
+    public static void earlyInit()
+    {
+        InputEvents.REGISTER_KEY_MAPPING.register(consumer -> consumer.accept(Keys.KEY_BACKPACK));
+    }
+
     public static void init()
     {
         BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
             BackpackLayer.registerModel(backpack.getId(), () -> (BackpackModel) backpack.getModelSupplier().get());
         });
-        InputEvents.REGISTER_KEY_MAPPING.register(consumer -> consumer.accept(Keys.KEY_BACKPACK));
         ClientEvents.init();
     }
 }
