@@ -277,7 +277,7 @@ public class ClientEvents
             {
                 initializedSlot = true;
                 List<Slot> slots = creativeScreen.getMenu().slots;
-                Slot backpackSlot = slots.stream().filter(slot -> slot.container instanceof ExtendedPlayerInventory && slot.getContainerSlot() == 41).findFirst().orElse(null);
+                Slot backpackSlot = slots.stream().filter(slot -> slot.container instanceof ExtendedPlayerInventory && slot.getContainerSlot() == 46).findFirst().orElse(null);
                 if(backpackSlot != null)
                 {
                     int index = slots.indexOf(backpackSlot);
