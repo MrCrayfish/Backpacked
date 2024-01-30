@@ -59,7 +59,10 @@ public class BackpackItem extends Item
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag)
     {
-        ClientUtils.createBackpackTooltip(stack, list);
+        if(level != null)
+        {
+            ClientUtils.createBackpackTooltip(stack, list);
+        }
     }
 
     public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
