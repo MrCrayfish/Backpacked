@@ -1,0 +1,113 @@
+{
+    "item.backpacked.backpack": "鞄",
+
+    "block.backpacked.oak_backpack_shelf": "オークの鞄掛け",
+    "block.backpacked.spruce_backpack_shelf": "トウヒの鞄掛け",
+    "block.backpacked.birch_backpack_shelf": "シラカバの鞄掛け",
+    "block.backpacked.jungle_backpack_shelf": "ジャングルの鞄掛け",
+    "block.backpacked.dark_oak_backpack_shelf": "ダークオークの鞄掛け",
+    "block.backpacked.acacia_backpack_shelf": "アカシアの鞄掛け",
+    "block.backpacked.crimson_backpack_shelf": "真紅の鞄掛け",
+    "block.backpacked.warped_backpack_shelf": "歪んだ鞄掛け",
+    "block.backpacked.cherry_backpack_shelf": "サクラの鞄掛け",
+
+    "key.backpack": "鞄を開ける",
+
+    "container.backpack": "鞄",
+
+    "backpacked.configgui.keepBackpackOnDeath": "死亡時の鞄インベントリの保持",
+    "backpacked.configgui.backpackInventorySizeColumns": "鞄インベントリの列数",
+    "backpacked.configgui.backpackInventorySizeRows": "鞄インベントリの行数",
+
+    "itemGroup.backpacked": "Backpacked",
+    "curios.identifier.backpacked": "Backpacked",
+    "button.categories.backpacked": "Backpacked",
+
+    "backpacked.gui.locked": "未開放",
+    "backpacked.toast.unlocked_backpack": "鞄が使えるようになりました",
+    "backpacked.button.open_backpack": "鞄を開ける",
+    "backpacked.button.reset": "リセット",
+    "backpacked.button.save": "保存",
+    "backpacked.button.customise.tooltip": "変更",
+    "backpacked.button.config.tooltip": "設定項目",
+    "backpacked.button.show_effects.tooltip": "エフェクトを表示する",
+    "backpacked.button.show_with_elytra.tooltip": "エリトラを表示する",
+    "backpacked.button.show_enchantment_glint.tooltip": "エンチャントの輝きを表示する",
+    "backpacked.title.customise_backpack": "鞄の設定",
+
+    "message.backpacked.player_opened": "誰かがあなたの鞄を開けました",
+    "message.backpacked.occupied_back_slot": "すでに他のアイテムが背中に装備されています",
+
+    "backpacked.backpack.standard": "標準",
+
+    "backpacked.backpack.classic": "旧式",
+
+    "backpacked.backpack.bamboo_basket": "竹籠",
+    "backpacked.backpack.bamboo_basket.unlock": "10匹のパンダに竹を給餌すると開放される",
+    "backpacked.formatter.fed_x_of_x": "%s匹に餌をやっている（目標は%s匹）",
+
+    "backpacked.backpack.rocket": "ロケット",
+    "backpacked.backpack.rocket.unlock": "エリトラで50km飛ぶと",
+    "backpacked.formatter.int_percent": "%s%sを完了",
+
+    "backpacked.backpack.mini_chest": "小さなチェスト",
+    "backpacked.backpack.mini_chest.unlock": "埋もれた宝を5個発見すると開放される",
+    "backpacked.formatter.found_x_of_x": "%s個を発見済み（目標は%s個）",
+
+    "backpacked.backpack.trash_can": "ごみ箱",
+    "backpacked.backpack.trash_can.unlock": "コンポスターで100回堆肥化すると開放される",
+    "backpacked.formatter.used_x_times": "%s回使用",
+
+    "backpacked.backpack.honey_jar": "ハチミツ瓶",
+    "backpacked.backpack.honey_jar.unlock": "ハチミツを20瓶集めると開放される",
+    "backpacked.formatter.collected_x_of_x": "%s瓶を入手済み（目標は%s瓶）",
+
+    "backpacked.backpack.turtle_shell": "亀の甲羅",
+    "backpacked.backpack.turtle_shell.unlock": "亀を20回繁殖させると開放される",
+    "backpacked.formatter.bred_x_of_x": "%s回繁殖済み（目標は%s回）",
+
+    "backpacked.backpack.cardboard_box": "段ボール箱",
+    "backpacked.backpack.cardboard_box.unlock": "1000個の原木を伐採すると開放される",
+    "backpacked.formatter.cut_x_of_x": "%s個を伐採済み（目標は%s個）",
+
+    "backpacked.backpack.sheep_plush": "羊まるごと",
+    "backpacked.backpack.sheep_plush.unlock": "250匹の羊を毛刈りすると開放される",
+    "backpacked.formatter.shear_x_sheep": "%s匹を毛刈り済み（目標は%s匹）",
+
+    "backpacked.backpack.wandering_bag": "行商の鞄",
+    "backpacked.backpack.wandering_bag.unlock": "2人の行商人にスリをはたらくと開放される",
+    "backpacked.formatter.pickpocketed_x_of_x": "%s人からスッている（目標は%s人）",
+
+    "backpacked.backpack.piglin_pack": "砦の遺跡風",
+    "backpacked.backpack.piglin_pack.unlock": "ネザーの全バイオームを訪ずれると開放される",
+    "backpacked.formatter.explored_x_of_x": "%s地を訪問済み（目標%s地）",
+
+    "backpacked.backpack.end_crystal": "エンドクリスタル",
+    "backpacked.backpack.end_crystal.unlock": "エンダードラゴンを倒すと開放される",
+
+    "backpacked.backpack.cogwheel": "歯車",
+    "backpacked.backpack.cogwheel.unlock": "Createで30種の異なるアイテムをクラフトすると開放される",
+    "backpacked.formatter.craft_x_of_x": "%s種をクラフト済み（目標は%s種）",
+
+    "backpacked.chat.install_configured": "設定項目を開くには%sを導入してください。",
+    "backpacked.chat.open_curseforge_page": "CurseForgeを開く",
+
+    "backpacked.formatter.incomplete": "未完了",
+    "backpacked.formatter.complete": "完了",
+
+    "backpacked.tooltip.remove_items": "鞄を外すまえに中身を空にする必要があります。 もしくは鞄掛けに置いてください。",
+
+    "enchantment.backpacked.funnelling": "収納",
+    "enchantment.backpacked.funnelling.desc": "採掘・収穫のさいに特定のアイテムを自動的に鞄に収納します",
+    "enchantment.backpacked.repairman": "拡張修繕",
+    "enchantment.backpacked.repairman.desc": "鞄に入っている修繕付きのアイテムも修復の対象になります",
+    "enchantment.backpacked.looted": "ドロップ収納",
+    "enchantment.backpacked.looted.desc": "モブを倒したさいにドロップ品を自動的に鞄に収納します",
+    "enchantment.backpacked.imbued_hide": "耐火",
+    "enchantment.backpacked.imbued_hide.desc": "鞄の材料が強化され，炎で損傷しなくなります",
+    "enchantment.backpacked.marksman": "拡張装填",
+    "enchantment.backpacked.marksman.desc": "鞄に収納している矢を放てるようになります。 矢以外の投射物も対応する投射器に装填されます。",
+
+   "subtitle.backpacked.backpack.place": "鞄が置かれる",
+   "subtitle.backpacked.backpack.equip": "鞄が装着される"
+}
