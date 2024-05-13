@@ -17,6 +17,7 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
+import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +27,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
@@ -36,12 +38,16 @@ import java.util.Map;
  */
 public class ServerPlayHandler
 {
-    public static void handleCustomiseBackpack(MessageBackpackCosmetics message, ServerPlayer player)
+    public static void handleCustomiseBackpack(MessageBackpackCosmetics message, MessageContext context)
     {
+        Player player = context.getPlayer().orElse(null);
+        if(player == null)
+            return;
+
         ItemStack stack = Services.BACKPACK.getBackpackStack(player);
         if(!stack.isEmpty())
         {
-            ResourceLocation id = message.getBackpackId();
+            ResourceLocation id = message.cosmeticId();
             Backpack backpack = BackpackManager.instance().getBackpack(id);
             if(backpack == null)
                 return;
@@ -51,29 +57,37 @@ public class ServerPlayHandler
 
             CompoundTag tag = stack.getOrCreateTag();
             tag.putString("BackpackModel", id.toString());
-            tag.putBoolean(ModelProperty.SHOW_GLINT.getTagName(), message.isShowGlint());
-            tag.putBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.isShowWithElytra());
-            tag.putBoolean(ModelProperty.SHOW_EFFECTS.getTagName(), message.isShowEffects());
+            tag.putBoolean(ModelProperty.SHOW_GLINT.getTagName(), message.showGlint());
+            tag.putBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.showElytra());
+            tag.putBoolean(ModelProperty.SHOW_EFFECTS.getTagName(), message.showEffects());
 
             if(Services.BACKPACK.isUsingThirdPartySlot())
                 return;
 
-            if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
+            if(player.getInventory() instanceof ExtendedPlayerInventory)
             {
-                Network.getPlay().sendToTracking(() -> player, new MessageUpdateBackpack(player.getId(), stack));
-                Network.getPlay().sendToPlayer(() -> player, new MessageUpdateBackpack(player.getId(), stack, true));
+                Network.getPlay().sendToTrackingEntity(() -> player, new MessageUpdateBackpack(player.getId(), stack, false));
+                Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageUpdateBackpack(player.getId(), stack, true));
             }
         }
     }
 
-    public static void handleOpenBackpack(MessageOpenBackpack message, ServerPlayer player)
+    public static void handleOpenBackpack(MessageOpenBackpack message, MessageContext context)
     {
-        BackpackItem.openBackpack(player, player);
+        Player player = context.getPlayer().orElse(null);
+        if(player instanceof ServerPlayer serverPlayer)
+        {
+            BackpackItem.openBackpack(serverPlayer, serverPlayer);
+        }
     }
 
-    public static void handleEntityBackpack(MessageEntityBackpack message, ServerPlayer player)
+    public static void handleEntityBackpack(MessageEntityBackpack message, MessageContext context)
     {
-        Entity entity = player.level().getEntity(message.getEntityId());
+        Player player = context.getPlayer().orElse(null);
+        if(player == null)
+            return;
+
+        Entity entity = player.level().getEntity(message.entityId());
         if(!(entity instanceof LivingEntity otherEntity))
             return;
 
@@ -86,7 +100,7 @@ public class ServerPlayHandler
         //TODO eventually open to all living entities
         if(otherEntity instanceof ServerPlayer otherPlayer)
         {
-            if(BackpackItem.openBackpack(otherPlayer, player))
+            if(BackpackItem.openBackpack(otherPlayer, (ServerPlayer) player))
             {
                 otherPlayer.displayClientMessage(Component.translatable("message.backpacked.player_opened"), true);
                 player.level().playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.75F, 1.0F);
@@ -94,12 +108,16 @@ public class ServerPlayHandler
         }
         else if(otherEntity instanceof WanderingTrader trader)
         {
-            WanderingTraderEvents.openBackpack(trader, player);
+            WanderingTraderEvents.openBackpack(trader, (ServerPlayer) player);
         }
     }
 
-    public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayer player)
+    public static void handleRequestCustomisation(MessageRequestCustomisation message, MessageContext context)
     {
+        Player player = context.getPlayer().orElse(null);
+        if(player == null)
+            return;
+
         if(Config.SERVER.common.disableCustomisation.get())
             return;
 
@@ -119,7 +137,7 @@ public class ServerPlayHandler
                     });
                 }
             }
-            Network.getPlay().sendToPlayer(() -> player, new MessageOpenCustomisation(map));
+            Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map));
         });
     }
 }

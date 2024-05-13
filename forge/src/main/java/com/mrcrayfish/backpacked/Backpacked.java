@@ -119,7 +119,7 @@ public class Backpacked
             ItemStack backpack = inventory.getBackpackItems().get(0);
             if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
             {
-                Network.getPlay().sendToTracking(() -> player, new MessageUpdateBackpack(player.getId(), backpack));
+                Network.getPlay().sendToTrackingEntity(() -> player, new MessageUpdateBackpack(player.getId(), backpack, false));
             }
         }
     }
@@ -138,7 +138,7 @@ public class Backpacked
         {
             if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
             {
-                Network.getPlay().sendToTracking(() -> player, new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0)));
+                Network.getPlay().sendToTrackingEntity(() -> player, new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0), false));
                 inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
             }
         }

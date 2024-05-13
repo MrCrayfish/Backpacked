@@ -180,11 +180,19 @@ public class CustomiseBackpackScreen extends Screen
     }
 
     @Override
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    {
+        super.renderBackground(graphics, mouseX, mouseY, partialTick);
+        graphics.blit(GUI_TEXTURE, this.windowLeft, this.windowTop, 0, 0, this.windowWidth, this.windowHeight);
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.renderBackground(graphics);
-        graphics.blit(GUI_TEXTURE, this.windowLeft, this.windowTop, 0, 0, this.windowWidth, this.windowHeight);
         super.render(graphics, mouseX, mouseY, partialTick);
+        
+        // Draw title
+        graphics.drawString(this.font, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752, false);
 
         // Draw player in window
         if(this.minecraft.player != null)
@@ -193,9 +201,6 @@ public class CustomiseBackpackScreen extends Screen
             this.renderPlayer(this.windowLeft + 42, this.windowTop + this.windowHeight / 2, mouseX, mouseY, this.minecraft.player);
             graphics.disableScissor();
         }
-
-        // Draw title
-        graphics.drawString(this.font, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752, false);
 
         // Draw scroll bar
         boolean canScroll = this.models.size() > 7;
@@ -341,15 +346,15 @@ public class CustomiseBackpackScreen extends Screen
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY)
     {
         if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 112, 140))
         {
             int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
-            int newIndex = startIndex - (int) Math.signum(scroll);
+            int newIndex = startIndex - (int) Math.signum(deltaY);
             this.scrollToIndex(newIndex);
         }
-        return super.mouseScrolled(mouseX, mouseY, scroll);
+        return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
     }
 
     private void scrollToIndex(int index)

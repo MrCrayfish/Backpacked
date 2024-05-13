@@ -2,11 +2,12 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
 }
 
-archivesBaseName = "${mod_id}-fabric"
-version = "${minecraft_version}-${mod_version}"
+base {
+    archivesName = "${mod_id}-fabric"
+}
 
 sourceSets {
     main {
@@ -52,6 +53,7 @@ dependencies {
     modImplementation "curse.maven:trinkets-341284:4657534"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":common")
+    modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
 }
 
 loom {

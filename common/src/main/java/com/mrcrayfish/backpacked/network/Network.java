@@ -12,7 +12,7 @@ import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.FrameworkNetwork;
-import com.mrcrayfish.framework.api.network.MessageDirection;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -22,15 +22,15 @@ public class Network
 {
     public static final FrameworkNetwork PLAY = FrameworkAPI
             .createNetworkBuilder(new ResourceLocation(Constants.MOD_ID, "play"), 1)
-            .registerPlayMessage(MessageOpenBackpack.class, MessageDirection.PLAY_SERVER_BOUND)
-            .registerPlayMessage(MessageUpdateBackpack.class, MessageDirection.PLAY_CLIENT_BOUND)
-            .registerPlayMessage(MessageEntityBackpack.class, MessageDirection.PLAY_SERVER_BOUND)
-            .registerPlayMessage(MessageBackpackCosmetics.class, MessageDirection.PLAY_SERVER_BOUND)
-            .registerPlayMessage(MessageSyncUnlockTracker.class, MessageDirection.PLAY_CLIENT_BOUND)
-            .registerPlayMessage(MessageUnlockBackpack.class, MessageDirection.PLAY_CLIENT_BOUND)
-            .registerPlayMessage(MessageRequestCustomisation.class, MessageDirection.PLAY_SERVER_BOUND)
-            .registerPlayMessage(MessageOpenCustomisation.class, MessageDirection.PLAY_CLIENT_BOUND)
-            .registerPlayMessage(MessageSyncVillagerBackpack.class, MessageDirection.PLAY_CLIENT_BOUND)
+            .registerPlayMessage("open_backpack", MessageOpenBackpack.class, MessageOpenBackpack::encode, MessageOpenBackpack::decode, MessageOpenBackpack::handle, PacketFlow.SERVERBOUND)
+            .registerPlayMessage("update_backpack", MessageUpdateBackpack.class, MessageUpdateBackpack::encode, MessageUpdateBackpack::decode, MessageUpdateBackpack::handle, PacketFlow.CLIENTBOUND)
+            .registerPlayMessage("entity_backpack", MessageEntityBackpack.class, MessageEntityBackpack::encode, MessageEntityBackpack::decode, MessageEntityBackpack::handle, PacketFlow.SERVERBOUND)
+            .registerPlayMessage("backpack_cosmetics", MessageBackpackCosmetics.class, MessageBackpackCosmetics::encode, MessageBackpackCosmetics::decode, MessageBackpackCosmetics::handle, PacketFlow.SERVERBOUND)
+            .registerPlayMessage("sync_unlock_tracker", MessageSyncUnlockTracker.class, MessageSyncUnlockTracker::encode, MessageSyncUnlockTracker::decode, MessageSyncUnlockTracker::handle, PacketFlow.CLIENTBOUND)
+            .registerPlayMessage("unlock_backpack", MessageUnlockBackpack.class, MessageUnlockBackpack::encode, MessageUnlockBackpack::decode, MessageUnlockBackpack::handle, PacketFlow.CLIENTBOUND)
+            .registerPlayMessage("request_customisation", MessageRequestCustomisation.class, MessageRequestCustomisation::encode, MessageRequestCustomisation::decode, MessageRequestCustomisation::handle, PacketFlow.SERVERBOUND)
+            .registerPlayMessage("open_customisation", MessageOpenCustomisation.class, MessageOpenCustomisation::encode, MessageOpenCustomisation::decode, MessageOpenCustomisation::handle, PacketFlow.CLIENTBOUND)
+            .registerPlayMessage("sync_villager_backpack", MessageSyncVillagerBackpack.class, MessageSyncVillagerBackpack::encode, MessageSyncVillagerBackpack::decode, MessageSyncVillagerBackpack::handle, PacketFlow.CLIENTBOUND)
             .build();
 
     public static void init() {}

@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -70,10 +71,10 @@ public class ClientHandler
 
     public static void onAddLayers(EntityRenderersEvent.AddLayers event)
     {
-        addBackpackLayer(event.getSkin("default"));
-        addBackpackLayer(event.getSkin("slim"));
+        addBackpackLayer(event.getPlayerSkin(PlayerSkin.Model.WIDE));
+        addBackpackLayer(event.getPlayerSkin(PlayerSkin.Model.SLIM));
 
-        EntityRenderer<?> renderer = event.getRenderer(EntityType.WANDERING_TRADER);
+        EntityRenderer<?> renderer = event.getEntityRenderer(EntityType.WANDERING_TRADER);
         if(renderer instanceof WanderingTraderRenderer traderRenderer)
         {
             traderRenderer.addLayer(new VillagerBackpackLayer<>(traderRenderer));
@@ -82,7 +83,7 @@ public class ClientHandler
         ModelInstances.get().loadModels(event.getEntityModels());
     }
 
-    private static void addBackpackLayer(LivingEntityRenderer<?, ?> renderer)
+    private static void addBackpackLayer(EntityRenderer<?> renderer)
     {
         if(renderer instanceof PlayerRenderer playerRenderer)
         {

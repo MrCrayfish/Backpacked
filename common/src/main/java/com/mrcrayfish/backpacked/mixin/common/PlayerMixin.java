@@ -79,21 +79,6 @@ public class PlayerMixin implements BackpackedInventoryAccess
         return this.backpackedInventory;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 7))
-    public void backpackedOnFallFlying(double dx, double dy, double dz, CallbackInfo ci)
-    {
-        Player player = (Player) (Object) this;
-        if(!(player instanceof ServerPlayer))
-            return;
-
-        int distance = (int) Math.round(Math.sqrt(dx * dx + dy * dy + dz * dz));
-        UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(RocketBackpack.ID)).ifPresent(tracker -> {
-            CountProgressTracker countTracker = (CountProgressTracker) tracker;
-            countTracker.increment(distance, (ServerPlayer) player);
-        });
-    }
-
     @Inject(method = "tick", at = @At(value = "HEAD"))
     public void backpackedTickHead(CallbackInfo ci)
     {

@@ -3,15 +3,15 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.blockentity.ForgeShelfBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
 import com.mrcrayfish.backpacked.data.pickpocket.ForgePickpocketChallenge;
+import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
 import com.mrcrayfish.backpacked.data.tracker.ForgeUnlockTracker;
 import com.mrcrayfish.backpacked.data.tracker.UnlockTracker;
 import com.mrcrayfish.backpacked.integration.Curios;
+import com.mrcrayfish.backpacked.integration.item.ForgeBackpackItem;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.integration.item.ForgeBackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -24,7 +24,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
@@ -119,7 +118,7 @@ public class ForgeBackpackHelper implements IBackpackHelper
     @Override
     public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, Component title)
     {
-        NetworkHooks.openScreen(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
+        openingPlayer.openMenu(new SimpleMenuProvider((id, playerInventory, entity) -> {
             return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner);
         }, title), buffer -> {
             buffer.writeVarInt(cols);

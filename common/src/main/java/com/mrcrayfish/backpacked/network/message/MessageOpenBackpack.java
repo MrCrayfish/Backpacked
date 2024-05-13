@@ -2,27 +2,23 @@ package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
-import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Author: MrCrayfish
  */
-public class MessageOpenBackpack extends PlayMessage<MessageOpenBackpack>
+public class MessageOpenBackpack
 {
-    @Override
-    public void encode(MessageOpenBackpack message, FriendlyByteBuf buffer) {}
+    public static void encode(MessageOpenBackpack message, FriendlyByteBuf buffer) {}
 
-    @Override
-    public MessageOpenBackpack decode(FriendlyByteBuf buffer)
+    public static MessageOpenBackpack decode(FriendlyByteBuf buffer)
     {
         return new MessageOpenBackpack();
     }
 
-    @Override
-    public void handle(MessageOpenBackpack message, MessageContext context)
+    public static void handle(MessageOpenBackpack message, MessageContext context)
     {
-        context.execute(() -> ServerPlayHandler.handleOpenBackpack(message, context.getPlayer()));
+        context.execute(() -> ServerPlayHandler.handleOpenBackpack(message, context));
         context.setHandled(true);
     }
 }

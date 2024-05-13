@@ -8,12 +8,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Author: MrCrayfish
  */
 public class UnlockBackpackToast implements Toast
 {
+    private static final ResourceLocation BACKGROUND_SPRITE = new ResourceLocation("toast/recipe");
     private static final Component TITLE = Component.translatable("backpacked.toast.unlocked_backpack").withStyle(ChatFormatting.YELLOW);
 
     private final Component name;
@@ -28,7 +30,7 @@ public class UnlockBackpackToast implements Toast
     @Override
     public Visibility render(GuiGraphics graphics, ToastComponent gui, long delta)
     {
-        graphics.blit(TEXTURE, 0, 0, 0, 0, 160, 32);
+        graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
         graphics.drawString(gui.getMinecraft().font, TITLE, 35, 7, 0xFFFFFF, false);
         graphics.drawString(gui.getMinecraft().font, this.name, 35, 18, 0xFFFFFF, false);
         CustomiseBackpackScreen.drawBackpackModel(graphics, this.model, 15, 7, 30F, 0, 0F);

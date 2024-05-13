@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -36,6 +37,8 @@ import java.util.Map;
  */
 public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
+    public static final MapCodec<ShelfBlock> CODEC = simpleCodec(ShelfBlock::new);
+
     private static final Map<Direction, VoxelShape> EMPTY_SHAPES = Maps.newEnumMap(ImmutableMap.of(
         Direction.NORTH, Block.box(2, 3, 7, 14, 5, 16),
         Direction.SOUTH, Block.box(2, 3, 0, 14, 5, 9),
@@ -53,6 +56,12 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     public ShelfBlock(Properties properties)
     {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<ShelfBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override

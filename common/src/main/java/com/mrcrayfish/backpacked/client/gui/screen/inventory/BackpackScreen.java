@@ -103,7 +103,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground(graphics); //Draw background
         super.render(graphics, mouseX, mouseY, partialTicks); //Super
         this.renderTooltip(graphics, mouseX, mouseY); //Render hovered tooltips
     }
