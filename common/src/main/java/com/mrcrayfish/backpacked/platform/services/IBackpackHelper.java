@@ -22,9 +22,6 @@ import javax.annotation.Nullable;
  */
 public interface IBackpackHelper
 {
-    @Nullable
-    UnlockTracker getUnlockTracker(Player player, boolean old);
-
     ItemStack getBackpackStack(Player player);
 
     boolean setBackpackStack(Player player, ItemStack stack);
@@ -34,9 +31,6 @@ public interface IBackpackHelper
     boolean isUsingThirdPartySlot();
 
     boolean isBackpackVisible(Player player);
-
-    @Nullable
-    PickpocketChallenge getPickpocketChallenge(Entity entity);
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);
 

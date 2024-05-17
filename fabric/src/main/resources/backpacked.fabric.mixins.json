@@ -7,11 +7,9 @@
     "mixins": [
         "BlockMixin",
         "EntityMixin",
-        "FabricPlayerMixin",
         "LivingEntityMixin",
         "ServerPlayerGameModeMixin",
-        "SheepEntityMixin",
-        "WanderingTraderMixin"
+        "SheepEntityMixin"
     ],
     "client": [ "EntityModelSetMixin" ],
     "injectors": {

@@ -47,10 +47,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
-    modCompileOnlyApi "com.terraformersmc:modmenu:7.2.1"
+    modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
-    modImplementation "curse.maven:trinkets-341284:4657534"
+    modImplementation "dev.emi:trinkets:${trinkets_version}"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":common")
     modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
@@ -81,7 +81,7 @@ loom {
             ideConfigGenerated(true)
             runDir("run")
         }
-        datagenClient {
+        datagen {
             inherit client
             setConfigName("Fabric Data")
             ideConfigGenerated(true)

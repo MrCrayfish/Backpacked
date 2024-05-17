@@ -88,6 +88,7 @@ subprojects {
                 "framework_version": framework_version,
                 "catalogue_version": catalogue_version,
                 "curios_version": curios_version,
+                "trinkets_version": trinkets_version,
                 "mod_name": mod_name,
                 "mod_version": mod_version,
                 "mod_author": mod_author,

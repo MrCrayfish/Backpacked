@@ -363,6 +363,8 @@ public class CustomiseBackpackScreen extends Screen
         this.scroll = Mth.clamp(this.scroll, 0, 123);
     }
 
+    long lastHash = -1;
+
     private String getBackpackModel()
     {
         ItemStack stack = Services.BACKPACK.getBackpackStack(this.minecraft.player);

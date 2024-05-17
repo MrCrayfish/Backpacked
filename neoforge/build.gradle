@@ -1,0 +1,143 @@
+import net.neoforged.gradle.common.tasks.PotentiallySignJar
+
+plugins {
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.0.84'
+    id 'java-library'
+}
+
+base {
+    archivesName = "${mod_id}-neoforge"
+}
+
+if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+}
+
+runs {
+    configureEach {
+        modSource project.sourceSets.main
+        modSource project(":common").sourceSets.main
+    }
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+configurations {
+    implementation.extendsFrom library
+}
+
+repositories {
+    maven {
+        url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup("top.theillusivec4.curios")
+        }
+    }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
+    implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
+    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    compileOnly project(":common")
+    runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
+}
+
+// NeoGradle compiles the game, but we don't want to add our common code to the game's code
+Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
+
+tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
+    source(project(":common").sourceSets.main.allSource)
+}
+
+tasks.withType(Javadoc).matching(notNeoTask).configureEach {
+    source(project(":common").sourceSets.main.allJava)
+}
+
+tasks.named("sourcesJar", Jar) {
+    from(project(":common").sourceSets.main.allSource)
+}
+
+tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
+    from project(":common").sourceSets.main.resources
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+
+            artifact jar
+            artifact sourcesJar
+
+            pom.withXml {
+                def depsNode = asNode().appendNode('dependencies')
+                [this.configurations.library].each {
+                    it.allDependencies.each {
+                        def depNode = depsNode.appendNode('dependency')
+                        depNode.appendNode('groupId', it.group)
+                        depNode.appendNode('artifactId', it.name)
+                        depNode.appendNode('version', it.version)
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        if (System.getenv("CI")) {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/MrCrayfish/Maven"
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
+                    password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
+                }
+            }
+        } else {
+            maven {
+                url "file://" + System.getenv("LOCAL_MAVEN")
+            }
+        }
+    }
+}
+
+signing {
+    if (System.getenv("SIGNING_KEY")) {
+        def signingKey = System.getenv("SIGNING_KEY")
+        def signingPassword = System.getenv("SIGNING_PASSPHRASE")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
+    sign publishing.publications.mavenJava
+}
+
+tasks.register('signJar', PotentiallySignJar) {
+    dependsOn jar
+    onlyIf {
+        hasProperty('keyStore') || System.getenv("KEYSTORE")
+    }
+    keyStore = findProperty('keyStore') ?: System.getenv("KEYSTORE")
+    alias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
+    storePass = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
+    input = jar.archiveFile
+}
+
+jar.finalizedBy 'signJar'

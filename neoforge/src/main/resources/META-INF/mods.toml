@@ -1,0 +1,60 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+license="${mod_license}"
+issueTrackerURL="${mod_issues}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+updateJSONURL="https://mrcrayfish.com/modupdatejson?id=${mod_id}"
+displayURL="${mod_homepage}"
+logoFile="assets/${mod_id}/banner.png"
+logoBlur=false
+authors="${mod_author}"
+description="${mod_desc}"
+
+[[mixins]]
+config = "${mod_id}.common.mixins.json"
+
+[[mixins]]
+config = "${mod_id}.neoforge.mixins.json"
+
+[[dependencies."${mod_id}"]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neoforge_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId="minecraft"
+    type="required"
+    versionRange="[${minecraft_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId="framework"
+    type="required"
+    versionRange="[${framework_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId="curios"
+    type="optional"
+    versionRange="[${curios_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId="controllable"
+    type="optional"
+    versionRange="[0.17.0,)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[modproperties."${mod_id}"]
+    catalogueImageIcon="assets/${mod_id}/icon.png"
+    configuredBackground="minecraft:textures/block/stone.png"

@@ -11,7 +11,7 @@
         "issues": "${mod_issues}"
     },
     "license": "${mod_license}",
-    "icon": "${mod_id}_icon.png",
+    "icon": "assets/${mod_id}/icon.png",
     "environment": "*",
     "entrypoints": {
         "main": [
@@ -52,7 +52,7 @@
             "background": "minecraft:textures/block/dirt.png"
         },
         "catalogue": {
-            "banner": "${mod_id}_logo.png"
+            "banner": "assets/${mod_id}/banner.png"
         }
     }
 }

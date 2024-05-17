@@ -6,6 +6,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -20,33 +21,34 @@ import java.util.List;
 @Mixin(Entity.class)
 public class EntityMixin implements ILootCapture
 {
-    private List<ItemEntity> backpackedDrops;
+    @Unique
+    private List<ItemEntity> backpacked$Drops;
 
     @Nullable
     @Override
     public List<ItemEntity> backpackedGetCapturedDrops()
     {
-        return this.backpackedDrops;
+        return this.backpacked$Drops;
     }
 
     @Override
     public void backpackedStartCapturingDrop()
     {
-        this.backpackedDrops = new ArrayList<>();
+        this.backpacked$Drops = new ArrayList<>();
     }
 
     @Override
     public void backpackedEndCapturingDrop()
     {
-        this.backpackedDrops = null;
+        this.backpacked$Drops = null;
     }
 
     @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;setDefaultPickUpDelay()V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     private void backpackedSpawnItem(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity)
     {
-        if(this.backpackedDrops != null)
+        if(this.backpacked$Drops != null)
         {
-            this.backpackedDrops.add(itemEntity);
+            this.backpacked$Drops.add(itemEntity);
             cir.setReturnValue(itemEntity);
         }
     }
