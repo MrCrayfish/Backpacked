@@ -20,13 +20,7 @@ public class TrashCanBackpack extends Backpack
 
     public TrashCanBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getTrashCan;
+        super(null, null);
     }
 
     @Nullable

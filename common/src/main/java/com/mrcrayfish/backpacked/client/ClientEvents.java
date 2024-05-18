@@ -129,12 +129,12 @@ public class ClientEvents
             if(!canShowBackpackEffects(stack))
                 continue;
 
-            String modelName = stack.getOrCreateTag().getString("BackpackModel");
+            /*String modelName = stack.getOrCreateTag().getString("BackpackModel");
             BackpackModel model = BackpackLayer.getModel(modelName).get();
             if(model == null)
-                continue;
+                continue;*/
 
-            model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
+            //model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
         }
     }
 

@@ -241,7 +241,7 @@ public class CustomiseBackpackScreen extends Screen
         graphics.drawString(this.font, entry.getLabel(), x + 20, y + 6, color, false);
 
         // Draw backpack model
-        drawBackpackModel(graphics, entry.getModel(), x + 8, y + 4, 20, this.animationTick, partialTick);
+        //drawBackpackModel(graphics, entry.getModel(), x + 8, y + 4, 20, this.animationTick, partialTick);
     }
 
     public static void drawBackpackModel(GuiGraphics graphics, BackpackModel model, int x, int y, float scale, int animationTick, float partialTick)
@@ -483,7 +483,7 @@ public class CustomiseBackpackScreen extends Screen
         private final Backpack backpack;
         private final Component label;
         private final List<FormattedCharSequence> unlockTooltip;
-        private final BackpackModel model;
+        //private final BackpackModel model;
 
         public BackpackModelEntry(Backpack backpack, Map<ResourceLocation, Component> progressMap)
         {
@@ -499,7 +499,7 @@ public class CustomiseBackpackScreen extends Screen
                 list.add(Language.getInstance().getVisualOrder(component));
             }
             this.unlockTooltip = ImmutableList.copyOf(list);
-            this.model = (BackpackModel) backpack.getModelSupplier().get();
+            //this.model = (BackpackModel) backpack.getModelSupplier().get();
         }
 
         public String getId()
@@ -522,9 +522,9 @@ public class CustomiseBackpackScreen extends Screen
             return this.backpack;
         }
 
-        public BackpackModel getModel()
+        /*public BackpackModel getModel()
         {
             return this.model;
-        }
+        }*/
     }
 }

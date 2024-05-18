@@ -91,7 +91,7 @@ public class ClientHandler
     {
         if(renderer instanceof PlayerRenderer playerRenderer)
         {
-            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer));
+            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, itemRenderer));
         }
     }
 }

@@ -20,13 +20,7 @@ public class RocketBackpack extends Backpack
 
     public RocketBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getRocket;
+        super(null, null);
     }
 
     @Nullable

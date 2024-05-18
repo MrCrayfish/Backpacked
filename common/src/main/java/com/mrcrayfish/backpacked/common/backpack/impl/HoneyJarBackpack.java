@@ -20,13 +20,7 @@ public class HoneyJarBackpack extends Backpack
 
     public HoneyJarBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getHoneyJar;
+        super(null, null);
     }
 
     @Nullable

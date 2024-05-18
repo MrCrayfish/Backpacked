@@ -27,14 +27,8 @@ public class EndCrystalBackpack extends Backpack
 
     public EndCrystalBackpack()
     {
-        super(ID);
+        super(null, null);
         EntityEvents.LIVING_ENTITY_DEATH.register(this::onLivingEntityDeath);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getEndCrystal;
     }
 
     @Nullable

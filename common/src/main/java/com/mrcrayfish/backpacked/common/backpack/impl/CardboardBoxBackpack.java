@@ -20,13 +20,7 @@ public class CardboardBoxBackpack extends Backpack
 
     public CardboardBoxBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getCardboardBox;
+        super(null, null);
     }
 
     @Nullable

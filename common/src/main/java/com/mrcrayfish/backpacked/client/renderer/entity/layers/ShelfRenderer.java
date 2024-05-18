@@ -33,7 +33,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 
         CompoundTag tag = stack.getOrCreateTag();
         String modelName = tag.getString("BackpackModel");
-        BackpackModel model = BackpackLayer.getModel(modelName).get();
+        /*BackpackModel model = BackpackLayer.getModel(modelName).get();
 
         Direction facing = entity.getDirection();
         poseStack.translate(0.5, 0.0, 0.5);
@@ -52,6 +52,6 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         model.setupAngles(null, animationTick, partialTick);
         model.getStraps().visible = false;
         model.getBag().setPos(0F, 0F, 0F);
-        model.getBag().render(poseStack, builder, light, overlay);
+        model.getBag().render(poseStack, builder, light, overlay);*/
     }
 }

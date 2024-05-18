@@ -10,7 +10,6 @@ import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModLayerDefinitions;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -53,7 +52,7 @@ public class ClientHandler implements ClientModInitializer
             if(entityRenderer instanceof WanderingTraderRenderer renderer) {
                 registrationHelper.register(new VillagerBackpackLayer<>(renderer));
             } else if(entityRenderer instanceof PlayerRenderer renderer) {
-                registrationHelper.register(new BackpackLayer<>(renderer));
+                registrationHelper.register(new BackpackLayer<>(renderer, itemRenderer));
             }
         });
     }

@@ -15,18 +15,12 @@ public class ClassicBackpack extends Backpack
 {
     public ClassicBackpack()
     {
-        super(new ResourceLocation(Constants.MOD_ID, "classic"));
+        super(null, null);
     }
 
     @Override
     public boolean isUnlocked(Player player)
     {
         return true;
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getClassic;
     }
 }

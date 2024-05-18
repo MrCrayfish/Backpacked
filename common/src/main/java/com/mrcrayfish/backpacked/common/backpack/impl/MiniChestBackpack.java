@@ -20,13 +20,7 @@ public class MiniChestBackpack extends Backpack
 
     public MiniChestBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getMiniChest;
+        super(null, null);
     }
 
     @Nullable

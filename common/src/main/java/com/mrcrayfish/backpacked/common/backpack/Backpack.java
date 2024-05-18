@@ -1,25 +1,38 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.data.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
  */
-public abstract class Backpack
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+public class Backpack
 {
-    private final ResourceLocation id;
+    public static final Codec<Backpack> CODEC = RecordCodecBuilder.create(builder -> {
+        return builder.group(Codec.STRING.fieldOf("name").forGetter(backpack -> {
+            return backpack.translationKey;
+        }), ResourceLocation.CODEC.optionalFieldOf("model").forGetter(backpack -> {
+            return backpack.model;
+        })).apply(builder, Backpack::new);
+    });
 
-    public Backpack(ResourceLocation id)
+    private final String translationKey;
+    private ResourceLocation id;
+    private Optional<ResourceLocation> model;
+
+    public Backpack(String translationKey, Optional<ResourceLocation> model)
     {
-        this.id = id;
+        this.translationKey = translationKey;
+        this.model = model;
     }
 
     public ResourceLocation getId()
@@ -27,18 +40,37 @@ public abstract class Backpack
         return this.id;
     }
 
+    public String getTranslationKey()
+    {
+        return this.translationKey;
+    }
+
+    public Optional<ResourceLocation> getModel()
+    {
+        return this.model;
+    }
+
     public boolean isUnlocked(Player player)
     {
         return UnlockManager.get(player).map(impl -> impl.getUnlockedBackpacks().contains(this.id)).orElse(false) || Config.SERVER.common.unlockAllBackpacks.get();
     }
 
-    public void clientTick(Player player, Vec3 pos) {}
-
-    public abstract Supplier<Object> getModelSupplier();
-
     @Nullable
     public IProgressTracker createProgressTracker()
     {
         return null;
+    }
+
+    // Private. Called from BackpackLoader
+    void setup(ResourceLocation id)
+    {
+        this.id = id;
+
+        // Set the default model if none was provided
+        if(this.model.isEmpty())
+        {
+            String name = "backpacked/backpack/" + id.getPath();
+            this.model = Optional.of(new ResourceLocation(id.getNamespace(), name));
+        }
     }
 }

@@ -10,14 +10,15 @@
         "common.ComposterBlockMixin",
         "common.EntityMixin",
         "common.ItemEntityMixin",
-        "common.RandomizableContainerBlockEntityMixin",
         "common.PandaEntityMixin",
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",
+        "common.RandomizableContainerBlockEntityMixin",
         "common.ServerPlayerMixin",
         "common.ServerPlayNetHandlerMixin"
     ],
     "client": [
+        "client.ModelBakeryMixin"
     ],
     "injectors": {
         "defaultRequire": 1

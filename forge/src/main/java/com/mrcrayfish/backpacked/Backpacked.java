@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.backpack.BackpackLoader;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
@@ -11,7 +12,6 @@ import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
-import com.mrcrayfish.framework.FrameworkSetup;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -89,6 +90,12 @@ public class Backpacked
         generator.addProvider(event.includeServer(), new LootTableGen(packOutput));
         generator.addProvider(event.includeServer(), new RecipeGen(packOutput));
         generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
+    }
+
+    @SubscribeEvent
+    public void addReloadListener(AddReloadListenerEvent event)
+    {
+        event.addListener(new BackpackLoader());
     }
 
     @SubscribeEvent

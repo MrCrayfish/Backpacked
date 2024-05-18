@@ -28,13 +28,7 @@ public class BambooBasketBackpack extends Backpack
 
     public BambooBasketBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getBambooBasketModel;
+        super(null, null);
     }
 
     @Override
