@@ -17,18 +17,12 @@ public class StandardBackpack extends Backpack
 
     public StandardBackpack()
     {
-        super(ID);
+        super(null, null);
     }
 
     @Override
     public boolean isUnlocked(Player player)
     {
         return true;
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getStandardModel;
     }
 }

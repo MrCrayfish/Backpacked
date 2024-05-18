@@ -20,13 +20,7 @@ public class PiglinPackBackpack extends Backpack
 
     public PiglinPackBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getPiglinPack;
+        super(null, null);
     }
 
     @Nullable

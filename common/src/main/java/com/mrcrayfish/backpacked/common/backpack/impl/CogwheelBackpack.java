@@ -21,13 +21,7 @@ public class CogwheelBackpack extends Backpack
 
     public CogwheelBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getCogwheel;
+        super(null, null);
     }
 
     @Nullable

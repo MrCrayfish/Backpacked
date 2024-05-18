@@ -20,13 +20,7 @@ public class TurtleShellBackpack extends Backpack
 
     public TurtleShellBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getTurtleShell;
+        super(null, null);
     }
 
     @Nullable

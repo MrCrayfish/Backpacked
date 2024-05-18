@@ -20,13 +20,7 @@ public class SheepPlushBackpack extends Backpack
 
     public SheepPlushBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getSheepPlush;
+        super(null, null);
     }
 
     @Nullable

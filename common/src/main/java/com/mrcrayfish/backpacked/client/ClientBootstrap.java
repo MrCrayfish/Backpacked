@@ -17,9 +17,9 @@ public class ClientBootstrap
 
     public static void init()
     {
-        BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
+        /*BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> {
             BackpackLayer.registerModel(backpack.getId(), () -> (BackpackModel) backpack.getModelSupplier().get());
-        });
+        });*/
         ClientEvents.init();
     }
 }

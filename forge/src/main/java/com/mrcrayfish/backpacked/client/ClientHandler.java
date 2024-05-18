@@ -12,8 +12,9 @@ import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModLayerDefinitions;
 import com.mrcrayfish.backpacked.integration.Controllable;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EntityType;
@@ -42,7 +43,6 @@ public class ClientHandler
     }
 
     //TODO convert these to fabric
-
     //Check
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
     {
@@ -70,8 +70,8 @@ public class ClientHandler
 
     public static void onAddLayers(EntityRenderersEvent.AddLayers event)
     {
-        addBackpackLayer(event.getSkin("default"));
-        addBackpackLayer(event.getSkin("slim"));
+        addBackpackLayer(event.getSkin("default"), event.getContext().getItemRenderer());
+        addBackpackLayer(event.getSkin("slim"), event.getContext().getItemRenderer());
 
         EntityRenderer<?> renderer = event.getRenderer(EntityType.WANDERING_TRADER);
         if(renderer instanceof WanderingTraderRenderer traderRenderer)
@@ -82,11 +82,11 @@ public class ClientHandler
         ModelInstances.get().loadModels(event.getEntityModels());
     }
 
-    private static void addBackpackLayer(LivingEntityRenderer<?, ?> renderer)
+    private static void addBackpackLayer(EntityRenderer<?> renderer, ItemRenderer itemRenderer)
     {
         if(renderer instanceof PlayerRenderer playerRenderer)
         {
-            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer));
+            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, itemRenderer));
         }
     }
 }

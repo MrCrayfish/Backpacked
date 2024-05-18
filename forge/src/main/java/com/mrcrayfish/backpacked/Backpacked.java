@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.backpack.BackpackLoader;
 import com.mrcrayfish.backpacked.data.pickpocket.ForgePickpocketChallenge;
 import com.mrcrayfish.backpacked.data.tracker.ForgeUnlockTracker;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
@@ -24,6 +25,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -63,8 +65,6 @@ public class Backpacked
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
         bus.addListener(this::onGatherData);
-        bus.addListener(ForgeUnlockTracker::registerCapability);
-        bus.addListener(ForgePickpocketChallenge::registerCapability);
         MinecraftForge.EVENT_BUS.register(this);
         controllableLoaded = ModList.get().isLoaded("controllable");
         curiosLoaded = ModList.get().isLoaded("curios");
@@ -92,6 +92,12 @@ public class Backpacked
         generator.addProvider(event.includeServer(), new LootTableGen(packOutput));
         generator.addProvider(event.includeServer(), new RecipeGen(packOutput));
         generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
+    }
+
+    @SubscribeEvent
+    public void addReloadListener(AddReloadListenerEvent event)
+    {
+        event.addListener(new BackpackLoader());
     }
 
     @SubscribeEvent

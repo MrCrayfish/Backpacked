@@ -28,13 +28,7 @@ public class WanderingBagBackpack extends Backpack
 
     public WanderingBagBackpack()
     {
-        super(ID);
-    }
-
-    @Override
-    public Supplier<Object> getModelSupplier()
-    {
-        return ModelInstances.get()::getWanderingBag;
+        super(null, null);
     }
 
     @Override
