@@ -26,13 +26,13 @@ public class BackpackArgument implements ArgumentType<Backpack>
     public Backpack parse(StringReader reader) throws CommandSyntaxException
     {
         ResourceLocation id = ResourceLocation.read(reader);
-        return BackpackManager.instance().getRegisteredBackpacks().stream().filter(backpack -> backpack.getId().equals(id)).findFirst().orElse(null);
+        return BackpackManager.instance().getBackpacks().stream().filter(backpack -> backpack.getId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
     {
-        BackpackManager.instance().getRegisteredBackpacks().forEach(backpack -> builder.suggest(backpack.getId().toString()));
+        BackpackManager.instance().getBackpacks().forEach(backpack -> builder.suggest(backpack.getId().toString()));
         return builder.buildFuture();
     }
 }

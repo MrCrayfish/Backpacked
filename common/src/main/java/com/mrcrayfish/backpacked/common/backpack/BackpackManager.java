@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,41 +30,63 @@ public final class BackpackManager
         return instance;
     }
 
-    private Map<ResourceLocation, Backpack> registeredBackpacks = new HashMap<>();
-    private Map<ResourceLocation, ModelMeta> registeredModelMeta = new HashMap<>();
+    private Map<ResourceLocation, Backpack> loadedBackpacks = new HashMap<>();
+
+    // Client only
+    private Map<ResourceLocation, Backpack> clientBackpacks = new HashMap<>();
+    private Map<ResourceLocation, ModelMeta> clientModelMeta = new HashMap<>();
 
     private BackpackManager() {}
 
     public void updateBackpacks(Map<ResourceLocation, Backpack> map)
     {
-        this.registeredBackpacks = map;
+        this.loadedBackpacks = map;
     }
 
     public void updateModelMeta(Map<ResourceLocation, ModelMeta> map)
     {
-        this.registeredModelMeta = map;
+        this.clientModelMeta = map;
+    }
+
+    public void updateClientBackpacks(List<Backpack> backpacks)
+    {
+        this.clientBackpacks.clear();
+        backpacks.forEach(backpack -> {
+            this.clientBackpacks.put(backpack.getId(), backpack);
+        });
     }
 
     @Nullable
     public Backpack getBackpack(ResourceLocation id)
     {
-        return this.registeredBackpacks.get(id);
+        return this.loadedBackpacks.get(id);
+    }
+
+    public List<Backpack> getBackpacks()
+    {
+        return ImmutableList.copyOf(this.loadedBackpacks.values());
     }
 
     @Nullable
-    public Backpack getBackpack(String id)
+    public Backpack getClientBackpack(ResourceLocation id)
     {
-        return this.registeredBackpacks.get(ResourceLocation.tryParse(id));
+        return this.clientBackpacks.get(id);
     }
 
-    public List<Backpack> getRegisteredBackpacks()
+    @Nullable
+    public Backpack getClientBackpack(String id)
     {
-        return ImmutableList.copyOf(this.registeredBackpacks.values());
+        return this.clientBackpacks.get(ResourceLocation.tryParse(id));
+    }
+
+    public List<Backpack> getClientBackpacks()
+    {
+        return ImmutableList.copyOf(this.clientBackpacks.values());
     }
 
     public ModelMeta getModelMeta(ResourceLocation id)
     {
-        return this.registeredModelMeta.getOrDefault(id, ModelMeta.DEFAULT);
+        return this.clientModelMeta.getOrDefault(id, ModelMeta.DEFAULT);
     }
 
     public void unlockBackpack(ServerPlayer player, ResourceLocation id)
@@ -73,7 +96,7 @@ public final class BackpackManager
         if(!Config.SERVER.common.unlockAllBackpacks.get())
             return;
 
-        if(!this.registeredBackpacks.containsKey(id))
+        if(!this.loadedBackpacks.containsKey(id))
             return;
 
         UnlockManager.get(player).ifPresent(impl -> {
@@ -81,5 +104,10 @@ public final class BackpackManager
                 Network.getPlay().sendToPlayer(() -> player, new MessageUnlockBackpack(id));
             }
         });
+    }
+
+    public MessageSyncBackpacks getSyncMessage()
+    {
+        return new MessageSyncBackpacks(this.getBackpacks());
     }
 }

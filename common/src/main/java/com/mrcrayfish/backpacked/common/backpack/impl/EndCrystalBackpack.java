@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.common.backpack.impl;
 
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.client.model.ModelInstances;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.data.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.tracker.ProgressFormatters;
@@ -16,7 +15,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -27,7 +25,7 @@ public class EndCrystalBackpack extends Backpack
 
     public EndCrystalBackpack()
     {
-        super(null);
+        super(null, null);
         EntityEvents.LIVING_ENTITY_DEATH.register(this::onLivingEntityDeath);
     }
 

@@ -31,7 +31,7 @@ public class UnlockTracker implements Serializable
     {
         this.updatable = updatable;
         ImmutableMap.Builder<ResourceLocation, IProgressTracker> builder = ImmutableMap.builder();
-        BackpackManager.instance().getRegisteredBackpacks().forEach(backpack ->
+        BackpackManager.instance().getBackpacks().forEach(backpack ->
         {
             IProgressTracker tracker = backpack.createProgressTracker();
             if(tracker != null)
