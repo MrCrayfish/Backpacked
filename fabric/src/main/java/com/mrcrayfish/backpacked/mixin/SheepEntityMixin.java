@@ -25,7 +25,7 @@ public class SheepEntityMixin
         if(!(player instanceof ServerPlayer))
             return;
 
-        UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(SheepPlushBackpack.ID)).ifPresent(tracker -> {
+        UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(SheepPlushBackpack.ID)).ifPresent(tracker -> {
             CountProgressTracker countTracker = (CountProgressTracker) tracker;
             countTracker.increment((ServerPlayer) player);
         });

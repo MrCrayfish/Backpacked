@@ -28,7 +28,7 @@ public class BeehiveBlockMixin
     {
         if(player instanceof ServerPlayer)
         {
-            UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(HoneyJarBackpack.ID)).ifPresent(tracker -> {
+            UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(HoneyJarBackpack.ID)).ifPresent(tracker -> {
                 ((CountProgressTracker) tracker).increment((ServerPlayer) player);
             });
         }

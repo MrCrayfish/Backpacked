@@ -24,7 +24,7 @@ public class PandaEntityMixin
         if(!(player instanceof ServerPlayer))
             return;
 
-        UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(BambooBasketBackpack.ID)).ifPresent(tracker -> {
+        UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(BambooBasketBackpack.ID)).ifPresent(tracker -> {
             BambooBasketBackpack.ProgressTracker progressTracker = (BambooBasketBackpack.ProgressTracker) tracker;
             progressTracker.addPanda((Panda) (Object) this, (ServerPlayer) player);
         });

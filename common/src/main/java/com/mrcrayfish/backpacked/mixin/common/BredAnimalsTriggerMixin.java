@@ -25,7 +25,7 @@ public class BredAnimalsTriggerMixin
         if((!(animal instanceof Turtle)))
             return;
 
-        UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(TurtleShellBackpack.ID)).ifPresent(tracker -> {
+        UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(TurtleShellBackpack.ID)).ifPresent(tracker -> {
             CountProgressTracker countTracker = (CountProgressTracker) tracker;
             countTracker.increment(player);
         });

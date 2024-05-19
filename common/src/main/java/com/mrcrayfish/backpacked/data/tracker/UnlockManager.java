@@ -36,28 +36,28 @@ public class UnlockManager
         testForCompletion.add(player);
     }
 
-    public static Optional<UnlockTracker> get(Player player)
+    public static Optional<UnlockTracker> getTracker(Player player)
     {
         return Optional.ofNullable(ModSyncedDataKeys.UNLOCK_TRACKER.getValue(player));
     }
 
     private static void onPlayerLoggedIn(Player player)
     {
-        get(player).ifPresent(unlockTracker -> {
+        getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
     private static void onPlayerRespawn(Player player, boolean finishedGame)
     {
-        get(player).ifPresent(unlockTracker -> {
+        getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
     private static void onPlayerChangedDimension(Player player, ResourceKey<Level> oldDimension, ResourceKey<Level> newDimension)
     {
-        get(player).ifPresent(unlockTracker -> {
+        getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
@@ -69,7 +69,7 @@ public class UnlockManager
 
         for(ServerPlayer player : testForCompletion)
         {
-            get(player).ifPresent(unlockTracker ->
+            getTracker(player).ifPresent(unlockTracker ->
             {
                 unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
                 {

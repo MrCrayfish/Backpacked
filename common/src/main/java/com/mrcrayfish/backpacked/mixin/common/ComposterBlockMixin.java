@@ -32,7 +32,7 @@ public class ComposterBlockMixin
         if(!(player instanceof ServerPlayer))
             return;
 
-        UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(TrashCanBackpack.ID)).ifPresent(tracker -> {
+        UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(TrashCanBackpack.ID)).ifPresent(tracker -> {
             CountProgressTracker countTracker = (CountProgressTracker) tracker;
             countTracker.increment((ServerPlayer) player);
         });

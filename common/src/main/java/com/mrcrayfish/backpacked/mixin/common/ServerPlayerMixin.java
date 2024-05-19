@@ -25,7 +25,7 @@ public class ServerPlayerMixin
             return;
 
         int distance = (int) Math.round(Math.sqrt(dx * dx + dy * dy + dz * dz));
-        UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(RocketBackpack.ID)).ifPresent(tracker -> {
+        UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(RocketBackpack.ID)).ifPresent(tracker -> {
             CountProgressTracker countTracker = (CountProgressTracker) tracker;
             countTracker.increment(distance, (ServerPlayer) player);
         });

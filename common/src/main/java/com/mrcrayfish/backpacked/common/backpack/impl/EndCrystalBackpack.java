@@ -41,7 +41,7 @@ public class EndCrystalBackpack extends Backpack
         Entity sourceEntity = source.getEntity();
         if(entity instanceof EnderDragon && sourceEntity instanceof ServerPlayer player)
         {
-            UnlockManager.get(player).flatMap(tracker -> tracker.getProgressTracker(ID)).ifPresent(tracker -> {
+            UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(ID)).ifPresent(tracker -> {
                 ((CountProgressTracker) tracker).increment(player);
             });
         }

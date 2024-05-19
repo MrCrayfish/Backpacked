@@ -31,7 +31,7 @@ public class ServerPlayerGameModeMixin
     {
         if(state.is(BlockTags.LOGS))
         {
-            UnlockManager.get(this.player).flatMap(tracker -> tracker.getProgressTracker(CardboardBoxBackpack.ID)).ifPresent(tracker -> {
+            UnlockManager.getTracker(this.player).flatMap(tracker -> tracker.getProgressTracker(CardboardBoxBackpack.ID)).ifPresent(tracker -> {
                 CountProgressTracker countTracker = (CountProgressTracker) tracker;
                 countTracker.increment(this.player);
             });

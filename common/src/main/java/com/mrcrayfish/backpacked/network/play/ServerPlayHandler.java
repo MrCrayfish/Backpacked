@@ -124,7 +124,7 @@ public class ServerPlayHandler
         if(Services.BACKPACK.getBackpackStack(player).isEmpty())
             return;
 
-        UnlockManager.get(player).ifPresent(unlockTracker ->
+        UnlockManager.getTracker(player).ifPresent(unlockTracker ->
         {
             Map<ResourceLocation, Component> map = new HashMap<>();
             for(Backpack backpack : BackpackManager.instance().getBackpacks())
