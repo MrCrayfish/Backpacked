@@ -19,6 +19,8 @@ public class ModelMeta
             })).apply(builder, ModelMeta::new);
     });
 
+    // TODO add overrrides for model, straps
+
     private final Vector3f shelfOffset;
 
     public ModelMeta(Vector3f shelfOffset)

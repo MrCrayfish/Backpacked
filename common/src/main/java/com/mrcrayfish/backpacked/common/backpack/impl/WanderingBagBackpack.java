@@ -28,7 +28,7 @@ public class WanderingBagBackpack extends Backpack
 
     public WanderingBagBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Override

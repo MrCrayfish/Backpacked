@@ -20,7 +20,7 @@ public class HoneyJarBackpack extends Backpack
 
     public HoneyJarBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

@@ -27,7 +27,7 @@ public class EndCrystalBackpack extends Backpack
 
     public EndCrystalBackpack()
     {
-        super(null, null);
+        super(null);
         EntityEvents.LIVING_ENTITY_DEATH.register(this::onLivingEntityDeath);
     }
 

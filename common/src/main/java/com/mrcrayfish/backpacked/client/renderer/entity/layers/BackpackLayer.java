@@ -8,13 +8,10 @@ import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -58,23 +55,26 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             if(backpack == null)
                 return;
 
-            ResourceLocation location = backpack.getModel().orElse(DEFAULT_BACKPACK);
+            ResourceLocation location = backpack.getBaseModel();
             BakedModel model = ClientServices.MODEL.getBakedModel(location);
             if(model == null)
                 return;
 
             pose.pushPose();
-            //backpack.transformToPlayerBody(this.getParentModel().body, !chestStack.isEmpty());
-            //backpack.setupAngles(player, player.tickCount, partialTick);
             pose.mulPose(Axis.YP.rotationDegrees(180.0F));
             pose.scale(1.05F, -1.05F, -1.05F);
             int offset = !chestStack.isEmpty() ? 3 : 2;
             pose.translate(0, -0.06, offset * 0.0625);
-            //pose.mulPose(Axis.);
-            this.itemRenderer.render(stack, ItemDisplayContext.HEAD, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
-
+            this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, this.getModel(backpack.getBaseModel()));
+            this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, this.getModel(backpack.getStrapsModel()));
             pose.popPose();
         }
+    }
+
+    private BakedModel getModel(ResourceLocation location)
+    {
+        BakedModel model = ClientServices.MODEL.getBakedModel(location);
+        return model != null ? model : this.itemRenderer.getItemModelShaper().getModelManager().getMissingModel();
     }
 
     public static boolean canRenderWithElytra(ItemStack stack)

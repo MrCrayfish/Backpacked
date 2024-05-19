@@ -20,7 +20,7 @@ public class TrashCanBackpack extends Backpack
 
     public TrashCanBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

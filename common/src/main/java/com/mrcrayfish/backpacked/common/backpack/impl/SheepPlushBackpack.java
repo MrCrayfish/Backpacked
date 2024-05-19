@@ -20,7 +20,7 @@ public class SheepPlushBackpack extends Backpack
 
     public SheepPlushBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

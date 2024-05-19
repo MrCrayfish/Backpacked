@@ -14,30 +14,28 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class Backpack
 {
     public static final Codec<Backpack> CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(Codec.STRING.fieldOf("name").forGetter(backpack -> {
             return backpack.translationKey;
-        }), ResourceLocation.CODEC.optionalFieldOf("model").forGetter(backpack -> {
-            return backpack.model;
         })).apply(builder, Backpack::new);
     });
 
     private final String translationKey;
     private ResourceLocation id;
-    private Optional<ResourceLocation> model;
+    private ResourceLocation baseModel;
+    private ResourceLocation strapsModel;
     private boolean setup = false;
 
-    public Backpack(String translationKey, Optional<ResourceLocation> model)
+    public Backpack(String translationKey)
     {
         this.translationKey = translationKey;
-        this.model = model;
     }
 
     public ResourceLocation getId()
     {
+        this.checkSetup();
         return this.id;
     }
 
@@ -46,9 +44,16 @@ public class Backpack
         return this.translationKey;
     }
 
-    public Optional<ResourceLocation> getModel()
+    public ResourceLocation getBaseModel()
     {
-        return this.model;
+        this.checkSetup();
+        return this.baseModel;
+    }
+
+    public ResourceLocation getStrapsModel()
+    {
+        this.checkSetup();
+        return this.strapsModel;
     }
 
     public ModelMeta getModelMeta()
@@ -71,14 +76,18 @@ public class Backpack
     {
         if(!this.setup)
         {
-            this.setup = true;
             this.id = id;
-            if(this.model.isEmpty())
-            {
-                // Set the default model if none was provided
-                String name = "backpacked/" + id.getPath();
-                this.model = Optional.of(new ResourceLocation(id.getNamespace(), name));
-            }
+            String name = "backpacked/" + id.getPath();
+            this.baseModel = new ResourceLocation(id.getNamespace(), name);
+            this.strapsModel = new ResourceLocation(id.getNamespace(), name + "_straps");
+            this.setup = true;
         }
+    }
+
+    private boolean checkSetup()
+    {
+        if(!this.setup)
+            throw new RuntimeException("Backpack is not setup");
+        return true;
     }
 }

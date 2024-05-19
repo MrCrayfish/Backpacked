@@ -20,7 +20,7 @@ public class CardboardBoxBackpack extends Backpack
 
     public CardboardBoxBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

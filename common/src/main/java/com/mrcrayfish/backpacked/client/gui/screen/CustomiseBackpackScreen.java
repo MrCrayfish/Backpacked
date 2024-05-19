@@ -16,8 +16,10 @@ import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
 import com.mrcrayfish.backpacked.common.backpack.impl.StandardBackpack;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
+import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.ChatFormatting;
@@ -31,6 +33,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +45,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -236,28 +241,23 @@ public class CustomiseBackpackScreen extends Screen
         graphics.drawString(this.font, entry.getLabel(), x + 20, y + 6, color, false);
 
         // Draw backpack model
-        //drawBackpackModel(graphics, entry.getModel(), x + 8, y + 4, 20, this.animationTick, partialTick);
+        drawBackpackModel(this.minecraft, graphics, entry.getBackpack(), x + 10, y + 10, 20, this.animationTick, partialTick);
     }
 
-    public static void drawBackpackModel(GuiGraphics graphics, BackpackModel model, int x, int y, float scale, int animationTick, float partialTick)
+    public static void drawBackpackModel(Minecraft mc, GuiGraphics graphics, Backpack backpack, int x, int y, float scale, int animationTick, float partialTick)
     {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(x, y, 50);
-        poseStack.mulPose(Axis.XP.rotationDegrees(-10F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(35F));
-        poseStack.scale(scale, scale, scale);
-        Lighting.setupForFlatItems();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        MultiBufferSource.BufferSource source = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-        VertexConsumer builder = source.getBuffer(model.renderType(model.getTextureLocation()));
-        model.setupAngles(null, animationTick, partialTick);
-        model.getStraps().visible = false;
-        ModelPart bag = model.getBag();
-        bag.setPos(0, 0, 0);
-        bag.render(poseStack, builder, 15728880, OverlayTexture.NO_OVERLAY);
-        source.endBatch();
-        poseStack.popPose();
+        BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+        model = model != null ? model : mc.getModelManager().getMissingModel();
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+        pose.translate(x, y, 200);
+        pose.mulPoseMatrix(new Matrix4f().scaling(1, -1, 1));
+        pose.scale(16, 16, 16);
+        Lighting.setupFor3DItems();
+        mc.getItemRenderer().render(new ItemStack(ModItems.BACKPACK.get()), ItemDisplayContext.GUI, false, graphics.pose(), graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
+        graphics.flush();
+        Lighting.setupFor3DItems();
+        pose.popPose();
     }
 
     private int getHoveredIndex(int mouseX, int mouseY)
