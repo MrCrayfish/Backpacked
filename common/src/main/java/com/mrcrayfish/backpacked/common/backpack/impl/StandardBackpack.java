@@ -17,7 +17,7 @@ public class StandardBackpack extends Backpack
 
     public StandardBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class CogwheelBackpack extends Backpack
 
     public CogwheelBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

@@ -20,7 +20,7 @@ public class MiniChestBackpack extends Backpack
 
     public MiniChestBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

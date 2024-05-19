@@ -20,7 +20,7 @@ public class PiglinPackBackpack extends Backpack
 
     public PiglinPackBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

@@ -20,7 +20,7 @@ public class RocketBackpack extends Backpack
 
     public RocketBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

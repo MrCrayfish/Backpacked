@@ -15,7 +15,7 @@ public class ClassicBackpack extends Backpack
 {
     public ClassicBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class TurtleShellBackpack extends Backpack
 
     public TurtleShellBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Nullable

@@ -28,7 +28,7 @@ public class BambooBasketBackpack extends Backpack
 
     public BambooBasketBackpack()
     {
-        super(null, null);
+        super(null);
     }
 
     @Override
