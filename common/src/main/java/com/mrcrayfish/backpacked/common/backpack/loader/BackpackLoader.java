@@ -1,9 +1,8 @@
-package com.mrcrayfish.backpacked.common.backpack;
+package com.mrcrayfish.backpacked.common.backpack.loader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
@@ -12,23 +11,17 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Author: MrCrayfish
  */
 public class BackpackLoader extends SimpleJsonResourceReloadListener
 {
-    private static final String DIRECTORY = "backpacked/backpacks";
+    private static final String DIRECTORY = "backpacked";
     private static final Gson GSON = new GsonBuilder().create();
 
     public BackpackLoader()
@@ -51,6 +44,6 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
                 backpacks.put(location, backpack);
             }
         });
-        BackpackManager.instance().accept(backpacks);
+        BackpackManager.instance().updateBackpacks(backpacks);
     }
 }

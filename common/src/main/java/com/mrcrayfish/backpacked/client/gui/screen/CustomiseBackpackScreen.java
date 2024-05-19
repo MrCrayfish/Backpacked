@@ -476,7 +476,6 @@ public class CustomiseBackpackScreen extends Screen
         private final Backpack backpack;
         private final Component label;
         private final List<FormattedCharSequence> unlockTooltip;
-        //private final BackpackModel model;
 
         public BackpackModelEntry(Backpack backpack, Map<ResourceLocation, Component> progressMap)
         {
@@ -514,10 +513,5 @@ public class CustomiseBackpackScreen extends Screen
         {
             return this.backpack;
         }
-
-        /*public BackpackModel getModel()
-        {
-            return this.model;
-        }*/
     }
 }
