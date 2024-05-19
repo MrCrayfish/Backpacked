@@ -28,6 +28,7 @@ public class Backpack
     private final String translationKey;
     private ResourceLocation id;
     private Optional<ResourceLocation> model;
+    private boolean setup = false;
 
     public Backpack(String translationKey, Optional<ResourceLocation> model)
     {
@@ -50,6 +51,11 @@ public class Backpack
         return this.model;
     }
 
+    public ModelMeta getModelMeta()
+    {
+        return BackpackManager.instance().getModelMeta(this.id);
+    }
+
     public boolean isUnlocked(Player player)
     {
         return UnlockManager.get(player).map(impl -> impl.getUnlockedBackpacks().contains(this.id)).orElse(false) || Config.SERVER.common.unlockAllBackpacks.get();
@@ -61,16 +67,18 @@ public class Backpack
         return null;
     }
 
-    // Private. Called from BackpackLoader
-    void setup(ResourceLocation id)
+    public void setup(ResourceLocation id)
     {
-        this.id = id;
-
-        // Set the default model if none was provided
-        if(this.model.isEmpty())
+        if(!this.setup)
         {
-            String name = "backpacked/backpack/" + id.getPath();
-            this.model = Optional.of(new ResourceLocation(id.getNamespace(), name));
+            this.setup = true;
+            this.id = id;
+            if(this.model.isEmpty())
+            {
+                // Set the default model if none was provided
+                String name = "backpacked/" + id.getPath();
+                this.model = Optional.of(new ResourceLocation(id.getNamespace(), name));
+            }
         }
     }
 }

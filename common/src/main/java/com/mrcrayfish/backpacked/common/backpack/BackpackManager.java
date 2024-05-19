@@ -2,11 +2,9 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.impl.*;
 import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
-import com.mrcrayfish.framework.platform.Services;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -32,13 +30,18 @@ public final class BackpackManager
     }
 
     private Map<ResourceLocation, Backpack> registeredBackpacks = new HashMap<>();
+    private Map<ResourceLocation, ModelMeta> registeredModelMeta = new HashMap<>();
 
     private BackpackManager() {}
 
-    // Private. Only called from BackpackLoader
-    void accept(Map<ResourceLocation, Backpack> backpacks)
+    public void updateBackpacks(Map<ResourceLocation, Backpack> map)
     {
-        this.registeredBackpacks = backpacks;
+        this.registeredBackpacks = map;
+    }
+
+    public void updateModelMeta(Map<ResourceLocation, ModelMeta> map)
+    {
+        this.registeredModelMeta = map;
     }
 
     @Nullable
@@ -56,6 +59,11 @@ public final class BackpackManager
     public List<Backpack> getRegisteredBackpacks()
     {
         return ImmutableList.copyOf(this.registeredBackpacks.values());
+    }
+
+    public ModelMeta getModelMeta(ResourceLocation id)
+    {
+        return this.registeredModelMeta.getOrDefault(id, ModelMeta.DEFAULT);
     }
 
     public void unlockBackpack(ServerPlayer player, ResourceLocation id)

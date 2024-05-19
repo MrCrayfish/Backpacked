@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 public class ModelBakeryMixin
 {
     @Unique
-    private static final Predicate<ResourceLocation> BACKPACKED_MODEL_TEST = location -> location.getPath().startsWith("models/backpacked/backpack");
+    private static final Predicate<ResourceLocation> BACKPACKED_MODEL_TEST = location -> location.getPath().startsWith("models/backpacked");
 
     @Shadow
     @Final

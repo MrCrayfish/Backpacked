@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
-import com.mrcrayfish.backpacked.common.backpack.BackpackLoader;
+import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
@@ -55,6 +55,7 @@ public class Backpacked
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            bus.addListener(ClientHandler::onRegisterClientLoaders);
             bus.addListener(ClientHandler::onRegisterLayerDefinitions);
             bus.addListener(ClientHandler::onRegisterRenderers);
             bus.addListener(ClientHandler::onAddLayers);

@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Backpacked;
+import com.mrcrayfish.backpacked.common.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.model.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.backpack.*;
@@ -12,7 +13,6 @@ import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModLayerDefinitions;
 import com.mrcrayfish.backpacked.integration.Controllable;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -41,6 +42,11 @@ public class ClientHandler
         {
             MinecraftForge.EVENT_BUS.register(new ForgeClientEvents());
         }
+    }
+
+    public static void onRegisterClientLoaders(RegisterClientReloadListenersEvent event)
+    {
+        event.registerReloadListener(new ModelMetaLoader());
     }
 
     //TODO convert these to fabric
