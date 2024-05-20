@@ -9,10 +9,9 @@
         "EntityMixin",
         "FabricPlayerMixin",
         "LivingEntityMixin",
-        "ServerPlayerGameModeMixin",
         "SheepEntityMixin"
     ],
-    "client": [ "EntityModelSetMixin" ],
+    "client": [],
     "injectors": {
         "defaultRequire": 1
     }

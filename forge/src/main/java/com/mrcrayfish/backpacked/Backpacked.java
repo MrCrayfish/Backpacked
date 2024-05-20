@@ -56,7 +56,6 @@ public class Backpacked
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             bus.addListener(ClientHandler::onRegisterClientLoaders);
-            bus.addListener(ClientHandler::onRegisterLayerDefinitions);
             bus.addListener(ClientHandler::onRegisterRenderers);
             bus.addListener(ClientHandler::onAddLayers);
             ClientBootstrap.earlyInit();
