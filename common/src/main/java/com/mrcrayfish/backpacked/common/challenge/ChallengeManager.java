@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalsChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.KillMobsChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.MineBlocksChallenge;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,8 +32,9 @@ public final class ChallengeManager
 
     private ChallengeManager()
     {
-        this.register(new ResourceLocation(Constants.MOD_ID, "kill_mobs"), KillMobsChallenge.CODEC, KillMobsChallenge.SERIALIZER);
-        this.register(new ResourceLocation(Constants.MOD_ID, "feed_animals"), FeedAnimalsChallenge.CODEC, FeedAnimalsChallenge.SERIALIZER);
+        this.register(KillMobsChallenge.ID, KillMobsChallenge.CODEC, KillMobsChallenge.SERIALIZER);
+        this.register(FeedAnimalsChallenge.ID, FeedAnimalsChallenge.CODEC, FeedAnimalsChallenge.SERIALIZER);
+        this.register(MineBlocksChallenge.ID, MineBlocksChallenge.CODEC, MineBlocksChallenge.SERIALIZER);
     }
 
     public <C extends Challenge, T extends ChallengeSerializer<C>> void register(ResourceLocation id, Codec<C> codec, T serializer)
