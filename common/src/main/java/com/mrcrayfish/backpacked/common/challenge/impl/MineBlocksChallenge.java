@@ -18,14 +18,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
  */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MineBlocksChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_blocks");
@@ -38,17 +41,21 @@ public class MineBlocksChallenge extends Challenge
             return challenge.values;
         }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
             return challenge.count;
+        }), BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("using_item").forGetter(challenge -> {
+            return challenge.item;
         })).apply(builder, MineBlocksChallenge::new);
     });
 
     private final List<Value> values;
     private final int count;
+    private final Optional<Item> item;
 
-    private MineBlocksChallenge(List<Value> values, int count)
+    private MineBlocksChallenge(List<Value> values, int count, Optional<Item> item)
     {
         super(ID);
         this.values = values;
         this.count = count;
+        this.item = item;
     }
 
     @Override
@@ -60,7 +67,7 @@ public class MineBlocksChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker()
     {
-        return new Tracker(this.count, this.values);
+        return new Tracker(this.count, this.values, this.item);
     }
 
     protected interface Value
@@ -159,6 +166,8 @@ public class MineBlocksChallenge extends Challenge
         {
             buf.writeCollection(challenge.values, (buf1, value) -> Value.write(value, buf1));
             buf.writeVarInt(challenge.count);
+            buf.writeOptional(challenge.item, (buf1, item) ->
+                buf1.writeId(BuiltInRegistries.ITEM, item));
         }
 
         @Override
@@ -166,7 +175,8 @@ public class MineBlocksChallenge extends Challenge
         {
             List<Value> values = buf.readList(Value::read);
             int count = buf.readVarInt();
-            return new MineBlocksChallenge(values, count);
+            Optional<Item> item = buf.readOptional(buf1 -> buf1.readById(BuiltInRegistries.ITEM));
+            return new MineBlocksChallenge(values, count, item);
         }
 
         @Override
@@ -178,14 +188,16 @@ public class MineBlocksChallenge extends Challenge
 
     protected static class Tracker extends CountProgressTracker
     {
-        protected Tracker(int maxCount, List<Value> values)
+        protected Tracker(int maxCount, List<Value> values, Optional<Item> usedItem)
         {
             super(maxCount, ProgressFormatters.MINED_X_OF_X);
-            UnlockManager.instance().addEventListener(EventType.MINED_BLOCK, (state, player) -> {
+            UnlockManager.instance().addEventListener(EventType.MINED_BLOCK, (state, stack, player) -> {
                 if(this.isComplete() || player.level().isClientSide())
                     return;
                 if(values.stream().anyMatch(value -> value.test(state))) {
-                    this.increment((ServerPlayer) player);
+                    if(usedItem.isEmpty() || usedItem.stream().anyMatch(stack::is)) {
+                        this.increment((ServerPlayer) player);
+                    }
                 }
             });
         }

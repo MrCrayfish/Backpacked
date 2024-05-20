@@ -4,7 +4,12 @@ import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,12 +33,19 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ServerPlayerGameMode.class)
 public class ServerPlayerGameModeMixin
 {
+    /*******************************
+     * Capture mining block events *
+     *******************************/
+
     @Shadow
     @Final
     protected ServerPlayer player;
 
     @Unique
     private BlockState backpacked$capturedMinedBlock;
+
+    @Unique
+    private ItemStack backpacked$capturedMinedItem;
 
     @Inject(method = "destroyBlock", at = @At(
         value = "INVOKE_ASSIGN",
@@ -44,6 +56,7 @@ public class ServerPlayerGameModeMixin
     private void backpackedOnBlockMined(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state)
     {
         this.backpacked$capturedMinedBlock = state;
+        this.backpacked$capturedMinedItem = this.player.getMainHandItem();
     }
 
     @Inject(method = "destroyAndAck", at = @At(
@@ -52,9 +65,9 @@ public class ServerPlayerGameModeMixin
         ordinal = 0))
     private void backpackedAfterSuccessfulDestroy(BlockPos pos, int action, String message, CallbackInfo ci)
     {
-        if(this.backpacked$capturedMinedBlock != null)
+        if(this.backpacked$capturedMinedBlock != null && this.backpacked$capturedMinedItem != null)
         {
-            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, this.player);
+            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, this.backpacked$capturedMinedItem, this.player);
         }
     }
 
