@@ -1,9 +1,6 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mojang.authlib.GameProfile;
-import com.mrcrayfish.backpacked.common.backpack.impl.RocketBackpack;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
-import com.mrcrayfish.backpacked.data.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
@@ -12,7 +9,6 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;

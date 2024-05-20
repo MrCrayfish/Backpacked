@@ -1,8 +1,9 @@
-package com.mrcrayfish.backpacked.data.tracker;
+package com.mrcrayfish.backpacked.data.unlock;
 
 import com.google.common.collect.ImmutableMap;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.util.Serializable;
 import com.mrcrayfish.framework.api.sync.IDataSerializer;
 import com.mrcrayfish.framework.entity.sync.Updatable;

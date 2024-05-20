@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.common.backpack.impl;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
-import com.mrcrayfish.backpacked.data.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.data.tracker.impl.UniqueCraftingProgressTracker;
+import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.backpack.tracker.impl.UniqueCraftingProgressTracker;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;

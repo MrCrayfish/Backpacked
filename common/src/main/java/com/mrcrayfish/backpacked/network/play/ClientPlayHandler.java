@@ -4,8 +4,8 @@ import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
+import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
@@ -86,7 +86,7 @@ public class ClientPlayHandler
         Entity entity = minecraft.level.getEntity(message.entityId());
         if(entity instanceof WanderingTrader trader)
         {
-            PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
+            TraderPickpocketing.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
         }
     }
 }

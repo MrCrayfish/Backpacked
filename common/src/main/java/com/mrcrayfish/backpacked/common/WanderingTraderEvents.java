@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.impl.WanderingBagBackpack;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
+import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -63,7 +63,7 @@ public class WanderingTraderEvents
     {
         if(!entity.level().isClientSide() && entity instanceof WanderingTrader trader && Config.COMMON.common.wanderingTrader.spawnBackpackOnWanderingTraders.get())
         {
-            PickpocketChallenge.get(trader).ifPresent(data ->
+            TraderPickpocketing.get(trader).ifPresent(data ->
             {
                 if(!data.isInitialized())
                 {
@@ -82,7 +82,7 @@ public class WanderingTraderEvents
             return;
 
         WanderingTrader trader = (WanderingTrader) entity;
-        PickpocketChallenge.get(trader).ifPresent(data ->
+        TraderPickpocketing.get(trader).ifPresent(data ->
         {
             if(data.isBackpackEquipped())
             {
@@ -103,7 +103,7 @@ public class WanderingTraderEvents
             trader.setUnhappyCounter(trader.getUnhappyCounter() - 1);
         }
 
-        PickpocketChallenge.get(entity).ifPresent(data ->
+        TraderPickpocketing.get(entity).ifPresent(data ->
         {
             if(!data.isBackpackEquipped())
                 return;
@@ -120,7 +120,7 @@ public class WanderingTraderEvents
         Level level = target.level();
         if(!level.isClientSide() && target instanceof WanderingTrader trader)
         {
-            if(!Config.COMMON.common.wanderingTrader.dislikedPlayersCanTrade.get() && PickpocketChallenge.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(player)).orElse(false))
+            if(!Config.COMMON.common.wanderingTrader.dislikedPlayersCanTrade.get() && TraderPickpocketing.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(player)).orElse(false))
             {
                 trader.setUnhappyCounter(20);
                 level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
@@ -188,7 +188,7 @@ public class WanderingTraderEvents
 
     public static void openBackpack(WanderingTrader trader, ServerPlayer openingPlayer)
     {
-        PickpocketChallenge.get(trader).ifPresent(data ->
+        TraderPickpocketing.get(trader).ifPresent(data ->
         {
             if(!data.isBackpackEquipped())
                 return;
@@ -215,7 +215,7 @@ public class WanderingTraderEvents
         });
     }
 
-    private static boolean generateBackpackLoot(WanderingTrader trader, PickpocketChallenge data)
+    private static boolean generateBackpackLoot(WanderingTrader trader, TraderPickpocketing data)
     {
         if(!data.isLootSpawned())
         {
@@ -269,7 +269,7 @@ public class WanderingTraderEvents
         @Override
         public boolean canUse()
         {
-            if(PickpocketChallenge.get(this.mob).map(PickpocketChallenge::isBackpackEquipped).orElse(false))
+            if(TraderPickpocketing.get(this.mob).map(TraderPickpocketing::isBackpackEquipped).orElse(false))
             {
                 return false;
             }
@@ -294,7 +294,7 @@ public class WanderingTraderEvents
             super.canUse();
             if(this.trader.getLastHurtByMob() == null && this.lookAt instanceof Player)
             {
-                PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
+                TraderPickpocketing data = TraderPickpocketing.get(this.trader).orElse(null);
                 return data != null && data.isBackpackEquipped() && data.getDetectedPlayers().containsKey((Player) this.lookAt);
             }
             return false;
@@ -305,7 +305,7 @@ public class WanderingTraderEvents
         {
             if(this.lookAt instanceof Player && this.lookAt.distanceTo(this.trader) <= Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get().floatValue() * 2.0)
             {
-                PickpocketChallenge data = PickpocketChallenge.get(this.trader).orElse(null);
+                TraderPickpocketing data = TraderPickpocketing.get(this.trader).orElse(null);
                 return data != null && data.getDetectedPlayers().containsKey((Player) this.lookAt);
             }
             return false;
@@ -316,7 +316,7 @@ public class WanderingTraderEvents
         {
             if(this.trader.level() instanceof ServerLevel serverLevel && this.lookAt instanceof Player player)
             {
-                if(PickpocketChallenge.get(this.trader).map(data -> data.isDislikedPlayer(player)).orElse(false))
+                if(TraderPickpocketing.get(this.trader).map(data -> data.isDislikedPlayer(player)).orElse(false))
                 {
                     serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER, this.trader.getX(), this.trader.getEyeY(), this.trader.getZ(), 1, 0, 0, 0, 0);
                     serverLevel.playSound(null, this.trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);

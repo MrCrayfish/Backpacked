@@ -1,21 +1,16 @@
 package com.mrcrayfish.backpacked.platform.services;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
-import com.mrcrayfish.backpacked.data.tracker.UnlockTracker;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish

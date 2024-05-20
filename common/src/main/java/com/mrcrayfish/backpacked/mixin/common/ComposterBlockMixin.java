@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.backpack.impl.TrashCanBackpack;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
-import com.mrcrayfish.backpacked.data.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.common.backpack.tracker.impl.CountProgressTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.data.tracker;
+package com.mrcrayfish.backpacked.data.unlock;
 
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -31,7 +31,7 @@ public class UnlockManager
         TickEvents.END_SERVER.register(UnlockManager::onServerTick);
     }
 
-    static void queuePlayerForCompletionTest(ServerPlayer player)
+    public static void queuePlayerForCompletionTest(ServerPlayer player)
     {
         testForCompletion.add(player);
     }

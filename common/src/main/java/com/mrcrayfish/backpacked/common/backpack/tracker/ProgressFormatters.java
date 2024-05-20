@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.data.tracker;
+package com.mrcrayfish.backpacked.common.backpack.tracker;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;

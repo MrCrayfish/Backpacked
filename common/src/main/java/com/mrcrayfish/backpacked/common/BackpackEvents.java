@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
-import com.mrcrayfish.backpacked.data.tracker.impl.BiomeExploreProgressTracker;
-import com.mrcrayfish.backpacked.data.tracker.impl.CraftingProgressTracker;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.common.backpack.tracker.impl.BiomeExploreProgressTracker;
+import com.mrcrayfish.backpacked.common.backpack.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.event.PlayerEvents;

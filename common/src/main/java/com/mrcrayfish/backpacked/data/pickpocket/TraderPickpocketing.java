@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.data.pickpocket;
 
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.Serializable;
 import com.mrcrayfish.framework.api.sync.IDataSerializer;
 import com.mrcrayfish.framework.entity.sync.Updatable;
@@ -17,9 +16,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PickpocketChallenge implements Serializable
+public class TraderPickpocketing implements Serializable
 {
-    public static final IDataSerializer<PickpocketChallenge> SERIALIZER = new Serializer();
+    public static final IDataSerializer<TraderPickpocketing> SERIALIZER = new Serializer();
 
     private final Updatable updatable;
     private boolean initialized = false;
@@ -28,7 +27,7 @@ public class PickpocketChallenge implements Serializable
     private final Map<Player, Long> detectedPlayers = new HashMap<>();
     private final Map<UUID, Long> dislikedPlayers = new HashMap<>();
 
-    public PickpocketChallenge(Updatable updatable)
+    public TraderPickpocketing(Updatable updatable)
     {
         this.updatable = updatable;
     }
@@ -104,19 +103,19 @@ public class PickpocketChallenge implements Serializable
         this.spawnedLoot = tag.getBoolean("SpawnedLoot");
     }
 
-    public static Optional<PickpocketChallenge> get(Entity entity)
+    public static Optional<TraderPickpocketing> get(Entity entity)
     {
         if(entity instanceof WanderingTrader trader)
         {
-            return Optional.ofNullable(ModSyncedDataKeys.PICKPOCKET_CHALLENGE.getValue(trader));
+            return Optional.ofNullable(ModSyncedDataKeys.TRADER_PICKPOCKETING.getValue(trader));
         }
         return Optional.empty();
     }
 
-    private static class Serializer implements IDataSerializer<PickpocketChallenge>
+    private static class Serializer implements IDataSerializer<TraderPickpocketing>
     {
         @Override
-        public void write(FriendlyByteBuf buf, PickpocketChallenge value)
+        public void write(FriendlyByteBuf buf, TraderPickpocketing value)
         {
             buf.writeBoolean(value.initialized);
             buf.writeBoolean(value.backpack);
@@ -125,15 +124,15 @@ public class PickpocketChallenge implements Serializable
 
         @Override
         @SuppressWarnings("removal")
-        public PickpocketChallenge read(FriendlyByteBuf buf)
+        public TraderPickpocketing read(FriendlyByteBuf buf)
         {
             throw new UnsupportedOperationException("Call new method");
         }
 
         @Override
-        public PickpocketChallenge read(Updatable updatable, FriendlyByteBuf buf)
+        public TraderPickpocketing read(Updatable updatable, FriendlyByteBuf buf)
         {
-            PickpocketChallenge challenge = new PickpocketChallenge(updatable);
+            TraderPickpocketing challenge = new TraderPickpocketing(updatable);
             challenge.initialized = buf.readBoolean();
             challenge.backpack = buf.readBoolean();
             challenge.spawnedLoot = buf.readBoolean();
@@ -141,7 +140,7 @@ public class PickpocketChallenge implements Serializable
         }
 
         @Override
-        public Tag write(PickpocketChallenge value)
+        public Tag write(TraderPickpocketing value)
         {
             CompoundTag tag = new CompoundTag();
             tag.putBoolean("Initialized", value.initialized);
@@ -152,15 +151,15 @@ public class PickpocketChallenge implements Serializable
 
         @Override
         @SuppressWarnings("removal")
-        public PickpocketChallenge read(Tag nbt)
+        public TraderPickpocketing read(Tag nbt)
         {
             throw new UnsupportedOperationException("Call new method");
         }
 
         @Override
-        public PickpocketChallenge read(Updatable updatable, Tag nbt)
+        public TraderPickpocketing read(Updatable updatable, Tag nbt)
         {
-            PickpocketChallenge challenge = new PickpocketChallenge(updatable);
+            TraderPickpocketing challenge = new TraderPickpocketing(updatable);
             if(nbt instanceof CompoundTag tag)
             {
                 challenge.initialized = tag.getBoolean("Initialized");
