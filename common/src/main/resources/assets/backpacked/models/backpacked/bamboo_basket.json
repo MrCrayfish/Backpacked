@@ -1,0 +1,58 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"textures": {
+		"bamboo_basket": "backpacked:backpack/bamboo_basket"
+	},
+	"components": [
+		{
+			"from": [4.5, 0, 8],
+			"to": [11.5, 9, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
+			"faces": {
+				"north": {"uv": [4, 4.5, 7.5, 9], "texture": "#bamboo_basket"},
+				"east": {"uv": [11, 0, 14.5, 4.5], "texture": "#bamboo_basket"},
+				"south": {"uv": [7.5, 0, 11, 4.5], "texture": "#bamboo_basket"},
+				"west": {"uv": [4, 0, 7.5, 4.5], "texture": "#bamboo_basket"},
+				"up": {"uv": [7, 12.5, 3.5, 9], "texture": "#bamboo_basket"},
+				"down": {"uv": [14, 4.5, 10.5, 8], "texture": "#bamboo_basket"}
+			}
+		},
+		{
+			"from": [11.5, 0, 8],
+			"to": [4.5, 9, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [15, 0, 8]},
+			"faces": {
+				"north": {"uv": [4, 4.5, 7.5, 9], "texture": "#bamboo_basket"},
+				"east": {"uv": [4, 0, 7.5, 4.5], "texture": "#bamboo_basket"},
+				"south": {"uv": [7.5, 0, 11, 4.5], "texture": "#bamboo_basket"},
+				"west": {"uv": [11, 0, 14.5, 4.5], "texture": "#bamboo_basket"},
+				"down": {"uv": [14, 4.5, 10.5, 8], "texture": "#bamboo_basket"}
+			}
+		},
+		{
+			"from": [4, 8.25, 7.5],
+			"to": [12, 9.25, 15.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
+			"faces": {
+				"north": {"uv": [0, 4, 4, 4.5], "texture": "#bamboo_basket"},
+				"east": {"uv": [0, 4.5, 4, 5], "texture": "#bamboo_basket"},
+				"south": {"uv": [0, 5, 4, 5.5], "texture": "#bamboo_basket"},
+				"west": {"uv": [0, 5.5, 4, 6], "texture": "#bamboo_basket"},
+				"up": {"uv": [4, 4, 0, 0], "texture": "#bamboo_basket"}
+			}
+		},
+		{
+			"from": [12, 8.25, 7.5],
+			"to": [4, 9.25, 15.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [16, 0, 8]},
+			"faces": {
+				"north": {"uv": [0, 4, 4, 4.5], "texture": "#bamboo_basket"},
+				"east": {"uv": [0, 4.5, 4, 5], "texture": "#bamboo_basket"},
+				"south": {"uv": [0, 5, 4, 5.5], "texture": "#bamboo_basket"},
+				"west": {"uv": [0, 5.5, 4, 6], "texture": "#bamboo_basket"},
+				"up": {"uv": [0, 0, 4, 4], "texture": "#bamboo_basket"}
+			}
+		}
+	]
+}
