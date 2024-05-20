@@ -45,6 +45,7 @@ public class UnlockManager
     {
         getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
+            queuePlayerForCompletionTest((ServerPlayer) player); // Safeguard to complete challenges
         });
     }
 

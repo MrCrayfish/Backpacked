@@ -1,8 +1,8 @@
 {
     "name": "backpack.backpacked.bamboo_basket",
     "unlock_challenge": {
-        "type": "backpacked:kill_mobs",
-        "entity": "minecraft:zombie",
+        "type": "backpacked:feed_animals",
+        "entity": "minecraft:panda",
         "count": 10
     }
 }
