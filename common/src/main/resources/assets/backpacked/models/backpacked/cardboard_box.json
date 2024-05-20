@@ -1,0 +1,30 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"texture_size": [32, 16],
+	"textures": {
+		"cardboard_box": "backpacked:backpack/cardboard_box"
+	},
+	"components": [
+		{
+			"from": [4, 1, 8],
+			"to": [12, 9, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
+			"faces": {
+				"north": {"uv": [10, 0, 14, 8], "texture": "#cardboard_box"},
+				"east": {"uv": [7, 0, 10, 8], "texture": "#cardboard_box"},
+				"south": {"uv": [3, 0, 7, 8], "texture": "#cardboard_box"},
+				"west": {"uv": [0, 0, 3, 8], "texture": "#cardboard_box"},
+				"up": {"uv": [8, 14, 4, 8], "texture": "#cardboard_box"},
+				"down": {"uv": [4, 8, 0, 14], "texture": "#cardboard_box"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 225, 0],
+			"translation": [3, 2, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}
