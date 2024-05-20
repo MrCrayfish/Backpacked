@@ -11,6 +11,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
+ * Simple injection into the bred trigger to post our own custom event
+ * <p>
+ * See {@link BackpackedEvents#BRED_ANIMAL} for relevant event
+ * <p>
  * Author: MrCrayfish
  */
 @Mixin(BredAnimalsTrigger.class)
