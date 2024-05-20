@@ -1,8 +1,6 @@
 package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.client.model.ModelInstances;
-import com.mrcrayfish.backpacked.client.model.backpack.BackpackModel;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
@@ -92,11 +90,6 @@ public class BackpackItem extends Item
     public int getRowCount()
     {
         return Config.COMMON.common.backpackInventorySizeRows.get();
-    }
-
-    public Supplier<BackpackModel> getDefaultModel()
-    {
-        return () -> ModelInstances.get().getStandardModel();
     }
 
     @Override
