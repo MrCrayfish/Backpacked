@@ -10,7 +10,7 @@
         "common.ComposterBlockMixin",
         "common.EntityMixin",
         "common.ItemEntityMixin",
-        "common.PandaEntityMixin",
+        "common.MobMixin",
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",
         "common.RandomizableContainerBlockEntityMixin",
