@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.EventType;
 import com.mrcrayfish.backpacked.event.block.MinedBlock;
+import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.backpacked.network.Network;
@@ -74,6 +75,7 @@ public final class UnlockManager
         EntityEvents.LIVING_ENTITY_DEATH.register(this::onEntityDeath);
         BackpackedEvents.MINED_BLOCK.register(this::onBlockMined);
         BackpackedEvents.FEED_ANIMAL.register(this::onFeedAnimal);
+        BackpackedEvents.BRED_ANIMAL.register(this::onBredAnimal);
         PlayerEvents.CRAFT_ITEM.register(this::onCraftedItem);
     }
 
@@ -126,6 +128,13 @@ public final class UnlockManager
         world.registryAccess().registryOrThrow(Registries.BIOME).getResourceKey(biome).ifPresent(key -> {
             this.getEventListeners(EventType.EXPLORE_UPDATE).forEach(o ->
                 ((ExploreUpdate) o).handle(key, player));
+        });
+    }
+
+    private void onBredAnimal(Animal first, Animal second, ServerPlayer player)
+    {
+        this.getEventListeners(EventType.BRED_ANIMAL).forEach(o -> {
+            ((BredAnimal) o).handle(first, second, player);
         });
     }
 
