@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.event;
 
 import com.mrcrayfish.backpacked.event.block.MinedBlock;
+import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.framework.api.event.FrameworkEvent;
@@ -12,6 +13,10 @@ public class BackpackedEvents
 {
     public static final FrameworkEvent<FeedAnimal> FEED_ANIMAL = new FrameworkEvent<>(listeners -> (animal, player) -> {
         listeners.forEach(listener -> listener.handle(animal, player));
+    });
+
+    public static final FrameworkEvent<BredAnimal> BRED_ANIMAL = new FrameworkEvent<>(listeners -> (first, second, player) -> {
+        listeners.forEach(listener -> listener.handle(first, second, player));
     });
 
     public static final FrameworkEvent<MinedBlock> MINED_BLOCK = new FrameworkEvent<>(listeners -> (state, player) -> {
