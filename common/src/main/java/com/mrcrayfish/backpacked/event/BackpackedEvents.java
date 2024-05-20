@@ -19,8 +19,8 @@ public class BackpackedEvents
         listeners.forEach(listener -> listener.handle(first, second, player));
     });
 
-    public static final FrameworkEvent<MinedBlock> MINED_BLOCK = new FrameworkEvent<>(listeners -> (state, player) -> {
-        listeners.forEach(listener -> listener.handle(state, player));
+    public static final FrameworkEvent<MinedBlock> MINED_BLOCK = new FrameworkEvent<>(listeners -> (state, stack, player) -> {
+        listeners.forEach(listener -> listener.handle(state, stack, player));
     });
 
     public static final FrameworkEvent<ExploreUpdate> EXPLORE_UPDATE = new FrameworkEvent<>(listeners -> (key, player) -> {

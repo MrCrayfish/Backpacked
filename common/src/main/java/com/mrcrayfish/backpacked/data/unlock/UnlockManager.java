@@ -1,9 +1,6 @@
 package com.mrcrayfish.backpacked.data.unlock;
 
-import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.tracker.impl.BiomeExploreProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.EventType;
@@ -24,7 +21,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
@@ -89,10 +85,10 @@ public final class UnlockManager
         return this.eventListeners.getOrDefault(type, Collections.emptyList());
     }
 
-    private void onBlockMined(BlockState state, Player player)
+    private void onBlockMined(BlockState state, ItemStack stack, Player player)
     {
         this.getEventListeners(EventType.MINED_BLOCK).forEach(o ->
-            ((MinedBlock) o).handle(state, player));
+            ((MinedBlock) o).handle(state, stack, player));
     }
 
     private void onFeedAnimal(Animal animal, Player player)
