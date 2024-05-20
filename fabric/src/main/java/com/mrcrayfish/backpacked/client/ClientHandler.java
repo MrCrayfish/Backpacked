@@ -52,7 +52,7 @@ public class ClientHandler implements ClientModInitializer
             if(entityRenderer instanceof WanderingTraderRenderer renderer) {
                 registrationHelper.register(new VillagerBackpackLayer<>(renderer));
             } else if(entityRenderer instanceof PlayerRenderer renderer) {
-                registrationHelper.register(new BackpackLayer<>(renderer, itemRenderer));
+                registrationHelper.register(new BackpackLayer<>(renderer, context.getItemRenderer()));
             }
         });
     }
