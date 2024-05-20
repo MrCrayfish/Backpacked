@@ -1,3 +1,8 @@
 {
-    "name": "backpack.backpacked.standard"
+    "name": "backpack.backpacked.standard",
+    "unlock_challenge": {
+        "type": "backpacked:kill_mobs",
+        "entity": "minecraft:zombie",
+        "count": 10
+    }
 }

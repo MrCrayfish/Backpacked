@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.challenge.Challenge;
 import com.mrcrayfish.backpacked.data.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,7 +22,7 @@ public class Backpack
     public static final Codec<Backpack> CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(Codec.STRING.fieldOf("name").forGetter(backpack -> {
             return backpack.translationKey;
-        }), Challenge.CODEC.optionalFieldOf("challenge").forGetter(backpack -> {
+        }), Challenge.CODEC.optionalFieldOf("unlock_challenge").forGetter(backpack -> {
             return backpack.challenge;
         })).apply(builder, Backpack::new);
     });
@@ -41,9 +42,10 @@ public class Backpack
 
     public Backpack(FriendlyByteBuf buf)
     {
-        this.setup(buf.readResourceLocation());
-        this.translationKey = buf.readUtf();
-        this.challenge = buf.readOptional(Challenge::new);
+        ResourceLocation id = buf.readResourceLocation();
+        this.setup(id);
+        this.translationKey = buf.readUtf(256);
+        this.challenge = buf.readOptional(Challenge::read);
     }
 
     public ResourceLocation getId()
@@ -83,7 +85,7 @@ public class Backpack
     @Nullable
     public IProgressTracker createProgressTracker()
     {
-        return null;
+        return this.challenge.map(Challenge::createProgressTracker).orElse(null);
     }
 
     // TODO switch to streamcodec in 1.20.6
