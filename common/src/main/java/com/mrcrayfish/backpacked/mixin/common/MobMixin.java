@@ -14,6 +14,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
+ * This mixin injects a detection method to determine if the player fed an animal. This basically
+ * just checks if the item after the interaction is different. If a chnage is detected, an event is
+ * posted.
+ * <p>
+ * See {@link BackpackedEntityEvents#FEED_ANIMAL} for relevant event
+ * <p>
  * Author: MrCrayfish
  */
 @Mixin(Mob.class)
