@@ -61,6 +61,11 @@ public class ProgressFormatters
         return Component.translatable("backpacked.formatter.explored_x_of_x", count, maxCount);
     };
 
+    public static final BiFunction<Integer, Integer, Component> KILLED_X_OF_X = (count, maxCount) -> {
+        count = Mth.clamp(count, 0, maxCount);
+        return Component.translatable("backpacked.formatter.killed_x_of_x", count, maxCount);
+    };
+
     public static final BiFunction<Integer, Integer, Component> INCOMPLETE_COMPLETE = (count, maxCount) -> {
         if(count < maxCount) return Component.translatable("backpacked.formatter.incomplete");
         return Component.translatable("backpacked.formatter.complete");
