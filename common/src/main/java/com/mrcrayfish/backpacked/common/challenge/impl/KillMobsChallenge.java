@@ -1,15 +1,15 @@
-package com.mrcrayfish.backpacked.common.backpack.challenge.impl;
+package com.mrcrayfish.backpacked.common.challenge.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.BackpackedCodecs;
-import com.mrcrayfish.backpacked.common.backpack.challenge.Challenge;
-import com.mrcrayfish.backpacked.common.backpack.challenge.ChallengeSerializer;
-import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.backpack.tracker.ProgressFormatters;
-import com.mrcrayfish.backpacked.common.backpack.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.common.challenge.Challenge;
+import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
+import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.framework.api.event.EntityEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
