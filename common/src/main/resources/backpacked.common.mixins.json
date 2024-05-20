@@ -14,6 +14,7 @@
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",
         "common.RandomizableContainerBlockEntityMixin",
+        "common.ServerPlayerGameModeMixin",
         "common.ServerPlayerMixin",
         "common.ServerPlayNetHandlerMixin"
     ],

@@ -10,7 +10,9 @@ import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
-import com.mrcrayfish.backpacked.event.BackpackedEntityEvents;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.event.EventType;
+import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -90,7 +92,7 @@ public class FeedAnimalsChallenge extends Challenge
         public Tracker(int maxCount, ImmutableList<EntityType<?>> types)
         {
             super(maxCount, ProgressFormatters.FED_X_OF_X);
-            BackpackedEntityEvents.FEED_ANIMAL.register((animal, player) -> {
+            UnlockManager.instance().addEventListener(EventType.FEED_ANIMAL, (animal, player) -> {
                 if(this.isComplete() || player.level().isClientSide())
                     return;
                 if(types.contains(animal.getType())) {

@@ -18,7 +18,7 @@ public class ServerPlayerMixin
 {
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 8))
-    public void backpackedOnFallFlying(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpackedOnFallFlying(double dx, double dy, double dz, CallbackInfo ci)
     {
         Player player = (Player) (Object) this;
         if(!(player instanceof ServerPlayer))

@@ -7,7 +7,6 @@
     "mixins": [
         "common.BlockMixin",
         "common.NeoForgePlayerMixin",
-        "common.ServerPlayerGameModeMixin",
         "common.ShearsItemMixin"
     ],
     "client": [

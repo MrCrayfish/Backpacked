@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.event.BackpackedEntityEvents;
+import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Mob;
@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * This mixin injects a detection method to determine if the player fed an animal. This basically
- * just checks if the item after the interaction is different. If a chnage is detected, an event is
+ * just checks if the item after the interaction is different. If a change is detected, an event is
  * posted.
  * <p>
- * See {@link BackpackedEntityEvents#FEED_ANIMAL} for relevant event
+ * See {@link BackpackedEvents#FEED_ANIMAL} for relevant event
  * <p>
  * Author: MrCrayfish
  */
@@ -53,7 +53,7 @@ public class MobMixin
                 Mob mob = (Mob) (Object) this;
                 if(mob instanceof Animal animal)
                 {
-                    BackpackedEntityEvents.FEED_ANIMAL.post().handle(animal, player);
+                    BackpackedEvents.FEED_ANIMAL.post().handle(animal, player);
                 }
             }
             this.backpacked$capturedFood = null;

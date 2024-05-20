@@ -4,9 +4,6 @@ import com.mrcrayfish.framework.api.event.IFrameworkEvent;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 
-/**
- * Author: MrCrayfish
- */
 @FunctionalInterface
 public interface FeedAnimal extends IFrameworkEvent
 {
