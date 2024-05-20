@@ -3,6 +3,8 @@ package com.mrcrayfish.backpacked.common.tracker.impl;
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.event.EventType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -29,9 +31,14 @@ public class BiomeExploreProgressTracker implements IProgressTracker
     public BiomeExploreProgressTracker(ResourceKey<Biome> ... biomes)
     {
         this.biomes = ImmutableSet.copyOf(Arrays.asList(biomes));
+        UnlockManager.instance().addEventListener(EventType.EXPLORE_UPDATE, (key, player) -> {
+            if(this.isComplete() || player.level().isClientSide())
+                return;
+            this.explore(key, (ServerPlayer) player);
+        });
     }
 
-    public void explore(ResourceKey<Biome> biome, ServerPlayer player)
+    private void explore(ResourceKey<Biome> biome, ServerPlayer player)
     {
         if(this.biomes.contains(biome))
         {

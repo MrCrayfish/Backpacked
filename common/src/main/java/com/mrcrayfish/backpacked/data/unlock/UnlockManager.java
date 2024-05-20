@@ -1,10 +1,14 @@
 package com.mrcrayfish.backpacked.data.unlock;
 
+import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.tracker.impl.BiomeExploreProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.EventType;
 import com.mrcrayfish.backpacked.event.block.MinedBlock;
+import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
@@ -14,14 +18,21 @@ import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.event.ServerEvents;
 import com.mrcrayfish.framework.api.event.TickEvents;
 import com.mrcrayfish.framework.event.IEntityEvent;
+import com.mrcrayfish.framework.event.IPlayerEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -58,10 +69,12 @@ public final class UnlockManager
         PlayerEvents.RESPAWN.register(this::onPlayerRespawn);
         PlayerEvents.CHANGE_DIMENSION.register(this::onPlayerChangedDimension);
         TickEvents.END_SERVER.register(this::onServerTick);
+        TickEvents.END_PLAYER.register(this::onPlayerTick);
         ServerEvents.STOPPING.register(this::onServerStopped);
         EntityEvents.LIVING_ENTITY_DEATH.register(this::onEntityDeath);
         BackpackedEvents.MINED_BLOCK.register(this::onBlockMined);
         BackpackedEvents.FEED_ANIMAL.register(this::onFeedAnimal);
+        PlayerEvents.CRAFT_ITEM.register(this::onCraftedItem);
     }
 
     public <T extends IFrameworkEvent> void addEventListener(EventType<T> type, T handler)
@@ -93,6 +106,27 @@ public final class UnlockManager
             ((IEntityEvent.LivingEntityDeath) o).handle(entity, source);
         });
         return false;
+    }
+
+    private void onCraftedItem(Player player, ItemStack stack, Container inventory)
+    {
+        this.getEventListeners(EventType.CRAFTED_ITEM).forEach(o -> {
+            ((IPlayerEvent.CraftItem) o).handle(player, stack, inventory);
+        });
+    }
+
+    private void onPlayerTick(Player player)
+    {
+        if(player.level().isClientSide() || player.tickCount % 20 != 0)
+            return;
+
+        Level world = player.level();
+        BlockPos playerPosition = player.blockPosition();
+        Biome biome = world.getBiome(playerPosition).value();
+        world.registryAccess().registryOrThrow(Registries.BIOME).getResourceKey(biome).ifPresent(key -> {
+            this.getEventListeners(EventType.EXPLORE_UPDATE).forEach(o ->
+                ((ExploreUpdate) o).handle(key, player));
+        });
     }
 
     private void onPlayerLoggedIn(Player player)
