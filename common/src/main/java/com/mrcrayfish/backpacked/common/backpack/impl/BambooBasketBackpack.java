@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.common.backpack.impl;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
-import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.backpack.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;

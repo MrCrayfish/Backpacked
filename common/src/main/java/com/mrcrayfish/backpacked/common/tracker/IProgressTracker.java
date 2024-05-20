@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.common.backpack.tracker;
+package com.mrcrayfish.backpacked.common.tracker;
 
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import net.minecraft.nbt.CompoundTag;

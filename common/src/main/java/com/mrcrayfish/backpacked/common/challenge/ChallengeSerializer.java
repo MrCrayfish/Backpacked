@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.common.backpack.challenge;
+package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

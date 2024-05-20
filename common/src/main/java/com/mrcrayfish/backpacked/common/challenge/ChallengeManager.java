@@ -1,8 +1,8 @@
-package com.mrcrayfish.backpacked.common.backpack.challenge;
+package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.common.backpack.challenge.impl.KillMobsChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.KillMobsChallenge;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 

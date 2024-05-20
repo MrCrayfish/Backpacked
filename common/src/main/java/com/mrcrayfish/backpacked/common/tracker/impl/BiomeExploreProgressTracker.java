@@ -1,8 +1,8 @@
-package com.mrcrayfish.backpacked.common.backpack.tracker.impl;
+package com.mrcrayfish.backpacked.common.tracker.impl;
 
 import com.google.common.collect.ImmutableSet;
-import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.backpack.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;

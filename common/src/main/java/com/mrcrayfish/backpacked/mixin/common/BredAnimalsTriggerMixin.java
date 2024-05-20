@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.backpack.impl.TurtleShellBackpack;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.common.backpack.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import net.minecraft.advancements.critereon.BredAnimalsTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;

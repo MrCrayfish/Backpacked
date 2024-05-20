@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.common.backpack.tracker.impl;
+package com.mrcrayfish.backpacked.common.tracker.impl;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
