@@ -1,0 +1,49 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"textures": {
+		"bamboo_basket": "backpacked:backpack/bamboo_basket"
+	},
+	"components": [
+		{
+			"from": [5, 3, 4],
+			"to": [6, 9, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, 0, 8]},
+			"faces": {
+				"north": {"uv": [0, 12.5, 0.5, 15.5], "texture": "#bamboo_basket"},
+				"up": {"uv": [15.5, 2, 15, 0], "texture": "#bamboo_basket"}
+			}
+		},
+		{
+			"from": [4, 3, 4],
+			"to": [5, 4, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, 1, 8]},
+			"faces": {
+				"north": {"uv": [15, 2, 15.5, 2.5], "texture": "#bamboo_basket"},
+				"east": {"uv": [11, 8, 13, 8.5], "texture": "#bamboo_basket"},
+				"south": {"uv": [15.5, 0.5, 16, 1], "texture": "#bamboo_basket"},
+				"west": {"uv": [14, 5, 16, 5.5], "texture": "#bamboo_basket"}
+			}
+		},
+		{
+			"from": [10, 3, 4],
+			"to": [11, 9, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 0, 8]},
+			"faces": {
+				"north": {"uv": [14.5, 0, 15, 3], "texture": "#bamboo_basket"},
+				"up": {"uv": [15.5, 2, 15, 0], "texture": "#bamboo_basket"}
+			}
+		},
+		{
+			"from": [11, 3, 4],
+			"to": [12, 4, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 1, 8]},
+			"faces": {
+				"north": {"uv": [15.5, 1, 16, 1.5], "texture": "#bamboo_basket"},
+				"east": {"uv": [14, 4.5, 16, 5], "texture": "#bamboo_basket"},
+				"south": {"uv": [15.5, 0, 16, 0.5], "texture": "#bamboo_basket"},
+				"west": {"uv": [5, 12.5, 7, 13], "texture": "#bamboo_basket"}
+			}
+		}
+	]
+}
