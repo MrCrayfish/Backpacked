@@ -2,6 +2,8 @@ package com.mrcrayfish.backpacked.common.tracker.impl;
 
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.event.EventType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,9 +22,14 @@ public class CraftingProgressTracker implements IProgressTracker
     {
         this.totalCount = totalCount;
         this.predicate = predicate;
+        UnlockManager.instance().addEventListener(EventType.CRAFTED_ITEM, (player, stack, inventory) -> {
+            if(this.isComplete() || player.level().isClientSide())
+                return;
+            this.processCrafted(stack, (ServerPlayer) player);
+        });
     }
 
-    public void processCrafted(ItemStack stack, ServerPlayer player)
+    protected void processCrafted(ItemStack stack, ServerPlayer player)
     {
         if(this.predicate.test(stack))
         {

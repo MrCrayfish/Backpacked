@@ -26,7 +26,7 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
     }
 
     @Override
-    public void processCrafted(ItemStack stack, ServerPlayer player)
+    protected void processCrafted(ItemStack stack, ServerPlayer player)
     {
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if(!this.craftedItems.contains(id) && this.predicate.test(stack))
@@ -43,8 +43,8 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
         super.read(tag);
         this.craftedItems.clear();
         ListTag list = tag.getList("CraftedItems", Tag.TAG_STRING);
-        list.forEach(inbt -> {
-            ResourceLocation id = ResourceLocation.tryParse(inbt.getAsString());
+        list.forEach(nbt -> {
+            ResourceLocation id = ResourceLocation.tryParse(nbt.getAsString());
             if(id != null) this.craftedItems.add(id);
         });
     }
