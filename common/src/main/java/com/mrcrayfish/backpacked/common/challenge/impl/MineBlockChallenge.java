@@ -29,33 +29,33 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MineBlocksChallenge extends Challenge
+public class MineBlockChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_blocks");
+    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_block");
     public static final Serializer SERIALIZER = new Serializer();
     private static final Codec<List<Value>> VALUE_CODEC = ExtraCodecs.validate(Value.CODEC.listOf(), values -> {
         return !values.isEmpty() ? DataResult.success(values) : DataResult.error(() -> "You must specify at least one block or block tag");
     });
-    public static final Codec<MineBlocksChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(VALUE_CODEC.fieldOf("blocks").forGetter(challenge -> {
+    public static final Codec<MineBlockChallenge> CODEC = RecordCodecBuilder.create(builder -> {
+        return builder.group(VALUE_CODEC.fieldOf("block").forGetter(challenge -> {
             return challenge.values;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
-            return challenge.count;
         }), BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("using_item").forGetter(challenge -> {
             return challenge.item;
-        })).apply(builder, MineBlocksChallenge::new);
+        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
+            return challenge.count;
+        })).apply(builder, MineBlockChallenge::new);
     });
 
     private final List<Value> values;
-    private final int count;
     private final Optional<Item> item;
+    private final int count;
 
-    private MineBlocksChallenge(List<Value> values, int count, Optional<Item> item)
+    private MineBlockChallenge(List<Value> values, Optional<Item> item, int count)
     {
         super(ID);
         this.values = values;
-        this.count = count;
         this.item = item;
+        this.count = count;
     }
 
     @Override
@@ -159,10 +159,10 @@ public class MineBlocksChallenge extends Challenge
         }
     }
 
-    public static class Serializer extends ChallengeSerializer<MineBlocksChallenge>
+    public static class Serializer extends ChallengeSerializer<MineBlockChallenge>
     {
         @Override
-        public void write(MineBlocksChallenge challenge, FriendlyByteBuf buf)
+        public void write(MineBlockChallenge challenge, FriendlyByteBuf buf)
         {
             buf.writeCollection(challenge.values, (buf1, value) -> Value.write(value, buf1));
             buf.writeVarInt(challenge.count);
@@ -171,18 +171,18 @@ public class MineBlocksChallenge extends Challenge
         }
 
         @Override
-        public MineBlocksChallenge read(FriendlyByteBuf buf)
+        public MineBlockChallenge read(FriendlyByteBuf buf)
         {
             List<Value> values = buf.readList(Value::read);
             int count = buf.readVarInt();
             Optional<Item> item = buf.readOptional(buf1 -> buf1.readById(BuiltInRegistries.ITEM));
-            return new MineBlocksChallenge(values, count, item);
+            return new MineBlockChallenge(values, item, count);
         }
 
         @Override
-        public Codec<MineBlocksChallenge> codec()
+        public Codec<MineBlockChallenge> codec()
         {
-            return MineBlocksChallenge.CODEC;
+            return MineBlockChallenge.CODEC;
         }
     }
 
