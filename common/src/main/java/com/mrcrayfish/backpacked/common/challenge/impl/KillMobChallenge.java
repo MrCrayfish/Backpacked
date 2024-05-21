@@ -4,18 +4,17 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.common.BackpackedCodecs;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
+import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.EventType;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,24 +35,24 @@ public class KillMobChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "kill_mob");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<KillMobChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-       return builder.group(BackpackedCodecs.ENTITY_TYPE_LIST.fieldOf("entity").forGetter(challenge -> {
-           return challenge.types;
+       return builder.group(EntityPredicate.CODEC.optionalFieldOf("target").forGetter(challenge -> {
+           return challenge.entity;
        }), ItemPredicate.CODEC.optionalFieldOf("using_item").forGetter(challenge -> {
-           return challenge.predicate;
+           return challenge.item;
        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
            return challenge.count;
        })).apply(builder, KillMobChallenge::new);
     });
 
-    private final ImmutableList<EntityType<?>> types;
-    private final Optional<ItemPredicate> predicate;
+    private final Optional<EntityPredicate> entity;
+    private final Optional<ItemPredicate> item;
     private final int count;
 
-    public KillMobChallenge(ImmutableList<EntityType<?>> types, Optional<ItemPredicate> predicate, int count)
+    public KillMobChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
         super(ID);
-        this.types = types;
-        this.predicate = predicate;
+        this.entity = entity;
+        this.item = item;
         this.count = count;
     }
 
@@ -66,7 +65,7 @@ public class KillMobChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker()
     {
-        return new Tracker(this.count, this.types, this.predicate);
+        return new Tracker(this.count, this.entity, this.item);
     }
 
     public static final class Serializer extends ChallengeSerializer<KillMobChallenge>
@@ -74,28 +73,18 @@ public class KillMobChallenge extends Challenge
         @Override
         public void write(KillMobChallenge challenge, FriendlyByteBuf buf)
         {
-            buf.writeCollection(challenge.types, (buf1, type) -> {
-                buf1.writeResourceLocation(BuiltInRegistries.ENTITY_TYPE.getKey(type));
-            });
-            buf.writeOptional(challenge.predicate, (buf1, predicate) -> {
-                buf1.writeNbt(ItemPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
-                    .getOrThrow(false, Constants.LOG::error));
-            });
+            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
+            ChallengeUtils.writeItemPredicate(buf, challenge.item);
             buf.writeVarInt(challenge.count);
         }
 
         @Override
         public KillMobChallenge read(FriendlyByteBuf buf)
         {
-            List<EntityType<?>> list = buf.readList(buf1 -> {
-                return BuiltInRegistries.ENTITY_TYPE.get(buf1.readResourceLocation());
-            });
-            Optional<ItemPredicate> predicate = buf.readOptional(buf1 -> {
-                return ItemPredicate.CODEC.parse(NbtOps.INSTANCE, buf1.readNbt(NbtAccounter.create(2097152L)))
-                    .getOrThrow(false, Constants.LOG::error);
-            });
+            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
+            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
             int count = buf.readVarInt();
-            return new KillMobChallenge(ImmutableList.copyOf(list), predicate, count);
+            return new KillMobChallenge(entity, item, count);
         }
 
         @Override
@@ -107,18 +96,18 @@ public class KillMobChallenge extends Challenge
 
     public static class Tracker extends CountProgressTracker
     {
-        public Tracker(int maxCount, List<EntityType<?>> types, Optional<ItemPredicate> predicate)
+        public Tracker(int maxCount, Optional<EntityPredicate> entityPredicate, Optional<ItemPredicate> itemPredicate)
         {
             super(maxCount, ProgressFormatters.KILLED_X_OF_X);
-            UnlockManager.instance().addEventListener(EventType.LIVING_ENTITY_DEATH, (entity, source) -> {
-                if(this.isComplete() || entity.level().isClientSide())
+            UnlockManager.instance().addEventListener(EventType.LIVING_ENTITY_DEATH, (livingEntity, source) -> {
+                if(this.isComplete() || livingEntity.level().isClientSide())
                     return false;
                 Entity cause = source.getEntity();
                 if(cause != null && cause.getType() == EntityType.PLAYER) {
-                    if(types.contains(entity.getType())) {
-                        ServerPlayer player = (ServerPlayer) cause;
+                    ServerPlayer player = (ServerPlayer) cause;
+                    if(entityPredicate.map(predicate -> predicate.matches(player, livingEntity)).orElse(true)) {
                         ItemStack heldItem = player.getMainHandItem();
-                        if(predicate.map(p -> p.matches(heldItem)).orElse(true)) {
+                        if(itemPredicate.map(p -> p.matches(heldItem)).orElse(true)) {
                             this.increment((ServerPlayer) cause);
                         }
                     }
