@@ -70,11 +70,11 @@ public class InteractWithBlockChallenge extends Challenge
         public void write(InteractWithBlockChallenge challenge, FriendlyByteBuf buf)
         {
             buf.writeOptional(challenge.block, (buf1, predicate) -> {
-                buf.writeNbt(BlockPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
+                buf1.writeNbt(BlockPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
                     .getOrThrow(false, Constants.LOG::error));
             });
             buf.writeOptional(challenge.item, (buf1, predicate) -> {
-                buf.writeNbt(ItemPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
+                buf1.writeNbt(ItemPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
                     .getOrThrow(false, Constants.LOG::error));
             });
             buf.writeVarInt(challenge.count);

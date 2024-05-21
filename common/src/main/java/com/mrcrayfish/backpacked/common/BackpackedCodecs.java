@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityType;
  */
 public class BackpackedCodecs
 {
+    // TODO support entity tags
     public static final Codec<ImmutableList<EntityType<?>>> ENTITY_TYPE_LIST = ExtraCodecs
         .either(BuiltInRegistries.ENTITY_TYPE.byNameCodec().listOf(), BuiltInRegistries.ENTITY_TYPE.byNameCodec()).xmap(
             either -> either.map(ImmutableList::copyOf, ImmutableList::of),
