@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
-import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalsChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.MineBlockChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
@@ -33,7 +33,7 @@ public final class ChallengeManager
     private ChallengeManager()
     {
         this.register(KillMobChallenge.ID, KillMobChallenge.CODEC, KillMobChallenge.SERIALIZER);
-        this.register(FeedAnimalsChallenge.ID, FeedAnimalsChallenge.CODEC, FeedAnimalsChallenge.SERIALIZER);
+        this.register(FeedAnimalChallenge.ID, FeedAnimalChallenge.CODEC, FeedAnimalChallenge.SERIALIZER);
         this.register(MineBlockChallenge.ID, MineBlockChallenge.CODEC, MineBlockChallenge.SERIALIZER);
         this.register(InteractWithBlockChallenge.ID, InteractWithBlockChallenge.CODEC, InteractWithBlockChallenge.SERIALIZER);
     }
