@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.event;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.event.block.MinedBlock;
+import com.mrcrayfish.backpacked.event.block.InteractedWithBlock;
 import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
@@ -21,4 +22,5 @@ public record EventType<T extends IFrameworkEvent>(ResourceLocation id)
     public static final EventType<FeedAnimal> FEED_ANIMAL = new EventType<>(new ResourceLocation(Constants.MOD_ID, "feed_animal"));
     public static final EventType<BredAnimal> BRED_ANIMAL = new EventType<>(new ResourceLocation(Constants.MOD_ID, "bred_animal"));
     public static final EventType<ExploreUpdate> EXPLORE_UPDATE = new EventType<>(new ResourceLocation(Constants.MOD_ID, "explore_update"));
+    public static final EventType<InteractedWithBlock> USED_ITEM_ON_BLOCK = new EventType<>(new ResourceLocation(Constants.MOD_ID, "used_item_on_block"));
 }

@@ -76,4 +76,32 @@ public class ServerPlayerGameModeMixin
     {
         this.backpacked$capturedMinedBlock = null;
     }
+
+    /***************************
+     * Use item on block event *
+     ***************************/
+
+    @Unique
+    private BlockState backpacked$capturedUseState;
+
+    @Unique
+    private ItemStack backpacked$capturedUseItem;
+
+    @Inject(method = "useItemOn", at = @At(value = "HEAD"))
+    private void backpackedOnUse(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    {
+        this.backpacked$capturedUseState = level.getBlockState(result.getBlockPos());
+        this.backpacked$capturedUseItem = stack.copy();
+    }
+
+    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/ItemUsedOnLocationTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
+    private void backpackedBeforeTriggers(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    {
+        if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)
+        {
+            BackpackedEvents.INTERACTED_WITH_BLOCK.post().handle(this.backpacked$capturedUseState, this.backpacked$capturedUseItem, player);
+            this.backpacked$capturedUseState = null;
+            this.backpacked$capturedUseItem = null;
+        }
+    }
 }
