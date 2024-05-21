@@ -12,7 +12,6 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.EventType;
-import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -25,22 +24,22 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class FeedAnimalsChallenge extends Challenge
+public class FeedAnimalChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "feed_animals");
+    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "feed_animal");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<FeedAnimalsChallenge> CODEC = RecordCodecBuilder.create(builder -> {
+    public static final Codec<FeedAnimalChallenge> CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(BackpackedCodecs.ENTITY_TYPE_LIST.fieldOf("entity").forGetter(challenge -> {
             return challenge.types;
         }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
             return challenge.count;
-        })).apply(builder, FeedAnimalsChallenge::new);
+        })).apply(builder, FeedAnimalChallenge::new);
     });
 
     private final ImmutableList<EntityType<?>> types;
     private final int count;
 
-    protected FeedAnimalsChallenge(ImmutableList<EntityType<?>> types, int count)
+    protected FeedAnimalChallenge(ImmutableList<EntityType<?>> types, int count)
     {
         super(ID);
         this.types = types;
@@ -59,10 +58,10 @@ public class FeedAnimalsChallenge extends Challenge
         return new Tracker(this.count, this.types);
     }
 
-    public static class Serializer extends ChallengeSerializer<FeedAnimalsChallenge>
+    public static class Serializer extends ChallengeSerializer<FeedAnimalChallenge>
     {
         @Override
-        public void write(FeedAnimalsChallenge challenge, FriendlyByteBuf buf)
+        public void write(FeedAnimalChallenge challenge, FriendlyByteBuf buf)
         {
             buf.writeCollection(challenge.types, (buf1, type) -> {
                 buf1.writeResourceLocation(BuiltInRegistries.ENTITY_TYPE.getKey(type));
@@ -71,19 +70,19 @@ public class FeedAnimalsChallenge extends Challenge
         }
 
         @Override
-        public FeedAnimalsChallenge read(FriendlyByteBuf buf)
+        public FeedAnimalChallenge read(FriendlyByteBuf buf)
         {
             List<EntityType<?>> list = buf.readList(buf1 -> {
                 return BuiltInRegistries.ENTITY_TYPE.get(buf1.readResourceLocation());
             });
             int count = buf.readVarInt();
-            return new FeedAnimalsChallenge(ImmutableList.copyOf(list), count);
+            return new FeedAnimalChallenge(ImmutableList.copyOf(list), count);
         }
 
         @Override
-        public Codec<FeedAnimalsChallenge> codec()
+        public Codec<FeedAnimalChallenge> codec()
         {
-            return FeedAnimalsChallenge.CODEC;
+            return FeedAnimalChallenge.CODEC;
         }
     }
 
