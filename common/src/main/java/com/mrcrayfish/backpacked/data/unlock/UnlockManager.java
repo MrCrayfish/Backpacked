@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.EventType;
 import com.mrcrayfish.backpacked.event.block.MinedBlock;
+import com.mrcrayfish.backpacked.event.block.InteractedWithBlock;
 import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
@@ -72,6 +73,7 @@ public final class UnlockManager
         BackpackedEvents.MINED_BLOCK.register(this::onBlockMined);
         BackpackedEvents.FEED_ANIMAL.register(this::onFeedAnimal);
         BackpackedEvents.BRED_ANIMAL.register(this::onBredAnimal);
+        BackpackedEvents.INTERACTED_WITH_BLOCK.register(this::onUsedItemOnBlock);
         PlayerEvents.CRAFT_ITEM.register(this::onCraftedItem);
     }
 
@@ -131,6 +133,13 @@ public final class UnlockManager
     {
         this.getEventListeners(EventType.BRED_ANIMAL).forEach(o -> {
             ((BredAnimal) o).handle(first, second, player);
+        });
+    }
+
+    private void onUsedItemOnBlock(BlockState state, ItemStack stack, ServerPlayer player)
+    {
+        this.getEventListeners(EventType.USED_ITEM_ON_BLOCK).forEach(o -> {
+            ((InteractedWithBlock) o).handle(state, stack, player);
         });
     }
 
