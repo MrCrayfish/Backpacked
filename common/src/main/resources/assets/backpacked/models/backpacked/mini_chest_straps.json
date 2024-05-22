@@ -1,0 +1,49 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"textures": {
+		"mini_chest": "backpacked:backpack/mini_chest"
+	},
+	"elements": [
+		{
+			"from": [5, 3, 4],
+			"to": [6, 9, 8],
+			"faces": {
+				"north": {"uv": [0, 12, 6, 13], "rotation": 270, "texture": "#mini_chest"},
+				"up": {"uv": [10, 13, 6, 12], "rotation": 270, "texture": "#mini_chest"}
+			}
+		},
+		{
+			"from": [4, 3, 4],
+			"to": [5, 4, 8],
+			"faces": {
+				"north": {"uv": [16, 12, 15, 13], "texture": "#mini_chest"},
+				"south": {"uv": [15, 12, 14, 13], "texture": "#mini_chest"},
+				"west": {"uv": [14, 12, 10, 13], "texture": "#mini_chest"}
+			}
+		},
+		{
+			"from": [10, 3, 4],
+			"to": [11, 9, 8],
+			"faces": {
+				"north": {"uv": [0, 13, 6, 12], "rotation": 270, "texture": "#mini_chest"},
+				"up": {"uv": [10, 12, 6, 13], "rotation": 270, "texture": "#mini_chest"}
+			}
+		},
+		{
+			"from": [11, 3, 4],
+			"to": [12, 4, 8],
+			"faces": {
+				"north": {"uv": [15, 12, 16, 13], "texture": "#mini_chest"},
+				"east": {"uv": [10, 12, 14, 13], "texture": "#mini_chest"},
+				"south": {"uv": [14, 12, 15, 13], "texture": "#mini_chest"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.75, 3.75, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}

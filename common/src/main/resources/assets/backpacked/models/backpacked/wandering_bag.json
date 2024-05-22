@@ -1,0 +1,64 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"textures": {
+		"wandering_bag": "backpacked:backpack/wandering_bag"
+	},
+	"elements": [
+		{
+			"from": [4.5, 0, 8],
+			"to": [11.5, 9, 12],
+			"faces": {
+				"north": {"uv": [0, 0, 3.5, 9], "texture": "#wandering_bag"},
+				"east": {"uv": [7, 0, 9, 9], "texture": "#wandering_bag"},
+				"south": {"uv": [3.5, 0, 7, 9], "texture": "#wandering_bag"},
+				"west": {"uv": [4.5, 10, 9, 14], "rotation": 90, "texture": "#wandering_bag"},
+				"up": {"uv": [12.5, 4, 9, 0], "texture": "#wandering_bag"},
+				"down": {"uv": [12.5, 4, 9, 8], "texture": "#wandering_bag"}
+			}
+		},
+		{
+			"from": [4.3, 0.8, 7.8],
+			"to": [11.7, 9.2, 12.2],
+			"faces": {
+				"north": {"uv": [12.5, 0, 16, 8], "texture": "#wandering_bag"},
+				"south": {"uv": [12.5, 8, 16, 16], "texture": "#wandering_bag"},
+				"up": {"uv": [3.5, 13, 0, 9], "texture": "#wandering_bag"}
+			}
+		},
+		{
+			"from": [4.3, 0.8, 12.2],
+			"to": [11.7, 9.2, 7.8],
+			"faces": {
+				"north": {"uv": [12.5, 0, 16, 8], "texture": "#wandering_bag"},
+				"south": {"uv": [12.5, 8, 16, 16], "texture": "#wandering_bag"},
+				"up": {"uv": [3.5, 13, 0, 9], "texture": "#wandering_bag"}
+			}
+		},
+		{
+			"from": [4.3, 6.05, 7.8],
+			"to": [11.7, 7.1, 12.2],
+			"faces": {
+				"east": {"uv": [5, 9, 7, 10], "texture": "#wandering_bag"},
+				"west": {"uv": [7, 9, 9, 10], "texture": "#wandering_bag"}
+			}
+		},
+		{
+			"from": [7, 5.625, 11.75],
+			"to": [9, 7.625, 12.75],
+			"faces": {
+				"east": {"uv": [12, 9, 12.5, 11], "texture": "#wandering_bag"},
+				"south": {"uv": [11.5, 11, 12.5, 13], "texture": "#wandering_bag"},
+				"west": {"uv": [11.5, 9, 12, 11], "texture": "#wandering_bag"},
+				"up": {"uv": [11, 9, 10, 8], "texture": "#wandering_bag"},
+				"down": {"uv": [12, 8, 11, 9], "texture": "#wandering_bag"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.25, 5.25, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}

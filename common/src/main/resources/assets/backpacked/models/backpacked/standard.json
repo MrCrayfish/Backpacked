@@ -9,7 +9,6 @@
 		{
 			"from": [4.5, 5, 8],
 			"to": [11.5, 9, 12],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
 			"faces": {
 				"north": {"uv": [3.5, 0, 7, 4], "texture": "#standard"},
 				"east": {"uv": [7, 0, 9, 4], "texture": "#standard"},
@@ -31,8 +30,6 @@
 		{
 			"from": [3.57612, 0.38268, 8.016],
 			"to": [4.57612, 5.38268, 12.016],
-			"shade": false,
-			"rotation": {"angle": 0, "axis": "y", "origin": [4.57612, 0.38268, 8.016]},
 			"faces": {
 				"north": {"uv": [13.5, 0, 14, 5], "texture": "#standard"},
 				"south": {"uv": [13, 4, 13.5, 9], "texture": "#standard"},
@@ -52,7 +49,6 @@
 		{
 			"from": [4.5, 0, 8],
 			"to": [11.5, 5, 12],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
 			"faces": {
 				"north": {"uv": [3.5, 4, 7, 9], "texture": "#standard"},
 				"south": {"uv": [0, 4, 3.5, 9], "texture": "#standard"},
@@ -62,7 +58,6 @@
 		{
 			"from": [4.5, 1.432, 12],
 			"to": [11.5, 4.432, 13],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0.432, 12]},
 			"faces": {
 				"east": {"uv": [12.5, 0, 13, 3], "texture": "#standard"},
 				"south": {"uv": [3.5, 9, 7, 12], "texture": "#standard"},
@@ -103,7 +98,6 @@
 		{
 			"from": [11.42388, 0.38268, 8.016],
 			"to": [12.42388, 5.38268, 12.016],
-			"rotation": {"angle": 0, "axis": "y", "origin": [11.42388, 0.38268, 8.016]},
 			"faces": {
 				"north": {"uv": [14.5, 9, 15, 14], "texture": "#standard"},
 				"east": {"uv": [9, 4, 11, 9], "texture": "#standard"},
@@ -124,7 +118,6 @@
 		{
 			"from": [7, 5.5, 11.5],
 			"to": [9, 7.5, 12.5],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8.5, 0.5, 7.5]},
 			"faces": {
 				"east": {"uv": [13, 13, 13.5, 15], "texture": "#standard"},
 				"south": {"uv": [15, 12, 16, 14], "texture": "#standard"},
@@ -136,7 +129,6 @@
 		{
 			"from": [6.5, 9, 9.5],
 			"to": [9.5, 10, 10.5],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8.5, 9, 9.5]},
 			"faces": {
 				"east": {"uv": [9, 11, 9.5, 12], "texture": "#standard"},
 				"west": {"uv": [9.5, 11, 10, 12], "texture": "#standard"},

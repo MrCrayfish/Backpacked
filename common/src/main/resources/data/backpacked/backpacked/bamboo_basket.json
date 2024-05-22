@@ -1,8 +1,15 @@
 {
     "name": "backpack.backpacked.bamboo_basket",
     "unlock_challenge": {
-        "type": "backpacked:feed_animals",
-        "entity": "minecraft:panda",
+        "type": "backpacked:interact_with_block",
+        "target": {
+            "blocks": [
+                "minecraft:composter"
+            ],
+            "state": {
+                "level": "8"
+            }
+        },
         "count": 10
     }
 }
