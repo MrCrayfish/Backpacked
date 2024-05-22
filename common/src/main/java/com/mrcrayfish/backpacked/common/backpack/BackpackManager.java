@@ -89,6 +89,11 @@ public final class BackpackManager
         return this.clientModelMeta.getOrDefault(id, ModelMeta.DEFAULT);
     }
 
+    public ModelMeta getModelMeta(Backpack backpack)
+    {
+        return this.clientModelMeta.getOrDefault(backpack.getId(), ModelMeta.DEFAULT);
+    }
+
     public void unlockBackpack(ServerPlayer player, ResourceLocation id)
     {
         // Prevents unlocking backpacks when all backpacks are forcefully unlocked.

@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.Minecraft;
@@ -58,7 +59,8 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         pose.translate(0.5, -6 * 0.0625, -5 * 0.0625);
 
         // Apply shelf offset since models can have different shapes and sizes
-        Vector3f offset = backpack.getModelMeta().getShelfOffset();
+        ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
+        Vector3f offset = meta.getShelfOffset();
         pose.translate(offset.x * 0.0625, offset.z * 0.0625, -offset.y * 0.0625);
 
         // Fix rotation and invert
