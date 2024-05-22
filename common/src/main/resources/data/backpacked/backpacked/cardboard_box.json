@@ -1,10 +1,10 @@
 {
     "name": "backpack.backpacked.cardboard_box",
     "unlock_challenge": {
-        "type": "backpacked:mine_blocks",
-        "blocks": [
-            "#minecraft:logs"
-        ],
+        "type": "backpacked:mine_block",
+        "target_block": {
+            "tag": "#minecraft:logs"
+        },
         "count": 100
     }
 }

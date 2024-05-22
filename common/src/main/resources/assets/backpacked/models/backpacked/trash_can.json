@@ -1,0 +1,49 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"textures": {
+		"trash_can": "backpacked:backpack/trash_can"
+	},
+	"elements": [
+		{
+			"from": [6.5, 10, 10.5],
+			"to": [9.5, 11, 11.5],
+			"faces": {
+				"north": {"uv": [2.5, 18, 4, 19], "texture": "#trash_can"},
+				"east": {"uv": [7.5, 12, 8, 13], "texture": "#trash_can"},
+				"south": {"uv": [9, 7, 10.5, 8], "texture": "#trash_can"},
+				"west": {"uv": [7, 12, 7.5, 13], "texture": "#trash_can"},
+				"up": {"uv": [8, 12, 6.5, 11], "texture": "#trash_can"},
+				"down": {"uv": [10.5, 8, 9, 9], "texture": "#trash_can"}
+			}
+		},
+		{
+			"from": [4.5, 9, 7.5],
+			"to": [11.5, 10, 14.5],
+			"faces": {
+				"north": {"uv": [8.5, 9, 12, 10], "texture": "#trash_can"},
+				"east": {"uv": [8.5, 10, 12, 11], "texture": "#trash_can"},
+				"south": {"uv": [8.5, 11, 12, 12], "texture": "#trash_can"},
+				"west": {"uv": [8.5, 12, 12, 13], "texture": "#trash_can"},
+				"up": {"uv": [15.5, 7, 12, 0], "texture": "#trash_can"}
+			}
+		},
+		{
+			"from": [5, 0.5, 8],
+			"to": [11, 9.5, 14],
+			"faces": {
+				"north": {"uv": [0, 0, 3, 9], "texture": "#trash_can"},
+				"east": {"uv": [3, 0, 6, 9], "texture": "#trash_can"},
+				"south": {"uv": [6, 0, 9, 9], "texture": "#trash_can"},
+				"west": {"uv": [9, 0, 12, 9], "texture": "#trash_can"},
+				"down": {"uv": [15, 7, 12, 13], "texture": "#trash_can"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-2, 5, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}

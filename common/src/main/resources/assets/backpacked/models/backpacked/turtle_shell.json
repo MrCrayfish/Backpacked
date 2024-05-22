@@ -1,0 +1,27 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"textures": {
+		"turtle_shell": "backpacked:backpack/turtle_shell"
+	},
+	"elements": [
+		{
+			"from": [4, 0, 8],
+			"to": [12, 9, 12],
+			"faces": {
+				"north": {"uv": [2, 0, 6, 9], "texture": "#turtle_shell"},
+				"east": {"uv": [0, 0, 2, 9], "texture": "#turtle_shell"},
+				"south": {"uv": [8, 0, 12, 9], "texture": "#turtle_shell"},
+				"west": {"uv": [6, 0, 8, 9], "texture": "#turtle_shell"},
+				"up": {"uv": [16, 8, 12, 4], "texture": "#turtle_shell"},
+				"down": {"uv": [16, 0, 12, 4], "texture": "#turtle_shell"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.5, 5.5, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}

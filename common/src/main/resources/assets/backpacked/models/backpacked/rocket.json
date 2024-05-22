@@ -1,0 +1,67 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"textures": {
+		"rocket": "backpacked:backpack/rocket"
+	},
+	"elements": [
+		{
+			"from": [6, -1, 8],
+			"to": [10, 9, 12],
+			"faces": {
+				"north": {"uv": [0, 0, 2, 10], "texture": "#rocket"},
+				"east": {"uv": [2, 0, 4, 10], "texture": "#rocket"},
+				"south": {"uv": [4, 0, 6, 10], "texture": "#rocket"},
+				"west": {"uv": [6, 0, 8, 10], "texture": "#rocket"},
+				"down": {"uv": [6, 10, 4, 14], "texture": "#rocket"}
+			}
+		},
+		{
+			"from": [5, 9, 7],
+			"to": [11, 10, 13],
+			"faces": {
+				"north": {"uv": [8, 6, 11, 7], "texture": "#rocket"},
+				"east": {"uv": [11, 6, 14, 7], "texture": "#rocket"},
+				"south": {"uv": [8, 7, 11, 8], "texture": "#rocket"},
+				"west": {"uv": [11, 7, 14, 8], "texture": "#rocket"},
+				"up": {"uv": [11, 6, 8, 0], "texture": "#rocket"},
+				"down": {"uv": [14, 0, 11, 6], "texture": "#rocket"}
+			}
+		},
+		{
+			"from": [6, 10, 8],
+			"to": [10, 11, 12],
+			"faces": {
+				"north": {"uv": [2, 12, 4, 13], "texture": "#rocket"},
+				"east": {"uv": [2, 11, 4, 12], "texture": "#rocket"},
+				"south": {"uv": [2, 10, 4, 11], "texture": "#rocket"},
+				"west": {"uv": [2, 13, 4, 14], "texture": "#rocket"},
+				"up": {"uv": [2, 14, 0, 10], "texture": "#rocket"}
+			}
+		},
+		{
+			"from": [7, 11, 9],
+			"to": [9, 12, 11],
+			"faces": {
+				"north": {"uv": [11, 8, 12, 9], "texture": "#rocket"},
+				"east": {"uv": [8, 8, 9, 9], "texture": "#rocket"},
+				"south": {"uv": [9, 8, 10, 9], "texture": "#rocket"},
+				"west": {"uv": [10, 8, 11, 9], "texture": "#rocket"},
+				"up": {"uv": [13, 10, 12, 8], "texture": "#rocket"}
+			}
+		},
+		{
+			"from": [6, -5, 10],
+			"to": [10, -1, 10],
+			"faces": {
+				"south": {"uv": [14, 8, 16, 12], "texture": "#rocket"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.25, 5.25, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}

@@ -1,0 +1,49 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"textures": {
+		"piglin_pack": "backpacked:backpack/piglin_pack"
+	},
+	"elements": [
+		{
+			"from": [5, 1, 4],
+			"to": [6, 9, 8],
+			"faces": {
+				"north": {"uv": [14.5, 0, 15, 8], "texture": "#piglin_pack"},
+				"up": {"uv": [16, 8, 15.5, 4], "texture": "#piglin_pack"}
+			}
+		},
+		{
+			"from": [4, 1, 4],
+			"to": [5, 2, 8],
+			"faces": {
+				"north": {"uv": [14, 11, 14.5, 12], "texture": "#piglin_pack"},
+				"south": {"uv": [10.5, 11, 11, 12], "texture": "#piglin_pack"},
+				"west": {"uv": [4, 12, 6, 13], "texture": "#piglin_pack"}
+			}
+		},
+		{
+			"from": [10, 1, 4],
+			"to": [11, 9, 8],
+			"faces": {
+				"north": {"uv": [15, 0, 15.5, 8], "texture": "#piglin_pack"},
+				"up": {"uv": [16, 4, 15.5, 0], "texture": "#piglin_pack"}
+			}
+		},
+		{
+			"from": [11, 1, 4],
+			"to": [12, 2, 8],
+			"faces": {
+				"north": {"uv": [0.5, 12, 1, 13], "texture": "#piglin_pack"},
+				"east": {"uv": [8, 12, 10, 13], "texture": "#piglin_pack"},
+				"south": {"uv": [1, 12, 1.5, 13], "texture": "#piglin_pack"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.25, 5.25, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}
