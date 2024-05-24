@@ -1,0 +1,44 @@
+{
+    "shelf_offset": [0, 0, 0],
+    "renderer": [
+        {
+            "type": "minecraft:draw_model",
+            "model": "backpacked:backpacked/cogwheel"
+        },
+        {
+            "type": "minecraft:stack",
+            "functions": [
+                {
+                    "type": "minecraft:translate",
+                    "y": -0.21875
+                },
+                {
+                    "type": "minecraft:rotate",
+                    "z": {
+                        "source": {
+                            "type": "minecraft:tick_count"
+                        },
+                        "multiplier": 4.0
+                    }
+                },
+                {
+                    "type": "minecraft:rotate",
+                    "z": {
+                        "source": {
+                            "type": "minecraft:walk_position"
+                        },
+                        "multiplier": 16.0
+                    }
+                },
+                {
+                    "type": "minecraft:translate",
+                    "y": 0.21875
+                },
+                {
+                    "type": "minecraft:draw_model",
+                    "model": "backpacked:backpacked/cogwheel_wheel"
+                }
+            ]
+        }
+    ]
+}
