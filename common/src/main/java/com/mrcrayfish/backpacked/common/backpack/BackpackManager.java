@@ -84,6 +84,7 @@ public final class BackpackManager
         return ImmutableList.copyOf(this.clientBackpacks.values());
     }
 
+    // TODO move out
     public ModelMeta getModelMeta(ResourceLocation id)
     {
         return this.clientModelMeta.getOrDefault(id, ModelMeta.DEFAULT);

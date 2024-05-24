@@ -34,6 +34,6 @@ public record DrawModelFunction(ResourceLocation id, Optional<Vector3f> origin) 
     public void apply(BackpackRenderContext context)
     {
         BakedModel model = ClientServices.MODEL.getBakedModel(this.id);
-        context.itemRenderer().render(context.stack(), ItemDisplayContext.NONE, false, context.pose(), context.source(), context.light(), OverlayTexture.NO_OVERLAY, model);
+        context.renderer().draw(model);
     }
 }
