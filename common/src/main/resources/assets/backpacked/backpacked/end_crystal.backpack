@@ -1,0 +1,135 @@
+{
+    "shelf_offset": [0, 0, 0],
+    "renderer": [
+        {
+            "type": "minecraft:draw_model",
+            "model": "backpacked:backpacked/end_crystal"
+        },
+        {
+            "type": "minecraft:stack",
+            "functions": [
+                {
+                    "type": "minecraft:translate",
+                    "y": {
+                        "source": {
+                            "type": "backpacked:waveform",
+                            "waveform": "sine",
+                            "wavelength": 20
+                        },
+                        "multiplier": 0.0625
+                    },
+                    "z": {
+                        "source": {
+                            "type": "minecraft:walk_speed"
+                        },
+                        "multiplier": 0.1
+                    }
+                },
+                {
+                    "type": "minecraft:stack",
+                    "functions": [
+                        {
+                            "type": "minecraft:translate",
+                            "y": -0.1875,
+                            "z": 0.328125
+                        },
+                        {
+                            "type": "minecraft:scale",
+                            "x": {
+                                "source": {
+                                    "type": "minecraft:walk_speed"
+                                },
+                                "base": 1.0,
+                                "multiplier": 0.25
+                            },
+                            "y": {
+                                "source": {
+                                    "type": "minecraft:walk_speed"
+                                },
+                                "base": 1.0,
+                                "multiplier": 0.25
+                            },
+                            "z": {
+                                "source": {
+                                    "type": "minecraft:walk_speed"
+                                },
+                                "base": 1.0,
+                                "multiplier": 0.25
+                            }
+                        },
+                        {
+                            "type": "minecraft:translate",
+                            "y": 0.1875,
+                            "z": -0.328125
+                        },
+                        {
+                            "type": "minecraft:draw_model",
+                            "model": "backpacked:backpacked/end_crystal_inner"
+                        }
+                    ]
+                },
+                {
+                    "type": "minecraft:translate",
+                    "y": -0.1875,
+                    "z": 0.328125
+                },
+                {
+                    "type": "minecraft:rotate",
+                    "y": {
+                        "source": {
+                            "type": "minecraft:tick_count"
+                        },
+                        "multiplier": 3
+                    }
+                },
+                {
+                    "type": "minecraft:rotate",
+                    "y": {
+                        "source": {
+                            "type": "minecraft:walk_position"
+                        },
+                        "multiplier": 8
+                    }
+                },
+                {
+                    "type": "minecraft:rotate",
+                    "x": 45,
+                    "z": 30
+                },
+                {
+                    "type": "minecraft:scale",
+                    "x": {
+                        "source": {
+                            "type": "minecraft:walk_speed"
+                        },
+                        "base": 1.0,
+                        "multiplier": 0.25
+                    },
+                    "y": {
+                        "source": {
+                            "type": "minecraft:walk_speed"
+                        },
+                        "base": 1.0,
+                        "multiplier": 0.25
+                    },
+                    "z": {
+                        "source": {
+                            "type": "minecraft:walk_speed"
+                        },
+                        "base": 1.0,
+                        "multiplier": 0.25
+                    }
+                },
+                {
+                    "type": "minecraft:translate",
+                    "y": 0.1875,
+                    "z": -0.328125
+                },
+                {
+                    "type": "minecraft:draw_model",
+                    "model": "backpacked:backpacked/end_crystal_frame"
+                }
+            ]
+        }
+    ]
+}

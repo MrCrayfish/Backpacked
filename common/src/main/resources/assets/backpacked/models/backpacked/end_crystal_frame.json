@@ -1,0 +1,30 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"texture_size": [32, 16],
+	"textures": {
+		"end_crystal": "backpacked:backpack/end_crystal"
+	},
+	"components": [
+		{
+			"from": [5.5, 2.5, 10.75],
+			"to": [10.5, 7.5, 15.75],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 5, 13.5]},
+			"faces": {
+				"north": {"uv": [0, 8, 2.5, 13], "texture": "#end_crystal"},
+				"east": {"uv": [0, 8, 2.5, 13], "texture": "#end_crystal"},
+				"south": {"uv": [0, 8, 2.5, 13], "texture": "#end_crystal"},
+				"west": {"uv": [0, 8, 2.5, 13], "texture": "#end_crystal"},
+				"up": {"uv": [2.5, 13, 0, 8], "texture": "#end_crystal"},
+				"down": {"uv": [2.5, 8, 0, 13], "texture": "#end_crystal"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.75, 4.75, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}

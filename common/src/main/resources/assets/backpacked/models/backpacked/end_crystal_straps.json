@@ -1,0 +1,58 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"texture_size": [32, 16],
+	"textures": {
+		"end_crystal": "backpacked:backpack/end_crystal"
+	},
+	"components": [
+		{
+			"from": [5, 1, 4],
+			"to": [6, 9, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, 0, 8]},
+			"faces": {
+				"north": {"uv": [15, 0, 15.5, 8], "texture": "#end_crystal"},
+				"up": {"uv": [13, 4, 12.5, 0], "texture": "#end_crystal"}
+			}
+		},
+		{
+			"from": [4, 1, 4],
+			"to": [5, 2, 8],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, 1, 8]},
+			"faces": {
+				"north": {"uv": [5, 12, 4.5, 13], "texture": "#end_crystal"},
+				"east": {"uv": [12, 4, 10, 5], "texture": "#end_crystal"},
+				"south": {"uv": [5.5, 12, 5, 13], "texture": "#end_crystal"},
+				"west": {"uv": [4.5, 12, 2.5, 13], "texture": "#end_crystal"}
+			}
+		},
+		{
+			"from": [10, 1, 4],
+			"to": [11, 9, 8],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 0, 8]},
+			"faces": {
+				"north": {"uv": [15.5, 0, 15, 8], "texture": "#end_crystal"},
+				"up": {"uv": [12.5, 4, 13, 0], "texture": "#end_crystal"}
+			}
+		},
+		{
+			"from": [11, 1, 4],
+			"to": [12, 2, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 1, 8]},
+			"faces": {
+				"north": {"uv": [4.5, 12, 5, 13], "texture": "#end_crystal"},
+				"east": {"uv": [2.5, 12, 4.5, 13], "texture": "#end_crystal"},
+				"south": {"uv": [5, 12, 5.5, 13], "texture": "#end_crystal"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.75, 4.75, 0],
+			"scale": [1.4, 1.4, 1.4]
+		}
+	}
+}
