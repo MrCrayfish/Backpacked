@@ -9,4 +9,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 public interface IRegistrationHelper
 {
     void addEnchantedBookToCreativeTab(CreativeModeTab.Output output, Enchantment enchantment);
+
+    boolean isModLoaded(String modId);
 }
