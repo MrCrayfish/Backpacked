@@ -2,13 +2,21 @@
     "shelf_offset": [0, 0, 0],
     "renderer": [
         {
-            "type": "minecraft:pose",
-            "pose": [
-                {
-                    "type": "backpacked:draw",
-                    "model": "bac"
+            "type": "minecraft:rotate",
+            "x": {
+                "source": {
+                    "type": "minecraft:walk_position"
                 }
-            ]
+            },
+            "z": {
+                "source": {
+                    "type": "minecraft:walk_position"
+                }
+            }
+        },
+        {
+            "type": "minecraft:draw_model",
+            "model": "backpacked:backpacked/bamboo_basket"
         }
     ]
 }

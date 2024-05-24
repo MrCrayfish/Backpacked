@@ -103,10 +103,11 @@ public class Backpack
         }
     }
 
-    private boolean checkSetup()
+    private void checkSetup()
     {
         if(!this.setup)
+        {
             throw new RuntimeException("Backpack is not setup");
-        return true;
+        }
     }
 }
