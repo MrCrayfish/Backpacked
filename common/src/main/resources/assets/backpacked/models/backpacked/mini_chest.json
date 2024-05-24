@@ -27,12 +27,5 @@
 				"down": {"uv": [4, 13, 2, 14], "texture": "#mini_chest"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.75, 3.75, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

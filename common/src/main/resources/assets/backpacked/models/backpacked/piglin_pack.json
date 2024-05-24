@@ -66,12 +66,5 @@
 				"up": {"uv": [11.5, 13, 10, 12], "texture": "#piglin_pack"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.25, 5.25, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

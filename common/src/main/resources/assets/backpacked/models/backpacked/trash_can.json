@@ -38,12 +38,5 @@
 				"down": {"uv": [15, 7, 12, 13], "texture": "#trash_can"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-2, 5, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

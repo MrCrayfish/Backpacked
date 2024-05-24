@@ -38,12 +38,5 @@
 				"south": {"uv": [12, 8, 12.5, 9], "texture": "#wandering_bag"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.25, 5.25, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

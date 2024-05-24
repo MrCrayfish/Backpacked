@@ -1,7 +1,6 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"loader": "framework:open_model",
-	"texture_size": [32, 32],
 	"textures": {
 		"cogwheel": "backpacked:backpack/cogwheel"
 	},

@@ -28,12 +28,5 @@
 				"down": {"uv": [16, 1.5, 14.5, 2], "texture": "#classic"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.25, 5.25, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }
