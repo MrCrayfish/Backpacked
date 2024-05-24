@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biomes;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -25,6 +26,7 @@ public class PiglinPackBackpack extends Backpack
     @Override
     public IProgressTracker createProgressTracker()
     {
-        return new BiomeExploreProgressTracker(Biomes.NETHER_WASTES, Biomes.SOUL_SAND_VALLEY, Biomes.CRIMSON_FOREST, Biomes.WARPED_FOREST, Biomes.BASALT_DELTAS);
+        //Biomes.NETHER_WASTES, Biomes.SOUL_SAND_VALLEY, Biomes.CRIMSON_FOREST, Biomes.WARPED_FOREST, Biomes.BASALT_DELTAS
+        return new BiomeExploreProgressTracker(List.of());
     }
 }

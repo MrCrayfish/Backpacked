@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
+import com.mrcrayfish.backpacked.common.challenge.impl.ExploreBiomeChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.MineBlockChallenge;
@@ -36,6 +37,7 @@ public final class ChallengeManager
         this.register(FeedAnimalChallenge.ID, FeedAnimalChallenge.CODEC, FeedAnimalChallenge.SERIALIZER);
         this.register(MineBlockChallenge.ID, MineBlockChallenge.CODEC, MineBlockChallenge.SERIALIZER);
         this.register(InteractWithBlockChallenge.ID, InteractWithBlockChallenge.CODEC, InteractWithBlockChallenge.SERIALIZER);
+        this.register(ExploreBiomeChallenge.ID, ExploreBiomeChallenge.CODEC, ExploreBiomeChallenge.SERIALIZER);
     }
 
     public <C extends Challenge, T extends ChallengeSerializer<C>> void register(ResourceLocation id, Codec<C> codec, T serializer)

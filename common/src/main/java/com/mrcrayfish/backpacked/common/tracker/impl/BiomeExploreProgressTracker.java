@@ -17,6 +17,7 @@ import net.minecraft.world.level.biome.Biome;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,10 +28,9 @@ public class BiomeExploreProgressTracker implements IProgressTracker
     private final ImmutableSet<ResourceKey<Biome>> biomes;
     private final Set<ResourceLocation> exploredBiomes = new HashSet<>();
 
-    @SafeVarargs
-    public BiomeExploreProgressTracker(ResourceKey<Biome> ... biomes)
+    public BiomeExploreProgressTracker(List<ResourceKey<Biome>> biomes)
     {
-        this.biomes = ImmutableSet.copyOf(Arrays.asList(biomes));
+        this.biomes = ImmutableSet.copyOf(biomes);
         UnlockManager.instance().addEventListener(EventType.EXPLORE_UPDATE, (key, player) -> {
             if(this.isComplete() || player.level().isClientSide())
                 return;
