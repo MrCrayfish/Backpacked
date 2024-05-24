@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.StaticSou
 import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.TickCountSource;
 import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.WalkPositionSource;
 import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.WalkSpeedSource;
+import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.WaveformSource;
 import com.mrcrayfish.framework.api.event.InputEvents;
 
 /**
@@ -30,6 +31,7 @@ public class ClientBootstrap
         SourceTypes.register(TickCountSource.TYPE);
         SourceTypes.register(WalkPositionSource.TYPE);
         SourceTypes.register(WalkSpeedSource.TYPE);
+        SourceTypes.register(WaveformSource.TYPE);
     }
 
     public static void init()
