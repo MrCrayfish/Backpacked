@@ -8,9 +8,11 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
+import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
 import com.mrcrayfish.backpacked.common.backpack.impl.StandardBackpack;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -26,6 +28,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -44,6 +47,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -63,6 +67,7 @@ public class CustomiseBackpackScreen extends Screen
     private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
 
+    private final ItemStack displayStack;
     private final int windowWidth;
     private final int windowHeight;
     private int windowLeft;
@@ -88,6 +93,7 @@ public class CustomiseBackpackScreen extends Screen
     public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
+        this.displayStack = new ItemStack(ModItems.BACKPACK.get());
         this.windowWidth = 201;
         this.windowHeight = 166;
         Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
@@ -235,22 +241,31 @@ public class CustomiseBackpackScreen extends Screen
         graphics.drawString(this.font, entry.getLabel(), x + 20, y + 6, color, false);
 
         // Draw backpack model
-        drawBackpackModel(this.minecraft, graphics, entry.getBackpack(), x + 10, y + 10, 20, this.animationTick, partialTick);
+        drawBackpackInGui(this.minecraft, graphics, this.displayStack, entry.getBackpack(), x + 10, y + 10, partialTick);
     }
 
-    public static void drawBackpackModel(Minecraft mc, GuiGraphics graphics, Backpack backpack, int x, int y, float scale, int animationTick, float partialTick)
+    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ItemStack stack, Backpack backpack, int x, int y, float partialTick)
     {
-        BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
-        model = model != null ? model : mc.getModelManager().getMissingModel();
         PoseStack pose = graphics.pose();
         pose.pushPose();
-        pose.translate(x, y, 200);
-        pose.mulPoseMatrix(new Matrix4f().scaling(1, -1, 1));
+        pose.translate(x, y, 150);
+        pose.mulPoseMatrix((new Matrix4f()).scaling(1.0F, -1.0F, 1.0F));
         pose.scale(16, 16, 16);
-        Lighting.setupFor3DItems();
-        mc.getItemRenderer().render(new ItemStack(ModItems.BACKPACK.get()), ItemDisplayContext.GUI, false, graphics.pose(), graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
-        graphics.flush();
-        Lighting.setupFor3DItems();
+        ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
+        meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
+        meta.renderer().ifPresentOrElse(renderer -> {
+            BackpackRenderContext context = new BackpackRenderContext(pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, partialTick, model -> {
+                mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
+                graphics.flush();
+            });
+            pose.pushPose();
+            renderer.forEach(function -> function.apply(context));
+            pose.popPose();
+        }, () -> {
+            BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+            mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
+            graphics.flush();
+        });
         pose.popPose();
     }
 

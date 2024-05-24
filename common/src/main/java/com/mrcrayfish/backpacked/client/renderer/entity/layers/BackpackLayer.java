@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.joml.Matrix4f;
 
 /**
  * Author: MrCrayfish
@@ -66,7 +67,9 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
             meta.renderer().ifPresentOrElse(renderer -> {
                 pose.pushPose();
-                BackpackRenderContext context = new BackpackRenderContext(pose, source, this.itemRenderer, light, stack, backpack, player, partialTick);
+                BackpackRenderContext context = new BackpackRenderContext(pose, source, light, stack, backpack, player, partialTick, model -> {
+                    this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+                });
                 renderer.forEach(function -> function.apply(context));
                 pose.popPose();
             }, () -> {
