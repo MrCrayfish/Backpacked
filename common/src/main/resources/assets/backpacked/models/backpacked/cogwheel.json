@@ -1,0 +1,47 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"texture_size": [32, 32],
+	"textures": {
+		"cogwheel": "backpacked:backpack/cogwheel"
+	},
+	"components": [
+		{
+			"from": [4, 8, 8],
+			"to": [12, 9, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 9, 8]},
+			"faces": {
+				"north": {"uv": [6, 11.5, 10, 12], "texture": "#cogwheel"},
+				"east": {"uv": [6, 12, 9, 12.5], "texture": "#cogwheel"},
+				"south": {"uv": [9, 10, 13, 10.5], "texture": "#cogwheel"},
+				"west": {"uv": [6, 10, 9, 10.5], "texture": "#cogwheel"},
+				"up": {"uv": [4, 7, 0, 4], "texture": "#cogwheel"},
+				"down": {"uv": [8, 4, 4, 7], "texture": "#cogwheel"}
+			}
+		},
+		{
+			"from": [4, 0, 8],
+			"to": [12, 1, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 9, 8]},
+			"faces": {
+				"north": {"uv": [6, 11.5, 10, 12], "texture": "#cogwheel"},
+				"east": {"uv": [6, 12, 9, 12.5], "texture": "#cogwheel"},
+				"south": {"uv": [9, 10, 13, 10.5], "texture": "#cogwheel"},
+				"west": {"uv": [6, 10, 9, 10.5], "texture": "#cogwheel"},
+				"up": {"uv": [4, 7, 0, 4], "texture": "#cogwheel"},
+				"down": {"uv": [8, 4, 4, 7], "texture": "#cogwheel"}
+			}
+		},
+		{
+			"from": [4.25, 0.75, 8.25],
+			"to": [11.75, 8.25, 13.75],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 9, 8]},
+			"faces": {
+				"north": {"uv": [3, 0, 7, 4], "texture": "#cogwheel"},
+				"east": {"uv": [0, 0, 3, 4], "texture": "#cogwheel"},
+				"south": {"uv": [10, 0, 14, 4], "texture": "#cogwheel"},
+				"west": {"uv": [7, 0, 10, 4], "texture": "#cogwheel"}
+			}
+		}
+	]
+}
