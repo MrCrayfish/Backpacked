@@ -15,15 +15,16 @@ import java.util.function.Function;
  */
 public final class Value
 {
-    public static final Value ZERO = new Value(new StaticSource(0), 1);
+    public static final Value ZERO = new Value(new StaticSource(0), 0.0, 1.0);
     public static final Codec<Value> VALUE_CODEC = RecordCodecBuilder.create(builder -> builder.group(
         BaseSource.CODEC.fieldOf("source").forGetter(o -> o.source),
+        Codec.DOUBLE.optionalFieldOf("base", 0.0).forGetter(o -> o.base),
         Codec.DOUBLE.optionalFieldOf("multiplier", 1.0).forGetter(o -> o.multiplier)
     ).apply(builder, Value::new));
 
     // We want to accept either a raw double or a full value object
     public static final Codec<Value> CODEC = ExtraCodecs.either(Codec.DOUBLE, VALUE_CODEC).xmap(either -> {
-        return either.map(val -> new Value(new StaticSource(val), 1.0), Function.identity());
+        return either.map(val -> new Value(new StaticSource(val), 0.0, 1.0), Function.identity());
     }, value -> {
         if(value.source instanceof StaticSource source) {
             return Either.left(source.value());
@@ -33,15 +34,17 @@ public final class Value
 
     private final BaseSource source;
     private final double multiplier;
+    private final double base;
 
-    public Value(BaseSource source, double multiplier)
+    public Value(BaseSource source, double base, double multiplier)
     {
         this.source = source;
+        this.base = base;
         this.multiplier = multiplier;
     }
 
     public double getValue(BackpackRenderContext context)
     {
-        return this.source.apply(context) * this.multiplier;
+        return this.base + this.source.apply(context) * this.multiplier;
     }
 }
