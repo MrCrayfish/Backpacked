@@ -9,6 +9,5 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IModelHelper
 {
-    @Nullable
     BakedModel getBakedModel(ResourceLocation id);
 }

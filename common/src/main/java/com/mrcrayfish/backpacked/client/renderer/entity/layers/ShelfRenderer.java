@@ -60,7 +60,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 
         // Apply shelf offset since models can have different shapes and sizes
         ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
-        Vector3f offset = meta.getShelfOffset();
+        Vector3f offset = meta.shelfOffset();
         pose.translate(offset.x * 0.0625, offset.z * 0.0625, -offset.y * 0.0625);
 
         // Fix rotation and invert

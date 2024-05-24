@@ -2,8 +2,10 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.ClientServices;
@@ -55,18 +57,24 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             if(backpack == null)
                 return;
 
-            ResourceLocation location = backpack.getBaseModel();
-            BakedModel model = ClientServices.MODEL.getBakedModel(location);
-            if(model == null)
-                return;
-
             pose.pushPose();
             pose.mulPose(Axis.YP.rotationDegrees(180.0F));
             pose.scale(1.05F, -1.05F, -1.05F);
             int offset = !chestStack.isEmpty() ? 3 : 2;
             pose.translate(0, -0.06, offset * 0.0625);
-            this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, this.getModel(backpack.getBaseModel()));
+
+            ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
+            meta.renderer().ifPresentOrElse(renderer -> {
+                pose.pushPose();
+                BackpackRenderContext context = new BackpackRenderContext(pose, source, this.itemRenderer, light, stack, backpack, player, partialTick);
+                renderer.forEach(function -> function.apply(context));
+                pose.popPose();
+            }, () -> {
+                BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+                this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+            });
             this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, this.getModel(backpack.getStrapsModel()));
+
             pose.popPose();
         }
     }
