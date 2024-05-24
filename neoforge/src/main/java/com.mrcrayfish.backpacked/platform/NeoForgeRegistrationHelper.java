@@ -5,6 +5,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.neoforged.fml.ModList;
 
 /**
  * Author: MrCrayfish
@@ -15,5 +16,11 @@ public class NeoForgeRegistrationHelper implements IRegistrationHelper
     public void addEnchantedBookToCreativeTab(CreativeModeTab.Output output, Enchantment enchantment)
     {
         output.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment, enchantment.getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+    }
+
+    @Override
+    public boolean isModLoaded(String modId)
+    {
+        return ModList.get().isLoaded(modId);
     }
 }
