@@ -49,12 +49,5 @@
 				"up": {"uv": [0, 0, 4, 4], "texture": "#bamboo_basket"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.25, 5.25, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

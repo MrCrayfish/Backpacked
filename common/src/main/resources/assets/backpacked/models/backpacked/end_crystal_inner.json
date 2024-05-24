@@ -9,7 +9,6 @@
 		{
 			"from": [6.25, 3.25, 11.5],
 			"to": [9.75, 6.75, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 5, 13.25]},
 			"faces": {
 				"north": {"uv": [13, 4, 15, 8], "texture": "#end_crystal"},
 				"east": {"uv": [13, 0, 15, 4], "texture": "#end_crystal"},
@@ -19,12 +18,5 @@
 				"down": {"uv": [13, 4, 11, 8], "texture": "#end_crystal"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.75, 4.75, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

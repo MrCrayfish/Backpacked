@@ -36,12 +36,5 @@
 				"east": {"uv": [8, 8, 10, 9], "texture": "#cardboard_box"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-2, 5.5, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

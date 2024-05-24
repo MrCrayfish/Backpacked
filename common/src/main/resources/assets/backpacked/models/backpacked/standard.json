@@ -135,12 +135,5 @@
 				"up": {"uv": [15, 9, 13.5, 8], "texture": "#standard"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.5, 5.5, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }

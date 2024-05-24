@@ -56,12 +56,5 @@
 				"south": {"uv": [14, 8, 16, 12], "texture": "#rocket"}
 			}
 		}
-	],
-	"display": {
-		"gui": {
-			"rotation": [30, 30, 0],
-			"translation": [-1.25, 5.25, 0],
-			"scale": [1.4, 1.4, 1.4]
-		}
-	}
+	]
 }
