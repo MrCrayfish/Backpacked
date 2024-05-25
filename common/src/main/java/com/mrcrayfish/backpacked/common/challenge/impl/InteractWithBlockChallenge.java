@@ -28,9 +28,9 @@ public class InteractWithBlockChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "interact_with_block");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<InteractWithBlockChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(BlockPredicate.CODEC.optionalFieldOf("target").forGetter(challenge -> {
+        return builder.group(BlockPredicate.CODEC.optionalFieldOf("block").forGetter(challenge -> {
             return challenge.block;
-        }), ItemPredicate.CODEC.optionalFieldOf("using_item").forGetter(challenge -> {
+        }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
             return challenge.item;
         }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
             return challenge.count;

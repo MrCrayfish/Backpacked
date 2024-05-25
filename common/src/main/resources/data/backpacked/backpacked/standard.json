@@ -2,7 +2,7 @@
     "name": "backpack.backpacked.standard",
     "unlock_challenge": {
         "type": "backpacked:kill_mob",
-        "target": {
+        "mob": {
             "type": "#minecraft:zombies"
         },
         "count": 10

@@ -37,7 +37,7 @@ public class ExploreBiomeChallenge extends Challenge
         return DataResult.success(keys);
     });
     public static final Codec<ExploreBiomeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(BIOME_LIST_CODEC.fieldOf("biomes").forGetter(challenge -> {
+        return builder.group(BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
             return challenge.biomes;
         })).apply(builder, ExploreBiomeChallenge::new);
     });

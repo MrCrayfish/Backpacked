@@ -2,7 +2,7 @@
     "name": "backpack.backpacked.cardboard_box",
     "unlock_challenge": {
         "type": "backpacked:mine_block",
-        "target_block": {
+        "block": {
             "tag": "#minecraft:logs"
         },
         "count": 100

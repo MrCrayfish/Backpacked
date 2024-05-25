@@ -1,3 +1,15 @@
 {
-    "name": "backpack.backpacked.trash_can"
+    "name": "backpack.backpacked.trash_can",
+    "unlock_challenge": {
+        "type": "backpacked:interact_with_block",
+        "block": {
+            "blocks": [
+                "minecraft:composter"
+            ],
+            "state": {
+                "level": "8"
+            }
+        },
+        "count": 10
+    }
 }
