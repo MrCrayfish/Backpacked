@@ -493,8 +493,8 @@ public class CustomiseBackpackScreen extends Screen
         {
             this.id = backpack.getId().toString();
             this.backpack = backpack;
-            this.label = Component.translatable(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath());
-            Component unlockMessage = Component.translatable(backpack.getId().getNamespace() + ".backpack." + backpack.getId().getPath() + ".unlock");
+            this.label = Component.translatable(backpack.getTranslationKey());
+            Component unlockMessage = Component.translatable(backpack.getTranslationKey() + ".unlock");
             List<FormattedCharSequence> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
             list.add(0, Language.getInstance().getVisualOrder(LOCKED));
             if(progressMap.containsKey(backpack.getId()))
@@ -503,7 +503,6 @@ public class CustomiseBackpackScreen extends Screen
                 list.add(Language.getInstance().getVisualOrder(component));
             }
             this.unlockTooltip = ImmutableList.copyOf(list);
-            //this.model = (BackpackModel) backpack.getModelSupplier().get();
         }
 
         public String getId()
