@@ -39,6 +39,11 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
         // TODO check for order
         Map<ResourceLocation, Backpack> backpacks = new HashMap<>();
         map.forEach((location, element) -> {
+            if(location.getPath().contains("/")) {
+                Constants.LOG.warn("Ignoring backpack '{}' as it was in a sub-directory", location);
+                return;
+            }
+
             JsonObject object = element.getAsJsonObject();
             if(object.has("mod_loaded") && object.get("mod_loaded").isJsonPrimitive()) {
                 String modId = object.get("mod_loaded").getAsString();
