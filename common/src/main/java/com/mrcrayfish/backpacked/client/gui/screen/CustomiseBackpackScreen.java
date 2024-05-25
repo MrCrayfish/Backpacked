@@ -14,7 +14,6 @@ import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
-import com.mrcrayfish.backpacked.common.backpack.impl.StandardBackpack;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -28,7 +27,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -47,7 +45,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -61,6 +58,7 @@ import java.util.stream.Collectors;
  */
 public class CustomiseBackpackScreen extends Screen
 {
+    public static final String DEFAULT_BACKPACK = "backpacked:standard";
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/customise_backpack.png");
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
     private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
@@ -120,7 +118,7 @@ public class CustomiseBackpackScreen extends Screen
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
         this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.reset"), onPress -> {
-            this.displayBackpackModel = StandardBackpack.ID.toString();
+            this.displayBackpackModel = DEFAULT_BACKPACK;
         }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowEnchantmentGlint, this.displayShowWithElytra, this.displayShowEffects));
@@ -149,7 +147,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.getBackpackModel().equals(StandardBackpack.ID.toString());
+        this.resetButton.active = !this.getBackpackModel().equals(DEFAULT_BACKPACK);
         this.saveButton.active = this.needsToSave();
     }
 
@@ -382,7 +380,7 @@ public class CustomiseBackpackScreen extends Screen
                 }
             }
         }
-        return StandardBackpack.ID.toString();
+        return DEFAULT_BACKPACK;
     }
 
     private void setLocalBackpackModel(String model)
