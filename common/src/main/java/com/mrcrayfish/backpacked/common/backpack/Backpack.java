@@ -20,23 +20,20 @@ import java.util.Optional;
 public class Backpack
 {
     public static final Codec<Backpack> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(Codec.STRING.fieldOf("name").forGetter(backpack -> {
-            return backpack.translationKey;
-        }), Challenge.CODEC.optionalFieldOf("unlock_challenge").forGetter(backpack -> {
+        return builder.group(Challenge.CODEC.optionalFieldOf("unlock_challenge").forGetter(backpack -> {
             return backpack.challenge;
         })).apply(builder, Backpack::new);
     });
 
-    private final String translationKey;
     private final Optional<Challenge> challenge;
     private ResourceLocation id;
     private ResourceLocation baseModel;
     private ResourceLocation strapsModel;
+    private String translationKey;
     private boolean setup = false;
 
-    public Backpack(String translationKey, Optional<Challenge> challenge)
+    public Backpack(Optional<Challenge> challenge)
     {
-        this.translationKey = translationKey;
         this.challenge = challenge;
     }
 
@@ -44,7 +41,6 @@ public class Backpack
     {
         ResourceLocation id = buf.readResourceLocation();
         this.setup(id);
-        this.translationKey = buf.readUtf(256);
         this.challenge = buf.readOptional(Challenge::read);
     }
 
@@ -99,6 +95,7 @@ public class Backpack
             String name = "backpacked/" + id.getPath();
             this.baseModel = new ResourceLocation(id.getNamespace(), name);
             this.strapsModel = new ResourceLocation(id.getNamespace(), name + "_straps");
+            this.translationKey = "backpack.%s.%s".formatted(id.getNamespace(), id.getPath());
             this.setup = true;
         }
     }

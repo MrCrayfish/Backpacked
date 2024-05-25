@@ -14,6 +14,7 @@ import net.minecraft.world.entity.npc.WanderingTrader;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class WanderingBagBackpack extends Backpack
 
     public WanderingBagBackpack()
     {
-        super(null, null);
+        super(Optional.empty());
     }
 
     @Override

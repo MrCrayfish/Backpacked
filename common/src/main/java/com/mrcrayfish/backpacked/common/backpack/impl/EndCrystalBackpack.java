@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -25,7 +26,7 @@ public class EndCrystalBackpack extends Backpack
 
     public EndCrystalBackpack()
     {
-        super(null, null);
+        super(Optional.empty());
         EntityEvents.LIVING_ENTITY_DEATH.register(this::onLivingEntityDeath);
     }
 

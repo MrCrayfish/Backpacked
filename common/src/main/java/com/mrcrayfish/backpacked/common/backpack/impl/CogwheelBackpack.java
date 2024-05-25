@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -19,7 +20,7 @@ public class CogwheelBackpack extends Backpack
 
     public CogwheelBackpack()
     {
-        super(null, null);
+        super(Optional.empty());
     }
 
     @Nullable

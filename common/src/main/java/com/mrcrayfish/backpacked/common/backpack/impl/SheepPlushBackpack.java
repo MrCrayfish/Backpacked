@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -18,7 +19,7 @@ public class SheepPlushBackpack extends Backpack
 
     public SheepPlushBackpack()
     {
-        super(null, null);
+        super(Optional.empty());
     }
 
     @Nullable
