@@ -83,7 +83,6 @@ public class Backpack
     {
         this.checkSetup();
         buf.writeResourceLocation(this.id);
-        buf.writeUtf(this.translationKey, 256);
         buf.writeOptional(this.challenge, (b, c) -> c.write(b));
     }
 
