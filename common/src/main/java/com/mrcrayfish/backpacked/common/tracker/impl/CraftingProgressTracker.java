@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.common.tracker.impl;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.event.EventType;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
