@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.challenge.impl.BreedAnimalChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.ExploreBiomeChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
@@ -36,6 +37,7 @@ public class Bootstrap
         // Register progress trackers
         ExploreBiomeChallenge.Tracker.registerEvent();
         FeedAnimalChallenge.Tracker.registerEvent();
+        BreedAnimalChallenge.Tracker.registerEvent();
         InteractWithBlockChallenge.Tracker.registerEvent();
         KillMobChallenge.Tracker.registerEvent();
         MineBlockChallenge.Tracker.registerEvent();
