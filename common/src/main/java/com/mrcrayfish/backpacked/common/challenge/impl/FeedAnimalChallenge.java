@@ -10,12 +10,14 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.EventType;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.entity.animal.Animal;
 
 import java.util.Optional;
 
@@ -83,16 +85,30 @@ public class FeedAnimalChallenge extends Challenge
 
     public static class Tracker extends CountProgressTracker
     {
-        public Tracker(int maxCount, Optional<EntityPredicate> entityPredicate)
+        private final Optional<EntityPredicate> entityPredicate;
+
+        private Tracker(int maxCount, Optional<EntityPredicate> entityPredicate)
         {
             super(maxCount, ProgressFormatters.FED_X_OF_X);
-            UnlockManager.instance().addEventListener(EventType.FEED_ANIMAL, (animal, player) -> {
-                if(this.isComplete() || player.level().isClientSide())
+            this.entityPredicate = entityPredicate;
+        }
+
+        private boolean test(ServerPlayer player, Animal animal)
+        {
+            return this.entityPredicate.map(p -> p.matches(player, animal)).orElse(true);
+        }
+
+        public static void registerEvent()
+        {
+            BackpackedEvents.FEED_ANIMAL.register((animal, player) -> {
+                if(player.level().isClientSide())
                     return;
-                ServerPlayer serverPlayer = (ServerPlayer) player;
-                if(entityPredicate.map(predicate -> predicate.matches(serverPlayer, animal)).orElse(true)) {
-                    this.increment(serverPlayer);
-                }
+                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                    ServerPlayer serverPlayer = (ServerPlayer) player;
+                    if(!tracker.isComplete() && tracker.test(serverPlayer, animal)) {
+                        tracker.increment(serverPlayer);
+                    }
+                });
             });
         }
     }

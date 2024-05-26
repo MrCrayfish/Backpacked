@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.event.EventType;
-import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.backpacked.util.Serializable;
 import com.mrcrayfish.framework.api.sync.IDataSerializer;
 import com.mrcrayfish.framework.entity.sync.Updatable;
@@ -16,8 +14,11 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -28,24 +29,29 @@ public class UnlockTracker implements Serializable
 
     private final Updatable updatable;
     private final Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
-    private final Map<ResourceLocation, IProgressTracker> progressTrackerMap;
+    private final Map<ResourceLocation, IProgressTracker> backpackToProgressTracker;
+    private final Map<Class<?>, List<IProgressTracker>> classToProgressTrackers;
 
     public UnlockTracker(Updatable updatable)
     {
         this.updatable = updatable;
         if(updatable == Updatable.NULL) {
             // Don't create trackers on the client
-            this.progressTrackerMap = ImmutableMap.of();
+            this.backpackToProgressTracker = ImmutableMap.of();
+            this.classToProgressTrackers = ImmutableMap.of();
             return;
         }
-        ImmutableMap.Builder<ResourceLocation, IProgressTracker> builder = ImmutableMap.builder();
+        Map<ResourceLocation, IProgressTracker> backpackMap = new HashMap<>();
+        Map<Class<?>, List<IProgressTracker>> classMap = new HashMap<>();
         BackpackManager.instance().getBackpacks().forEach(backpack -> {
             IProgressTracker tracker = backpack.createProgressTracker();
             if(tracker != null) {
-                builder.put(backpack.getId(), tracker);
+                classMap.computeIfAbsent(tracker.getClass(), c -> new ArrayList<>()).add(tracker);
+                backpackMap.put(backpack.getId(), tracker);
             }
         });
-        this.progressTrackerMap = builder.build();
+        this.backpackToProgressTracker = ImmutableMap.copyOf(backpackMap);
+        this.classToProgressTrackers = ImmutableMap.copyOf(classMap);
     }
 
     public Set<ResourceLocation> getUnlockedBackpacks()
@@ -55,7 +61,7 @@ public class UnlockTracker implements Serializable
 
     public Map<ResourceLocation, IProgressTracker> getProgressTrackerMap()
     {
-        return this.progressTrackerMap;
+        return this.backpackToProgressTracker;
     }
 
     void setUnlockedBackpacks(Set<ResourceLocation> unlockedBackpacks)
@@ -69,13 +75,23 @@ public class UnlockTracker implements Serializable
         return this.unlockedBackpacks.contains(id);
     }
 
-    public Optional<IProgressTracker> getProgressTracker(ResourceLocation id)
+    public Optional<IProgressTracker> getProgressTracker(ResourceLocation backpackId)
     {
-        if(!Config.SERVER.common.unlockAllBackpacks.get() && !this.unlockedBackpacks.contains(id))
+        if(!Config.SERVER.common.unlockAllBackpacks.get() && !this.unlockedBackpacks.contains(backpackId))
         {
-            return Optional.ofNullable(this.progressTrackerMap.get(id));
+            return Optional.ofNullable(this.backpackToProgressTracker.get(backpackId));
         }
         return Optional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getProgressTrackers(Class<T> trackerClass)
+    {
+        if(this.classToProgressTrackers.containsKey(trackerClass))
+        {
+            return (List<T>) this.classToProgressTrackers.get(trackerClass);
+        }
+        return Collections.emptyList();
     }
 
     public boolean unlockBackpack(ResourceLocation id)
@@ -97,7 +113,7 @@ public class UnlockTracker implements Serializable
         tag.put("UnlockedBackpacks", unlockedBackpacks);
 
         ListTag progressTrackers = new ListTag();
-        this.progressTrackerMap.forEach((location, progressTracker) -> {
+        this.backpackToProgressTracker.forEach((location, progressTracker) -> {
             CompoundTag progressTag = new CompoundTag();
             progressTag.putString("Id", location.toString());
             CompoundTag dataTag = new CompoundTag();
@@ -123,7 +139,7 @@ public class UnlockTracker implements Serializable
         {
             CompoundTag progressTag = (CompoundTag) t;
             ResourceLocation id = new ResourceLocation(progressTag.getString("Id"));
-            IProgressTracker tracker = this.progressTrackerMap.get(id);
+            IProgressTracker tracker = this.backpackToProgressTracker.get(id);
             if(tracker != null)
             {
                 CompoundTag dataTag = progressTag.getCompound("Data");
