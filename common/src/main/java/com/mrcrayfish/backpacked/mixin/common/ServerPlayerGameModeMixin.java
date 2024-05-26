@@ -2,12 +2,14 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Final;
@@ -47,6 +49,9 @@ public class ServerPlayerGameModeMixin
     @Unique
     private ItemStack backpacked$capturedMinedItem;
 
+    @Unique
+    private CompoundTag backpacked$capturedMinedTag;
+
     @Inject(method = "destroyBlock", at = @At(
         value = "INVOKE_ASSIGN",
         target = "Lnet/minecraft/server/level/ServerLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
@@ -57,6 +62,14 @@ public class ServerPlayerGameModeMixin
     {
         this.backpacked$capturedMinedBlock = state;
         this.backpacked$capturedMinedItem = this.player.getMainHandItem();
+        if(BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.post().handle(this.backpacked$capturedMinedBlock, this.backpacked$capturedMinedItem, this.player))
+        {
+            BlockEntity entity = this.player.level().getBlockEntity(pos);
+            if(entity != null)
+            {
+                this.backpacked$capturedMinedTag = entity.saveWithFullMetadata();
+            }
+        }
     }
 
     @Inject(method = "destroyAndAck", at = @At(
@@ -67,7 +80,7 @@ public class ServerPlayerGameModeMixin
     {
         if(this.backpacked$capturedMinedBlock != null && this.backpacked$capturedMinedItem != null)
         {
-            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, this.backpacked$capturedMinedItem, this.player);
+            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, this.backpacked$capturedMinedItem, this.backpacked$capturedMinedTag, this.player);
         }
     }
 
@@ -75,6 +88,8 @@ public class ServerPlayerGameModeMixin
     private void backpackedDestroyTail(BlockPos pos, int action, String message, CallbackInfo ci)
     {
         this.backpacked$capturedMinedBlock = null;
+        this.backpacked$capturedMinedItem = null;
+        this.backpacked$capturedMinedTag = null;
     }
 
     /***************************
@@ -87,11 +102,22 @@ public class ServerPlayerGameModeMixin
     @Unique
     private ItemStack backpacked$capturedUseItem;
 
+    @Unique
+    private CompoundTag backpacked$capturedUseTag;
+
     @Inject(method = "useItemOn", at = @At(value = "HEAD"))
     private void backpackedOnUse(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         this.backpacked$capturedUseState = level.getBlockState(result.getBlockPos());
         this.backpacked$capturedUseItem = stack.copy();
+        if(BackpackedEvents.INTERACTED_WITH_BLOCK_CAPTURE_TAG.post().handle(this.backpacked$capturedUseState, this.backpacked$capturedUseItem, player))
+        {
+            BlockEntity entity = level.getBlockEntity(result.getBlockPos());
+            if(entity != null)
+            {
+                this.backpacked$capturedUseTag = entity.saveWithFullMetadata();
+            }
+        }
     }
 
     @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/ItemUsedOnLocationTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
@@ -99,9 +125,10 @@ public class ServerPlayerGameModeMixin
     {
         if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)
         {
-            BackpackedEvents.INTERACTED_WITH_BLOCK.post().handle(this.backpacked$capturedUseState, this.backpacked$capturedUseItem, player);
+            BackpackedEvents.INTERACTED_WITH_BLOCK.post().handle(this.backpacked$capturedUseState, this.backpacked$capturedUseItem, this.backpacked$capturedUseTag, player);
             this.backpacked$capturedUseState = null;
             this.backpacked$capturedUseItem = null;
+            this.backpacked$capturedUseTag = null;
         }
     }
 }

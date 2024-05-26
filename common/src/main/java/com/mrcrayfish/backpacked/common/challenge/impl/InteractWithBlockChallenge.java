@@ -10,12 +10,14 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.event.EventType;
+import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
 
@@ -87,19 +89,39 @@ public class InteractWithBlockChallenge extends Challenge
         }
     }
 
-    protected static class Tracker extends CountProgressTracker
+    public static class Tracker extends CountProgressTracker
     {
-        protected Tracker(int maxCount, Optional<BlockPredicate> block, Optional<ItemPredicate> item)
+        private final Optional<BlockPredicate> block;
+        private final Optional<ItemPredicate> item;
+
+        private Tracker(int maxCount, Optional<BlockPredicate> block, Optional<ItemPredicate> item)
         {
             super(maxCount, ProgressFormatters.MINED_X_OF_X);
-            UnlockManager.instance().addEventListener(EventType.USED_ITEM_ON_BLOCK, (state, stack, player) -> {
-                if(this.isComplete() || player.level().isClientSide())
-                    return;
-                if(ChallengeUtils.testPredicate(block, state)) {
-                    if(ChallengeUtils.testPredicate(item, stack)) {
-                        this.increment(player);
+            this.block = block;
+            this.item = item;
+        }
+
+        private boolean test(BlockState state, ItemStack stack)
+        {
+            return ChallengeUtils.testPredicate(this.block, state, null) && ChallengeUtils.testPredicate(this.item, stack);
+        }
+
+        public static void registerEvent()
+        {
+            // Only capture the compound tag of the block entity if we need to
+            BackpackedEvents.INTERACTED_WITH_BLOCK_CAPTURE_TAG.register((state, stack, player) -> {
+                return UnlockManager.getTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
+                    return !tracker.isComplete() && tracker.test(state, stack);
+                });
+            });
+
+            // If this event is called, we have successfully interacted with block. Now update tracker
+            BackpackedEvents.INTERACTED_WITH_BLOCK.register((state, stack, tag, player) -> {
+                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(!tracker.isComplete() && tracker.test(state, stack)) {
+                        tracker.increment(player);
                     }
-                }
+                });
             });
         }
     }

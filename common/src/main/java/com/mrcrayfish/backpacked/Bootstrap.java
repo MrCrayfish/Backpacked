@@ -2,6 +2,13 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.challenge.impl.ExploreBiomeChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.MineBlockChallenge;
+import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.impl.UniqueCraftingProgressTracker;
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
@@ -25,5 +32,14 @@ public class Bootstrap
         WanderingTraderEvents.init();
         Config.init();
         ModCommands.init();
+
+        // Register progress trackers
+        ExploreBiomeChallenge.Tracker.registerEvent();
+        FeedAnimalChallenge.Tracker.registerEvent();
+        InteractWithBlockChallenge.Tracker.registerEvent();
+        KillMobChallenge.Tracker.registerEvent();
+        MineBlockChallenge.Tracker.registerEvent();
+        CraftingProgressTracker.registerEvent();
+        UniqueCraftingProgressTracker.registerEvent();
     }
 }

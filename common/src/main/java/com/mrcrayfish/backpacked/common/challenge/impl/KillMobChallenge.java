@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -11,19 +10,18 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.event.EventType;
+import com.mrcrayfish.framework.api.event.EntityEvents;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -96,21 +94,38 @@ public class KillMobChallenge extends Challenge
 
     public static class Tracker extends CountProgressTracker
     {
-        public Tracker(int maxCount, Optional<EntityPredicate> entityPredicate, Optional<ItemPredicate> itemPredicate)
+        private final Optional<EntityPredicate> entityPredicate;
+        private final Optional<ItemPredicate> itemPredicate;
+
+        private Tracker(int maxCount, Optional<EntityPredicate> entityPredicate, Optional<ItemPredicate> itemPredicate)
         {
             super(maxCount, ProgressFormatters.KILLED_X_OF_X);
-            UnlockManager.instance().addEventListener(EventType.LIVING_ENTITY_DEATH, (livingEntity, source) -> {
-                if(this.isComplete() || livingEntity.level().isClientSide())
+            this.entityPredicate = entityPredicate;
+            this.itemPredicate = itemPredicate;
+        }
+
+        private boolean test(LivingEntity entity, ItemStack stack, ServerPlayer player)
+        {
+            return this.entityPredicate.map(p -> p.matches(player, entity)).orElse(true) && this.itemPredicate.map(p -> p.matches(stack)).orElse(true);
+        }
+
+        public static void registerEvent()
+        {
+            EntityEvents.LIVING_ENTITY_DEATH.register((entity, source) -> {
+                if(entity.level().isClientSide())
                     return false;
+
                 Entity cause = source.getEntity();
                 if(cause != null && cause.getType() == EntityType.PLAYER) {
                     ServerPlayer player = (ServerPlayer) cause;
-                    if(entityPredicate.map(predicate -> predicate.matches(player, livingEntity)).orElse(true)) {
+                    UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                        if(tracker.isComplete())
+                            return;
                         ItemStack heldItem = player.getMainHandItem();
-                        if(itemPredicate.map(p -> p.matches(heldItem)).orElse(true)) {
-                            this.increment((ServerPlayer) cause);
+                        if(tracker.test(entity, heldItem, player)) {
+                            tracker.increment(player);
                         }
-                    }
+                    });
                 }
                 return false;
             });

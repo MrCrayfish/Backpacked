@@ -1,5 +1,7 @@
 package com.mrcrayfish.backpacked.common.tracker.impl;
 
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -58,5 +60,18 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
             list.add(StringTag.valueOf(location.toString()));
         });
         tag.put("CraftedItems", list);
+    }
+
+    public static void registerEvent()
+    {
+        PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
+            if(player.level().isClientSide())
+                return;
+            UnlockManager.getTrackers(player, UniqueCraftingProgressTracker.class).forEach(tracker -> {
+                if(!tracker.isComplete()) {
+                    tracker.processCrafted(stack, (ServerPlayer) player);
+                }
+            });
+        });
     }
 }

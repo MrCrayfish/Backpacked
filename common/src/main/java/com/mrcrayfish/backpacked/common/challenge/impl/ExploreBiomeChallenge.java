@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -8,15 +9,25 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.impl.BiomeExploreProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -59,7 +70,7 @@ public class ExploreBiomeChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker()
     {
-        return new BiomeExploreProgressTracker(this.biomes);
+        return new Tracker(this.biomes);
     }
 
     public static class Serializer extends ChallengeSerializer<ExploreBiomeChallenge>
@@ -85,6 +96,74 @@ public class ExploreBiomeChallenge extends Challenge
         public Codec<ExploreBiomeChallenge> codec()
         {
             return ExploreBiomeChallenge.CODEC;
+        }
+    }
+
+    public static class Tracker implements IProgressTracker
+    {
+        private final ImmutableSet<ResourceKey<Biome>> biomes;
+        private final Set<ResourceLocation> exploredBiomes = new HashSet<>();
+
+        private Tracker(List<ResourceKey<Biome>> biomes)
+        {
+            this.biomes = ImmutableSet.copyOf(biomes);
+        }
+
+        private void explore(ResourceKey<Biome> biome, ServerPlayer player)
+        {
+            if(this.biomes.contains(biome))
+            {
+                this.exploredBiomes.add(biome.location());
+                this.markForCompletionTest(player);
+            }
+        }
+
+        @Override
+        public boolean isComplete()
+        {
+            return this.exploredBiomes.size() >= this.biomes.size();
+        }
+
+        @Override
+        public void read(CompoundTag tag)
+        {
+            this.exploredBiomes.clear();
+            ListTag list = tag.getList("ExploredBiomes", Tag.TAG_STRING);
+            list.forEach(nbt ->
+            {
+                ResourceLocation id = ResourceLocation.tryParse(nbt.getAsString());
+                if(id != null && this.biomes.stream().anyMatch(key -> key.location().equals(id)))
+                {
+                    this.exploredBiomes.add(id);
+                }
+            });
+        }
+
+        @Override
+        public void write(CompoundTag tag)
+        {
+            ListTag list = new ListTag();
+            this.exploredBiomes.forEach(location -> list.add(StringTag.valueOf(location.toString())));
+            tag.put("ExploredBiomes", list);
+        }
+
+        @Override
+        public Component getDisplayComponent()
+        {
+            return ProgressFormatters.EXPLORED_X_OF_X.apply(this.exploredBiomes.size(), this.biomes.size());
+        }
+
+        public static void registerEvent()
+        {
+            BackpackedEvents.EXPLORE_UPDATE.register((key, player) -> {
+                if(player.level().isClientSide())
+                    return;
+                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(!tracker.isComplete()) {
+                        tracker.explore(key, (ServerPlayer) player);
+                    }
+                });
+            });
         }
     }
 }

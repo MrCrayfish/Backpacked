@@ -4,11 +4,13 @@ import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -18,7 +20,7 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class ChallengeUtils
 {
-    public static boolean testPredicate(Optional<BlockPredicate> optional, BlockState state)
+    public static boolean testPredicate(Optional<BlockPredicate> optional, BlockState state, @Nullable CompoundTag tag)
     {
         if(optional.isEmpty())
             return true;
@@ -27,6 +29,9 @@ public final class ChallengeUtils
             return false;
         if(predicate.blocks().isPresent() && !state.is(predicate.blocks().get()))
             return false;
+        if(tag != null && predicate.nbt().isPresent() && !predicate.nbt().get().matches(tag)) {
+            return false;
+        }
         return predicate.properties().isEmpty() || predicate.properties().get().matches(state);
     }
 
