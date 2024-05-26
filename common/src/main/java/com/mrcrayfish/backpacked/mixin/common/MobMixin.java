@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 /**
  * This mixin injects a detection method to determine if the player fed an animal. This basically
@@ -42,21 +43,17 @@ public class MobMixin
         }
     }
 
-    @Inject(method = "interact", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/Mob;mobInteract(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
-    private void backpackedOnMobInteractPost(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
+    @Inject(method = "interact", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/Mob;mobInteract(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void backpackedOnMobInteractPost(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, InteractionResult result)
     {
-        if(this.backpacked$capturedFood != null)
+        if(result.consumesAction() && this.backpacked$capturedFood != null)
         {
-            ItemStack heldItem = player.getItemInHand(hand);
-            if(!ItemStack.matches(this.backpacked$capturedFood, heldItem))
+            Mob mob = (Mob) (Object) this;
+            if(mob instanceof Animal animal)
             {
-                Mob mob = (Mob) (Object) this;
-                if(mob instanceof Animal animal)
-                {
-                    BackpackedEvents.FEED_ANIMAL.post().handle(animal, player);
-                }
+                BackpackedEvents.FEED_ANIMAL.post().handle(animal, player);
             }
-            this.backpacked$capturedFood = null;
         }
+        this.backpacked$capturedFood = null;
     }
 }
