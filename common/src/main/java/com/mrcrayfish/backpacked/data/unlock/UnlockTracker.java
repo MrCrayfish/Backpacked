@@ -35,7 +35,7 @@ public class UnlockTracker implements Serializable
         Map<ResourceLocation, IProgressTracker> backpackMap = new HashMap<>();
         Map<Class<?>, List<IProgressTracker>> classMap = new HashMap<>();
         BackpackManager.instance().getBackpacks().forEach(backpack -> {
-            IProgressTracker tracker = backpack.createProgressTracker();
+            IProgressTracker tracker = backpack.createProgressTracker(backpack.getId());
             if(tracker != null) {
                 classMap.computeIfAbsent(tracker.getClass(), c -> new ArrayList<>()).add(tracker);
                 backpackMap.put(backpack.getId(), tracker);

@@ -32,7 +32,7 @@ public class EndCrystalBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new CountProgressTracker(1, ProgressFormatters.INCOMPLETE_COMPLETE);
     }

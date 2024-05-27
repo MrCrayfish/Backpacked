@@ -24,7 +24,7 @@ public class SheepPlushBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new CountProgressTracker(250, ProgressFormatters.SHEARED_X_SHEEP);
     }

@@ -73,9 +73,9 @@ public class Backpack
     }
 
     @Nullable
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return this.challenge.map(Challenge::createProgressTracker).orElse(null);
+        return this.challenge.map(c -> c.createProgressTracker(backpackId)).orElse(null);
     }
 
     // TODO switch to streamcodec in 1.20.6

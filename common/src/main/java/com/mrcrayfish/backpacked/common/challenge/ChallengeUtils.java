@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +44,15 @@ public final class ChallengeUtils
         ItemPredicate predicate = optional.get();
         return predicate.matches(stack);
     }
+
+    public static boolean testPredicate(Optional<EntityPredicate> optional, ServerPlayer player, Entity entity)
+    {
+        if(optional.isEmpty())
+            return true;
+        EntityPredicate predicate = optional.get();
+        return predicate.matches(player, entity);
+    }
+
 
     public static void writeBlockPredicate(FriendlyByteBuf buf, Optional<BlockPredicate> optional)
     {

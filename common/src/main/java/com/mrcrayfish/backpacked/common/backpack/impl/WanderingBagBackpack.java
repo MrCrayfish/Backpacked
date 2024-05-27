@@ -32,7 +32,7 @@ public class WanderingBagBackpack extends Backpack
 
     @Override
     @Nullable
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new PickpocketProgressTracker();
     }

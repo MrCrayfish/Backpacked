@@ -21,7 +21,7 @@ public abstract class Challenge
 
     public abstract ChallengeSerializer<?> getSerializer();
 
-    public abstract IProgressTracker createProgressTracker();
+    public abstract IProgressTracker createProgressTracker(ResourceLocation backpackId);
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public final void write(FriendlyByteBuf buf)

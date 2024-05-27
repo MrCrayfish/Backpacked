@@ -11,6 +11,7 @@
         "common.EntityMixin",
         "common.ItemEntityMixin",
         "common.MobMixin",
+        "common.PlayerInteractTriggerMixin",
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",
         "common.RandomizableContainerBlockEntityMixin",

@@ -24,7 +24,7 @@ public class MiniChestBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new CountProgressTracker(5, ProgressFormatters.FOUND_X_OF_X);
     }

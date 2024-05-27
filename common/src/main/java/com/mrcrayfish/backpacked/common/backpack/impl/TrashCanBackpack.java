@@ -24,7 +24,7 @@ public class TrashCanBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new CountProgressTracker(100, ProgressFormatters.USED_X_TIMES);
     }

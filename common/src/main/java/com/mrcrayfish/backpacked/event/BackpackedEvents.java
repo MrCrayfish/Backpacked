@@ -5,7 +5,12 @@ import com.mrcrayfish.backpacked.event.block.InteractedWithBlock;
 import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
+import com.mrcrayfish.backpacked.event.entity.InteractedWithEntity;
 import com.mrcrayfish.framework.api.event.FrameworkEvent;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -48,5 +53,13 @@ public class BackpackedEvents
 
     public static final FrameworkEvent<InteractedWithBlock> INTERACTED_WITH_BLOCK = new FrameworkEvent<>(listeners -> (state, stack, tag, player) -> {
         listeners.forEach(listener -> listener.handle(state, stack, tag, player));
+    });
+
+    public static final FrameworkEvent<InteractedWithEntity.Capture> INTERACTED_WITH_ENTITY_CAPTURE = new FrameworkEvent<>(listeners -> (player, stack, entity, consumer) -> {
+        listeners.forEach(listener -> listener.handle(player, stack, entity, consumer));
+    });
+
+    public static final FrameworkEvent<InteractedWithEntity>  INTERACTED_WITH_ENTITY = new FrameworkEvent<>(listeners -> (player, stack, entity, capturedIds) -> {
+        listeners.forEach(listener -> listener.handle(player, stack, entity, capturedIds));
     });
 }
