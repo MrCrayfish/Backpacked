@@ -7,9 +7,7 @@
     "mixins": [
         "BlockMixin",
         "EntityMixin",
-        "FabricPlayerMixin",
-        "LivingEntityMixin",
-        "SheepEntityMixin"
+        "LivingEntityMixin"
     ],
     "client": [],
     "injectors": {
