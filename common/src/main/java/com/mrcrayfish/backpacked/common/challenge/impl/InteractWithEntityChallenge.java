@@ -35,7 +35,7 @@ public class InteractWithEntityChallenge extends Challenge
             return challenge.entity;
         }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
             return challenge.item;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
+        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(challenge -> {
             return challenge.count;
         })).apply(builder, InteractWithEntityChallenge::new);
     });
