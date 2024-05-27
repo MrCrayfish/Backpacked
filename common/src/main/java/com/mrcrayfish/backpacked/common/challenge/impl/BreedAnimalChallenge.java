@@ -53,7 +53,7 @@ public class BreedAnimalChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.count, this.entity);
     }

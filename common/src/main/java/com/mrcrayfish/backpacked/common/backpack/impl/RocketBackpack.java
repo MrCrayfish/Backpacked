@@ -24,7 +24,7 @@ public class RocketBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new CountProgressTracker(50000, ProgressFormatters.INT_PERCENT);
     }

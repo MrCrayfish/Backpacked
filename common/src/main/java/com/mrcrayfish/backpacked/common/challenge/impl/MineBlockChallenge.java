@@ -61,7 +61,7 @@ public class MineBlockChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.count, this.block, this.item);
     }

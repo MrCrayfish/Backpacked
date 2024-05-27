@@ -24,7 +24,7 @@ public class TurtleShellBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new CountProgressTracker(20, ProgressFormatters.BRED_X_OF_X);
     }

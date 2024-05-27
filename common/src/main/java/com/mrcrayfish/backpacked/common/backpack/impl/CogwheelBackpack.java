@@ -25,7 +25,7 @@ public class CogwheelBackpack extends Backpack
 
     @Nullable
     @Override
-    public IProgressTracker createProgressTracker()
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new UniqueCraftingProgressTracker(30, stack -> Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(stack.getItem())).getNamespace().equals("create"));
     }
