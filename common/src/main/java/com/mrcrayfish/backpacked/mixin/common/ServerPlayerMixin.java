@@ -1,8 +1,7 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.common.backpack.impl.RocketBackpack;
-import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.common.MovementType;
+import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,29 +19,84 @@ import java.util.List;
  * Author: MrCrayfish
  */
 @Mixin(ServerPlayer.class)
-public class ServerPlayerMixin implements BackpackedInteractAccess
+public abstract class ServerPlayerMixin implements BackpackedInteractAccess
 {
     @Unique
     public List<ResourceLocation> backpacked$CapturedInteractIds = new ArrayList<>();
-
-    @SuppressWarnings("ConstantConditions")
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 8))
-    private void backpackedOnFallFlying(double dx, double dy, double dz, CallbackInfo ci)
-    {
-        Player player = (Player) (Object) this;
-        if(!(player instanceof ServerPlayer))
-            return;
-
-        int distance = (int) Math.round(Math.sqrt(dx * dx + dy * dy + dz * dz));
-        UnlockManager.getTracker(player).flatMap(tracker -> tracker.getProgressTracker(RocketBackpack.ID)).ifPresent(tracker -> {
-            CountProgressTracker countTracker = (CountProgressTracker) tracker;
-            countTracker.increment(distance, (ServerPlayer) player);
-        });
-    }
 
     @Override
     public List<ResourceLocation> getBackpacked$CapturedInteractIds()
     {
         return this.backpacked$CapturedInteractIds;
+    }
+
+    @Unique
+    private void backpacked$PlayerTravelEvent(double dx, double dy, double dz, MovementType type)
+    {
+        Player player = (Player) (Object) this;
+        if(player.level().isClientSide())
+            return;
+        double distanceSquared = dx * dx + dy * dy + dz * dz;
+        BackpackedEvents.PLAYER_TRAVEL.post().handle((ServerPlayer) player, distanceSquared, type);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 0))
+    private void backpackedMovementSwim(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.SWIM);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 1))
+    private void backpackedMovementWalkUnderwater(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.WALK_UNDERWATER);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 2))
+    private void backpackedMovementWalkOnWater(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.WALK_ON_WATER);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 3))
+    private void backpackedMovementClimb(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(0, dy, 0, MovementType.CLIMB);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 4))
+    private void backpackedMovementSprint(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.SPRINT);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 5))
+    private void backpackedMovementSneak(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.SNEAK);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 6))
+    private void backpackedMovementWalk(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.WALK);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 7))
+    private void backpackedMovementElytraFlying(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.ELYTRA_FLY);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 8))
+    private void backpackedMovementFlying(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.FLY);
+    }
+
+    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 8))
+    private void backpackedMovementFall(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(0, dy, 0, MovementType.FALL);
     }
 }
