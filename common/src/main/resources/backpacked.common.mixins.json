@@ -5,9 +5,7 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "backpacked.refmap.json",
     "mixins": [
-        "common.BeehiveBlockMixin",
         "common.BredAnimalsTriggerMixin",
-        "common.ComposterBlockMixin",
         "common.EntityMixin",
         "common.ItemEntityMixin",
         "common.MobMixin",
