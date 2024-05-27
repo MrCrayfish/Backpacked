@@ -6,11 +6,9 @@ import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.backpacked.event.entity.InteractedWithEntity;
+import com.mrcrayfish.backpacked.event.entity.PlayerTravel;
 import com.mrcrayfish.framework.api.event.FrameworkEvent;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
  * Author: MrCrayfish
@@ -61,5 +59,9 @@ public class BackpackedEvents
 
     public static final FrameworkEvent<InteractedWithEntity>  INTERACTED_WITH_ENTITY = new FrameworkEvent<>(listeners -> (player, stack, entity, capturedIds) -> {
         listeners.forEach(listener -> listener.handle(player, stack, entity, capturedIds));
+    });
+
+    public static final FrameworkEvent<PlayerTravel> PLAYER_TRAVEL = new FrameworkEvent<>(listeners -> (player, distance, style) -> {
+        listeners.forEach(listener -> listener.handle(player, distance, style));
     });
 }

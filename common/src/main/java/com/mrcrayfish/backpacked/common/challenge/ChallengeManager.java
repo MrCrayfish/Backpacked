@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithEntityChallen
 import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.MineBlockChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.TravelDistanceChallenge;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,7 @@ public final class ChallengeManager
         this.register(MineBlockChallenge.ID, MineBlockChallenge.CODEC, MineBlockChallenge.SERIALIZER);
         this.register(InteractWithBlockChallenge.ID, InteractWithBlockChallenge.CODEC, InteractWithBlockChallenge.SERIALIZER);
         this.register(InteractWithEntityChallenge.ID, InteractWithEntityChallenge.CODEC, InteractWithEntityChallenge.SERIALIZER);
+        this.register(TravelDistanceChallenge.ID, TravelDistanceChallenge.CODEC, TravelDistanceChallenge.SERIALIZER);
         this.register(ExploreBiomeChallenge.ID, ExploreBiomeChallenge.CODEC, ExploreBiomeChallenge.SERIALIZER);
     }
 
