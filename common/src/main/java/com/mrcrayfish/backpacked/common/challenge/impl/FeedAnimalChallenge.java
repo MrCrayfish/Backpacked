@@ -31,7 +31,7 @@ public class FeedAnimalChallenge extends Challenge
     public static final Codec<FeedAnimalChallenge> CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(EntityPredicate.CODEC.optionalFieldOf("animal").forGetter(challenge -> {
             return challenge.entity;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(challenge -> {
+        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(challenge -> {
             return challenge.count;
         })).apply(builder, FeedAnimalChallenge::new);
     });
