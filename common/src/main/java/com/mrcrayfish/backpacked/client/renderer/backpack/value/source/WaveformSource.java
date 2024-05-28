@@ -30,7 +30,7 @@ public record WaveformSource(Waveform waveform, double wavelength, double amplit
     @Override
     public double apply(BackpackRenderContext context)
     {
-        double time = context.entity().tickCount + context.partialTick();
+        double time = context.animationTick() + context.partialTick();
         return this.waveform.function.apply(time, this.wavelength, this.amplitude, this.phase);
     }
 

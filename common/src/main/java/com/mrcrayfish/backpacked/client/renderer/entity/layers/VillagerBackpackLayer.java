@@ -59,7 +59,7 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
             ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
             meta.renderer().ifPresentOrElse(renderer -> {
                 pose.pushPose();
-                BackpackRenderContext context = new BackpackRenderContext(pose, source, light, this.displayStack, backpack, villager, partialTick, model -> {
+                BackpackRenderContext context = new BackpackRenderContext(pose, source, light, this.displayStack, backpack, villager, partialTick, villager.tickCount, model -> {
                     this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
                 });
                 renderer.forEach(function -> function.apply(context));
