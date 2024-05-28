@@ -19,13 +19,6 @@ import java.util.function.Function;
  */
 public class BackpackedCodecs
 {
-    // TODO support entity tags
-    public static final Codec<ImmutableList<EntityType<?>>> ENTITY_TYPE_LIST = ExtraCodecs
-        .either(BuiltInRegistries.ENTITY_TYPE.byNameCodec().listOf(), BuiltInRegistries.ENTITY_TYPE.byNameCodec()).xmap(
-            either -> either.map(ImmutableList::copyOf, ImmutableList::of),
-            list -> list.size() == 1 ? Either.right(list.get(0)) : Either.left(list)
-        );
-
     public static final Codec<Set<String>> STRING_SET = Codec.either(Codec.STRING, Codec.STRING.listOf()).xmap(either -> {
         return either.map(List::of, Function.identity());
     }, list -> {

@@ -17,7 +17,6 @@ import java.util.function.Function;
  */
 public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay, Optional<List<BaseFunction>> renderer)
 {
-    private static final Vector3f ZERO = new Vector3f();
     public static final Codec<ItemTransform> ITEM_TRANSFORM_CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(
             ExtraCodecs.VECTOR3F.fieldOf("rotation").orElseGet(Vector3f::new).forGetter(o -> o.rotation),
@@ -29,9 +28,9 @@ public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay
     });
     public static final ModelMeta DEFAULT = new ModelMeta(new Vector3f(), Optional.empty(), Optional.empty());
     public static final Codec<ModelMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-        ExtraCodecs.VECTOR3F.optionalFieldOf("shelf_offset", ZERO).forGetter(o -> o.shelfOffset),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf("gui_display").forGetter(o -> o.guiDisplay),
-        BaseFunction.CODEC.listOf().optionalFieldOf("renderer").forGetter(o -> o.renderer)
+        ExtraCodecs.strictOptionalField(ExtraCodecs.VECTOR3F, "shelf_offset", new Vector3f()).forGetter(o -> o.shelfOffset),
+        ExtraCodecs.strictOptionalField(ITEM_TRANSFORM_CODEC, "gui_display").forGetter(o -> o.guiDisplay),
+        ExtraCodecs.strictOptionalField(BaseFunction.CODEC.listOf(), "renderer").forGetter(o -> o.renderer)
     ).apply(builder, ModelMeta::new));
 
 }

@@ -33,11 +33,11 @@ public class MineBlockChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_block");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<MineBlockChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(BlockPredicate.CODEC.optionalFieldOf("block").forGetter(challenge -> {
+        return builder.group(ExtraCodecs.strictOptionalField(BlockPredicate.CODEC, "block").forGetter(challenge -> {
             return challenge.block;
-        }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
+        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
             return challenge.item;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(challenge -> {
+        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
             return challenge.count;
         })).apply(builder, MineBlockChallenge::new);
     });

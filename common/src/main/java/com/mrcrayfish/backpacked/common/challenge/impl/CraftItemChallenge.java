@@ -36,9 +36,9 @@ public class CraftItemChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<CraftItemChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
+        return builder.group(ExtraCodecs.strictOptionalField(CraftedItemPredicate.CODEC, "crafted_item").forGetter(challenge -> {
             return challenge.predicate;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(challenge -> {
+        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
             return challenge.count;
         })).apply(builder, CraftItemChallenge::new);
     });

@@ -18,8 +18,8 @@ public final class Value
     public static final Value ZERO = new Value(new StaticSource(0), 0.0, 1.0);
     public static final Codec<Value> VALUE_CODEC = RecordCodecBuilder.create(builder -> builder.group(
         BaseSource.CODEC.fieldOf("source").forGetter(o -> o.source),
-        Codec.DOUBLE.optionalFieldOf("base", 0.0).forGetter(o -> o.base),
-        Codec.DOUBLE.optionalFieldOf("multiplier", 1.0).forGetter(o -> o.multiplier)
+        ExtraCodecs.strictOptionalField(Codec.DOUBLE, "base", 0.0).forGetter(o -> o.base),
+        ExtraCodecs.strictOptionalField(Codec.DOUBLE, "multiplier", 1.0).forGetter(o -> o.multiplier)
     ).apply(builder, Value::new));
 
     // We want to accept either a raw double or a full value object
