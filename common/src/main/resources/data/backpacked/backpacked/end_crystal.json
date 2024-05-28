@@ -1,3 +1,9 @@
 {
-    "name": "backpack.backpacked.end_crystal"
+    "unlock_challenge": {
+        "type": "backpacked:kill_mob",
+        "mob": {
+            "type": "minecraft:ender_dragon"
+        },
+        "count": 1
+    }
 }

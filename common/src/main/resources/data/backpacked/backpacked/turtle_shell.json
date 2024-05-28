@@ -1,3 +1,8 @@
 {
-    "name": "backpack.backpacked.turtle_shell"
+    "unlock_challenge": {
+        "type": "backpacked:breed_animal",
+        "animal": {
+            "type": "minecraft:turtle"
+        }
+    }
 }

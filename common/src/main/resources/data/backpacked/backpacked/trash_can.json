@@ -1,5 +1,4 @@
 {
-    "name": "backpack.backpacked.trash_can",
     "unlock_challenge": {
         "type": "backpacked:interact_with_block",
         "block": {
