@@ -60,7 +60,7 @@ public class Config
             public final IntProperty backpackInventorySizeColumns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
 
             @ConfigProperty(name = "backpackInventorySize", comment = "The amount of slot rows in the backpack inventory.")
-            public final IntProperty backpackInventorySizeRows = IntProperty.create(1, 1, BackpackContainerMenu.MAX_ROWS);
+            public final IntProperty backpackInventorySizeRows = IntProperty.create(6, 1, BackpackContainerMenu.MAX_ROWS);
 
             @ConfigProperty(name = "wandering_trader")
             public final WanderingTrader wanderingTrader = new WanderingTrader();
