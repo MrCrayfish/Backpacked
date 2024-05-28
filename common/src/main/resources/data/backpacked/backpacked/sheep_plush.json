@@ -1,6 +1,7 @@
 {
     "unlock_challenge": {
         "type": "backpacked:interact_with_entity",
+        "formatter": "backpacked:shear_x_of_x",
         "entity": {
             "type": "minecraft:sheep",
             "nbt": "{\"Sheared\":false}"

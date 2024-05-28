@@ -33,6 +33,11 @@ public record ProgressFormatter(ResourceLocation id, BiFunction<Integer, Integer
         return formatter;
     }
 
+    public static final ProgressFormatter COMPLETED_X_OF_X = register("completed_x_of_x", (count, maxCount) -> {
+        count = Mth.clamp(count, 0, maxCount);
+        return Component.translatable("backpacked.formatter.completed_x_of_x", count, maxCount);
+    });
+
     public static final ProgressFormatter COLLECT_X_OF_X = register("collect_x_of_x", (count, maxCount) -> {
         count = Mth.clamp(count, 0, maxCount);
         return Component.translatable("backpacked.formatter.collected_x_of_x", count, maxCount);
@@ -60,8 +65,8 @@ public record ProgressFormatter(ResourceLocation id, BiFunction<Integer, Integer
         return Component.translatable("backpacked.formatter.cut_x_of_x", count, maxCount);
     });
 
-    public static final ProgressFormatter SHEARED_X_SHEEP = register("shear_x_sheep", (count, maxCount) -> {
-        return Component.translatable("backpacked.formatter.shear_x_sheep", count, maxCount);
+    public static final ProgressFormatter SHEARED_X_OF_X = register("shear_x_of_x", (count, maxCount) -> {
+        return Component.translatable("backpacked.formatter.shear_x_of_x", count, maxCount);
     });
 
     public static final ProgressFormatter INT_PERCENT = register("percentage", (numerator, denominator) -> {

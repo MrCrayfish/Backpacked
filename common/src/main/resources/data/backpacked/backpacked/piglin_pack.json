@@ -1,6 +1,7 @@
 {
     "unlock_challenge": {
         "type": "backpacked:interact_with_entity",
+        "formatter": "backpacked:traded_x_of_x",
         "entity": {
             "type": "minecraft:piglin"
         },

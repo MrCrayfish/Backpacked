@@ -1,6 +1,7 @@
 {
     "unlock_challenge": {
         "type": "backpacked:interact_with_block",
+        "formatter": "backpacked:incomplete_complete",
         "block": {
             "blocks": [
                 "minecraft:chest"
