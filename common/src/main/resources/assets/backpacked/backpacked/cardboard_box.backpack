@@ -1,5 +1,5 @@
 {
-    "shelf_offset": [0, 0, 0],
+    "shelf_offset": [0, -1, 0],
     "gui_display": {
         "rotation": [30, 30, 0],
         "translation": [-2, 5.5, 0],
