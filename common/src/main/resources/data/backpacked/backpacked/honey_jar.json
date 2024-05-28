@@ -1,0 +1,16 @@
+{
+    "unlock_challenge": {
+        "type": "backpacked:interact_with_block",
+        "block": {
+            "blocks": [
+                "minecraft:beehive",
+                "minecraft:bee_nest"
+            ]
+        },
+        "item": {
+            "items": [
+                "minecraft:glass_bottle"
+            ]
+        }
+    }
+}
