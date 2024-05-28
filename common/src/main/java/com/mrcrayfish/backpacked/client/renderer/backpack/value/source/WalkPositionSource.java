@@ -20,6 +20,6 @@ public class WalkPositionSource implements BaseSource
     @Override
     public double apply(BackpackRenderContext context)
     {
-        return context.entity().walkAnimation.position(context.partialTick());
+        return context.entity() != null ? context.entity().walkAnimation.position(context.partialTick()) : 0;
     }
 }

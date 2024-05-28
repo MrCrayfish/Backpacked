@@ -20,6 +20,6 @@ public class WalkSpeedSource implements BaseSource
     @Override
     public double apply(BackpackRenderContext context)
     {
-        return context.entity().walkAnimation.speed(context.partialTick());
+        return context.entity() != null ? context.entity().walkAnimation.speed(context.partialTick()) : 0;
     }
 }

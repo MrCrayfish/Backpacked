@@ -82,7 +82,7 @@
                     "type": "minecraft:rotate",
                     "y": {
                         "source": {
-                            "type": "minecraft:tick_count"
+                            "type": "minecraft:animation_tick"
                         },
                         "multiplier": 3
                     }

@@ -7,9 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class TickCountSource implements BaseSource
+public class AnimationTickSource implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation("tick_count"), Codec.unit(new TickCountSource()));
+    public static final Type TYPE = new Type(new ResourceLocation("animation_tick"), Codec.unit(new AnimationTickSource()));
 
     @Override
     public Type type()
@@ -20,6 +20,6 @@ public class TickCountSource implements BaseSource
     @Override
     public double apply(BackpackRenderContext context)
     {
-        return context.entity() != null ? context.entity().tickCount + context.partialTick() : 0;
+        return context.animationTick() + context.partialTick();
     }
 }

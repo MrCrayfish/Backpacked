@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.function.RotateFunctio
 import com.mrcrayfish.backpacked.client.renderer.backpack.function.ScaleFunction;
 import com.mrcrayfish.backpacked.client.renderer.backpack.function.StackFunction;
 import com.mrcrayfish.backpacked.client.renderer.backpack.function.TranslateFunction;
+import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.AnimationTickSource;
 import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.SourceTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.StaticSource;
 import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.TickCountSource;
@@ -32,6 +33,7 @@ public class ClientBootstrap
         SourceTypes.register(WalkPositionSource.TYPE);
         SourceTypes.register(WalkSpeedSource.TYPE);
         SourceTypes.register(WaveformSource.TYPE);
+        SourceTypes.register(AnimationTickSource.TYPE);
     }
 
     public static void init()

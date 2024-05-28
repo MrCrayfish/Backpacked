@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -29,13 +31,13 @@ import java.util.function.Supplier;
  */
 public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 {
-    private final ItemRenderer renderer;
+    private final ItemRenderer itemRenderer;
     private final Supplier<BakedModel> missingModel;
 
     public ShelfRenderer(BlockEntityRendererProvider.Context context)
     {
-        this.renderer = context.getItemRenderer();
-        this.missingModel = () -> this.renderer.getItemModelShaper().getModelManager().getMissingModel();
+        this.itemRenderer = context.getItemRenderer();
+        this.missingModel = () -> this.itemRenderer.getItemModelShaper().getModelManager().getMissingModel();
     }
 
     @Override
@@ -68,7 +70,17 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         pose.scale(1.0F, -1.0F, -1.0F);
 
         int animationTick = Optional.ofNullable(Minecraft.getInstance().player).map(player -> player.tickCount).orElse(0);
-        this.renderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, overlay, this.getModel(backpack.getBaseModel()));
+        meta.renderer().ifPresentOrElse(renderer -> {
+            pose.pushPose();
+            BackpackRenderContext context = new BackpackRenderContext(pose, buffer, light, stack, backpack, null, partialTick, animationTick, model -> {
+                this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
+            });
+            renderer.forEach(function -> function.apply(context));
+            pose.popPose();
+        }, () -> {
+            BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+            this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
+        });
     }
 
     private BakedModel getModel(ResourceLocation location)
