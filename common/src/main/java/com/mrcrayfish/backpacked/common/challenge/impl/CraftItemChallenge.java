@@ -1,0 +1,157 @@
+package com.mrcrayfish.backpacked.common.challenge.impl;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.common.BackpackedCodecs;
+import com.mrcrayfish.backpacked.common.challenge.Challenge;
+import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
+import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.framework.api.event.PlayerEvents;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.Optional;
+import java.util.Set;
+
+/**
+ * Author: MrCrayfish
+ */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+public class CraftItemChallenge extends Challenge
+{
+    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
+    public static final Serializer SERIALIZER = new Serializer();
+    public static final Codec<CraftItemChallenge> CODEC = RecordCodecBuilder.create(builder -> {
+        return builder.group(CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
+            return challenge.predicate;
+        }), ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(challenge -> {
+            return challenge.count;
+        })).apply(builder, CraftItemChallenge::new);
+    });
+
+    private final Optional<CraftedItemPredicate> predicate;
+    private final int count;
+
+    public CraftItemChallenge(Optional<CraftedItemPredicate> predicate, int count)
+    {
+        super(ID);
+        this.predicate = predicate;
+        this.count = count;
+    }
+
+    @Override
+    public ChallengeSerializer<?> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
+    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    {
+        return new Tracker(this.predicate, this.count);
+    }
+
+    public static class Serializer extends ChallengeSerializer<CraftItemChallenge>
+    {
+        @Override
+        public void write(CraftItemChallenge challenge, FriendlyByteBuf buf)
+        {
+            buf.writeOptional(challenge.predicate, (buf1, predicate) ->
+                buf1.writeNbt(CraftedItemPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
+                    .getOrThrow(false, Constants.LOG::error)));
+            buf.writeVarInt(challenge.count);
+        }
+
+        @Override
+        public CraftItemChallenge read(FriendlyByteBuf buf)
+        {
+            Optional<CraftedItemPredicate> predicate = buf.readOptional(buf1 -> CraftedItemPredicate.CODEC
+                .parse(NbtOps.INSTANCE, buf1.readNbt(NbtAccounter.create(2097152L)))
+                .getOrThrow(false, Constants.LOG::error));
+            int count = buf.readVarInt();
+            return new CraftItemChallenge(predicate, count);
+        }
+
+        @Override
+        public Codec<CraftItemChallenge> codec()
+        {
+            return CraftItemChallenge.CODEC;
+        }
+    }
+
+    public static class Tracker extends CountProgressTracker
+    {
+        private final Optional<CraftedItemPredicate> predicate;
+
+        public Tracker(Optional<CraftedItemPredicate> predicate, int maxCount)
+        {
+            super(maxCount, ProgressFormatters.CRAFT_X_OF_X);
+            this.predicate = predicate;
+        }
+
+        public static void registerEvent()
+        {
+            PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
+                if(player.level().isClientSide())
+                    return;
+                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(tracker.isComplete())
+                        return;
+                    if(tracker.predicate.map(p -> p.test(stack)).orElse(true)) {
+                        tracker.increment(stack.getCount(), (ServerPlayer) player);
+                    }
+                });
+            });
+        }
+    }
+
+    public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey<Item>> tag, Optional<HolderSet<Item>> items)
+    {
+        public static final Codec<CraftedItemPredicate> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+            ExtraCodecs.strictOptionalField(BackpackedCodecs.STRING_SET, "mod_ids").forGetter(o -> o.modIds),
+            ExtraCodecs.strictOptionalField(TagKey.codec(Registries.ITEM), "tag").forGetter(CraftedItemPredicate::tag),
+            ExtraCodecs.strictOptionalField(BackpackedCodecs.ITEMS, "items").forGetter(CraftedItemPredicate::items)
+        ).apply(builder, CraftedItemPredicate::new));
+
+        public boolean test(ItemStack stack)
+        {
+            if(this.modIds.isPresent())
+            {
+                ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+                if(this.modIds.get().contains(key.getNamespace()))
+                {
+                    return true;
+                }
+            }
+            if(this.tag.isPresent())
+            {
+                if(stack.is(this.tag.get()))
+                {
+                    return true;
+                }
+            }
+            if(this.items.isPresent())
+            {
+                if(this.items.get().contains(stack.getItemHolder()))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+}

@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.challenge.impl.BreedAnimalChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.CraftItemChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.ExploreBiomeChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
@@ -45,6 +46,7 @@ public class Bootstrap
         TravelDistanceChallenge.Tracker.registerEvent();
         KillMobChallenge.Tracker.registerEvent();
         MineBlockChallenge.Tracker.registerEvent();
+        CraftItemChallenge.Tracker.registerEvent();
         CraftingProgressTracker.registerEvent();
         UniqueCraftingProgressTracker.registerEvent();
     }
