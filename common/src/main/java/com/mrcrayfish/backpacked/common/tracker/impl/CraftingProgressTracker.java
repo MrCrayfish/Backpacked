@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common.tracker.impl;
 
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.nbt.CompoundTag;
@@ -16,11 +16,13 @@ public class CraftingProgressTracker implements IProgressTracker
 {
     protected int count;
     protected final int totalCount;
+    private final ProgressFormatter formatter;
     protected final Predicate<ItemStack> predicate;
 
-    public CraftingProgressTracker(int totalCount, Predicate<ItemStack> predicate)
+    public CraftingProgressTracker(int totalCount, ProgressFormatter formatter, Predicate<ItemStack> predicate)
     {
         this.totalCount = totalCount;
+        this.formatter = formatter;
         this.predicate = predicate;
     }
 
@@ -54,7 +56,7 @@ public class CraftingProgressTracker implements IProgressTracker
     @Override
     public Component getDisplayComponent()
     {
-        return ProgressFormatters.CRAFT_X_OF_X.apply(this.count, this.totalCount);
+        return this.formatter.formatter().apply(this.count, this.totalCount);
     }
 
     public static void registerEvent()

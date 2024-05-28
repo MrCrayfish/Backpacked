@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
@@ -31,7 +31,9 @@ public class InteractWithEntityChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "interact_with_entity");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<InteractWithEntityChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "entity").forGetter(challenge -> {
+        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
+            return challenge.formatter;
+        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "entity").forGetter(challenge -> {
             return challenge.entity;
         }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
             return challenge.item;
@@ -40,13 +42,15 @@ public class InteractWithEntityChallenge extends Challenge
         })).apply(builder, InteractWithEntityChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    public InteractWithEntityChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
+    public InteractWithEntityChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
         super(ID);
+        this.formatter = formatter;
         this.entity = entity;
         this.item = item;
         this.count = count;
@@ -61,7 +65,7 @@ public class InteractWithEntityChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(backpackId, this.count, this.entity, this.item);
+        return new Tracker(backpackId, this.count, this.formatter, this.entity, this.item);
     }
 
     public static class Serializer extends ChallengeSerializer<InteractWithEntityChallenge>
@@ -80,7 +84,7 @@ public class InteractWithEntityChallenge extends Challenge
             Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
             Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
             int count = buf.readVarInt();
-            return new InteractWithEntityChallenge(entity, item, count);
+            return new InteractWithEntityChallenge(ProgressFormatter.USED_X_TIMES, entity, item, count);
         }
 
         @Override
@@ -96,9 +100,9 @@ public class InteractWithEntityChallenge extends Challenge
         private final Optional<EntityPredicate> entity;
         private final Optional<ItemPredicate> item;
 
-        private Tracker(ResourceLocation backpackId, int maxCount, Optional<EntityPredicate> entity, Optional<ItemPredicate> item)
+        private Tracker(ResourceLocation backpackId, int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item)
         {
-            super(maxCount, ProgressFormatters.MINED_X_OF_X);
+            super(maxCount, formatter);
             this.backpackId = backpackId;
             this.entity = entity;
             this.item = item;

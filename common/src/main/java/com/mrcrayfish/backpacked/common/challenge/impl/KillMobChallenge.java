@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.framework.api.event.EntityEvents;
@@ -33,7 +33,9 @@ public class KillMobChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "kill_mob");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<KillMobChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-       return builder.group(ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "mob").forGetter(challenge -> {
+       return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.KILLED_X_OF_X).forGetter(challenge -> {
+           return challenge.formatter;
+       }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "mob").forGetter(challenge -> {
            return challenge.entity;
        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
            return challenge.item;
@@ -42,13 +44,15 @@ public class KillMobChallenge extends Challenge
        })).apply(builder, KillMobChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    public KillMobChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
+    public KillMobChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
         super(ID);
+        this.formatter = formatter;
         this.entity = entity;
         this.item = item;
         this.count = count;
@@ -63,7 +67,7 @@ public class KillMobChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.entity, this.item);
+        return new Tracker(this.count, this.formatter, this.entity, this.item);
     }
 
     public static final class Serializer extends ChallengeSerializer<KillMobChallenge>
@@ -82,7 +86,7 @@ public class KillMobChallenge extends Challenge
             Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
             Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
             int count = buf.readVarInt();
-            return new KillMobChallenge(entity, item, count);
+            return new KillMobChallenge(ProgressFormatter.KILLED_X_OF_X, entity, item, count);
         }
 
         @Override
@@ -97,9 +101,9 @@ public class KillMobChallenge extends Challenge
         private final Optional<EntityPredicate> entityPredicate;
         private final Optional<ItemPredicate> itemPredicate;
 
-        private Tracker(int maxCount, Optional<EntityPredicate> entityPredicate, Optional<ItemPredicate> itemPredicate)
+        private Tracker(int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entityPredicate, Optional<ItemPredicate> itemPredicate)
         {
-            super(maxCount, ProgressFormatters.KILLED_X_OF_X);
+            super(maxCount, formatter);
             this.entityPredicate = entityPredicate;
             this.itemPredicate = itemPredicate;
         }
