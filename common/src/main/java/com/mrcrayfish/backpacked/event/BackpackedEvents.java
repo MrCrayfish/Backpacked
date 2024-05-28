@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.event.entity.BredAnimal;
 import com.mrcrayfish.backpacked.event.entity.ExploreUpdate;
 import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.backpacked.event.entity.InteractedWithEntity;
+import com.mrcrayfish.backpacked.event.entity.MerchantTrade;
 import com.mrcrayfish.backpacked.event.entity.PlayerTravel;
 import com.mrcrayfish.framework.api.event.FrameworkEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,11 +58,15 @@ public class BackpackedEvents
         listeners.forEach(listener -> listener.handle(player, stack, entity, consumer));
     });
 
-    public static final FrameworkEvent<InteractedWithEntity>  INTERACTED_WITH_ENTITY = new FrameworkEvent<>(listeners -> (player, stack, entity, capturedIds) -> {
+    public static final FrameworkEvent<InteractedWithEntity> INTERACTED_WITH_ENTITY = new FrameworkEvent<>(listeners -> (player, stack, entity, capturedIds) -> {
         listeners.forEach(listener -> listener.handle(player, stack, entity, capturedIds));
     });
 
     public static final FrameworkEvent<PlayerTravel> PLAYER_TRAVEL = new FrameworkEvent<>(listeners -> (player, distance, style) -> {
         listeners.forEach(listener -> listener.handle(player, distance, style));
+    });
+
+    public static final FrameworkEvent<MerchantTrade> MERCHANT_TRADE = new FrameworkEvent<>(listeners -> (merchant, player, stack) -> {
+        listeners.forEach(listener -> listener.handle(merchant, player, stack));
     });
 }

@@ -2,15 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
-import com.mrcrayfish.backpacked.common.challenge.impl.BreedAnimalChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.CraftItemChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.ExploreBiomeChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithEntityChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.MineBlockChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.TravelDistanceChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.impl.UniqueCraftingProgressTracker;
 import com.mrcrayfish.backpacked.core.ModCommands;
@@ -47,6 +39,7 @@ public class Bootstrap
         KillMobChallenge.Tracker.registerEvent();
         MineBlockChallenge.Tracker.registerEvent();
         CraftItemChallenge.Tracker.registerEvent();
+        MerchantTradeChallenge.Tracker.registerEvent();
         CraftingProgressTracker.registerEvent();
         UniqueCraftingProgressTracker.registerEvent();
     }

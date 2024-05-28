@@ -1,15 +1,7 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
-import com.mrcrayfish.backpacked.common.challenge.impl.BreedAnimalChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.CraftItemChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.ExploreBiomeChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.FeedAnimalChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithEntityChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.MineBlockChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.InteractWithBlockChallenge;
-import com.mrcrayfish.backpacked.common.challenge.impl.TravelDistanceChallenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +38,7 @@ public final class ChallengeManager
         this.register(TravelDistanceChallenge.ID, TravelDistanceChallenge.CODEC, TravelDistanceChallenge.SERIALIZER);
         this.register(ExploreBiomeChallenge.ID, ExploreBiomeChallenge.CODEC, ExploreBiomeChallenge.SERIALIZER);
         this.register(CraftItemChallenge.ID, CraftItemChallenge.CODEC, CraftItemChallenge.SERIALIZER);
+        this.register(MerchantTradeChallenge.ID, MerchantTradeChallenge.CODEC, MerchantTradeChallenge.SERIALIZER);
     }
 
     public <C extends Challenge, T extends ChallengeSerializer<C>> void register(ResourceLocation id, Codec<C> codec, T serializer)
