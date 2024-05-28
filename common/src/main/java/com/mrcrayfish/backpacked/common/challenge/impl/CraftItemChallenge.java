@@ -122,7 +122,7 @@ public class CraftItemChallenge extends Challenge
     public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey<Item>> tag, Optional<HolderSet<Item>> items)
     {
         public static final Codec<CraftedItemPredicate> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ExtraCodecs.strictOptionalField(BackpackedCodecs.STRING_SET, "mod_ids").forGetter(o -> o.modIds),
+            ExtraCodecs.strictOptionalField(BackpackedCodecs.STRING_SET, "namespace").forGetter(o -> o.modIds),
             ExtraCodecs.strictOptionalField(TagKey.codec(Registries.ITEM), "tag").forGetter(CraftedItemPredicate::tag),
             ExtraCodecs.strictOptionalField(BackpackedCodecs.ITEMS, "items").forGetter(CraftedItemPredicate::items)
         ).apply(builder, CraftedItemPredicate::new));
