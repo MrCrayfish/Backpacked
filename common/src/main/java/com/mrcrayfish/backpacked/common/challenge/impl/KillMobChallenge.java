@@ -33,11 +33,11 @@ public class KillMobChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "kill_mob");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<KillMobChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-       return builder.group(EntityPredicate.CODEC.optionalFieldOf("mob").forGetter(challenge -> {
+       return builder.group(ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "mob").forGetter(challenge -> {
            return challenge.entity;
-       }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
+       }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
            return challenge.item;
-       }), ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(challenge -> {
+       }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
            return challenge.count;
        })).apply(builder, KillMobChallenge::new);
     });

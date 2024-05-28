@@ -51,7 +51,10 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
                     return;
                 }
             }
-            Backpack backpack = Util.getOrThrow(Backpack.CODEC.parse(JsonOps.INSTANCE, object), JsonParseException::new);
+            Backpack backpack = Util.getOrThrow(Backpack.CODEC.parse(JsonOps.INSTANCE, object), s -> {
+                Constants.LOG.error("An error occurred when parsing the backpack '{}'", location);
+                return new JsonParseException(s);
+            });
             backpack.setup(location);
             backpacks.put(location, backpack);
         });

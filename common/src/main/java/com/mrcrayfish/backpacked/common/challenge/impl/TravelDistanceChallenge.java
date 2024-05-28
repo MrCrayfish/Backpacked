@@ -28,7 +28,7 @@ public class TravelDistanceChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "travel_distance");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<TravelDistanceChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).optionalFieldOf("movement").forGetter(challenge -> {
+        return builder.group(ExtraCodecs.strictOptionalField(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf), "movement").forGetter(challenge -> {
             return challenge.movementTypes;
         }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
             return challenge.totalDistanceInCm;
