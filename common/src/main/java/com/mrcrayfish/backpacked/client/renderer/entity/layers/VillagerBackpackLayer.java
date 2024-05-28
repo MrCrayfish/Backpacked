@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.platform.ClientServices;
@@ -25,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class VillagerBackpackLayer<T extends AbstractVillager, M extends VillagerModel<T>> extends RenderLayer<T, M>
 {
-    private static final ResourceLocation STANDARD_BACKPACK = new ResourceLocation(Constants.MOD_ID, "standard");
+    private static final ResourceLocation WANDERING_BACKPACK = new ResourceLocation(Constants.MOD_ID, "wandering_bag");
 
     private final ItemStack displayStack = new ItemStack(ModItems.BACKPACK.get());
     private final ItemRenderer itemRenderer;
@@ -41,21 +44,31 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
     {
         TraderPickpocketing.get(villager).ifPresent(data ->
         {
-            if(data.isBackpackEquipped())
-            {
-                Backpack backpack = BackpackManager.instance().getClientBackpack(STANDARD_BACKPACK);
-                if(backpack == null)
-                    return;
+            if(!data.isBackpackEquipped())
+                return;
 
-                ResourceLocation location = backpack.getBaseModel();
-                BakedModel model = ClientServices.MODEL.getBakedModel(location);
-                if(model == null)
-                    return;
+            Backpack backpack = BackpackManager.instance().getClientBackpack(WANDERING_BACKPACK);
+            if(backpack == null)
+                return;
 
+            pose.pushPose();
+            pose.mulPose(Axis.YP.rotationDegrees(180.0F));
+            pose.scale(1F, -1F, -1F);
+            pose.translate(0, -0.06, 3.5 * 0.0625);
+
+            ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
+            meta.renderer().ifPresentOrElse(renderer -> {
                 pose.pushPose();
-                this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+                BackpackRenderContext context = new BackpackRenderContext(pose, source, light, this.displayStack, backpack, villager, partialTick, model -> {
+                    this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+                });
+                renderer.forEach(function -> function.apply(context));
                 pose.popPose();
-            }
+            }, () -> {
+                BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+                this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+            });
+            pose.popPose();
         });
     }
 

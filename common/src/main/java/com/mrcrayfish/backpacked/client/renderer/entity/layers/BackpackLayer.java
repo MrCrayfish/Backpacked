@@ -30,8 +30,6 @@ import org.joml.Matrix4f;
  */
 public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends RenderLayer<T, M>
 {
-    private static final ResourceLocation DEFAULT_BACKPACK = new ResourceLocation("");
-
     private final ItemRenderer itemRenderer;
 
     public BackpackLayer(RenderLayerParent<T, M> renderer, ItemRenderer itemRenderer)
