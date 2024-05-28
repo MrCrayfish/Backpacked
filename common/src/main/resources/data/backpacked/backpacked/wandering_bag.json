@@ -1,3 +1,8 @@
 {
-    "name": "backpack.backpacked.wandering_bag"
+    "unlock_challenge": {
+        "type": "backpacked:merchant_trade",
+        "merchant": {
+            "type": "minecraft:wandering_trader"
+        }
+    }
 }

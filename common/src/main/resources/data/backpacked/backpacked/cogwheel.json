@@ -1,4 +1,13 @@
 {
     "mod_loaded": "create",
-    "name": "backpack.backpacked.cogwheel"
+    "unlock_challenge": {
+        "type": "backpacked:craft_item",
+        "crafted_item": {
+            "items": [
+                "create:cogwheel",
+                "create:large_cogwheel"
+            ]
+        },
+        "count": 10
+    }
 }
