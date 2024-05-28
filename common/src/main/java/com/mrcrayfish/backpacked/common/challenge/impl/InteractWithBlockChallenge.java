@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
@@ -30,7 +30,9 @@ public class InteractWithBlockChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "interact_with_block");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<InteractWithBlockChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ExtraCodecs.strictOptionalField(BlockPredicate.CODEC, "block").forGetter(challenge -> {
+        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
+            return challenge.formatter;
+        }), ExtraCodecs.strictOptionalField(BlockPredicate.CODEC, "block").forGetter(challenge -> {
             return challenge.block;
         }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
             return challenge.item;
@@ -39,13 +41,15 @@ public class InteractWithBlockChallenge extends Challenge
         })).apply(builder, InteractWithBlockChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final Optional<BlockPredicate> block;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    public InteractWithBlockChallenge(Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
+    public InteractWithBlockChallenge(ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
     {
         super(ID);
+        this.formatter = formatter;
         this.block = block;
         this.item = item;
         this.count = count;
@@ -60,7 +64,7 @@ public class InteractWithBlockChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.block, this.item);
+        return new Tracker(this.count, this.formatter, this.block, this.item);
     }
 
     public static class Serializer extends ChallengeSerializer<InteractWithBlockChallenge>
@@ -79,7 +83,7 @@ public class InteractWithBlockChallenge extends Challenge
             Optional<BlockPredicate> block = ChallengeUtils.readBlockPredicate(buf);
             Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
             int count = buf.readVarInt();
-            return new InteractWithBlockChallenge(block, item, count);
+            return new InteractWithBlockChallenge(ProgressFormatter.USED_X_TIMES, block, item, count);
         }
 
         @Override
@@ -94,9 +98,9 @@ public class InteractWithBlockChallenge extends Challenge
         private final Optional<BlockPredicate> block;
         private final Optional<ItemPredicate> item;
 
-        private Tracker(int maxCount, Optional<BlockPredicate> block, Optional<ItemPredicate> item)
+        private Tracker(int maxCount, ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item)
         {
-            super(maxCount, ProgressFormatters.MINED_X_OF_X);
+            super(maxCount, formatter);
             this.block = block;
             this.item = item;
         }

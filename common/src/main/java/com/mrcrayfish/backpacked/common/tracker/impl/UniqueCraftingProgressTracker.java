@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.tracker.impl;
 
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,9 +23,9 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
 {
     protected Set<ResourceLocation> craftedItems = new HashSet<>();
 
-    public UniqueCraftingProgressTracker(int totalCount, Predicate<ItemStack> predicate)
+    public UniqueCraftingProgressTracker(int totalCount, ProgressFormatter formatter, Predicate<ItemStack> predicate)
     {
-        super(totalCount, predicate);
+        super(totalCount, formatter, predicate);
     }
 
     @Override

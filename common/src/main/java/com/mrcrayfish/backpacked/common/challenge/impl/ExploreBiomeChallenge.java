@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.registries.Registries;
@@ -48,16 +48,20 @@ public class ExploreBiomeChallenge extends Challenge
         return DataResult.success(keys);
     });
     public static final Codec<ExploreBiomeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
+        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.EXPLORED_X_OF_X).forGetter(challenge -> {
+            return challenge.formatter;
+        }), BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
             return challenge.biomes;
         })).apply(builder, ExploreBiomeChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final List<ResourceKey<Biome>> biomes;
 
-    public ExploreBiomeChallenge(List<ResourceKey<Biome>> biomes)
+    public ExploreBiomeChallenge(ProgressFormatter formatter, List<ResourceKey<Biome>> biomes)
     {
         super(ID);
+        this.formatter = formatter;
         this.biomes = biomes;
     }
 
@@ -70,7 +74,7 @@ public class ExploreBiomeChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(this.biomes);
+        return new Tracker(this.formatter, this.biomes);
     }
 
     public static class Serializer extends ChallengeSerializer<ExploreBiomeChallenge>
@@ -89,7 +93,7 @@ public class ExploreBiomeChallenge extends Challenge
             List<ResourceKey<Biome>> biomes = buf.readList(buf1 -> {
                 return ResourceKey.create(Registries.BIOME, buf1.readResourceLocation());
             });
-            return new ExploreBiomeChallenge(biomes);
+            return new ExploreBiomeChallenge(ProgressFormatter.EXPLORED_X_OF_X, biomes);
         }
 
         @Override
@@ -101,11 +105,13 @@ public class ExploreBiomeChallenge extends Challenge
 
     public static class Tracker implements IProgressTracker
     {
+        private final ProgressFormatter formatter;
         private final ImmutableSet<ResourceKey<Biome>> biomes;
         private final Set<ResourceLocation> exploredBiomes = new HashSet<>();
 
-        private Tracker(List<ResourceKey<Biome>> biomes)
+        private Tracker(ProgressFormatter formatter, List<ResourceKey<Biome>> biomes)
         {
+            this.formatter = formatter;
             this.biomes = ImmutableSet.copyOf(biomes);
         }
 
@@ -150,7 +156,7 @@ public class ExploreBiomeChallenge extends Challenge
         @Override
         public Component getDisplayComponent()
         {
-            return ProgressFormatters.EXPLORED_X_OF_X.apply(this.exploredBiomes.size(), this.biomes.size());
+            return this.formatter.formatter().apply(this.exploredBiomes.size(), this.biomes.size());
         }
 
         public static void registerEvent()

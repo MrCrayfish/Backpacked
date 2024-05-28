@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.BackpackedCodecs;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
@@ -36,19 +36,23 @@ public class CraftItemChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<CraftItemChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ExtraCodecs.strictOptionalField(CraftedItemPredicate.CODEC, "crafted_item").forGetter(challenge -> {
+        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.CRAFT_X_OF_X).forGetter(challenge -> {
+            return challenge.formatter;
+        }), ExtraCodecs.strictOptionalField(CraftedItemPredicate.CODEC, "crafted_item").forGetter(challenge -> {
             return challenge.predicate;
         }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
             return challenge.count;
         })).apply(builder, CraftItemChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final Optional<CraftedItemPredicate> predicate;
     private final int count;
 
-    public CraftItemChallenge(Optional<CraftedItemPredicate> predicate, int count)
+    public CraftItemChallenge(ProgressFormatter formatter, Optional<CraftedItemPredicate> predicate, int count)
     {
         super(ID);
+        this.formatter = formatter;
         this.predicate = predicate;
         this.count = count;
     }
@@ -62,7 +66,7 @@ public class CraftItemChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(this.predicate, this.count);
+        return new Tracker(this.formatter, this.predicate, this.count);
     }
 
     public static class Serializer extends ChallengeSerializer<CraftItemChallenge>
@@ -83,7 +87,7 @@ public class CraftItemChallenge extends Challenge
                 .parse(NbtOps.INSTANCE, buf1.readNbt(NbtAccounter.create(2097152L)))
                 .getOrThrow(false, Constants.LOG::error));
             int count = buf.readVarInt();
-            return new CraftItemChallenge(predicate, count);
+            return new CraftItemChallenge(ProgressFormatter.CRAFT_X_OF_X, predicate, count);
         }
 
         @Override
@@ -97,9 +101,9 @@ public class CraftItemChallenge extends Challenge
     {
         private final Optional<CraftedItemPredicate> predicate;
 
-        public Tracker(Optional<CraftedItemPredicate> predicate, int maxCount)
+        public Tracker(ProgressFormatter formatter, Optional<CraftedItemPredicate> predicate, int maxCount)
         {
-            super(maxCount, ProgressFormatters.CRAFT_X_OF_X);
+            super(maxCount, formatter);
             this.predicate = predicate;
         }
 

@@ -70,6 +70,8 @@
     "backpacked.formatter.explored_x_of_x": "Explored %s / %s",
     "backpacked.formatter.killed_x_of_x": "Killed %s / %s",
     "backpacked.formatter.mined_x_of_x": "Mined %s / %s",
+    "backpacked.formatter.traded_x_of_x": "Traded %s / %s",
+    "backpacked.formatter.travelled_blocks": "Travelled %s / %s Blocks",
     "backpacked.formatter.incomplete": "Incomplete",
     "backpacked.formatter.complete": "Complete",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",

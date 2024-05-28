@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
@@ -31,7 +31,9 @@ public class MerchantTradeChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merchant_trade");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<MerchantTradeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "merchant").forGetter(o -> {
+        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.TRADED_X_OF_X).forGetter(challenge -> {
+            return challenge.formatter;
+        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "merchant").forGetter(o -> {
             return o.entity;
         }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(o -> {
             return o.item;
@@ -40,13 +42,15 @@ public class MerchantTradeChallenge extends Challenge
         })).apply(builder, MerchantTradeChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    protected MerchantTradeChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
+    protected MerchantTradeChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
         super(ID);
+        this.formatter = formatter;
         this.entity = entity;
         this.item = item;
         this.count = count;
@@ -61,7 +65,7 @@ public class MerchantTradeChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.entity, this.item);
+        return new Tracker(this.count, this.formatter, this.entity, this.item);
     }
 
     public static class Serializer extends ChallengeSerializer<MerchantTradeChallenge>
@@ -80,7 +84,7 @@ public class MerchantTradeChallenge extends Challenge
             Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
             Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
             int count = buf.readVarInt();
-            return new MerchantTradeChallenge(entity, item, count);
+            return new MerchantTradeChallenge(ProgressFormatter.TRADED_X_OF_X, entity, item, count);
         }
 
         @Override
@@ -95,9 +99,9 @@ public class MerchantTradeChallenge extends Challenge
         private final Optional<EntityPredicate> entity;
         private final Optional<ItemPredicate> item;
 
-        public Tracker(int maxCount, Optional<EntityPredicate> entity, Optional<ItemPredicate> item)
+        public Tracker(int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item)
         {
-            super(maxCount, ProgressFormatters.COLLECT_X_OF_X);
+            super(maxCount, formatter);
             this.entity = entity;
             this.item = item;
         }

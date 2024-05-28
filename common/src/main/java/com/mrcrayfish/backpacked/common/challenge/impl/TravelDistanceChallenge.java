@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.MovementType;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
@@ -28,19 +28,23 @@ public class TravelDistanceChallenge extends Challenge
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "travel_distance");
     public static final Serializer SERIALIZER = new Serializer();
     public static final Codec<TravelDistanceChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ExtraCodecs.strictOptionalField(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf), "movement").forGetter(challenge -> {
+        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.INT_PERCENT).forGetter(challenge -> {
+            return challenge.formatter;
+        }), ExtraCodecs.strictOptionalField(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf), "movement").forGetter(challenge -> {
             return challenge.movementTypes;
         }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
             return challenge.totalDistanceInCm;
         })).apply(builder, TravelDistanceChallenge::new);
     });
 
+    private final ProgressFormatter formatter;
     private final Optional<EnumSet<MovementType>> movementTypes;
     private final int totalDistanceInCm;
 
-    protected TravelDistanceChallenge(Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
+    protected TravelDistanceChallenge(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
     {
         super(ID);
+        this.formatter = formatter;
         this.movementTypes = movementTypes;
         this.totalDistanceInCm = totalDistanceInCm;
     }
@@ -54,7 +58,7 @@ public class TravelDistanceChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return new Tracker(this.movementTypes, this.totalDistanceInCm);
+        return new Tracker(this.formatter, this.movementTypes, this.totalDistanceInCm);
     }
 
     public static class Serializer extends ChallengeSerializer<TravelDistanceChallenge>
@@ -75,7 +79,7 @@ public class TravelDistanceChallenge extends Challenge
                 return buf1.readEnumSet(MovementType.class);
             });
             int totalDistance = buf.readInt();
-            return new TravelDistanceChallenge(movementTypes, totalDistance);
+            return new TravelDistanceChallenge(ProgressFormatter.INT_PERCENT, movementTypes, totalDistance);
         }
 
         @Override
@@ -89,9 +93,9 @@ public class TravelDistanceChallenge extends Challenge
     {
         private final Optional<EnumSet<MovementType>> movementTypes;
 
-        public Tracker(Optional<EnumSet<MovementType>> movementTypes, int maxCount)
+        public Tracker(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int maxCount)
         {
-            super(maxCount, ProgressFormatters.INT_PERCENT);
+            super(maxCount, formatter);
             this.movementTypes = movementTypes;
         }
 

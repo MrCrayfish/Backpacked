@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common.tracker.impl;
 
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,11 +13,11 @@ import java.util.function.BiFunction;
  */
 public class CountProgressTracker implements IProgressTracker
 {
-    private final BiFunction<Integer, Integer, Component> formatter;
+    private final ProgressFormatter formatter;
     private final int maxCount;
     private int count;
 
-    public CountProgressTracker(int maxCount, BiFunction<Integer, Integer, Component> formatter)
+    public CountProgressTracker(int maxCount, ProgressFormatter formatter)
     {
         this.maxCount = maxCount;
         this.formatter = formatter;
@@ -55,6 +56,6 @@ public class CountProgressTracker implements IProgressTracker
     @Override
     public Component getDisplayComponent()
     {
-        return this.formatter.apply(this.count, this.maxCount);
+        return this.formatter.formatter().apply(this.count, this.maxCount);
     }
 }
