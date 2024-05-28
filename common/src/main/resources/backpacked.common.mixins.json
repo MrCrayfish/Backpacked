@@ -8,6 +8,7 @@
         "common.BredAnimalsTriggerMixin",
         "common.EntityMixin",
         "common.ItemEntityMixin",
+        "common.MerchantResultSlotMixin",
         "common.MobMixin",
         "common.PlayerInteractTriggerMixin",
         "common.PlayerInventoryMixin",
