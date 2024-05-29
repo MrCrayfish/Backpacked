@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
+import com.mrcrayfish.backpacked.common.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -19,6 +20,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -37,6 +39,12 @@ public class ClientHandler
                 NeoForge.EVENT_BUS.register(new PickpocketDebugRenderer());
             }
         });
+    }
+
+    @SubscribeEvent
+    private static void onRegisterClientLoaders(RegisterClientReloadListenersEvent event)
+    {
+        event.registerReloadListener(new ModelMetaLoader());
     }
 
     @SubscribeEvent

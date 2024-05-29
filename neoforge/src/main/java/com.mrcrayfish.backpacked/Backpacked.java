@@ -2,17 +2,22 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.integration.CuriosBackpack;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
+import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.EnvironmentHelper;
 import net.minecraft.core.HolderLookup;
@@ -21,7 +26,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -32,8 +39,10 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -42,6 +51,10 @@ import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.common.capability.ItemizedCurioCapability;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+
+// TODO clean up this class
 
 /**
  * Author: MrCrayfish
@@ -64,6 +77,7 @@ public class Backpacked
         NeoForge.EVENT_BUS.addListener(this::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onDropLoot);
         NeoForge.EVENT_BUS.addListener(this::onInteract);
+        NeoForge.EVENT_BUS.addListener(this::addReloadListener);
         curiosLoaded = ModList.get().isLoaded("curios");
     }
 
@@ -86,6 +100,11 @@ public class Backpacked
         generator.addProvider(event.includeServer(), new LootTableGen(packOutput));
         generator.addProvider(event.includeServer(), new RecipeGen(packOutput));
         generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
+    }
+
+    private void addReloadListener(AddReloadListenerEvent event)
+    {
+        event.addListener(new BackpackLoader());
     }
 
     private void onPlayerClone(PlayerEvent.Clone event)
