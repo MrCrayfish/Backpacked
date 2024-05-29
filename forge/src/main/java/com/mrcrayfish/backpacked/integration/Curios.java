@@ -94,14 +94,7 @@ public class Curios
             @Override
             public boolean canEquipFromUse(SlotContext context)
             {
-                // TODO test if fixed
-                // Temporary until issue is fixed: https://github.com/TheIllusiveC4/Curios/issues/332
-                Optional<SlotResult> result = CuriosApi.getCuriosHelper().findCurio(context.entity(), "back", context.index());
-                return result.map(slotResult -> {
-                    return slotResult.stack().isEmpty() || CuriosApi.getCurio(slotResult.stack()).map(iCurio -> {
-                        return iCurio.canUnequip(slotResult.slotContext());
-                    }).orElse(true);
-                }).orElse(true);
+                return true;
             }
 
             @Override
