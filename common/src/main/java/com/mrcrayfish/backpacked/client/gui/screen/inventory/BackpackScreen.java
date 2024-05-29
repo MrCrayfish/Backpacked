@@ -82,7 +82,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private List<MiniButton> gatherButtons()
     {
         List<MiniButton> buttons = new ArrayList<>();
-        boolean canCustomise = this.owner && !Config.SERVER.common.disableCustomisation.get();
+        boolean canCustomise = this.owner && !Config.SERVER.backpack.disableCustomisation.get();
         if(canCustomise)
         {
             MiniButton customiseButton = new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {

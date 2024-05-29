@@ -13,7 +13,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotResult;
-import top.theillusivec4.curios.api.SlotTypePreset;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
@@ -28,13 +27,15 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Curios
 {
+    public static final String SLOT_IDENTIFIER = "back";
+
     public static ItemStack getBackpackStack(Player player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
         optional.ifPresent(itemHandler ->
         {
-            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SLOT_IDENTIFIER);
             stacksOptional.ifPresent(stacksHandler ->
             {
                 ItemStack stack = stacksHandler.getStacks().getStackInSlot(0);
@@ -49,10 +50,10 @@ public class Curios
 
     public static void setBackpackStack(Player player, ItemStack stack)
     {
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
         optional.ifPresent(itemHandler ->
         {
-            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SLOT_IDENTIFIER);
             stacksOptional.ifPresent(stacksHandler ->
             {
                 stacksHandler.getStacks().setStackInSlot(0, stack.copy());
@@ -63,9 +64,9 @@ public class Curios
     public static boolean isBackpackVisible(Player player)
     {
         AtomicReference<Boolean> visible = new AtomicReference<>(true);
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
         optional.ifPresent(itemHandler -> {
-            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SlotTypePreset.BACK.getIdentifier());
+            Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SLOT_IDENTIFIER);
             stacksOptional.ifPresent(stacksHandler -> {
                 visible.set(stacksHandler.getRenders().get(0));
             });
@@ -93,10 +94,11 @@ public class Curios
             @Override
             public boolean canEquipFromUse(SlotContext context)
             {
+                // TODO test if fixed
                 // Temporary until issue is fixed: https://github.com/TheIllusiveC4/Curios/issues/332
                 Optional<SlotResult> result = CuriosApi.getCuriosHelper().findCurio(context.entity(), "back", context.index());
                 return result.map(slotResult -> {
-                    return slotResult.stack().isEmpty() || CuriosApi.getCuriosHelper().getCurio(slotResult.stack()).map(iCurio -> {
+                    return slotResult.stack().isEmpty() || CuriosApi.getCurio(slotResult.stack()).map(iCurio -> {
                         return iCurio.canUnequip(slotResult.slotContext());
                     }).orElse(true);
                 }).orElse(true);
@@ -111,7 +113,7 @@ public class Curios
             @Override
             public boolean canUnequip(SlotContext context)
             {
-                if(!Config.SERVER.common.lockBackpackIntoSlot.get())
+                if(!Config.SERVER.backpack.lockIntoSlot.get())
                     return true;
                 CompoundTag tag = stack.getTag();
                 return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
@@ -121,7 +123,7 @@ public class Curios
             @Override
             public DropRule getDropRule(SlotContext context, DamageSource source, int lootingLevel, boolean recentlyHit)
             {
-                return Config.COMMON.common.keepBackpackOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
+                return Config.SERVER.backpack.keepOnDeath.get() ? DropRule.ALWAYS_KEEP : DropRule.DEFAULT;
             }
         });
     }

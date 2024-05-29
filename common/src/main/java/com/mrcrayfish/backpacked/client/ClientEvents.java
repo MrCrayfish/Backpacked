@@ -150,9 +150,9 @@ public class ClientEvents
         if(mc.level == null || mc.player == null || mc.gameMode == null)
             return false;
 
-        double range = Config.SERVER.common.pickpocketMaxReachDistance.get();
+        double range = Config.SERVER.pickpocketing.maxReachDistance.get();
         List<LivingEntity> entities = new ArrayList<>();
-        if(Config.SERVER.common.pickpocketBackpacks.get()) {
+        if(Config.SERVER.pickpocketing.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
                 return !Services.BACKPACK.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));

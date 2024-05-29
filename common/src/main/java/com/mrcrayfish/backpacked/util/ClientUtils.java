@@ -20,7 +20,7 @@ public class ClientUtils
 {
     public static void createBackpackTooltip(ItemStack stack, List<Component> list)
     {
-        if(!Config.SERVER.common.lockBackpackIntoSlot.get())
+        if(!Config.SERVER.backpack.lockIntoSlot.get())
             return;
 
         Minecraft mc = Minecraft.getInstance();

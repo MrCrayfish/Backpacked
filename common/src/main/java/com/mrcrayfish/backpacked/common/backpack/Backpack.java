@@ -72,7 +72,7 @@ public class Backpack
 
     public boolean isUnlocked(Player player)
     {
-        return UnlockManager.getTracker(player).map(tracker -> tracker.isUnlocked(this.id)).orElse(false) || this.challenge.isEmpty() || Config.SERVER.common.unlockAllBackpacks.get();
+        return UnlockManager.getTracker(player).map(tracker -> tracker.isUnlocked(this.id)).orElse(false) || this.challenge.isEmpty() || Config.SERVER.backpack.unlockAllCosmetics.get();
     }
 
     @Nullable

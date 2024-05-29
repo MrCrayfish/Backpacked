@@ -144,7 +144,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
         {
             if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
             {
-                boolean dropsContents = Config.SERVER.common.dropContentsFromShelf.get();
+                boolean dropsContents = Config.SERVER.backpack.dropContentsFromShelf.get();
                 ItemStack stack = dropsContents ? shelfBlockEntity.getBackpack() : shelfBlockEntity.getBackpackWithContents();
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
                 if(dropsContents) Containers.dropContents(level, pos, shelfBlockEntity);

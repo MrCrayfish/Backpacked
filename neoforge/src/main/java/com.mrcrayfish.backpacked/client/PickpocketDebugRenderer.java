@@ -31,7 +31,7 @@ public class PickpocketDebugRenderer
         if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
             return;
 
-        if(!Config.SERVER.common.pickpocketBackpacks.get())
+        if(!Config.SERVER.pickpocketing.enabled.get())
             return;
 
         PoseStack stack = event.getPoseStack();
@@ -49,7 +49,7 @@ public class PickpocketDebugRenderer
 
             stack.pushPose();
 
-            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player, Config.SERVER.common.pickpocketMaxReachDistance.get()) && PickpocketUtil.canSeeBackpack(player, mc.player);
+            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player, Config.SERVER.pickpocketing.maxReachDistance.get()) && PickpocketUtil.canSeeBackpack(player, mc.player);
             float boxRed = inReach ? 0.0F : 1.0F;
             float boxGreen = inReach ? 1.0F : 1.0F;
             float boxBlue = inReach ? 0.0F : 1.0F;
@@ -63,8 +63,8 @@ public class PickpocketDebugRenderer
             float lineBlue = inRange ? 0.0F : 1.0F;
             Matrix4f matrix4f = stack.last().pose();
             Vec3 pos = player.getPosition(event.getPartialTick());
-            Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.common.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.common.pickpocketMaxReachDistance.get());
-            Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.common.pickpocketMaxRangeAngle.get().floatValue()).scale(Config.SERVER.common.pickpocketMaxReachDistance.get());
+            Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.pickpocketing.maxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketing.maxReachDistance.get());
+            Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.pickpocketing.maxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketing.maxReachDistance.get());
             builder.vertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();
             builder.vertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();
             builder.vertex(matrix4f, (float) (pos.x + end.x),(float) (pos.y + end.y), (float) (pos.z + end.z)).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();

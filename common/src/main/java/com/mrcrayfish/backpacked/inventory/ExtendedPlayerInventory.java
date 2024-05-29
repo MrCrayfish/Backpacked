@@ -220,7 +220,7 @@ public class ExtendedPlayerInventory extends Inventory
     @Override
     public void dropAll()
     {
-        if(Config.COMMON.common.keepBackpackOnDeath.get())
+        if(Config.SERVER.backpack.keepOnDeath.get())
         {
             super.dropAll();
         }

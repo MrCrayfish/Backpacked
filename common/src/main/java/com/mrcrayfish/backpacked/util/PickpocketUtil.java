@@ -43,7 +43,7 @@ public class PickpocketUtil
 
     public static boolean canPickpocketEntity(LivingEntity targetEntity, Player thiefPlayer)
     {
-        return canPickpocketEntity(targetEntity, thiefPlayer, Config.SERVER.common.pickpocketMaxReachDistance.get());
+        return canPickpocketEntity(targetEntity, thiefPlayer, Config.SERVER.pickpocketing.maxReachDistance.get());
     }
 
     public static boolean canPickpocketEntity(LivingEntity targetEntity, Player thiefPlayer, double range)
@@ -58,7 +58,7 @@ public class PickpocketUtil
         Vec3 between = getEntityPos(thiefPlayer, 1.0F).subtract(getEntityPos(livingEntity, 1.0F));
         float angle = (float) Math.toDegrees(Math.atan2(between.z, between.x)) - 90F;
         float difference = Mth.degreesDifferenceAbs(livingEntity.yBodyRot + 180F, angle);
-        return difference <= Config.SERVER.common.pickpocketMaxRangeAngle.get();
+        return difference <= Config.SERVER.pickpocketing.maxRangeAngle.get();
     }
 
     public static boolean inReachOfBackpack(LivingEntity targetPlayer, Player thiefPlayer, double reachDistance)
@@ -76,9 +76,9 @@ public class PickpocketUtil
 
         AABB backpackBox = getBackpackBox(targetEntity, 1.0F);
         Vec3 start = thiefPlayer.getEyePosition(1.0F);
-        Vec3 end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.common.pickpocketMaxReachDistance.get()).add(start);
+        Vec3 end = thiefPlayer.getViewVector(1.0F).scale(Config.SERVER.pickpocketing.maxReachDistance.get()).add(start);
         Optional<Vec3> hitPos = backpackBox.clip(start, end);
-        if(!hitPos.isPresent())
+        if(hitPos.isEmpty())
             return false;
 
         BlockHitResult result = thiefPlayer.level().clip(new ClipContext(start, hitPos.get(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, thiefPlayer));

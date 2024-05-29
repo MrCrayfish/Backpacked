@@ -74,7 +74,7 @@ public class CuriosBackpack implements ICurioItem
     @Override
     public boolean canUnequip(SlotContext context, ItemStack stack)
     {
-        if(!Config.SERVER.common.lockBackpackIntoSlot.get())
+        if(!Config.SERVER.backpack.lockIntoSlot.get())
             return true;
         CompoundTag tag = stack.getTag();
         return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
@@ -84,6 +84,6 @@ public class CuriosBackpack implements ICurioItem
     @Override
     public ICurio.DropRule getDropRule(SlotContext context, DamageSource source, int lootingLevel, boolean recentlyHit, ItemStack stack)
     {
-        return Config.COMMON.common.keepBackpackOnDeath.get() ? ICurio.DropRule.ALWAYS_KEEP : ICurio.DropRule.DEFAULT;
+        return Config.SERVER.backpack.keepOnDeath.get() ? ICurio.DropRule.ALWAYS_KEEP : ICurio.DropRule.DEFAULT;
     }
 }

@@ -27,13 +27,10 @@ import java.util.stream.Collectors;
  */
 public class Config
 {
-    @FrameworkConfig(id = Constants.MOD_ID, name = "client", type = ConfigType.CLIENT, separator = '-')
+    @FrameworkConfig(id = Constants.MOD_ID, name = "client", type = ConfigType.CLIENT)
     public static final Client CLIENT = new Client();
 
-    @FrameworkConfig(id = Constants.MOD_ID, name = "common", type = ConfigType.UNIVERSAL, separator = '-')
-    public static final CommonWrapper COMMON = new CommonWrapper();
-
-    @FrameworkConfig(id = Constants.MOD_ID, name = "server", type = ConfigType.WORLD_SYNC, separator = '-')
+    @FrameworkConfig(id = Constants.MOD_ID, name = "server", type = ConfigType.SERVER_SYNC)
     public static final Server SERVER = new Server();
 
     public static class Client
@@ -42,42 +39,84 @@ public class Config
         public final BoolProperty hideConfigButton = BoolProperty.create(false);
 
         @ConfigProperty(name = "buttonAlignment", comment = "The alignment of the buttons in the backpack inventory screen")
-        public final EnumProperty<ButtonAlignment> buttonAlignment = EnumProperty.create(ButtonAlignment.RIGHT);
+        public final EnumProperty<ButtonAlignment> buttonAlignment = EnumProperty.create(ButtonAlignment.LEFT);
     }
 
-    // This is like this in order to migrate forge config, normally wrapping is not necessary
-    public static class CommonWrapper
+    public static class Server
     {
-        @ConfigProperty(name = "common", comment = "Common configuration settings")
-        public final Common common = new Common();
+        @ConfigProperty(name = "backpack")
+        public final Backpack backpack = new Backpack();
 
-        public static class Common
+        @ConfigProperty(name = "pickpocketing")
+        public final Pickpocketing pickpocketing = new Pickpocketing();
+
+        @ConfigProperty(name = "wanderingTrader")
+        public final WanderingTrader wanderingTrader = new WanderingTrader();
+
+        public static class Backpack
         {
-            @ConfigProperty(name = "keepBackpackOnDeath", comment = "If enabled, hides the config button from the backpack screen")
-            public final BoolProperty keepBackpackOnDeath = BoolProperty.create(false);
+            @ConfigProperty(name = "keepOnDeath", comment = "If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.")
+            public final BoolProperty keepOnDeath = BoolProperty.create(false);
 
-            @ConfigProperty(name = "backpackInventorySizeColumns", comment = "The amount of slot columns in the backpack inventory.")
-            public final IntProperty backpackInventorySizeColumns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
+            @ConfigProperty(name = "inventorySizeColumns", comment = "The amount of slot columns in the backpack inventory.")
+            public final IntProperty inventorySizeColumns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
 
-            @ConfigProperty(name = "backpackInventorySize", comment = "The amount of slot rows in the backpack inventory.")
-            public final IntProperty backpackInventorySizeRows = IntProperty.create(6, 1, BackpackContainerMenu.MAX_ROWS);
+            @ConfigProperty(name = "inventorySizeRows", comment = "The amount of slot rows in the backpack inventory.")
+            public final IntProperty inventorySizeRows = IntProperty.create(6, 1, BackpackContainerMenu.MAX_ROWS);
 
-            @ConfigProperty(name = "wandering_trader")
-            public final WanderingTrader wanderingTrader = new WanderingTrader();
+            @ConfigProperty(name = "disableCustomisation", comment = "If enabled, prevents backpacks from being customised. This will remove the customise button from the backpack inventory")
+            public final BoolProperty disableCustomisation = BoolProperty.create(false);
 
-            public static class WanderingTrader
+            @ConfigProperty(name = "unlockAllCosmetics", comment = "Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.")
+            public final BoolProperty unlockAllCosmetics = BoolProperty.create(false);
+
+            @ConfigProperty(name = "lockIntoSlot", comment = "Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.")
+            public final BoolProperty lockIntoSlot = BoolProperty.create(true);
+
+            @ConfigProperty(name = "autoEquipOnPickup", comment = "When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.")
+            public final BoolProperty autoEquipOnPickup = BoolProperty.create(false);
+
+            @ConfigProperty(name = "dropContentsFromShelf", comment = "When breaking a shelf, the placed backpack will also drops it's items into the world. This prevents players from carrying multiple backpacks")
+            public final BoolProperty dropContentsFromShelf = BoolProperty.create(true);
+
+            @ConfigProperty(name = "bannedItems", comment = "A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
+            public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
+        }
+
+        public static class Pickpocketing
+        {
+            @ConfigProperty(name = "enabledPickpocketing", comment = "If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.")
+            public final BoolProperty enabled = BoolProperty.create(true);
+
+            @ConfigProperty(name = "maxReachDistance", comment = "The maximum reach distance of a player to interact with another player's backpack.")
+            public final DoubleProperty maxReachDistance = DoubleProperty.create(2.0, 0.0, 4.0);
+
+            @ConfigProperty(name = "maxAngleRange", comment = """
+            The maximum angle at which another player's backpack can be accessed.
+            Think of this as how directly behind the backpack the player needs to be
+            in order to pickpocket. A smaller range prevents the player from accessing
+            the backpack from the side.""")
+            public final DoubleProperty maxRangeAngle = DoubleProperty.create(80.0, 0.0, 90.0);
+        }
+
+        public static class WanderingTrader
+        {
+            @ConfigProperty(name = "enableBackpack", comment = "If enabled, allows wandering traders to equip backpacks")
+            public final BoolProperty enableBackpack = BoolProperty.create(true);
+
+            @ConfigProperty(name = "spawnWithBackpackChance", comment = "The chance a Wandering Trader will spawn with a backpack. The chance is interpreted as one out of x, with x being the number given from this config option.")
+            public final IntProperty spawnWithBackpackChance = IntProperty.create(2, 1, 100);
+
+            @ConfigProperty(name = "pickpocketingChallenge")
+            public final PickpocketingChallenge challenge = new PickpocketingChallenge();
+
+            public static class PickpocketingChallenge
             {
-                @ConfigProperty(name = "spawnBackpackOnWanderingTraders", comment = "If enabled, hides the config button from the backpack screen")
-                public final BoolProperty spawnBackpackOnWanderingTraders = BoolProperty.create(true);
+                @ConfigProperty(name = "maxDetectionDistance", comment = "The maximum distance a Wandering Trader can detect a player. The longer the distance, the more difficult the challenge to pickpocket their backpack.")
+                public final DoubleProperty maxDetectionDistance = DoubleProperty.create(10.0, 1.0, 32.0);
 
-                @ConfigProperty(name = "wanderingTraderBackpackChance", comment = "The chance a Wandering Trader will spawn with a backpack. The chance is interpreted as one out of x, with x being the number given from this config option.")
-                public final IntProperty wanderingTraderBackpackChance = IntProperty.create(2, 1, 100);
-
-                @ConfigProperty(name = "wanderingTraderMaxDetectionDistance", comment = "The maximum distance a Wandering Trader can detect a player. The longer the distance, the more difficult the challenge to pickpocket their backpack.")
-                public final DoubleProperty wanderingTraderMaxDetectionDistance = DoubleProperty.create(10.0, 1.0, 32.0);
-
-                @ConfigProperty(name = "wanderingTraderForgetTime", comment = "The time (in ticks) a Wandering Trader will wait before it decides to forget about a detected player. The Wandering Trader will wait indefinitely if the detected player is within the maximum detection distance.")
-                public final IntProperty wanderingTraderForgetTime = IntProperty.create(200, 1, 12000);
+                @ConfigProperty(name = "timeToForgetPlayer", comment = "The time (in ticks) a Wandering Trader will wait before it decides to forget about a detected player. The Wandering Trader will wait indefinitely if the detected player is within the maximum detection distance.")
+                public final IntProperty timeToForgetPlayer = IntProperty.create(200, 1, 12000);
 
                 @ConfigProperty(name = "dislikedPlayersCanTrade", comment = "If true, allows players who are disliked by Wandering Traders to continue to trade normally with them. A player is considered disliked if they are caught when trying to pickpocket a Wandering Trader's backpack.")
                 public final BoolProperty dislikedPlayersCanTrade = BoolProperty.create(false);
@@ -94,42 +133,6 @@ public class Config
                 @ConfigProperty(name = "maxEmeraldStack", comment = "The maximum size of an emerald stack that can generate in the Wandering Trader backpack")
                 public final IntProperty maxEmeraldStack = IntProperty.create(32, 1, 64);
             }
-        }
-    }
-
-    public static class Server
-    {
-        @ConfigProperty(name = "common", comment = "Common configuration settings")
-        public final Common common = new Common();
-
-        public static class Common
-        {
-            @ConfigProperty(name = "bannedItems", comment = "A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
-            public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
-
-            @ConfigProperty(name = "disableCustomisation", comment = "If enabled, prevents backpacks from being customised. This will remove the customise button from the backpack inventory")
-            public final BoolProperty disableCustomisation = BoolProperty.create(false);
-
-            @ConfigProperty(name = "unlockAllBackpacks", comment = "Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.")
-            public final BoolProperty unlockAllBackpacks = BoolProperty.create(false);
-
-            @ConfigProperty(name = "lockBackpackIntoSlot", comment = "Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.")
-            public final BoolProperty lockBackpackIntoSlot = BoolProperty.create(true);
-
-            @ConfigProperty(name = "dropContentsFromShelf", comment = "When breaking a shelf, the placed backpack will also drops it's items into the world. This prevents players from carrying multiple backpacks")
-            public final BoolProperty dropContentsFromShelf = BoolProperty.create(true);
-
-            @ConfigProperty(name = "autoEquipBackpackOnPickup", comment = "When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.")
-            public final BoolProperty autoEquipBackpackOnPickup = BoolProperty.create(false);
-
-            @ConfigProperty(name = "pickpocketBackpacks", comment = "If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.")
-            public final BoolProperty pickpocketBackpacks = BoolProperty.create(true);
-
-            @ConfigProperty(name = "pickpocketDistance", comment = "The maximum reach distance of a player to interact with another player's backpack.")
-            public final DoubleProperty pickpocketMaxReachDistance = DoubleProperty.create(2.0, 0.0, 4.0);
-
-            @ConfigProperty(name = "pickpocketMaxRangeAngle", comment = "The maximum angle at which another player's backpack can be accessed")
-            public final DoubleProperty pickpocketMaxRangeAngle = DoubleProperty.create(80.0, 0.0, 90.0);
         }
 
         private static List<String> getDefaultBannedItems()
@@ -228,7 +231,7 @@ public class Config
 
     public static void updateBannedItemsList()
     {
-        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.common.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
+        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.backpack.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
     }
 
     public static Set<ResourceLocation> getBannedItemsList()
