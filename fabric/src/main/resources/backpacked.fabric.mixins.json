@@ -4,12 +4,8 @@
     "package": "com.mrcrayfish.backpacked.mixin",
     "compatibilityLevel": "JAVA_17",
     "refmap": "backpacked.refmap.json",
-    "mixins": [
-        "BlockMixin",
-        "EntityMixin",
-        "LivingEntityMixin"
-    ],
-    "client": [],
+    "mixins": [ "BlockMixin", "EnchantmentCategoryMixin", "EntityMixin", "LivingEntityMixin" ],
+    "client": [ ],
     "injectors": {
         "defaultRequire": 1
     }

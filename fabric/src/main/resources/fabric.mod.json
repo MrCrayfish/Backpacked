@@ -22,6 +22,9 @@
         ],
         "fabric-datagen": [
             "com.mrcrayfish.backpacked.datagen.DataGeneration"
+        ],
+        "mm:early_risers": [
+            "com.mrcrayfish.backpacked.asm.Loader"
         ]
     },
     "mixins": [

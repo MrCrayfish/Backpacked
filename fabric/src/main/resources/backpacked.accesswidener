@@ -3,3 +3,4 @@ accessible class net/minecraft/client/gui/screens/inventory/CreativeModeInventor
 accessible field net/minecraft/world/entity/Mob goalSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen leftPos I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen topPos I
+extendable class net/minecraft/world/item/enchantment/EnchantmentCategory
