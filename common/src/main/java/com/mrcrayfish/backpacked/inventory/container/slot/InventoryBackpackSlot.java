@@ -41,7 +41,7 @@ public class InventoryBackpackSlot extends Slot
     @Override
     public boolean mayPickup(Player player)
     {
-        if(!Config.SERVER.common.lockBackpackIntoSlot.get())
+        if(!Config.SERVER.backpack.lockIntoSlot.get())
             return true;
         CompoundTag tag = this.getItem().getTag();
         return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();

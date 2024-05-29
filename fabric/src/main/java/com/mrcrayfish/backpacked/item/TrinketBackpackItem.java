@@ -35,7 +35,7 @@ public class TrinketBackpackItem extends FabricBackpackItem implements Trinket
     @Override
     public boolean canUnequip(ItemStack stack, SlotReference slot, LivingEntity entity)
     {
-        if(!Config.SERVER.common.lockBackpackIntoSlot.get())
+        if(!Config.SERVER.backpack.lockIntoSlot.get())
             return true;
         CompoundTag tag = stack.getTag();
         return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
@@ -50,6 +50,6 @@ public class TrinketBackpackItem extends FabricBackpackItem implements Trinket
     @Override
     public TrinketEnums.DropRule getDropRule(ItemStack stack, SlotReference slot, LivingEntity entity)
     {
-        return stack.getItem() instanceof BackpackItem && Config.COMMON.common.keepBackpackOnDeath.get() ? TrinketEnums.DropRule.KEEP : Trinket.super.getDropRule(stack, slot, entity);
+        return stack.getItem() instanceof BackpackItem && Config.SERVER.backpack.keepOnDeath.get() ? TrinketEnums.DropRule.KEEP : Trinket.super.getDropRule(stack, slot, entity);
     }
 }

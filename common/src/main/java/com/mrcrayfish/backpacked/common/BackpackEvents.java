@@ -21,7 +21,7 @@ public class BackpackEvents
 
     private static boolean onPickupItem(Player player, ItemEntity entity)
     {
-        if(Config.SERVER.common.autoEquipBackpackOnPickup.get() && player instanceof ServerPlayer serverPlayer)
+        if(Config.SERVER.backpack.autoEquipOnPickup.get() && player instanceof ServerPlayer serverPlayer)
         {
             ItemStack stack = entity.getItem();
             if(!(stack.getItem() instanceof BackpackItem))

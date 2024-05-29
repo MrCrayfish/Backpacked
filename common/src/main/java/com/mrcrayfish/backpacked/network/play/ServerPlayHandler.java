@@ -46,7 +46,7 @@ public class ServerPlayHandler
             if(backpack == null)
                 return;
 
-            if(!backpack.isUnlocked(player) && !Config.SERVER.common.unlockAllBackpacks.get())
+            if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
                 return;
 
             CompoundTag tag = stack.getOrCreateTag();
@@ -77,7 +77,7 @@ public class ServerPlayHandler
         if(!(entity instanceof LivingEntity otherEntity))
             return;
 
-        if(otherEntity instanceof ServerPlayer && !Config.SERVER.common.pickpocketBackpacks.get())
+        if(otherEntity instanceof ServerPlayer && !Config.SERVER.pickpocketing.enabled.get())
             return;
 
         if(!PickpocketUtil.canSeeBackpack(otherEntity, player))
@@ -100,7 +100,7 @@ public class ServerPlayHandler
 
     public static void handleRequestCustomisation(MessageRequestCustomisation message, ServerPlayer player)
     {
-        if(Config.SERVER.common.disableCustomisation.get())
+        if(Config.SERVER.backpack.disableCustomisation.get())
             return;
 
         if(Services.BACKPACK.getBackpackStack(player).isEmpty())

@@ -26,6 +26,6 @@ public class WanderingTraderContainer extends BackpackContainerMenu
     @Override
     public boolean stillValid(Player playerIn)
     {
-        return this.trader.isAlive() && Optional.ofNullable(ModSyncedDataKeys.TRADER_PICKPOCKETING.getValue(this.trader)).map(data -> !data.getDetectedPlayers().containsKey(playerIn)).orElse(false) && PickpocketUtil.canPickpocketEntity(this.trader, playerIn, Config.SERVER.common.pickpocketMaxReachDistance.get() + 0.5);
+        return this.trader.isAlive() && Optional.ofNullable(ModSyncedDataKeys.TRADER_PICKPOCKETING.getValue(this.trader)).map(data -> !data.getDetectedPlayers().containsKey(playerIn)).orElse(false) && PickpocketUtil.canPickpocketEntity(this.trader, playerIn, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5);
     }
 }

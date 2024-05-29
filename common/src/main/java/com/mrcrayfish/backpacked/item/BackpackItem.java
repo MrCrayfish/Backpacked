@@ -84,12 +84,12 @@ public class BackpackItem extends Item
 
     public int getColumnCount()
     {
-        return Config.COMMON.common.backpackInventorySizeColumns.get();
+        return Config.SERVER.backpack.inventorySizeColumns.get();
     }
 
     public int getRowCount()
     {
-        return Config.COMMON.common.backpackInventorySizeRows.get();
+        return Config.SERVER.backpack.inventorySizeRows.get();
     }
 
     @Override

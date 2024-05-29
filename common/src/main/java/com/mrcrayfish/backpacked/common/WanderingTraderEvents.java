@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
-import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -60,13 +59,13 @@ public class WanderingTraderEvents
 
     private static void onEntityJoinLevel(Entity entity, Level level, boolean disk)
     {
-        if(!entity.level().isClientSide() && entity instanceof WanderingTrader trader && Config.COMMON.common.wanderingTrader.spawnBackpackOnWanderingTraders.get())
+        if(!entity.level().isClientSide() && entity instanceof WanderingTrader trader && Config.SERVER.wanderingTrader.enableBackpack.get())
         {
             TraderPickpocketing.get(trader).ifPresent(data ->
             {
                 if(!data.isInitialized())
                 {
-                    boolean equipped = trader.level().random.nextInt(Config.COMMON.common.wanderingTrader.wanderingTraderBackpackChance.get()) == 0;
+                    boolean equipped = trader.level().random.nextInt(Config.SERVER.wanderingTrader.spawnWithBackpackChance.get()) == 0;
                     data.setBackpackEquipped(equipped);
                     data.setInitialized();
                 }
@@ -110,7 +109,7 @@ public class WanderingTraderEvents
             List<Player> newDetectedPlayers = findDetectedPlayers(trader);
             newDetectedPlayers.forEach(player -> detectedPlayers.put(player, level.getGameTime()));
             detectedPlayers.entrySet().removeIf(createForgetPlayerPredicate(trader, level));
-            data.getDislikedPlayers().entrySet().removeIf(entry -> level.getGameTime() - entry.getValue() > Config.COMMON.common.wanderingTrader.dislikeCooldown.get());
+            data.getDislikedPlayers().entrySet().removeIf(entry -> level.getGameTime() - entry.getValue() > Config.SERVER.wanderingTrader.challenge.dislikeCooldown.get());
         });
     }
 
@@ -119,7 +118,7 @@ public class WanderingTraderEvents
         Level level = target.level();
         if(!level.isClientSide() && target instanceof WanderingTrader trader)
         {
-            if(!Config.COMMON.common.wanderingTrader.dislikedPlayersCanTrade.get() && TraderPickpocketing.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(player)).orElse(false))
+            if(!Config.SERVER.wanderingTrader.challenge.dislikedPlayersCanTrade.get() && TraderPickpocketing.get(trader).map(data -> data.isBackpackEquipped() && data.isDislikedPlayer(player)).orElse(false))
             {
                 trader.setUnhappyCounter(20);
                 level.playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
@@ -138,7 +137,7 @@ public class WanderingTraderEvents
 
     private static Predicate<Map.Entry<Player, Long>> createForgetPlayerPredicate(WanderingTrader trader, Level world)
     {
-        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > getMaxDetectionDistance() * 2.0 || (world.getGameTime() - entry.getValue() > Config.COMMON.common.wanderingTrader.wanderingTraderForgetTime.get() && entry.getKey().distanceTo(trader) >= Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get());
+        return entry -> !entry.getKey().isAlive() || entry.getKey().distanceTo(trader) > getMaxDetectionDistance() * 2.0 || (world.getGameTime() - entry.getValue() > Config.SERVER.wanderingTrader.challenge.timeToForgetPlayer.get() && entry.getKey().distanceTo(trader) >= Config.SERVER.wanderingTrader.challenge.maxDetectionDistance.get());
     }
 
     // Determines if the player is in the living entities vision
@@ -197,7 +196,7 @@ public class WanderingTraderEvents
                 trader.setUnhappyCounter(20);
                 trader.getLookControl().setLookAt(openingPlayer.getEyePosition(1.0F));
                 trader.level().playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
-                trader.level().getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
+                trader.level().getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.SERVER.wanderingTrader.challenge.maxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
                 ((ServerLevel) trader.level()).sendParticles(ParticleTypes.ANGRY_VILLAGER, trader.getX(), trader.getEyeY(), trader.getZ(), 1, 0, 0, 0, 0);
                 data.addDislikedPlayer(openingPlayer, trader.level().getGameTime());
                 return;
@@ -226,16 +225,16 @@ public class WanderingTraderEvents
             MerchantOffers offers = trader.getOffers();
             for(int i = 0; i < size; i++)
             {
-                if(!Config.COMMON.common.wanderingTrader.generateEmeraldsOnly.get() && i < count)
+                if(!Config.SERVER.wanderingTrader.challenge.generateEmeraldsOnly.get() && i < count)
                 {
                     MerchantOffer offer = offers.get(trader.level().random.nextInt(offers.size()));
                     ItemStack loot = offer.getResult().copy();
-                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level().random.nextInt(Config.COMMON.common.wanderingTrader.maxLootMultiplier.get()) + 1), 0, loot.getMaxStackSize()));
+                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level().random.nextInt(Config.SERVER.wanderingTrader.challenge.maxLootMultiplier.get()) + 1), 0, loot.getMaxStackSize()));
                     trader.getInventory().setItem(randomSlotIndexes.get(i), loot);
                 }
                 else
                 {
-                    ItemStack stack = new ItemStack(Items.EMERALD, trader.level().random.nextInt(Config.COMMON.common.wanderingTrader.maxEmeraldStack.get()) + 1);
+                    ItemStack stack = new ItemStack(Items.EMERALD, trader.level().random.nextInt(Config.SERVER.wanderingTrader.challenge.maxEmeraldStack.get()) + 1);
                     trader.getInventory().setItem(randomSlotIndexes.get(i), stack);
                 }
             }
@@ -255,7 +254,7 @@ public class WanderingTraderEvents
 
     private static double getMaxDetectionDistance()
     {
-        return Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get();
+        return Config.SERVER.wanderingTrader.challenge.maxDetectionDistance.get();
     }
 
     private static class PickpocketLookAtPlayerGoal extends LookAtPlayerGoal
@@ -282,7 +281,7 @@ public class WanderingTraderEvents
 
         public LootAtDetectedPlayerGoal(WanderingTrader trader)
         {
-            super(trader, Player.class, Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get().floatValue() * 2.0F, 1.0F);
+            super(trader, Player.class, Config.SERVER.wanderingTrader.challenge.maxDetectionDistance.get().floatValue() * 2.0F, 1.0F);
             this.trader = trader;
             this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
         }
@@ -302,7 +301,7 @@ public class WanderingTraderEvents
         @Override
         public boolean canContinueToUse()
         {
-            if(this.lookAt instanceof Player && this.lookAt.distanceTo(this.trader) <= Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get().floatValue() * 2.0)
+            if(this.lookAt instanceof Player && this.lookAt.distanceTo(this.trader) <= Config.SERVER.wanderingTrader.challenge.maxDetectionDistance.get().floatValue() * 2.0)
             {
                 TraderPickpocketing data = TraderPickpocketing.get(this.trader).orElse(null);
                 return data != null && data.getDetectedPlayers().containsKey((Player) this.lookAt);
@@ -326,7 +325,7 @@ public class WanderingTraderEvents
         @Override
         public void tick()
         {
-            if(this.lookAt instanceof Player && isPlayerSeenByLivingEntity(this.trader, (Player) this.lookAt, Config.COMMON.common.wanderingTrader.wanderingTraderMaxDetectionDistance.get() * 2))
+            if(this.lookAt instanceof Player && isPlayerSeenByLivingEntity(this.trader, (Player) this.lookAt, Config.SERVER.wanderingTrader.challenge.maxDetectionDistance.get() * 2))
             {
                 this.trader.getLookControl().setLookAt(this.lookAt.getX(), this.lookAt.getEyeY(), this.lookAt.getZ());
             }
