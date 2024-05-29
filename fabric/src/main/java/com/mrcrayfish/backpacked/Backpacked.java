@@ -4,13 +4,16 @@ import com.chocohead.mm.api.ClassTinkerers;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.backpack.loader.FabricBackpackLoader;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.framework.FrameworkSetup;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.impl.event.interaction.InteractionEventsRouter;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
@@ -30,7 +33,6 @@ public class Backpacked implements ModInitializer
     public void onInitialize()
     {
         Bootstrap.init();
-
         UseEntityCallback.EVENT.register((player, level, hand, entity, result) ->
         {
             if(!level.isClientSide() && WanderingTraderEvents.onInteract(entity, player))
@@ -39,6 +41,7 @@ public class Backpacked implements ModInitializer
             }
             return InteractionResult.PASS;
         });
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricBackpackLoader());
     }
 
     public static boolean isTrinketsLoaded()
