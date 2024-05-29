@@ -35,6 +35,10 @@ repositories {
         name = 'Ladysnake Mods'
         url = 'https://maven.ladysnake.org/releases'
     }
+    maven {
+        name = 'Fabric-ASM and other GitHub repos'
+        url = "https://jitpack.io/"
+    }
 }
 
 configurations {
@@ -51,6 +55,9 @@ dependencies {
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
     modImplementation "dev.emi:trinkets:${trinkets_version}"
+    include library("com.github.Chocohead:Fabric-ASM:v2.3") {
+        exclude (group: "net.fabricmc.fabric-api")
+    }
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":common")
     modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
