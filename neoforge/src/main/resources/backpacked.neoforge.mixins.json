@@ -5,8 +5,7 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "backpacked.refmap.json",
     "mixins": [
-        "common.BlockMixin",
-        "common.NeoForgePlayerMixin"
+        "common.BlockMixin"
     ],
     "client": [
     ],

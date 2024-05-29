@@ -77,6 +77,7 @@ public class Backpacked
         NeoForge.EVENT_BUS.addListener(this::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onDropLoot);
         NeoForge.EVENT_BUS.addListener(this::onInteract);
+        NeoForge.EVENT_BUS.addListener(this::onGetProjectile);
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
         curiosLoaded = ModList.get().isLoaded("curios");
     }
@@ -174,6 +175,35 @@ public class Backpacked
     private void onRegisterCapabilities(RegisterCapabilitiesEvent event)
     {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.SHELF.get(), (entity, context) -> new InvWrapper(entity));
+    }
+
+    private void onGetProjectile(LivingGetProjectileEvent event)
+    {
+        if(event.getProjectileItemStack().isEmpty() && event.getEntity() instanceof Player player)
+        {
+            ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+            if(backpack.isEmpty())
+                return;
+
+            if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MARKSMAN.get(), backpack) <= 0)
+                return;
+
+            BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+            if(inventory == null)
+                return;
+
+            Predicate<ItemStack> predicate = ((ProjectileWeaponItem) event.getProjectileWeaponItemStack().getItem()).getSupportedHeldProjectiles();
+            ItemStack projectile = IntStream.range(0, inventory.getContainerSize())
+                .mapToObj(inventory::getItem)
+                .filter(predicate)
+                .findFirst()
+                .orElse(ItemStack.EMPTY);
+
+            if(!projectile.isEmpty())
+            {
+                event.setProjectileItemStack(projectile);
+            }
+        }
     }
 
     public static boolean isCuriosLoaded()
