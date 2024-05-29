@@ -47,8 +47,6 @@ public class CuriosBackpack implements ICurioItem
     {
         if(context.cosmetic())
             return;
-        ItemStack stack2 = Services.BACKPACK.getBackpackStack(Minecraft.getInstance().player);
-        System.out.println("RECIEVED UPDATE FOR HASH: " + stack.hashCode() + " - " + stack2.hashCode());
         stack.setTag(compound);
     }
 
