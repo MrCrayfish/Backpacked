@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common.backpack.challenge;
 
 import com.mojang.serialization.Codec;
-import com.mrcrayfish.backpacked.data.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 

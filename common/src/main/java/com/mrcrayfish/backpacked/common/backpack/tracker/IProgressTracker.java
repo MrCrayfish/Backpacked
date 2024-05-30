@@ -1,5 +1,6 @@
-package com.mrcrayfish.backpacked.data.tracker;
+package com.mrcrayfish.backpacked.common.backpack.tracker;
 
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

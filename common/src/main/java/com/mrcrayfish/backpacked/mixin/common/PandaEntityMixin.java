@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.backpack.impl.BambooBasketBackpack;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

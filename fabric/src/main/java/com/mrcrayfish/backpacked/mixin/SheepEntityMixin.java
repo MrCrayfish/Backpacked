@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.mixin;
 
 import com.mrcrayfish.backpacked.common.backpack.impl.SheepPlushBackpack;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
-import com.mrcrayfish.backpacked.data.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.common.backpack.tracker.impl.CountProgressTracker;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

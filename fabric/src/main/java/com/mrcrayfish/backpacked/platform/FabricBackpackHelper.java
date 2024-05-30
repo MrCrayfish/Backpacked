@@ -2,10 +2,6 @@ package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
-import com.mrcrayfish.backpacked.data.tracker.UnlockTracker;
-import com.mrcrayfish.backpacked.entity.IPickpocketChallengeHolder;
-import com.mrcrayfish.backpacked.entity.IUnlockTrackerHolder;
 import com.mrcrayfish.backpacked.integration.Trinkets;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
@@ -27,7 +23,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -36,13 +31,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class FabricBackpackHelper implements IBackpackHelper
 {
-    @Nullable
-    @Override
-    public UnlockTracker getUnlockTracker(Player player, boolean old)
-    {
-        return ((IUnlockTrackerHolder) player).backpackedGetUnlockTracker();
-    }
-
     @Override
     public ItemStack getBackpackStack(Player player)
     {
@@ -97,13 +85,6 @@ public class FabricBackpackHelper implements IBackpackHelper
     public boolean isBackpackVisible(Player player)
     {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public PickpocketChallenge getPickpocketChallenge(Entity entity)
-    {
-        return entity instanceof WanderingTrader trader ? ((IPickpocketChallengeHolder) trader).backpackedGetPickpocketChallenge() : null;
     }
 
     @Override

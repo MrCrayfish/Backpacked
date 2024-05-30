@@ -10,12 +10,10 @@
         "common.ComposterBlockMixin",
         "common.EntityMixin",
         "common.ItemEntityMixin",
-        "common.LockableLootTileEntityMixin",
         "common.PandaEntityMixin",
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",
         "common.RandomizableContainerBlockEntityMixin",
-        "common.ServerPlayerMixin",
         "common.ServerPlayNetHandlerMixin"
     ],
     "client": [

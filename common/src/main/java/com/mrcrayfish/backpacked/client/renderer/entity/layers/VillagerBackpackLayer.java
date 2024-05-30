@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mrcrayfish.backpacked.client.model.ModelInstances;
 import com.mrcrayfish.backpacked.client.model.backpack.BackpackModel;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
+import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,7 +27,7 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int p_225628_3_, T villager, float p_225628_5_, float p_225628_6_, float partialTick, float p_225628_8_, float p_225628_9_, float p_225628_10_)
     {
-        PickpocketChallenge.get(villager).ifPresent(data ->
+        TraderPickpocketing.get(villager).ifPresent(data ->
         {
             if(data.isBackpackEquipped())
             {

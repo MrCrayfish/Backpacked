@@ -3,22 +3,17 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.blockentity.ForgeShelfBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.data.pickpocket.PickpocketChallenge;
-import com.mrcrayfish.backpacked.data.pickpocket.ForgePickpocketChallenge;
-import com.mrcrayfish.backpacked.data.tracker.ForgeUnlockTracker;
-import com.mrcrayfish.backpacked.data.tracker.UnlockTracker;
 import com.mrcrayfish.backpacked.integration.Curios;
+import com.mrcrayfish.backpacked.integration.item.ForgeBackpackItem;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.integration.item.ForgeBackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +21,6 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkHooks;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -34,16 +28,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ForgeBackpackHelper implements IBackpackHelper
 {
-    @Override
-    @Nullable
-    public UnlockTracker getUnlockTracker(Player player, boolean old)
-    {
-        if(old) player.reviveCaps();
-        UnlockTracker tracker = player.getCapability(ForgeUnlockTracker.UNLOCK_TRACKER_CAPABILITY).resolve().orElse(null);
-        if(old) player.invalidateCaps();
-        return tracker;
-    }
-
     @Override
     public ItemStack getBackpackStack(Player player)
     {
@@ -102,12 +86,6 @@ public class ForgeBackpackHelper implements IBackpackHelper
             return Curios.isBackpackVisible(player);
         }
         return true;
-    }
-
-    @Override
-    public PickpocketChallenge getPickpocketChallenge(Entity entity)
-    {
-        return entity.getCapability(ForgePickpocketChallenge.PICKPOCKET_CAPABILITY).resolve().orElse(null);
     }
 
     @Override

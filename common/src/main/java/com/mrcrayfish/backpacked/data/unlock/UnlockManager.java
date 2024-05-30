@@ -1,6 +1,7 @@
-package com.mrcrayfish.backpacked.data.tracker;
+package com.mrcrayfish.backpacked.data.unlock;
 
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -33,7 +34,7 @@ public class UnlockManager
         TickEvents.END_SERVER.register(UnlockManager::onServerTick);
     }
 
-    static void queuePlayerForCompletionTest(ServerPlayer player)
+    public static void queuePlayerForCompletionTest(ServerPlayer player)
     {
         testForCompletion.add(player);
     }
@@ -45,7 +46,7 @@ public class UnlockManager
 
     private static Optional<UnlockTracker> get(Player player, boolean old)
     {
-        return Optional.ofNullable(Services.BACKPACK.getUnlockTracker(player, old));
+        return Optional.ofNullable(ModSyncedDataKeys.UNLOCK_TRACKER.getValue(player));
     }
 
     private static void onPlayerClone(Player oldPlayer, Player newPlayer, boolean respawn)

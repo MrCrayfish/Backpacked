@@ -1,7 +1,7 @@
-package com.mrcrayfish.backpacked.data.tracker.impl;
+package com.mrcrayfish.backpacked.common.backpack.tracker.impl;
 
-import com.mrcrayfish.backpacked.data.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.data.tracker.ProgressFormatters;
+import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.backpack.tracker.ProgressFormatters;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;

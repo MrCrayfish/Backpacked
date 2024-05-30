@@ -1,13 +1,16 @@
-package com.mrcrayfish.backpacked.data.tracker;
+package com.mrcrayfish.backpacked.data.unlock;
 
 import com.google.common.collect.ImmutableMap;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.util.Serializable;
+import com.mrcrayfish.framework.api.sync.IDataSerializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
@@ -18,6 +21,8 @@ import java.util.Set;
 
 public class UnlockTracker implements Serializable
 {
+    public static final Serializer SERIALIZER = new Serializer();
+
     private final Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
     private final Map<ResourceLocation, IProgressTracker> progressTrackerMap;
 
@@ -117,5 +122,41 @@ public class UnlockTracker implements Serializable
                 tracker.read(dataTag);
             }
         });
+    }
+
+    public static class Serializer implements IDataSerializer<UnlockTracker>
+    {
+        @Override
+        public void write(FriendlyByteBuf buf, UnlockTracker value)
+        {
+            buf.writeNbt(value.serialize());
+        }
+
+        // TODO convert to updatable
+
+        @Override
+        public UnlockTracker read(FriendlyByteBuf buf)
+        {
+            UnlockTracker tracker = new UnlockTracker();
+            Optional.ofNullable(buf.readNbt()).ifPresent(tracker::deserialize);
+            return tracker;
+        }
+
+        @Override
+        public Tag write(UnlockTracker value)
+        {
+            return value.serialize();
+        }
+
+        @Override
+        public UnlockTracker read(Tag nbt)
+        {
+            UnlockTracker tracker = new UnlockTracker();
+            if(nbt instanceof CompoundTag tag)
+            {
+                tracker.deserialize(tag);
+            }
+            return tracker;
+        }
     }
 }

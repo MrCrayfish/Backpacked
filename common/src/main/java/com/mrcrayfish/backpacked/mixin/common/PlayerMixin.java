@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mojang.authlib.GameProfile;
 import com.mrcrayfish.backpacked.common.backpack.impl.RocketBackpack;
-import com.mrcrayfish.backpacked.data.tracker.UnlockManager;
-import com.mrcrayfish.backpacked.data.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.common.backpack.tracker.impl.CountProgressTracker;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
