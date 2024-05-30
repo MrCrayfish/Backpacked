@@ -1,4 +1,4 @@
-name: Build and Sign Mod
+name: Build and Sign Mod (Common)
 on:
   push:
     paths:
