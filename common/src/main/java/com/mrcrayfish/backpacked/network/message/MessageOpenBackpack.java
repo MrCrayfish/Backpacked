@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public class MessageOpenBackpack
+public record MessageOpenBackpack()
 {
     public static void encode(MessageOpenBackpack message, FriendlyByteBuf buffer) {}
 

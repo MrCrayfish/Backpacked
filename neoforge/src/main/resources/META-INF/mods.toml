@@ -43,9 +43,9 @@ config = "${mod_id}.neoforge.mixins.json"
 
 [[dependencies."${mod_id}"]]
     modId="curios"
-    type="optional"
+    type="required"
     versionRange="[${curios_version},)"
-    ordering="AFTER"
+    ordering="NONE"
     side="BOTH"
 
 [[dependencies."${mod_id}"]]

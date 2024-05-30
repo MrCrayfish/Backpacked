@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.integration.CuriosHelper;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
@@ -18,8 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 /**
  * Author: MrCrayfish
  */
@@ -28,20 +25,7 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     @Override
     public ItemStack getBackpackStack(Player player)
     {
-        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        if(Backpacked.isCuriosLoaded())
-        {
-            backpack.set(CuriosHelper.getBackpackStack(player));
-        }
-        else if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            ItemStack stack = inventory.getBackpackItems().get(0);
-            if(stack.getItem() instanceof BackpackItem)
-            {
-                backpack.set(stack);
-            }
-        }
-        return backpack.get();
+        return CuriosHelper.getBackpackStack(player);
     }
 
     @Override
@@ -49,18 +33,8 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     {
         if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
             return false;
-
-        if(Backpacked.isCuriosLoaded())
-        {
-            CuriosHelper.setBackpackStack(player, stack);
-            return true;
-        }
-        else if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            inventory.getBackpackItems().set(0, stack.copy());
-            return true;
-        }
-        return false;
+        CuriosHelper.setBackpackStack(player, stack);
+        return true;
     }
 
     @Override
@@ -70,19 +44,9 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public boolean isUsingThirdPartySlot()
-    {
-        return Backpacked.isCuriosLoaded();
-    }
-
-    @Override
     public boolean isBackpackVisible(Player player)
     {
-        if(Backpacked.isCuriosLoaded())
-        {
-            return CuriosHelper.isBackpackVisible(player);
-        }
-        return true;
+        return CuriosHelper.isBackpackVisible(player);
     }
 
     @Override

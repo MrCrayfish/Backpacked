@@ -13,10 +13,7 @@ import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.integration.CuriosBackpack;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.EnvironmentHelper;
@@ -31,7 +28,6 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -40,15 +36,11 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.CuriosCapability;
-import top.theillusivec4.curios.common.capability.ItemizedCurioCapability;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -64,31 +56,23 @@ public class Backpacked
 {
     public static final EnchantmentCategory ENCHANTMENT_TYPE = EnchantmentCategory.create("backpack", item -> item instanceof BackpackItem);
 
-    private static boolean curiosLoaded = false;
-
     public Backpacked(IEventBus bus)
     {
         EnvironmentHelper.runOn(Environment.CLIENT, () -> ClientBootstrap::earlyInit);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onGatherData);
         bus.addListener(this::onRegisterCapabilities);
-        NeoForge.EVENT_BUS.addListener(this::onPlayerClone);
-        NeoForge.EVENT_BUS.addListener(this::onStartTracking);
-        NeoForge.EVENT_BUS.addListener(this::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onDropLoot);
         NeoForge.EVENT_BUS.addListener(this::onInteract);
         NeoForge.EVENT_BUS.addListener(this::onGetProjectile);
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
-        curiosLoaded = ModList.get().isLoaded("curios");
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
             Bootstrap.init();
-            if(isCuriosLoaded()) {
-                CuriosApi.registerCurio(ModItems.BACKPACK.get(), new CuriosBackpack());
-            }
+            CuriosApi.registerCurio(ModItems.BACKPACK.get(), new CuriosBackpack());
         });
     }
 
@@ -106,53 +90,6 @@ public class Backpacked
     private void addReloadListener(AddReloadListenerEvent event)
     {
         event.addListener(new BackpackLoader());
-    }
-
-    private void onPlayerClone(PlayerEvent.Clone event)
-    {
-        if(curiosLoaded)
-            return;
-
-        Player oldPlayer = event.getOriginal();
-        if(oldPlayer.getInventory() instanceof ExtendedPlayerInventory inventory1 && event.getEntity().getInventory() instanceof ExtendedPlayerInventory inventory2)
-        {
-            inventory2.copyBackpack(inventory1);
-        }
-    }
-
-    private void onStartTracking(PlayerEvent.StartTracking event)
-    {
-        if(curiosLoaded)
-            return;
-
-        Player player = event.getEntity();
-        if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            ItemStack backpack = inventory.getBackpackItems().get(0);
-            if(!backpack.isEmpty() && backpack.getItem() instanceof BackpackItem)
-            {
-                Network.getPlay().sendToTrackingEntity(() -> player, new MessageUpdateBackpack(player.getId(), backpack, false));
-            }
-        }
-    }
-
-    private void onPlayerTick(TickEvent.PlayerTickEvent event)
-    {
-        if(curiosLoaded)
-            return;
-
-        if(event.phase != TickEvent.Phase.START)
-            return;
-
-        Player player = event.player;
-        if(!player.level().isClientSide && player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            if(!inventory.backpackArray.get(0).equals(inventory.backpackInventory.get(0)))
-            {
-                Network.getPlay().sendToTrackingEntity(() -> player, new MessageUpdateBackpack(player.getId(), inventory.backpackInventory.get(0), false));
-                inventory.backpackArray.set(0, inventory.backpackInventory.get(0));
-            }
-        }
     }
 
     private void onDropLoot(LivingDropsEvent event)
@@ -204,10 +141,5 @@ public class Backpacked
                 event.setProjectileItemStack(projectile);
             }
         }
-    }
-
-    public static boolean isCuriosLoaded()
-    {
-        return curiosLoaded;
     }
 }

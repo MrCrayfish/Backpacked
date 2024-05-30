@@ -6,12 +6,10 @@ import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -50,22 +48,6 @@ public class ClientPlayHandler
         UnlockManager.getTracker(player).ifPresent(impl -> {
             message.unlockedBackpacks().forEach(impl::unlockBackpack);
         });
-    }
-
-    public static void handleUpdateBackpack(MessageUpdateBackpack message)
-    {
-        Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.level != null)
-        {
-            Entity entity = minecraft.level.getEntity(message.entityId());
-            if(entity instanceof Player player)
-            {
-                if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-                {
-                    inventory.getBackpackItems().set(0, message.backpack());
-                }
-            }
-        }
     }
 
     public static void handleOpenCustomisation(MessageOpenCustomisation message)

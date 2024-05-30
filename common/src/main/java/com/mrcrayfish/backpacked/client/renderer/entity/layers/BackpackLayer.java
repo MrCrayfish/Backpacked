@@ -48,7 +48,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             if(chestStack.getItem() == Items.ELYTRA && !canRenderWithElytra(stack))
                 return;
 
-            if(Services.BACKPACK.isUsingThirdPartySlot() && !Services.BACKPACK.isBackpackVisible(player))
+            if(!Services.BACKPACK.isBackpackVisible(player))
                 return;
 
             String modelName = stack.getOrCreateTag().getString("BackpackModel");

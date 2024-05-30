@@ -53,22 +53,4 @@ public class FabricScreenHelper implements IScreenHelper
             }
         });
     }
-
-    @Override
-    public int getScreenLeftPos(AbstractContainerScreen<?> screen)
-    {
-        return screen.leftPos;
-    }
-
-    @Override
-    public int getScreenTopPos(AbstractContainerScreen<?> screen)
-    {
-        return screen.topPos;
-    }
-
-    @Override
-    public Slot createCreativeSlotWrapper(Slot slot, int index, int x, int y)
-    {
-        return new CreativeModeInventoryScreen.SlotWrapper(slot, index, x, y);
-    }
 }

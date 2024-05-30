@@ -45,22 +45,4 @@ public class NeoForgeScreenHelper implements IScreenHelper
             }
         });
     }
-
-    @Override
-    public int getScreenLeftPos(AbstractContainerScreen<?> screen)
-    {
-        return screen.getGuiLeft();
-    }
-
-    @Override
-    public int getScreenTopPos(AbstractContainerScreen<?> screen)
-    {
-        return screen.getGuiTop();
-    }
-
-    @Override
-    public Slot createCreativeSlotWrapper(Slot slot, int index, int x, int y)
-    {
-        return new CreativeModeInventoryScreen.SlotWrapper(slot, index, x, y);
-    }
 }

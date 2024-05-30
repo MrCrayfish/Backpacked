@@ -14,8 +14,7 @@
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",
         "common.ServerPlayerGameModeMixin",
-        "common.ServerPlayerMixin",
-        "common.ServerPlayNetHandlerMixin"
+        "common.ServerPlayerMixin"
     ],
     "client": [
         "client.ModelBakeryMixin"

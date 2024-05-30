@@ -23,8 +23,6 @@ public interface IBackpackHelper
 
     EnchantmentCategory getEnchantmentCategory();
 
-    boolean isUsingThirdPartySlot();
-
     boolean isBackpackVisible(Player player);
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);

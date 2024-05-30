@@ -19,7 +19,6 @@ public class Network
         .createNetworkBuilder(new ResourceLocation(Constants.MOD_ID, "play"), 1)
         .registerConfigurationMessage("sync_backpacks", MessageSyncBackpacks.class, MessageSyncBackpacks::encode, MessageSyncBackpacks::decode, MessageSyncBackpacks::handle, () -> List.of(BackpackManager.instance().getSyncMessage()))
         .registerPlayMessage("open_backpack", MessageOpenBackpack.class, MessageOpenBackpack::encode, MessageOpenBackpack::decode, MessageOpenBackpack::handle, PacketFlow.SERVERBOUND)
-        .registerPlayMessage("update_backpack", MessageUpdateBackpack.class, MessageUpdateBackpack::encode, MessageUpdateBackpack::decode, MessageUpdateBackpack::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("entity_backpack", MessageEntityBackpack.class, MessageEntityBackpack::encode, MessageEntityBackpack::decode, MessageEntityBackpack::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("backpack_cosmetics", MessageBackpackCosmetics.class, MessageBackpackCosmetics::encode, MessageBackpackCosmetics::decode, MessageBackpackCosmetics::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("sync_unlock_tracker", MessageSyncUnlockTracker.class, MessageSyncUnlockTracker::encode, MessageSyncUnlockTracker::decode, MessageSyncUnlockTracker::handle, PacketFlow.CLIENTBOUND)
