@@ -206,7 +206,7 @@ public class WanderingTraderEvents
 
             if(generateBackpackLoot(trader, data))
             {
-                UnlockManager.get(openingPlayer).flatMap(tracker -> tracker.getProgressTracker(WanderingBagBackpack.ID)).ifPresent(tracker -> {
+                UnlockManager.getTracker(openingPlayer).flatMap(tracker -> tracker.getProgressTracker(WanderingBagBackpack.ID)).ifPresent(tracker -> {
                     ((WanderingBagBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
                 });
             }

@@ -29,7 +29,7 @@ public class ClientPlayHandler
             return;
 
         Player player = mc.player;
-        UnlockManager.get(player).ifPresent(impl ->
+        UnlockManager.getTracker(player).ifPresent(impl ->
         {
             Backpack backpack = BackpackManager.instance().getClientBackpack(message.cosmeticId());
             if(backpack != null)
@@ -47,7 +47,7 @@ public class ClientPlayHandler
             return;
 
         Player player = mc.player;
-        UnlockManager.get(player).ifPresent(impl -> {
+        UnlockManager.getTracker(player).ifPresent(impl -> {
             message.unlockedBackpacks().forEach(impl::unlockBackpack);
         });
     }

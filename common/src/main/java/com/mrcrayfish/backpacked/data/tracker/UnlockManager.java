@@ -38,7 +38,7 @@ public class UnlockManager
         testForCompletion.add(player);
     }
 
-    public static Optional<UnlockTracker> get(Player player)
+    public static Optional<UnlockTracker> getTracker(Player player)
     {
         return UnlockManager.get(player, false);
     }
@@ -52,7 +52,7 @@ public class UnlockManager
     {
         get(oldPlayer, true).ifPresent(originalTracker ->
         {
-            get(newPlayer).ifPresent(newTracker ->
+            getTracker(newPlayer).ifPresent(newTracker ->
             {
                 newTracker.setUnlockedBackpacks(originalTracker.getUnlockedBackpacks());
                 originalTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
@@ -67,21 +67,21 @@ public class UnlockManager
 
     private static void onPlayerLoggedIn(Player player)
     {
-        get(player).ifPresent(unlockTracker -> {
+        getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
     private static void onPlayerRespawn(Player player, boolean finishedGame)
     {
-        get(player).ifPresent(unlockTracker -> {
+        getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
 
     private static void onPlayerChangedDimension(Player player, ResourceKey<Level> oldDimension, ResourceKey<Level> newDimension)
     {
-        get(player).ifPresent(unlockTracker -> {
+        getTracker(player).ifPresent(unlockTracker -> {
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockTracker(unlockTracker.getUnlockedBackpacks()));
         });
     }
@@ -93,7 +93,7 @@ public class UnlockManager
 
         for(ServerPlayer player : testForCompletion)
         {
-            get(player).ifPresent(unlockTracker ->
+            getTracker(player).ifPresent(unlockTracker ->
             {
                 unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
                 {

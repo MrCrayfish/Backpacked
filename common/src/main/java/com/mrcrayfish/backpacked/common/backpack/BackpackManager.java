@@ -99,7 +99,7 @@ public final class BackpackManager
         if(!this.loadedBackpacks.containsKey(id))
             return;
 
-        UnlockManager.get(player).ifPresent(impl -> {
+        UnlockManager.getTracker(player).ifPresent(impl -> {
             if(impl.unlockBackpack(id)) {
                 Network.getPlay().sendToPlayer(() -> player, new MessageUnlockBackpack(id));
             }

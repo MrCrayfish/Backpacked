@@ -54,7 +54,7 @@ public class BackpackEvents
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        UnlockManager.get(player).ifPresent(unlockTracker ->
+        UnlockManager.getTracker(player).ifPresent(unlockTracker ->
         {
             unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
             {
@@ -79,7 +79,7 @@ public class BackpackEvents
         BlockPos playerPosition = serverPlayer.blockPosition();
         world.registryAccess().registryOrThrow(Registries.BIOME).getResourceKey(world.getBiome(playerPosition).value()).ifPresent(key ->
         {
-            UnlockManager.get(serverPlayer).ifPresent(unlockTracker ->
+            UnlockManager.getTracker(serverPlayer).ifPresent(unlockTracker ->
             {
                 unlockTracker.getProgressTrackerMap().forEach((location, progressTracker) ->
                 {
