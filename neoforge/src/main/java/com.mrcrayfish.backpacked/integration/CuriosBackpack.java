@@ -19,8 +19,6 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
  */
 public class CuriosBackpack implements ICurioItem
 {
-    public static final CuriosBackpack INSTANCE = new CuriosBackpack();
-
     @NotNull
     @Override
     public ICurio.SoundInfo getEquipSound(SlotContext context, ItemStack stack)
@@ -49,19 +47,6 @@ public class CuriosBackpack implements ICurioItem
             return;
         stack.setTag(compound);
     }
-
-    // TODO check
-    /*@Override
-    public boolean canEquipFromUse(SlotContext context)
-    {
-        // Temporary until issue is fixed: https://github.com/TheIllusiveC4/Curios/issues/332
-        Optional<SlotResult> result = CuriosApi.getCuriosHelper().findCurio(context.entity(), "back", context.index());
-        return result.map(slotResult -> {
-            return slotResult.stack().isEmpty() || CuriosApi.getCuriosHelper().getCurio(slotResult.stack()).map(iCurio -> {
-                return iCurio.canUnequip(slotResult.slotContext());
-            }).orElse(true);
-        }).orElse(true);
-    }*/
 
     @Override
     public boolean canSync(SlotContext context, ItemStack stack)
