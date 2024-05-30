@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 /**
  * Author: MrCrayfish
  */
+@SuppressWarnings("unused")
 @Mixin(EnchantmentCategory.class)
 public abstract class EnchantmentCategoryMixin
 {

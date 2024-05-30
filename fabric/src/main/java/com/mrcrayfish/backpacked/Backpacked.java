@@ -21,12 +21,9 @@ public class Backpacked implements ModInitializer
 {
     public static final Supplier<EnchantmentCategory> ENCHANTMENT_TYPE = Suppliers.memoize(() -> ClassTinkerers.getEnum(EnchantmentCategory.class, "BACKPACKED$BACKPACK"));
 
-    private static boolean trinketsLoaded;
-
     public Backpacked()
     {
         FrameworkSetup.run();
-        trinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
     }
 
     @Override
@@ -42,10 +39,5 @@ public class Backpacked implements ModInitializer
             return InteractionResult.PASS;
         });
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricBackpackLoader());
-    }
-
-    public static boolean isTrinketsLoaded()
-    {
-        return trinketsLoaded;
     }
 }

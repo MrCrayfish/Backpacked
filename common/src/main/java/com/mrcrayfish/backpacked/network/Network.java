@@ -22,7 +22,6 @@ public class Network
                 return List.of(Pair.of("Backpacks", BackpackManager.instance().getSyncMessage()));
             })
             .registerPlayMessage(MessageOpenBackpack.class, MessageDirection.PLAY_SERVER_BOUND)
-            .registerPlayMessage(MessageUpdateBackpack.class, MessageDirection.PLAY_CLIENT_BOUND)
             .registerPlayMessage(MessageEntityBackpack.class, MessageDirection.PLAY_SERVER_BOUND)
             .registerPlayMessage(MessageBackpackCosmetics.class, MessageDirection.PLAY_SERVER_BOUND)
             .registerPlayMessage(MessageSyncUnlockTracker.class, MessageDirection.PLAY_CLIENT_BOUND)

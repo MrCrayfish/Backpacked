@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -14,7 +13,6 @@ import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -63,6 +61,9 @@ public class ServerPlayHandler
                 Network.getPlay().sendToTracking(() -> player, new MessageUpdateBackpack(player.getId(), stack));
                 Network.getPlay().sendToPlayer(() -> player, new MessageUpdateBackpack(player.getId(), stack, true));
             }
+            tag.putBoolean(ModelProperty.SHOW_GLINT.getTagName(), message.showGlint());
+            tag.putBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.showElytra());
+            tag.putBoolean(ModelProperty.SHOW_EFFECTS.getTagName(), message.showEffects());
         }
     }
 

@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.integration.item;
 
-import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
@@ -23,10 +22,6 @@ public class ForgeBackpackItem extends BackpackItem
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
     {
-        if(!Backpacked.isCuriosLoaded())
-        {
-            return null;
-        }
         return Curios.createBackpackProvider(stack);
     }
 }

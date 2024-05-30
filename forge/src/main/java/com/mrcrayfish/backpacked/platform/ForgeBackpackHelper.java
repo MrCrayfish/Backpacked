@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.blockentity.ForgeShelfBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.integration.Curios;
 import com.mrcrayfish.backpacked.integration.item.ForgeBackpackItem;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
@@ -21,8 +20,6 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkHooks;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 /**
  * Author: MrCrayfish
  */
@@ -31,20 +28,7 @@ public class ForgeBackpackHelper implements IBackpackHelper
     @Override
     public ItemStack getBackpackStack(Player player)
     {
-        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        if(Backpacked.isCuriosLoaded())
-        {
-            backpack.set(Curios.getBackpackStack(player));
-        }
-        else if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            ItemStack stack = inventory.getBackpackItems().get(0);
-            if(stack.getItem() instanceof BackpackItem)
-            {
-                backpack.set(stack);
-            }
-        }
-        return backpack.get();
+        return Curios.getBackpackStack(player);
     }
 
     @Override
@@ -52,18 +36,8 @@ public class ForgeBackpackHelper implements IBackpackHelper
     {
         if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
             return false;
-
-        if(Backpacked.isCuriosLoaded())
-        {
-            Curios.setBackpackStack(player, stack);
-            return true;
-        }
-        else if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            inventory.getBackpackItems().set(0, stack.copy());
-            return true;
-        }
-        return false;
+        Curios.setBackpackStack(player, stack);
+        return true;
     }
 
     @Override
@@ -73,19 +47,9 @@ public class ForgeBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public boolean isUsingThirdPartySlot()
-    {
-        return Backpacked.isCuriosLoaded();
-    }
-
-    @Override
     public boolean isBackpackVisible(Player player)
     {
-        if(Backpacked.isCuriosLoaded())
-        {
-            return Curios.isBackpackVisible(player);
-        }
-        return true;
+        return Curios.isBackpackVisible(player);
     }
 
     @Override

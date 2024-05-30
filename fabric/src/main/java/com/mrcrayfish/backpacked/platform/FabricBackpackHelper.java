@@ -3,10 +3,8 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.integration.Trinkets;
-import com.mrcrayfish.backpacked.inventory.ExtendedPlayerInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.item.FabricBackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -24,8 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 /**
  * Author: MrCrayfish
  */
@@ -34,20 +30,7 @@ public class FabricBackpackHelper implements IBackpackHelper
     @Override
     public ItemStack getBackpackStack(Player player)
     {
-        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        if(Backpacked.isTrinketsLoaded())
-        {
-            backpack.set(Trinkets.getBackpackStack(player));
-        }
-        else if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            ItemStack stack = inventory.getBackpackItems().get(0);
-            if(stack.getItem() instanceof BackpackItem)
-            {
-                backpack.set(stack);
-            }
-        }
-        return backpack.get();
+        return Trinkets.getBackpackStack(player);
     }
 
     @Override
@@ -55,30 +38,14 @@ public class FabricBackpackHelper implements IBackpackHelper
     {
         if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
             return false;
-
-        if(Backpacked.isTrinketsLoaded())
-        {
-            Trinkets.setBackpackStack(player, stack);
-            return true;
-        }
-        else if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-        {
-            inventory.getBackpackItems().set(0, stack.copy());
-            return true;
-        }
-        return false;
+        Trinkets.setBackpackStack(player, stack);
+        return true;
     }
 
     @Override
     public EnchantmentCategory getEnchantmentCategory()
     {
         return Backpacked.ENCHANTMENT_TYPE.get();
-    }
-
-    @Override
-    public boolean isUsingThirdPartySlot()
-    {
-        return Backpacked.isTrinketsLoaded();
     }
 
     @Override
@@ -102,11 +69,7 @@ public class FabricBackpackHelper implements IBackpackHelper
     @Override
     public BackpackItem createBackpackItem(Item.Properties properties)
     {
-        if(Backpacked.isTrinketsLoaded())
-        {
-            return Trinkets.createTrinketBackpack(properties);
-        }
-        return new FabricBackpackItem(properties);
+        return Trinkets.createTrinketBackpack(properties);
     }
 
     private record BackpackScreenFactory(Container inventory, int cols, int rows, boolean owner, Component title) implements ExtendedScreenHandlerFactory
