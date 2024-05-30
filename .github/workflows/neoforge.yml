@@ -74,7 +74,7 @@ jobs:
     - name: Construct artifact files
       id: artifacts
       run: |
-        echo "neoforge=neoforge/build/libs/${{ steps.mod_id.outputs.value }}-neoforge-${{ steps.mc_version.outputs.value }}-${{ steps.mod_version.outputs.value }}.jar" >> "$GITHUB_OUTPUT"
+        echo "neoforge=neoforge/build/libs/${{ steps.mod_id.outputs.value }}-neoforge-${{ steps.mc_version.outputs.value }}-${{ steps.mod_version.outputs.value }}-signed.jar" >> "$GITHUB_OUTPUT"
     - name: Import GPG
       env:
         SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
