@@ -40,7 +40,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
 
     @Override
     @Nullable
-    public BackpackInventory getBackpackedInventory()
+    public BackpackInventory backpacked$GetBackpackInventory()
     {
         Player player = (Player) (Object) this;
         ItemStack stack = Services.BACKPACK.getBackpackStack(player);
@@ -59,7 +59,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void backpackedTickHead(CallbackInfo ci)
+    public void backpacked$TickHead(CallbackInfo ci)
     {
         if(this.backpacked$Inventory != null)
         {
@@ -68,7 +68,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
-    public void backpackedAddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
+    public void backpacked$AddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
     {
         if(this.backpacked$Inventory != null)
         {
@@ -77,7 +77,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "interactOn", at = @At(value = "HEAD"))
-    public void backpackedInteractHead(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
+    public void backpacked$InteractHead(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
     {
         Player player = (Player) (Object) this;
         if(player instanceof ServerPlayer serverPlayer)

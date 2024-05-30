@@ -5,5 +5,5 @@ package com.mrcrayfish.backpacked.inventory;
  */
 public interface BackpackedInventoryAccess
 {
-    BackpackInventory getBackpackedInventory();
+    BackpackInventory backpacked$GetBackpackInventory();
 }

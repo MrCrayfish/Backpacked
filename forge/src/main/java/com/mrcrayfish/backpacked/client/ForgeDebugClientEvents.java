@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
 /**
  * Author: MrCrayfish
  */
-public class ForgeClientEvents
+public class ForgeDebugClientEvents
 {
     @SubscribeEvent
     public void onRenderWorldLastEvent(RenderLevelStageEvent event)

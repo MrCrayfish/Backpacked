@@ -26,25 +26,25 @@ public class EntityMixin implements ILootCapture
 
     @Nullable
     @Override
-    public List<ItemEntity> backpackedGetCapturedDrops()
+    public List<ItemEntity> backpacked$GetCapturedDrops()
     {
         return this.backpacked$Drops;
     }
 
     @Override
-    public void backpackedStartCapturingDrop()
+    public void backpacked$StartCapturingDrop()
     {
         this.backpacked$Drops = new ArrayList<>();
     }
 
     @Override
-    public void backpackedEndCapturingDrop()
+    public void backpacked$EndCapturingDrop()
     {
         this.backpacked$Drops = null;
     }
 
     @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;setDefaultPickUpDelay()V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    private void backpackedSpawnItem(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity)
+    private void backpacked$SpawnItem(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity)
     {
         if(this.backpacked$Drops != null)
         {

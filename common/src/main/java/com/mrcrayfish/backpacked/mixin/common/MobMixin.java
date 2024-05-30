@@ -30,7 +30,7 @@ public class MobMixin
     private ItemStack backpacked$capturedFood;
 
     @Inject(method = "interact", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;mobInteract(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
-    private void backpackedOnMobInteractPre(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
+    private void backpacked$OnMobInteractPre(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
     {
         Mob mob = (Mob) (Object) this;
         if(mob instanceof Animal animal)
@@ -44,7 +44,7 @@ public class MobMixin
     }
 
     @Inject(method = "interact", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/Mob;mobInteract(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void backpackedOnMobInteractPost(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, InteractionResult result)
+    private void backpacked$OnMobInteractPost(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, InteractionResult result)
     {
         if(result.consumesAction() && this.backpacked$capturedFood != null)
         {

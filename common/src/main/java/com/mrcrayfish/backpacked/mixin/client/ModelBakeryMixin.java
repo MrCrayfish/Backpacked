@@ -36,7 +36,7 @@ public class ModelBakeryMixin
     private Map<ResourceLocation, UnbakedModel> topLevelModels;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void backpackedOnLoadModels(BlockColors colors, ProfilerFiller filler, Map<ResourceLocation, BlockModel> models, Map<ResourceLocation, List<ModelBakery.LoadedJson>> data, CallbackInfo ci)
+    private void backpacked$OnLoadModels(BlockColors colors, ProfilerFiller filler, Map<ResourceLocation, BlockModel> models, Map<ResourceLocation, List<ModelBakery.LoadedJson>> data, CallbackInfo ci)
     {
         // Load the json models from the backpack directory
         ModelBakery bakery = (ModelBakery) (Object) this;
