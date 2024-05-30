@@ -17,23 +17,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EntityMixin implements IMovedAccess
 {
     @Unique
-    public boolean backpackedMoved;
+    public boolean backpacked$Moved;
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void backpackedTickHead(CallbackInfo ci)
+    public void backpacked$TickHead(CallbackInfo ci)
     {
-        this.backpackedMoved = false;
+        this.backpacked$Moved = false;
     }
 
     @Inject(method = "move", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/Entity;nextStep()F"))
-    public void backpackedMoveStep(MoverType type, Vec3 delta, CallbackInfo ci)
+    public void backpacked$MoveStep(MoverType type, Vec3 delta, CallbackInfo ci)
     {
-        this.backpackedMoved = true;
+        this.backpacked$Moved = true;
     }
 
     @Override
-    public boolean backpackedMoved()
+    public boolean backpacked$Moved()
     {
-        return this.backpackedMoved;
+        return this.backpacked$Moved;
     }
 }

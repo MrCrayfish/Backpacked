@@ -44,7 +44,7 @@ public class BackpackItem extends Item
         ItemStack backpack = Services.BACKPACK.getBackpackStack(ownerPlayer);
         if(!backpack.isEmpty())
         {
-            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) ownerPlayer).getBackpackedInventory();
+            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory();
             if(backpackInventory == null)
                 return false;
             BackpackItem backpackItem = (BackpackItem) backpack.getItem();

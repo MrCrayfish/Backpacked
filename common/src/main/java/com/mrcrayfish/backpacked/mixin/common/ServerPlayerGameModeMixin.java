@@ -58,7 +58,7 @@ public class ServerPlayerGameModeMixin
         ordinal = 0,
         shift = At.Shift.BY, by = 1),
         locals = LocalCapture.CAPTURE_FAILHARD)
-    private void backpackedOnBlockMined(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state)
+    private void backpacked$OnBlockMined(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state)
     {
         this.backpacked$capturedMinedBlock = state;
         this.backpacked$capturedMinedItem = this.player.getMainHandItem();
@@ -76,7 +76,7 @@ public class ServerPlayerGameModeMixin
         value = "INVOKE",
         target = "Lnet/minecraft/server/level/ServerPlayerGameMode;debugLogging(Lnet/minecraft/core/BlockPos;ZILjava/lang/String;)V",
         ordinal = 0))
-    private void backpackedAfterSuccessfulDestroy(BlockPos pos, int action, String message, CallbackInfo ci)
+    private void backpacked$AfterSuccessfulDestroy(BlockPos pos, int action, String message, CallbackInfo ci)
     {
         if(this.backpacked$capturedMinedBlock != null && this.backpacked$capturedMinedItem != null)
         {
@@ -85,7 +85,7 @@ public class ServerPlayerGameModeMixin
     }
 
     @Inject(method = "destroyAndAck", at = @At(value = "TAIL"))
-    private void backpackedDestroyTail(BlockPos pos, int action, String message, CallbackInfo ci)
+    private void backpacked$DestroyTail(BlockPos pos, int action, String message, CallbackInfo ci)
     {
         this.backpacked$capturedMinedBlock = null;
         this.backpacked$capturedMinedItem = null;
@@ -106,7 +106,7 @@ public class ServerPlayerGameModeMixin
     private CompoundTag backpacked$capturedUseTag;
 
     @Inject(method = "useItemOn", at = @At(value = "HEAD"))
-    private void backpackedOnUse(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    private void backpacked$OnUse(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         this.backpacked$capturedUseState = level.getBlockState(result.getBlockPos());
         this.backpacked$capturedUseItem = stack.copy();
@@ -121,7 +121,7 @@ public class ServerPlayerGameModeMixin
     }
 
     @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/ItemUsedOnLocationTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
-    private void backpackedBeforeTriggers(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    private void backpacked$BeforeTriggers(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)
         {

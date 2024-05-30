@@ -42,7 +42,7 @@ public class FunnellingEnchantment extends Enchantment
         if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.FUNNELLING.get(), backpack) <= 0)
             return false;
 
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
         if(inventory == null)
             return false;
 

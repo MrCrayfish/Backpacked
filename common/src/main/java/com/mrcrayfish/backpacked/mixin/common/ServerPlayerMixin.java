@@ -41,61 +41,61 @@ public abstract class ServerPlayerMixin implements BackpackedInteractAccess
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 0))
-    private void backpackedMovementSwim(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementSwim(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.SWIM);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 1))
-    private void backpackedMovementWalkUnderwater(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementWalkUnderwater(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.WALK_UNDERWATER);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 2))
-    private void backpackedMovementWalkOnWater(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementWalkOnWater(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.WALK_ON_WATER);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 3))
-    private void backpackedMovementClimb(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementClimb(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(0, dy, 0, MovementType.CLIMB);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 4))
-    private void backpackedMovementSprint(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementSprint(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.SPRINT);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 5))
-    private void backpackedMovementSneak(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementSneak(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.SNEAK);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 6))
-    private void backpackedMovementWalk(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementWalk(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.WALK);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 7))
-    private void backpackedMovementElytraFlying(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementElytraFlying(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.ELYTRA_FLY);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 8))
-    private void backpackedMovementFlying(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementFlying(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, 0, dz, MovementType.FLY);
     }
 
     @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V", ordinal = 8))
-    private void backpackedMovementFall(double dx, double dy, double dz, CallbackInfo ci)
+    private void backpacked$MovementFall(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(0, dy, 0, MovementType.FALL);
     }

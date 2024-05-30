@@ -32,7 +32,6 @@ import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -131,7 +130,7 @@ public class Backpacked
             if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MARKSMAN.get(), backpack) <= 0)
                 return;
 
-            BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+            BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
             if(inventory == null)
                 return;
 

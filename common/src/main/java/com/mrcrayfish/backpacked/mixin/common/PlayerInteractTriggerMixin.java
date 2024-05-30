@@ -21,7 +21,7 @@ import java.util.List;
 public class PlayerInteractTriggerMixin
 {
     @Inject(method = "trigger", at = @At(value = "HEAD"))
-    private void backpackedOnTriggerHead(ServerPlayer player, ItemStack stack, Entity entity, CallbackInfo ci)
+    private void backpacked$OnTriggerHead(ServerPlayer player, ItemStack stack, Entity entity, CallbackInfo ci)
     {
         BackpackedInteractAccess access = (BackpackedInteractAccess) player;
         List<ResourceLocation> capturedIds = access.getBackpacked$CapturedInteractIds();

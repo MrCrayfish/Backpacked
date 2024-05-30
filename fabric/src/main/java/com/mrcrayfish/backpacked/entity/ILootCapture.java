@@ -11,9 +11,9 @@ import java.util.List;
 public interface ILootCapture
 {
     @Nullable
-    List<ItemEntity> backpackedGetCapturedDrops();
+    List<ItemEntity> backpacked$GetCapturedDrops();
 
-    void backpackedStartCapturingDrop();
+    void backpacked$StartCapturingDrop();
 
-    void backpackedEndCapturingDrop();
+    void backpacked$EndCapturingDrop();
 }

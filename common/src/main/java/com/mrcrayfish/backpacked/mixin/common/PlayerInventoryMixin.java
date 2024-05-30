@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerInventoryMixin
 {
     @Inject(method = "removeItem(Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "TAIL"))
-    public void backpackedRemoveItemTail(ItemStack stack, CallbackInfo ci)
+    public void backpacked$RemoveItemTail(ItemStack stack, CallbackInfo ci)
     {
         Inventory playerInventory = (Inventory) (Object) this;
         Player player = playerInventory.player;
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
         if(inventory == null)
             return;
 

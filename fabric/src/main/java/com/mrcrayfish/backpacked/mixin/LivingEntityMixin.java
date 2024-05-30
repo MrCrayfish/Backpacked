@@ -19,16 +19,16 @@ import java.util.List;
 public class LivingEntityMixin
 {
     @Inject(method = "dropAllDeathLoot", at = @At(value = "HEAD"))
-    private void backpackedOnDropLootPre(DamageSource damageSource, CallbackInfo ci)
+    private void backpacked$OnDropLootPre(DamageSource damageSource, CallbackInfo ci)
     {
-        ((ILootCapture) this).backpackedStartCapturingDrop();
+        ((ILootCapture) this).backpacked$StartCapturingDrop();
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At(value = "TAIL"))
-    private void backpackedOnDropLootPost(DamageSource damageSource, CallbackInfo ci)
+    private void backpacked$OnDropLootPost(DamageSource damageSource, CallbackInfo ci)
     {
         LivingEntity entity = (LivingEntity) (Object) this;
-        List<ItemEntity> drops = ((ILootCapture) this).backpackedGetCapturedDrops();
+        List<ItemEntity> drops = ((ILootCapture) this).backpacked$GetCapturedDrops();
         if(drops != null)
         {
             //TODO move to an event
@@ -36,7 +36,7 @@ public class LivingEntityMixin
             {
                 drops.forEach(e -> entity.level().addFreshEntity(e));
             }
-            ((ILootCapture) this).backpackedEndCapturingDrop();
+            ((ILootCapture) this).backpacked$EndCapturingDrop();
         }
     }
 }

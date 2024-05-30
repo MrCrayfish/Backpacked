@@ -36,7 +36,7 @@ public class ClientHandler
 
         if(!FMLLoader.isProduction())
         {
-            MinecraftForge.EVENT_BUS.register(new ForgeClientEvents());
+            MinecraftForge.EVENT_BUS.register(new ForgeDebugClientEvents());
         }
     }
 
