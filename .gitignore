@@ -23,3 +23,5 @@ eclipse
 run
 runPlayerTwo
 */src/generated/resources/.cache
+forge/runs
+neoforge/runs
