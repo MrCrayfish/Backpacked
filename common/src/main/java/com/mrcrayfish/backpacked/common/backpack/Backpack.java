@@ -33,8 +33,6 @@ public class Backpack
     private String translationKey;
     private boolean setup = false;
 
-    // TODO honey jar, rocket backpack
-
     public Backpack(Optional<Challenge> challenge)
     {
         this.challenge = challenge;
