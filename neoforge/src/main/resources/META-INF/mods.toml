@@ -57,4 +57,5 @@ config = "${mod_id}.neoforge.mixins.json"
 
 [modproperties."${mod_id}"]
     catalogueImageIcon="assets/${mod_id}/icon.png"
+    catalogueBackground="assets/${mod_id}/background.png"
     configuredBackground="minecraft:textures/block/stone.png"

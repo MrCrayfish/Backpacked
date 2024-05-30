@@ -53,7 +53,8 @@
             "background": "minecraft:textures/block/dirt.png"
         },
         "catalogue": {
-            "banner": "assets/${mod_id}/banner.png"
+            "banner": "assets/${mod_id}/banner.png",
+            "background": "assets/${mod_id}/background.png"
         }
     }
 }
