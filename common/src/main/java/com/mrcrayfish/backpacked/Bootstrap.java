@@ -19,7 +19,7 @@ public class Bootstrap
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.UNLOCK_TRACKER);
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.TRADER_PICKPOCKETING);
         Network.init();
-        UnlockManager.init();
+        UnlockManager.instance();
         BackpackEvents.init();
         RepairmanEnchantment.init();
         WanderingTraderEvents.init();

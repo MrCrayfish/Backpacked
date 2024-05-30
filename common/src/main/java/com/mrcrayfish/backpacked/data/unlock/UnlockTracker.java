@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.event.EventType;
+import com.mrcrayfish.backpacked.event.entity.FeedAnimal;
 import com.mrcrayfish.backpacked.util.Serializable;
 import com.mrcrayfish.framework.api.sync.IDataSerializer;
 import net.minecraft.nbt.CompoundTag;
@@ -29,11 +31,9 @@ public class UnlockTracker implements Serializable
     public UnlockTracker()
     {
         ImmutableMap.Builder<ResourceLocation, IProgressTracker> builder = ImmutableMap.builder();
-        BackpackManager.instance().getBackpacks().forEach(backpack ->
-        {
+        BackpackManager.instance().getBackpacks().forEach(backpack -> {
             IProgressTracker tracker = backpack.createProgressTracker();
-            if(tracker != null)
-            {
+            if(tracker != null) {
                 builder.put(backpack.getId(), tracker);
             }
         });

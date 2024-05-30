@@ -7,7 +7,6 @@
     "mixins": [
         "common.BlockMixin",
         "common.ForgePlayerMixin",
-        "common.ServerPlayerGameModeMixin",
         "common.SheepEntityMixin"
     ],
     "client": [

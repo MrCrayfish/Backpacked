@@ -10,7 +10,8 @@ import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatters;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
-import com.mrcrayfish.framework.api.event.EntityEvents;
+import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.event.EventType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -91,7 +92,7 @@ public class KillMobsChallenge extends Challenge
         public Tracker(int maxCount, List<EntityType<?>> types)
         {
             super(maxCount, ProgressFormatters.KILLED_X_OF_X);
-            EntityEvents.LIVING_ENTITY_DEATH.register((entity, source) -> {
+            UnlockManager.instance().addEventListener(EventType.LIVING_ENTITY_DEATH, (entity, source) -> {
                 if(this.isComplete() || entity.level().isClientSide())
                     return false;
                 Entity cause = source.getEntity();
