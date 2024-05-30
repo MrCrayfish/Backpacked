@@ -2,7 +2,7 @@ name: Build and Sign Mod
 on:
   push:
     paths:
-      - 'release_build'
+      - 'release_build_fabric'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,21 +39,6 @@ jobs:
       with:
         path: ~/.gradle/caches
         key: gradle-minecraft-${{ steps.mc_version.outputs.value }}
-    - name: Load Keystore
-      id: load_keystore
-      env:
-        JKS: ${{ secrets.MRCRAYFISH_JKS }}
-      if: ${{ env.JKS != '' }}
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'keystore.jks'
-        encodedString: ${{ env.JKS }}
-    - name: Set Keystore Variables
-      if: ${{ steps.load_keystore.outputs.filePath != '' }}
-      run: |
-        echo "KEYSTORE=${{ steps.load_keystore.outputs.filePath }}" >> $GITHUB_ENV 
-        echo "KEYSTORE_ALIAS=${{ secrets.MRCRAYFISH_JKS_ALIAS }}" >> $GITHUB_ENV
-        echo "KEYSTORE_PASS=${{ secrets.MRCRAYFISH_JKS_PASSPHRASE }}" >> $GITHUB_ENV
     - name: Make gradlew executable
       run: chmod +x ./gradlew
     - name: Run Data Generation
@@ -62,20 +47,21 @@ jobs:
         GPR_KEY: ${{ secrets.GPR_TOKEN }}
         SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
         SIGNING_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      run: ./gradlew :forge:Data :fabric:runDatagen :neoforge:runData
+        TARGET_LOADER: "fabric"
+      run: ./gradlew :fabric:runDatagen
     - name: Build and Publish
       env:
         GPR_USER: "MrCrayfish"
         GPR_KEY: ${{ secrets.GPR_TOKEN }}
         SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
         SIGNING_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        TARGET_LOADER: "fabric"
       run: ./gradlew build
     - name: Stop Gradle
       run: ./gradlew --stop
     - name: Construct artifact files
       id: artifacts
       run: |
-        echo "forge=forge/build/libs/${{ steps.mod_id.outputs.value }}-forge-${{ steps.mc_version.outputs.value }}-${{ steps.mod_version.outputs.value }}.jar" >> "$GITHUB_OUTPUT"
         echo "fabric=fabric/build/libs/${{ steps.mod_id.outputs.value }}-fabric-${{ steps.mc_version.outputs.value }}-${{ steps.mod_version.outputs.value }}.jar" >> "$GITHUB_OUTPUT"
     - name: Import GPG
       env:
@@ -91,15 +77,7 @@ jobs:
         SIGNING_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       if: ${{ env.SIGNING_PASSPHRASE != '' }}
       run: |
-        gpg --batch --yes --passphrase "${{ env.SIGNING_PASSPHRASE }}" --armor --detach-sign ${{ steps.artifacts.outputs.forge }}
         gpg --batch --yes --passphrase "${{ env.SIGNING_PASSPHRASE }}" --armor --detach-sign ${{ steps.artifacts.outputs.fabric }}
-    - name: Upload Forge Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: '${{ steps.mod_id.outputs.value }}-forge-${{ steps.mc_version.outputs.value }}-${{ steps.mod_version.outputs.value }}'
-        path: |
-          ${{ steps.artifacts.outputs.forge }}
-          ${{ steps.artifacts.outputs.forge }}.asc
     - name: Upload Fabric Artifacts
       uses: actions/upload-artifact@v2
       with:
