@@ -38,7 +38,7 @@ public class MessageSyncVillagerBackpack extends PlayMessage<MessageSyncVillager
         context.setHandled(true);
     }
 
-    public int getEntityId()
+    public int entityId()
     {
         return this.entityId;
     }

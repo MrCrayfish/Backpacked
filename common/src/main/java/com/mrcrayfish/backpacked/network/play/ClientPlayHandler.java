@@ -31,10 +31,10 @@ public class ClientPlayHandler
         Player player = mc.player;
         UnlockManager.get(player).ifPresent(impl ->
         {
-            Backpack backpack = BackpackManager.instance().getBackpack(message.getId());
+            Backpack backpack = BackpackManager.instance().getClientBackpack(message.cosmeticId());
             if(backpack != null)
             {
-                impl.unlockBackpack(message.getId());
+                impl.unlockBackpack(message.cosmeticId());
                 mc.getToasts().addToast(new UnlockBackpackToast(backpack));
             }
         });
@@ -48,7 +48,7 @@ public class ClientPlayHandler
 
         Player player = mc.player;
         UnlockManager.get(player).ifPresent(impl -> {
-            message.getUnlockedBackpacks().forEach(impl::unlockBackpack);
+            message.unlockedBackpacks().forEach(impl::unlockBackpack);
         });
     }
 
@@ -57,12 +57,12 @@ public class ClientPlayHandler
         Minecraft minecraft = Minecraft.getInstance();
         if(minecraft.level != null)
         {
-            Entity entity = minecraft.level.getEntity(message.getEntityId());
+            Entity entity = minecraft.level.getEntity(message.entityId());
             if(entity instanceof Player player)
             {
                 if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
                 {
-                    inventory.getBackpackItems().set(0, message.getBackpack());
+                    inventory.getBackpackItems().set(0, message.backpack());
                 }
             }
         }
@@ -74,7 +74,7 @@ public class ClientPlayHandler
         if(minecraft.player == null)
             return;
 
-        minecraft.setScreen(new CustomiseBackpackScreen(message.getProgressMap()));
+        minecraft.setScreen(new CustomiseBackpackScreen(message.progressMap()));
     }
 
     public static void handleSyncVillagerBackpack(MessageSyncVillagerBackpack message)
@@ -83,7 +83,7 @@ public class ClientPlayHandler
         if(minecraft.level == null)
             return;
 
-        Entity entity = minecraft.level.getEntity(message.getEntityId());
+        Entity entity = minecraft.level.getEntity(message.entityId());
         if(entity instanceof WanderingTrader trader)
         {
             PickpocketChallenge.get(trader).ifPresent(data -> data.setBackpackEquipped(true));

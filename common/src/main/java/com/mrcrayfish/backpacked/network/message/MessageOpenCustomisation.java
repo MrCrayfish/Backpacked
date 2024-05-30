@@ -55,7 +55,7 @@ public class MessageOpenCustomisation extends PlayMessage<MessageOpenCustomisati
         context.setHandled(true);
     }
 
-    public Map<ResourceLocation, Component> getProgressMap()
+    public Map<ResourceLocation, Component> progressMap()
     {
         return this.map;
     }

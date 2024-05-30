@@ -1,19 +1,15 @@
 package com.mrcrayfish.backpacked.network;
 
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
-import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
-import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageUpdateBackpack;
+import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.FrameworkNetwork;
 import com.mrcrayfish.framework.api.network.MessageDirection;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -22,6 +18,9 @@ public class Network
 {
     public static final FrameworkNetwork PLAY = FrameworkAPI
             .createNetworkBuilder(new ResourceLocation(Constants.MOD_ID, "play"), 1)
+            .registerHandshakeMessage(MessageSyncBackpacks.class, local -> {
+                return List.of(Pair.of("Backpacks", BackpackManager.instance().getSyncMessage()));
+            })
             .registerPlayMessage(MessageOpenBackpack.class, MessageDirection.PLAY_SERVER_BOUND)
             .registerPlayMessage(MessageUpdateBackpack.class, MessageDirection.PLAY_CLIENT_BOUND)
             .registerPlayMessage(MessageEntityBackpack.class, MessageDirection.PLAY_SERVER_BOUND)

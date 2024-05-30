@@ -93,12 +93,12 @@ public class MessageUpdateBackpack extends PlayMessage<MessageUpdateBackpack>
         return tag;
     }
 
-    public int getEntityId()
+    public int entityId()
     {
         return this.entityId;
     }
 
-    public ItemStack getBackpack()
+    public ItemStack backpack()
     {
         return this.backpack;
     }

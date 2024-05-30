@@ -49,7 +49,7 @@ public class MessageSyncUnlockTracker extends PlayMessage<MessageSyncUnlockTrack
         context.setHandled(true);
     }
 
-    public Set<ResourceLocation> getUnlockedBackpacks()
+    public Set<ResourceLocation> unlockedBackpacks()
     {
         return this.unlockedBackpacks;
     }

@@ -39,7 +39,7 @@ public class MessageUnlockBackpack extends PlayMessage<MessageUnlockBackpack>
         context.setHandled(true);
     }
 
-    public ResourceLocation getId()
+    public ResourceLocation cosmeticId()
     {
         return this.id;
     }

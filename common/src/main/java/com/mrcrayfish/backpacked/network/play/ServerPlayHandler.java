@@ -109,7 +109,7 @@ public class ServerPlayHandler
         UnlockManager.get(player).ifPresent(unlockTracker ->
         {
             Map<ResourceLocation, Component> map = new HashMap<>();
-            for(Backpack backpack : BackpackManager.instance().getRegisteredBackpacks())
+            for(Backpack backpack : BackpackManager.instance().getBackpacks())
             {
                 if(!unlockTracker.isUnlocked(backpack.getId()))
                 {
