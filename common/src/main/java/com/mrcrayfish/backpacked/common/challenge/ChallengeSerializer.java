@@ -18,11 +18,5 @@ public abstract class ChallengeSerializer<T extends Challenge>
         return id != null ? DataResult.success(id) : DataResult.error(() -> "Unregistered serializer");
     });
 
-    // TODO change to streamcodec
-
-    public abstract void write(T challenge, FriendlyByteBuf buf);
-
-    public abstract T read(FriendlyByteBuf buf);
-
     public abstract Codec<T> codec();
 }

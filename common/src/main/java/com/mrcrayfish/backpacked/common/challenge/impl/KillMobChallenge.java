@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
-import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
@@ -13,7 +12,6 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.framework.api.event.EntityEvents;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
@@ -72,22 +70,6 @@ public class KillMobChallenge extends Challenge
 
     public static final class Serializer extends ChallengeSerializer<KillMobChallenge>
     {
-        @Override
-        public void write(KillMobChallenge challenge, FriendlyByteBuf buf)
-        {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public KillMobChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new KillMobChallenge(ProgressFormatter.KILLED_X_OF_X, entity, item, count);
-        }
 
         @Override
         public Codec<KillMobChallenge> codec()

@@ -13,7 +13,6 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
@@ -69,22 +68,6 @@ public class InteractWithBlockChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<InteractWithBlockChallenge>
     {
-        @Override
-        public void write(InteractWithBlockChallenge challenge, FriendlyByteBuf buf)
-        {
-            ChallengeUtils.writeBlockPredicate(buf, challenge.block);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public InteractWithBlockChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<BlockPredicate> block = ChallengeUtils.readBlockPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new InteractWithBlockChallenge(ProgressFormatter.USED_X_TIMES, block, item, count);
-        }
 
         @Override
         public Codec<InteractWithBlockChallenge> codec()

@@ -13,7 +13,6 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
@@ -70,22 +69,6 @@ public class InteractWithEntityChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<InteractWithEntityChallenge>
     {
-        @Override
-        public void write(InteractWithEntityChallenge challenge, FriendlyByteBuf buf)
-        {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public InteractWithEntityChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new InteractWithEntityChallenge(ProgressFormatter.USED_X_TIMES, entity, item, count);
-        }
 
         @Override
         public Codec<InteractWithEntityChallenge> codec()

@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
+import com.mrcrayfish.backpacked.common.challenge.impl.DummyChallenge;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import net.minecraft.network.FriendlyByteBuf;
@@ -42,7 +43,7 @@ public class Backpack
     {
         ResourceLocation id = buf.readResourceLocation();
         this.setup(id);
-        this.challenge = buf.readOptional(Challenge::read);
+        this.challenge = buf.readBoolean() ? Optional.of(DummyChallenge.INSTANCE) : Optional.empty();
     }
 
     public ResourceLocation getId()
@@ -84,7 +85,7 @@ public class Backpack
     {
         this.checkSetup();
         buf.writeResourceLocation(this.id);
-        buf.writeOptional(this.challenge, (b, c) -> c.write(b));
+        buf.writeBoolean(this.challenge.isPresent());
     }
 
     public void setup(ResourceLocation id)

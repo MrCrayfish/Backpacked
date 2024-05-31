@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
+import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -22,19 +23,4 @@ public abstract class Challenge
     public abstract ChallengeSerializer<?> getSerializer();
 
     public abstract IProgressTracker createProgressTracker(ResourceLocation backpackId);
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public final void write(FriendlyByteBuf buf)
-    {
-        buf.writeResourceLocation(this.id);
-        ((ChallengeSerializer) this.getSerializer()).write(this, buf);
-    }
-
-    public static Challenge read(FriendlyByteBuf buf)
-    {
-        ResourceLocation id = buf.readResourceLocation();
-        ChallengeSerializer<?> serializer = ChallengeManager.instance().getSerializer(id);
-        if(serializer == null) throw new RuntimeException("No challenge serializer registered for the id: " + id);
-        return serializer.read(buf);
-    }
 }

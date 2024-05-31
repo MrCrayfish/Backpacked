@@ -14,7 +14,6 @@ import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
@@ -72,22 +71,6 @@ public class MineBlockChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<MineBlockChallenge>
     {
-        @Override
-        public void write(MineBlockChallenge challenge, FriendlyByteBuf buf)
-        {
-            ChallengeUtils.writeBlockPredicate(buf, challenge.block);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public MineBlockChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<BlockPredicate> block = ChallengeUtils.readBlockPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new MineBlockChallenge(ProgressFormatter.MINED_X_OF_X, block, item, count);
-        }
 
         @Override
         public Codec<MineBlockChallenge> codec()

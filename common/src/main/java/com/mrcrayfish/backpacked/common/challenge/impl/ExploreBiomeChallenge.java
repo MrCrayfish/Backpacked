@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -79,22 +78,6 @@ public class ExploreBiomeChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<ExploreBiomeChallenge>
     {
-        @Override
-        public void write(ExploreBiomeChallenge challenge, FriendlyByteBuf buf)
-        {
-            buf.writeCollection(challenge.biomes, (buf1, key) -> {
-                buf1.writeResourceLocation(key.location());
-            });
-        }
-
-        @Override
-        public ExploreBiomeChallenge read(FriendlyByteBuf buf)
-        {
-            List<ResourceKey<Biome>> biomes = buf.readList(buf1 -> {
-                return ResourceKey.create(Registries.BIOME, buf1.readResourceLocation());
-            });
-            return new ExploreBiomeChallenge(ProgressFormatter.EXPLORED_X_OF_X, biomes);
-        }
 
         @Override
         public Codec<ExploreBiomeChallenge> codec()

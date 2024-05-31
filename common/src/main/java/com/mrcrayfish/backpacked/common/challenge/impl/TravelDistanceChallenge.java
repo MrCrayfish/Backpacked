@@ -11,7 +11,6 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 
@@ -63,24 +62,6 @@ public class TravelDistanceChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<TravelDistanceChallenge>
     {
-        @Override
-        public void write(TravelDistanceChallenge challenge, FriendlyByteBuf buf)
-        {
-            buf.writeOptional(challenge.movementTypes, (buf1, types) -> {
-                buf1.writeEnumSet(types, MovementType.class);
-            });
-            buf.writeInt(challenge.totalDistanceInCm);
-        }
-
-        @Override
-        public TravelDistanceChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EnumSet<MovementType>> movementTypes = buf.readOptional(buf1 -> {
-                return buf1.readEnumSet(MovementType.class);
-            });
-            int totalDistance = buf.readInt();
-            return new TravelDistanceChallenge(ProgressFormatter.INT_PERCENT, movementTypes, totalDistance);
-        }
 
         @Override
         public Codec<TravelDistanceChallenge> codec()

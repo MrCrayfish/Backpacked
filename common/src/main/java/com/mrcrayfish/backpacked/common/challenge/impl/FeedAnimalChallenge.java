@@ -5,14 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
-import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
@@ -64,20 +62,6 @@ public class FeedAnimalChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<FeedAnimalChallenge>
     {
-        @Override
-        public void write(FeedAnimalChallenge challenge, FriendlyByteBuf buf)
-        {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public FeedAnimalChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            int count = buf.readVarInt();
-            return new FeedAnimalChallenge(ProgressFormatter.FED_X_OF_X, entity, count);
-        }
 
         @Override
         public Codec<FeedAnimalChallenge> codec()

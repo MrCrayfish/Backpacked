@@ -14,9 +14,6 @@ import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -71,24 +68,6 @@ public class CraftItemChallenge extends Challenge
 
     public static class Serializer extends ChallengeSerializer<CraftItemChallenge>
     {
-        @Override
-        public void write(CraftItemChallenge challenge, FriendlyByteBuf buf)
-        {
-            buf.writeOptional(challenge.predicate, (buf1, predicate) ->
-                buf1.writeNbt(CraftedItemPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
-                    .getOrThrow(false, Constants.LOG::error)));
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public CraftItemChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<CraftedItemPredicate> predicate = buf.readOptional(buf1 -> CraftedItemPredicate.CODEC
-                .parse(NbtOps.INSTANCE, buf1.readNbt(NbtAccounter.create(2097152L)))
-                .getOrThrow(false, Constants.LOG::error));
-            int count = buf.readVarInt();
-            return new CraftItemChallenge(ProgressFormatter.CRAFT_X_OF_X, predicate, count);
-        }
 
         @Override
         public Codec<CraftItemChallenge> codec()
