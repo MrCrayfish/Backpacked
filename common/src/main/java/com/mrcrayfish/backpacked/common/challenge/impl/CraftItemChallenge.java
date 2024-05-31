@@ -1,7 +1,8 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.BackpackedCodecs;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -14,15 +15,12 @@ import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.Set;
@@ -35,15 +33,6 @@ public class CraftItemChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<CraftItemChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.CRAFT_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(CraftedItemPredicate.CODEC, "crafted_item").forGetter(challenge -> {
-            return challenge.predicate;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, CraftItemChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<CraftedItemPredicate> predicate;
@@ -72,28 +61,12 @@ public class CraftItemChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<CraftItemChallenge>
     {
         @Override
-        public void write(CraftItemChallenge challenge, FriendlyByteBuf buf)
+        public CraftItemChallenge deserialize(JsonObject object)
         {
-            buf.writeOptional(challenge.predicate, (buf1, predicate) ->
-                buf1.writeNbt(CraftedItemPredicate.CODEC.encodeStart(NbtOps.INSTANCE, predicate)
-                    .getOrThrow(false, Constants.LOG::error)));
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public CraftItemChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<CraftedItemPredicate> predicate = buf.readOptional(buf1 -> CraftedItemPredicate.CODEC
-                .parse(NbtOps.INSTANCE, buf1.readNbt(NbtAccounter.create(2097152L)))
-                .getOrThrow(false, Constants.LOG::error));
-            int count = buf.readVarInt();
-            return new CraftItemChallenge(ProgressFormatter.CRAFT_X_OF_X, predicate, count);
-        }
-
-        @Override
-        public Codec<CraftItemChallenge> codec()
-        {
-            return CraftItemChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.CRAFT_X_OF_X);
+            Optional<CraftedItemPredicate> predicate = CraftedItemPredicate.deserialize(object.get("crafted_item"));
+            int count = readCount(object, 1);
+            return new CraftItemChallenge(formatter, predicate, count);
         }
     }
 
@@ -110,12 +83,11 @@ public class CraftItemChallenge extends Challenge
         public static void registerEvent()
         {
             PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
-                if(player.level().isClientSide())
-                    return;
+                if(player.level().isClientSide()) return;
                 UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(tracker.isComplete())
-                        return;
-                    if(tracker.predicate.map(p -> p.test(stack)).orElse(true)) {
+                    if(tracker.isComplete()) return;
+                    if(tracker.predicate.map(p -> p.test(stack)).orElse(true))
+                    {
                         tracker.increment(stack.getCount(), (ServerPlayer) player);
                     }
                 });
@@ -123,14 +95,9 @@ public class CraftItemChallenge extends Challenge
         }
     }
 
-    public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey<Item>> tag, Optional<HolderSet<Item>> items)
+    public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey<Item>> tag,
+                                       Optional<HolderSet<Item>> items)
     {
-        public static final Codec<CraftedItemPredicate> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ExtraCodecs.strictOptionalField(BackpackedCodecs.STRING_SET, "namespace").forGetter(o -> o.modIds),
-            ExtraCodecs.strictOptionalField(TagKey.codec(Registries.ITEM), "tag").forGetter(CraftedItemPredicate::tag),
-            ExtraCodecs.strictOptionalField(BackpackedCodecs.ITEMS, "items").forGetter(CraftedItemPredicate::items)
-        ).apply(builder, CraftedItemPredicate::new));
-
         public boolean test(ItemStack stack)
         {
             if(this.modIds.isPresent())
@@ -156,6 +123,20 @@ public class CraftItemChallenge extends Challenge
                 }
             }
             return false;
+        }
+
+        public static Optional<CraftedItemPredicate> deserialize(@Nullable JsonElement element)
+        {
+            if(element == null || !element.isJsonObject()) return Optional.empty();
+            JsonObject object = element.getAsJsonObject();
+            Optional<Set<String>> namespaces = object.has("namespace") ? BackpackedCodecs.STRING_SET.parse(JsonOps.INSTANCE, object.get("namespace"))
+                .result() : Optional.empty();
+            Optional<TagKey<Item>> tag = object.has("tag") ? TagKey.codec(Registries.ITEM)
+                .parse(JsonOps.INSTANCE, object.get("tag"))
+                .result() : Optional.empty();
+            Optional<HolderSet<Item>> items = object.has("items") ? BackpackedCodecs.ITEMS.parse(JsonOps.INSTANCE, object.get("items"))
+                .result() : Optional.empty();
+            return Optional.of(new CraftedItemPredicate(namespaces, tag, items));
         }
     }
 }

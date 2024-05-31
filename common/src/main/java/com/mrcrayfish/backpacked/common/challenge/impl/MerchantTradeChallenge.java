@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -30,17 +31,6 @@ public class MerchantTradeChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merchant_trade");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<MerchantTradeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.TRADED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "merchant").forGetter(o -> {
-            return o.entity;
-        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(o -> {
-            return o.item;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(o -> {
-            return o.count;
-        })).apply(builder, MerchantTradeChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -71,26 +61,13 @@ public class MerchantTradeChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<MerchantTradeChallenge>
     {
         @Override
-        public void write(MerchantTradeChallenge challenge, FriendlyByteBuf buf)
+        public MerchantTradeChallenge deserialize(JsonObject object)
         {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public MerchantTradeChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new MerchantTradeChallenge(ProgressFormatter.TRADED_X_OF_X, entity, item, count);
-        }
-
-        @Override
-        public Codec<MerchantTradeChallenge> codec()
-        {
-            return MerchantTradeChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.TRADED_X_OF_X);
+            Optional<EntityPredicate> entity = object.has("merchant") ? Optional.of(EntityPredicate.fromJson(object.get("merchant"))) : Optional.empty();
+            Optional<ItemPredicate> item = object.has("item") ? Optional.of(ItemPredicate.fromJson(object.get("item"))) : Optional.empty();
+            int count = readCount(object, 1);
+            return new MerchantTradeChallenge(formatter, entity, item, count);
         }
     }
 

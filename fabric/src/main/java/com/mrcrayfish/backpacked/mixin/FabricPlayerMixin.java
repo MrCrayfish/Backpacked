@@ -34,7 +34,7 @@ public class FabricPlayerMixin
         if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MARKSMAN.get(), backpack) <= 0)
             return;
 
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).getBackpackedInventory();
+        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
         if(inventory == null)
             return;
 

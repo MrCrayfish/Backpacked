@@ -43,7 +43,6 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
                 Constants.LOG.warn("Ignoring backpack '{}' as it was in a sub-directory", location);
                 return;
             }
-
             JsonObject object = element.getAsJsonObject();
             if(object.has("mod_loaded") && object.get("mod_loaded").isJsonPrimitive()) {
                 String modId = object.get("mod_loaded").getAsString();
@@ -51,12 +50,13 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
                     return;
                 }
             }
-            Backpack backpack = Util.getOrThrow(Backpack.CODEC.parse(JsonOps.INSTANCE, object), s -> {
-                Constants.LOG.error("An error occurred when parsing the backpack '{}'", location);
-                return new JsonParseException(s);
-            });
-            backpack.setup(location);
-            backpacks.put(location, backpack);
+            try {
+                Backpack backpack = Backpack.deserialize(object);
+                backpack.setup(location);
+                backpacks.put(location, backpack);
+            } catch(Exception e) {
+                throw new JsonParseException("An error occurred when parsing the backpack '%s'".formatted(location), e);
+            }
         });
         BackpackManager.instance().updateBackpacks(backpacks);
     }

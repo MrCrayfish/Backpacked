@@ -1,28 +1,42 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
  */
 public abstract class ChallengeSerializer<T extends Challenge>
 {
-    public static final Codec<ChallengeSerializer<?>> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
-        ChallengeSerializer<?> serializer = ChallengeManager.instance().getSerializer(id);
-        return serializer != null ? DataResult.success(serializer) : DataResult.error(() -> "Serializer does not exist");
-    }, serializer -> {
-        ResourceLocation id = ChallengeManager.instance().getSerializerId(serializer);
-        return id != null ? DataResult.success(id) : DataResult.error(() -> "Unregistered serializer");
-    });
+    public abstract T deserialize(JsonObject object);
 
-    // TODO change to streamcodec
+    public static ProgressFormatter readFormatter(JsonObject object, ProgressFormatter defaultValue)
+    {
+        if(object.has("formatter"))
+        {
+            ResourceLocation formatterId = new ResourceLocation(GsonHelper.getAsString(object, "formatter"));
+            ProgressFormatter newFormatter = ProgressFormatter.REGISTERED_FORMATTERS.get(formatterId);
+            if(newFormatter != null)
+                return newFormatter;
+            throw new JsonParseException("Invalid formatter: " + formatterId);
+        }
+        return defaultValue;
+    }
 
-    public abstract void write(T challenge, FriendlyByteBuf buf);
-
-    public abstract T read(FriendlyByteBuf buf);
-
-    public abstract Codec<T> codec();
+    public static int readCount(JsonObject object, int defaultValue)
+    {
+        if(object.has("count"))
+        {
+            int value = GsonHelper.getAsInt(object, "count");
+            if(value < 1) throw new JsonParseException("Count must be positive and greater than zero");
+            return value;
+        }
+        return defaultValue;
+    }
 }

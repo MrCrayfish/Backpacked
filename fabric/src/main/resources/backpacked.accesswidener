@@ -1,3 +1,8 @@
 accessWidener v1 named
 accessible field net/minecraft/world/entity/Mob goalSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+accessible field net/minecraft/advancements/critereon/BlockPredicate tag Lnet/minecraft/tags/TagKey;
+accessible field net/minecraft/advancements/critereon/BlockPredicate blocks Ljava/util/Set;
+accessible field net/minecraft/advancements/critereon/BlockPredicate properties Lnet/minecraft/advancements/critereon/StatePropertiesPredicate;
+accessible field net/minecraft/advancements/critereon/BlockPredicate nbt Lnet/minecraft/advancements/critereon/NbtPredicate;
+accessible field net/minecraft/client/resources/model/ModelManager bakedRegistry Ljava/util/Map;
 extendable class net/minecraft/world/item/enchantment/EnchantmentCategory

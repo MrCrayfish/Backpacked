@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -30,17 +31,6 @@ public class InteractWithEntityChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "interact_with_entity");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<InteractWithEntityChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "entity").forGetter(challenge -> {
-            return challenge.entity;
-        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
-            return challenge.item;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, InteractWithEntityChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -71,26 +61,13 @@ public class InteractWithEntityChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<InteractWithEntityChallenge>
     {
         @Override
-        public void write(InteractWithEntityChallenge challenge, FriendlyByteBuf buf)
+        public InteractWithEntityChallenge deserialize(JsonObject object)
         {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public InteractWithEntityChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new InteractWithEntityChallenge(ProgressFormatter.USED_X_TIMES, entity, item, count);
-        }
-
-        @Override
-        public Codec<InteractWithEntityChallenge> codec()
-        {
-            return InteractWithEntityChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.COMPLETED_X_OF_X);
+            Optional<EntityPredicate> entity = object.has("entity") ? Optional.of(EntityPredicate.fromJson(object.get("entity"))) : Optional.empty();
+            Optional<ItemPredicate> item = object.has("item") ? Optional.of(ItemPredicate.fromJson(object.get("item"))) : Optional.empty();
+            int count = readCount(object, 1);
+            return new InteractWithEntityChallenge(formatter, entity, item, count);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -32,17 +33,6 @@ public class MineBlockChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_block");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<MineBlockChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.MINED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(BlockPredicate.CODEC, "block").forGetter(challenge -> {
-            return challenge.block;
-        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
-            return challenge.item;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, MineBlockChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<BlockPredicate> block;
@@ -73,26 +63,13 @@ public class MineBlockChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<MineBlockChallenge>
     {
         @Override
-        public void write(MineBlockChallenge challenge, FriendlyByteBuf buf)
+        public MineBlockChallenge deserialize(JsonObject object)
         {
-            ChallengeUtils.writeBlockPredicate(buf, challenge.block);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public MineBlockChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<BlockPredicate> block = ChallengeUtils.readBlockPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new MineBlockChallenge(ProgressFormatter.MINED_X_OF_X, block, item, count);
-        }
-
-        @Override
-        public Codec<MineBlockChallenge> codec()
-        {
-            return MineBlockChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.MINED_X_OF_X);
+            Optional<BlockPredicate> block = object.has("block") ? Optional.of(BlockPredicate.fromJson(object.get("block"))) : Optional.empty();
+            Optional<ItemPredicate> item = object.has("item") ? Optional.of(ItemPredicate.fromJson(object.get("item"))) : Optional.empty();
+            int count = readCount(object, 1);
+            return new MineBlockChallenge(formatter, block, item, count);
         }
     }
 

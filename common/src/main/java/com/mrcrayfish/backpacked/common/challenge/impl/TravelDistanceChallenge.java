@@ -1,7 +1,8 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.MovementType;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -11,9 +12,8 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.GsonHelper;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -27,15 +27,6 @@ public class TravelDistanceChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "travel_distance");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<TravelDistanceChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.INT_PERCENT).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf), "movement").forGetter(challenge -> {
-            return challenge.movementTypes;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
-            return challenge.totalDistanceInCm;
-        })).apply(builder, TravelDistanceChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<EnumSet<MovementType>> movementTypes;
@@ -64,28 +55,14 @@ public class TravelDistanceChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<TravelDistanceChallenge>
     {
         @Override
-        public void write(TravelDistanceChallenge challenge, FriendlyByteBuf buf)
+        public TravelDistanceChallenge deserialize(JsonObject object)
         {
-            buf.writeOptional(challenge.movementTypes, (buf1, types) -> {
-                buf1.writeEnumSet(types, MovementType.class);
-            });
-            buf.writeInt(challenge.totalDistanceInCm);
-        }
-
-        @Override
-        public TravelDistanceChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EnumSet<MovementType>> movementTypes = buf.readOptional(buf1 -> {
-                return buf1.readEnumSet(MovementType.class);
-            });
-            int totalDistance = buf.readInt();
-            return new TravelDistanceChallenge(ProgressFormatter.INT_PERCENT, movementTypes, totalDistance);
-        }
-
-        @Override
-        public Codec<TravelDistanceChallenge> codec()
-        {
-            return TravelDistanceChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.INT_PERCENT);
+            Optional<EnumSet<MovementType>> movements = object.has("movement") ? MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).parse(JsonOps.INSTANCE, object.get("movement")).result() : Optional.empty();
+            int totalDistance = GsonHelper.getAsInt(object, "total_distance");
+            if(totalDistance <= 0)
+                throw new JsonParseException("Total distance must be greater than zero. Found " + totalDistance);
+            return new TravelDistanceChallenge(formatter, movements, totalDistance);
         }
     }
 

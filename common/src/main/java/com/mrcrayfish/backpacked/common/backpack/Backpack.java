@@ -1,14 +1,12 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
@@ -20,12 +18,6 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class Backpack
 {
-    public static final Codec<Backpack> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ExtraCodecs.strictOptionalField(Challenge.CODEC, "unlock_challenge").forGetter(backpack -> {
-            return backpack.challenge;
-        })).apply(builder, Backpack::new);
-    });
-
     private final Optional<Challenge> challenge;
     private ResourceLocation id;
     private ResourceLocation baseModel;
@@ -42,7 +34,7 @@ public class Backpack
     {
         ResourceLocation id = buf.readResourceLocation();
         this.setup(id);
-        this.challenge = buf.readOptional(Challenge::read);
+        this.challenge = buf.readBoolean() ? Optional.of(Challenge.DUMMY) : Optional.empty();
     }
 
     public ResourceLocation getId()
@@ -84,7 +76,7 @@ public class Backpack
     {
         this.checkSetup();
         buf.writeResourceLocation(this.id);
-        buf.writeOptional(this.challenge, (b, c) -> c.write(b));
+        buf.writeBoolean(this.challenge.isPresent());
     }
 
     public void setup(ResourceLocation id)
@@ -106,5 +98,14 @@ public class Backpack
         {
             throw new RuntimeException("Backpack is not setup");
         }
+    }
+
+    public static Backpack deserialize(JsonObject object)
+    {
+        if(object.has("unlock_challenge"))
+        {
+            return new Backpack(Challenge.deserialize(object.get("unlock_challenge")));
+        }
+        return new Backpack(Optional.empty());
     }
 }

@@ -52,18 +52,6 @@ public class ServerPlayHandler
             tag.putBoolean(ModelProperty.SHOW_GLINT.getTagName(), message.isShowGlint());
             tag.putBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.isShowWithElytra());
             tag.putBoolean(ModelProperty.SHOW_EFFECTS.getTagName(), message.isShowEffects());
-
-            if(Services.BACKPACK.isUsingThirdPartySlot())
-                return;
-
-            if(player.getInventory() instanceof ExtendedPlayerInventory inventory)
-            {
-                Network.getPlay().sendToTracking(() -> player, new MessageUpdateBackpack(player.getId(), stack));
-                Network.getPlay().sendToPlayer(() -> player, new MessageUpdateBackpack(player.getId(), stack, true));
-            }
-            tag.putBoolean(ModelProperty.SHOW_GLINT.getTagName(), message.showGlint());
-            tag.putBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.showElytra());
-            tag.putBoolean(ModelProperty.SHOW_EFFECTS.getTagName(), message.showEffects());
         }
     }
 

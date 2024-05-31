@@ -24,35 +24,27 @@ public final class ChallengeManager
         return instance;
     }
 
-    private final Map<ResourceLocation, Codec<? extends Challenge>> codecs = new HashMap<>();
     private final Map<ResourceLocation, ChallengeSerializer<? extends Challenge>> serializers = new HashMap<>();
 
     private ChallengeManager()
     {
-        this.register(KillMobChallenge.ID, KillMobChallenge.CODEC, KillMobChallenge.SERIALIZER);
-        this.register(FeedAnimalChallenge.ID, FeedAnimalChallenge.CODEC, FeedAnimalChallenge.SERIALIZER);
-        this.register(BreedAnimalChallenge.ID, BreedAnimalChallenge.CODEC, BreedAnimalChallenge.SERIALIZER);
-        this.register(MineBlockChallenge.ID, MineBlockChallenge.CODEC, MineBlockChallenge.SERIALIZER);
-        this.register(InteractWithBlockChallenge.ID, InteractWithBlockChallenge.CODEC, InteractWithBlockChallenge.SERIALIZER);
-        this.register(InteractWithEntityChallenge.ID, InteractWithEntityChallenge.CODEC, InteractWithEntityChallenge.SERIALIZER);
-        this.register(TravelDistanceChallenge.ID, TravelDistanceChallenge.CODEC, TravelDistanceChallenge.SERIALIZER);
-        this.register(ExploreBiomeChallenge.ID, ExploreBiomeChallenge.CODEC, ExploreBiomeChallenge.SERIALIZER);
-        this.register(CraftItemChallenge.ID, CraftItemChallenge.CODEC, CraftItemChallenge.SERIALIZER);
-        this.register(MerchantTradeChallenge.ID, MerchantTradeChallenge.CODEC, MerchantTradeChallenge.SERIALIZER);
+        this.register(KillMobChallenge.ID, KillMobChallenge.SERIALIZER);
+        this.register(FeedAnimalChallenge.ID, FeedAnimalChallenge.SERIALIZER);
+        this.register(BreedAnimalChallenge.ID, BreedAnimalChallenge.SERIALIZER);
+        this.register(MineBlockChallenge.ID, MineBlockChallenge.SERIALIZER);
+        this.register(InteractWithBlockChallenge.ID, InteractWithBlockChallenge.SERIALIZER);
+        this.register(InteractWithEntityChallenge.ID, InteractWithEntityChallenge.SERIALIZER);
+        this.register(TravelDistanceChallenge.ID, TravelDistanceChallenge.SERIALIZER);
+        this.register(ExploreBiomeChallenge.ID, ExploreBiomeChallenge.SERIALIZER);
+        this.register(CraftItemChallenge.ID, CraftItemChallenge.SERIALIZER);
+        this.register(MerchantTradeChallenge.ID, MerchantTradeChallenge.SERIALIZER);
     }
 
-    public <C extends Challenge, T extends ChallengeSerializer<C>> void register(ResourceLocation id, Codec<C> codec, T serializer)
+    public <C extends Challenge, T extends ChallengeSerializer<C>> void register(ResourceLocation id, T serializer)
     {
-        if(this.codecs.containsKey(id))
+        if(this.serializers.containsKey(id))
             throw new IllegalArgumentException("Challenge with the id '%s' already exists".formatted(id));
-        this.codecs.put(id, codec);
         this.serializers.put(id, serializer);
-    }
-
-    @Nullable
-    public Codec<? extends Challenge> getCodec(ResourceLocation id)
-    {
-        return this.codecs.get(id);
     }
 
     @Nullable

@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -12,6 +15,7 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -80,26 +84,9 @@ public class ExploreBiomeChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<ExploreBiomeChallenge>
     {
         @Override
-        public void write(ExploreBiomeChallenge challenge, FriendlyByteBuf buf)
+        public ExploreBiomeChallenge deserialize(JsonObject object)
         {
-            buf.writeCollection(challenge.biomes, (buf1, key) -> {
-                buf1.writeResourceLocation(key.location());
-            });
-        }
-
-        @Override
-        public ExploreBiomeChallenge read(FriendlyByteBuf buf)
-        {
-            List<ResourceKey<Biome>> biomes = buf.readList(buf1 -> {
-                return ResourceKey.create(Registries.BIOME, buf1.readResourceLocation());
-            });
-            return new ExploreBiomeChallenge(ProgressFormatter.EXPLORED_X_OF_X, biomes);
-        }
-
-        @Override
-        public Codec<ExploreBiomeChallenge> codec()
-        {
-            return ExploreBiomeChallenge.CODEC;
+            return Util.getOrThrow(CODEC.parse(JsonOps.INSTANCE, object), JsonParseException::new);
         }
     }
 

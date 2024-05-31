@@ -61,5 +61,6 @@ public class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks>
             Constants.LOG.error("Failed to update backpacks", e);
         }
         context.setHandled(true);
+        context.reply(new Acknowledge());
     }
 }

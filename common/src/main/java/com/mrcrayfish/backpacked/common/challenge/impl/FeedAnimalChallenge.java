@@ -1,21 +1,17 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
-import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.animal.Animal;
 
 import java.util.Optional;
@@ -28,15 +24,6 @@ public class FeedAnimalChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "feed_animal");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<FeedAnimalChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.FED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "animal").forGetter(challenge -> {
-            return challenge.entity;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, FeedAnimalChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -65,24 +52,12 @@ public class FeedAnimalChallenge extends Challenge
     public static class Serializer extends ChallengeSerializer<FeedAnimalChallenge>
     {
         @Override
-        public void write(FeedAnimalChallenge challenge, FriendlyByteBuf buf)
+        public FeedAnimalChallenge deserialize(JsonObject object)
         {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public FeedAnimalChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            int count = buf.readVarInt();
-            return new FeedAnimalChallenge(ProgressFormatter.FED_X_OF_X, entity, count);
-        }
-
-        @Override
-        public Codec<FeedAnimalChallenge> codec()
-        {
-            return FeedAnimalChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.FED_X_OF_X);
+            Optional<EntityPredicate> predicate = object.has("animal") ? Optional.of(EntityPredicate.fromJson(object.get("animal"))) : Optional.empty();
+            int count = readCount(object, 1);
+            return new FeedAnimalChallenge(formatter, predicate, count);
         }
     }
 

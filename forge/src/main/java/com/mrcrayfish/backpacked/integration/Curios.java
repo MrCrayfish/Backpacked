@@ -32,7 +32,7 @@ public class Curios
     public static ItemStack getBackpackStack(Player player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
         optional.ifPresent(itemHandler ->
         {
             Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SLOT_IDENTIFIER);
@@ -50,7 +50,7 @@ public class Curios
 
     public static void setBackpackStack(Player player, ItemStack stack)
     {
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
         optional.ifPresent(itemHandler ->
         {
             Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SLOT_IDENTIFIER);
@@ -64,7 +64,7 @@ public class Curios
     public static boolean isBackpackVisible(Player player)
     {
         AtomicReference<Boolean> visible = new AtomicReference<>(true);
-        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
+        LazyOptional<ICuriosItemHandler> optional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
         optional.ifPresent(itemHandler -> {
             Optional<ICurioStacksHandler> stacksOptional = itemHandler.getStacksHandler(SLOT_IDENTIFIER);
             stacksOptional.ifPresent(stacksHandler -> {

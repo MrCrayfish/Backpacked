@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -32,17 +33,6 @@ public class KillMobChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "kill_mob");
     public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<KillMobChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-       return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.KILLED_X_OF_X).forGetter(challenge -> {
-           return challenge.formatter;
-       }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "mob").forGetter(challenge -> {
-           return challenge.entity;
-       }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
-           return challenge.item;
-       }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-           return challenge.count;
-       })).apply(builder, KillMobChallenge::new);
-    });
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -73,26 +63,13 @@ public class KillMobChallenge extends Challenge
     public static final class Serializer extends ChallengeSerializer<KillMobChallenge>
     {
         @Override
-        public void write(KillMobChallenge challenge, FriendlyByteBuf buf)
+        public KillMobChallenge deserialize(JsonObject object)
         {
-            ChallengeUtils.writeEntityPredicate(buf, challenge.entity);
-            ChallengeUtils.writeItemPredicate(buf, challenge.item);
-            buf.writeVarInt(challenge.count);
-        }
-
-        @Override
-        public KillMobChallenge read(FriendlyByteBuf buf)
-        {
-            Optional<EntityPredicate> entity = ChallengeUtils.readEntityPredicate(buf);
-            Optional<ItemPredicate> item = ChallengeUtils.readItemPredicate(buf);
-            int count = buf.readVarInt();
-            return new KillMobChallenge(ProgressFormatter.KILLED_X_OF_X, entity, item, count);
-        }
-
-        @Override
-        public Codec<KillMobChallenge> codec()
-        {
-            return KillMobChallenge.CODEC;
+            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.KILLED_X_OF_X);
+            Optional<EntityPredicate> entity = object.has("mob") ? Optional.of(EntityPredicate.fromJson(object.get("mob"))) : Optional.empty();
+            Optional<ItemPredicate> item = object.has("item") ? Optional.of(ItemPredicate.fromJson(object.get("item"))) : Optional.empty();
+            int count = readCount(object, 1);
+            return new KillMobChallenge(formatter, entity, item, count);
         }
     }
 
