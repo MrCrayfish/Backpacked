@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.data.pickpocket;
 
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.Serializable;
 import com.mrcrayfish.framework.api.sync.IDataSerializer;
+import com.mrcrayfish.framework.entity.sync.Updatable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,16 +20,16 @@ public class TraderPickpocketing implements Serializable
 {
     public static final IDataSerializer<TraderPickpocketing> SERIALIZER = new Serializer();
 
+    private final Updatable updatable;
     private boolean initialized = false;
     private boolean backpack = false;
     private boolean spawnedLoot = false;
     private final Map<Player, Long> detectedPlayers = new HashMap<>();
     private final Map<UUID, Long> dislikedPlayers = new HashMap<>();
 
-    // TODO add updatable
-    public TraderPickpocketing()
+    public TraderPickpocketing(Updatable updatable)
     {
-        //this.updatable = updatable;
+        this.updatable = updatable;
     }
 
     public boolean isInitialized()
@@ -40,13 +40,13 @@ public class TraderPickpocketing implements Serializable
     public void setInitialized()
     {
         this.initialized = true;
-        //this.updatable.markDirty(); // TODO
+        this.updatable.markDirty();
     }
 
     public void setBackpackEquipped(boolean equipped)
     {
         this.backpack = equipped;
-        //this.updatable.markDirty(); // TODO
+        this.updatable.markDirty();
     }
 
     public boolean isBackpackEquipped()
@@ -62,7 +62,7 @@ public class TraderPickpocketing implements Serializable
     public void setLootSpawned()
     {
         this.spawnedLoot = true;
-        //this.updatable.markDirty(); // TODO
+        this.updatable.markDirty();
     }
 
     public Map<Player, Long> getDetectedPlayers()
@@ -126,14 +126,10 @@ public class TraderPickpocketing implements Serializable
         @SuppressWarnings("removal")
         public TraderPickpocketing read(FriendlyByteBuf buf)
         {
-            TraderPickpocketing challenge = new TraderPickpocketing();
-            challenge.initialized = buf.readBoolean();
-            challenge.backpack = buf.readBoolean();
-            challenge.spawnedLoot = buf.readBoolean();
-            return challenge;
+            throw new UnsupportedOperationException();
         }
 
-        /*@Override
+        @Override
         public TraderPickpocketing read(Updatable updatable, FriendlyByteBuf buf)
         {
             TraderPickpocketing challenge = new TraderPickpocketing(updatable);
@@ -141,7 +137,7 @@ public class TraderPickpocketing implements Serializable
             challenge.backpack = buf.readBoolean();
             challenge.spawnedLoot = buf.readBoolean();
             return challenge;
-        }*/
+        }
 
         @Override
         public Tag write(TraderPickpocketing value)
@@ -157,17 +153,10 @@ public class TraderPickpocketing implements Serializable
         @SuppressWarnings("removal")
         public TraderPickpocketing read(Tag nbt)
         {
-            TraderPickpocketing challenge = new TraderPickpocketing();
-            if(nbt instanceof CompoundTag tag)
-            {
-                challenge.initialized = tag.getBoolean("Initialized");
-                challenge.backpack = tag.getBoolean("EquippedBackpack");
-                challenge.spawnedLoot = tag.getBoolean("SpawnedLoot");
-            }
-            return challenge;
+            throw new UnsupportedOperationException();
         }
 
-        /*@Override
+        @Override
         public TraderPickpocketing read(Updatable updatable, Tag nbt)
         {
             TraderPickpocketing challenge = new TraderPickpocketing(updatable);
@@ -178,6 +167,6 @@ public class TraderPickpocketing implements Serializable
                 challenge.spawnedLoot = tag.getBoolean("SpawnedLoot");
             }
             return challenge;
-        }*/
+        }
     }
 }
