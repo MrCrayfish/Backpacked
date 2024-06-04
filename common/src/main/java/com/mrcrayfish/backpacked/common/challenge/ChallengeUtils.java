@@ -23,8 +23,6 @@ public final class ChallengeUtils
         if(optional.isEmpty())
             return true;
         BlockPredicate predicate = optional.get();
-        if(predicate.tag().isPresent() && !state.is(predicate.tag().get()))
-            return false;
         if(predicate.blocks().isPresent() && !state.is(predicate.blocks().get()))
             return false;
         if(tag != null && predicate.nbt().isPresent() && !predicate.nbt().get().matches(tag)) {
@@ -38,7 +36,7 @@ public final class ChallengeUtils
         if(optional.isEmpty())
             return true;
         ItemPredicate predicate = optional.get();
-        return predicate.matches(stack);
+        return predicate.test(stack);
     }
 
     public static boolean testPredicate(Optional<EntityPredicate> optional, ServerPlayer player, Entity entity)

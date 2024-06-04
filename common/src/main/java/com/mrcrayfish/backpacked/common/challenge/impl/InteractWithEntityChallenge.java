@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -27,19 +26,20 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class InteractWithEntityChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "interact_with_entity");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<InteractWithEntityChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "entity").forGetter(challenge -> {
-            return challenge.entity;
-        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
-            return challenge.item;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, InteractWithEntityChallenge::new);
-    });
+    public static final ChallengeSerializer<InteractWithEntityChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "interact_with_entity"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
+                return challenge.formatter;
+            }), EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(challenge -> {
+                return challenge.entity;
+            }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
+                return challenge.item;
+            }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
+                return challenge.count;
+            })).apply(builder, InteractWithEntityChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -48,7 +48,7 @@ public class InteractWithEntityChallenge extends Challenge
 
     public InteractWithEntityChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
-        super(ID);
+        super();
         this.formatter = formatter;
         this.entity = entity;
         this.item = item;
@@ -65,16 +65,6 @@ public class InteractWithEntityChallenge extends Challenge
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(backpackId, this.count, this.formatter, this.entity, this.item);
-    }
-
-    public static class Serializer extends ChallengeSerializer<InteractWithEntityChallenge>
-    {
-
-        @Override
-        public Codec<InteractWithEntityChallenge> codec()
-        {
-            return InteractWithEntityChallenge.CODEC;
-        }
     }
 
     public static class Tracker extends CountProgressTracker

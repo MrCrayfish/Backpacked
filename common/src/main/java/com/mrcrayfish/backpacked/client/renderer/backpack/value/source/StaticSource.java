@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record StaticSource(double value) implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation("static"), RecordCodecBuilder.<StaticSource>create(builder ->
+    public static final Type TYPE = new Type(new ResourceLocation("static"), RecordCodecBuilder.<StaticSource>mapCodec(builder ->
         builder.group(Codec.DOUBLE.fieldOf("value").forGetter(o -> o.value)
     ).apply(builder, StaticSource::new)));
 

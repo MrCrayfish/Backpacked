@@ -8,7 +8,6 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackL
 import com.mrcrayfish.backpacked.common.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
-import com.mrcrayfish.backpacked.integration.Controllable;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -32,7 +31,7 @@ public class ClientHandler
 
         if(Backpacked.isControllableLoaded())
         {
-            Controllable.init();
+            //Controllable.init();
         }
 
         if(!FMLLoader.isProduction())

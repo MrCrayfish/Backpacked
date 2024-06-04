@@ -2,14 +2,12 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.platform.Services;
-import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 
 /**
  * Author: MrCrayfish
@@ -20,9 +18,9 @@ public class BackpackInventory extends SimpleContainer
     private final ItemStack stack;
     private boolean save;
 
-    public BackpackInventory(int cols, int rows, Player player, ItemStack stack)
+    public BackpackInventory(int columns, int rows, Player player, ItemStack stack)
     {
-        super(rows * cols);
+        super(rows * columns);
         this.player = player;
         this.stack = stack;
         this.loadBackpackContents(player);
@@ -30,11 +28,12 @@ public class BackpackInventory extends SimpleContainer
 
     private void loadBackpackContents(Player player)
     {
-        CompoundTag compound = this.stack.getOrCreateTag();
-        if(compound.contains("Items", Tag.TAG_LIST))
+        ItemContainerContents contents = this.stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        contents.copyInto(this.getItems()); // TODO reimplement dropping items if inventory is resized
+        /*if(compound.contains("Items", Tag.TAG_LIST))
         {
             InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this, player.level(), player.position());
-        }
+        }*/
     }
 
     public ItemStack getBackpackStack()
@@ -66,7 +65,6 @@ public class BackpackInventory extends SimpleContainer
 
     public void saveItemsToStack()
     {
-        CompoundTag compound = this.stack.getOrCreateTag();
-        compound.put("Items", InventoryHelper.saveAllItems(new ListTag(), this));
+        this.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.getItems()));
     }
 }

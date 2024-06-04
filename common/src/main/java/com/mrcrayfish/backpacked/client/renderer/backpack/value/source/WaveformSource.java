@@ -13,7 +13,7 @@ import net.minecraft.util.StringRepresentable;
  */
 public record WaveformSource(Waveform waveform, double wavelength, double amplitude, double phase) implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation(Constants.MOD_ID, "waveform"), RecordCodecBuilder.<WaveformSource>create(builder ->
+    public static final Type TYPE = new Type(new ResourceLocation(Constants.MOD_ID, "waveform"), RecordCodecBuilder.<WaveformSource>mapCodec(builder ->
         builder.group(
             Waveform.CODEC.fieldOf("waveform").forGetter(o -> o.waveform),
             Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),

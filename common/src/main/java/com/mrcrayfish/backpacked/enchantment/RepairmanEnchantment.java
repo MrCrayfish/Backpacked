@@ -1,13 +1,13 @@
 package com.mrcrayfish.backpacked.enchantment;
 
 import com.mrcrayfish.backpacked.core.ModEnchantments;
+import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.util.ItemStackHelper;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,12 +15,11 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-
 public class RepairmanEnchantment extends Enchantment
 {
     public RepairmanEnchantment()
     {
-        super(Rarity.UNCOMMON, Services.BACKPACK.getEnchantmentCategory(), new EquipmentSlot[]{});
+        super(Enchantment.definition(ModTags.Items.BACKPACK_ENCHANTABLE, 1, 1, Enchantment.constantCost(25), Enchantment.constantCost(50), 8));
     }
 
     public static void init()

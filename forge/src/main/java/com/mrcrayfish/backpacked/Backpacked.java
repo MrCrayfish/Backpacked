@@ -5,13 +5,14 @@ import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
+import com.mrcrayfish.backpacked.integration.CuriosBackpack;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -20,7 +21,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +38,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -49,8 +51,6 @@ import java.util.stream.IntStream;
 @Mod(Constants.MOD_ID)
 public class Backpacked
 {
-    public static final EnchantmentCategory ENCHANTMENT_TYPE = EnchantmentCategory.create("backpack", item -> item instanceof BackpackItem);
-
     private static boolean controllableLoaded = false;
 
     public Backpacked()
@@ -75,7 +75,10 @@ public class Backpacked
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
-        event.enqueueWork(Bootstrap::init);
+        event.enqueueWork(() -> {
+            Bootstrap.init();
+            CuriosApi.registerCurio(ModItems.BACKPACK.get(), new CuriosBackpack());
+        });
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
@@ -92,14 +95,14 @@ public class Backpacked
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        generator.addProvider(event.includeServer(), new LootTableGen(packOutput));
-        generator.addProvider(event.includeServer(), new RecipeGen(packOutput));
+        generator.addProvider(event.includeServer(), new LootTableGen(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new RecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
     }
 
     private void addReloadListener(AddReloadListenerEvent event)
     {
-        event.addListener(new BackpackLoader());
+        event.addListener(new BackpackLoader(event.getServerResources().registryLookup));
     }
 
     private void onDropLoot(LivingDropsEvent event)

@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.MovementType;
@@ -24,17 +23,18 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class TravelDistanceChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "travel_distance");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<TravelDistanceChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.INT_PERCENT).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf), "movement").forGetter(challenge -> {
-            return challenge.movementTypes;
-        }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
-            return challenge.totalDistanceInCm;
-        })).apply(builder, TravelDistanceChallenge::new);
-    });
+    public static final ChallengeSerializer<TravelDistanceChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "travel_distance"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.INT_PERCENT).forGetter(challenge -> {
+                return challenge.formatter;
+            }), MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).optionalFieldOf("movement").forGetter(challenge -> {
+                return challenge.movementTypes;
+            }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
+                return challenge.totalDistanceInCm;
+            })).apply(builder, TravelDistanceChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final Optional<EnumSet<MovementType>> movementTypes;
@@ -42,7 +42,7 @@ public class TravelDistanceChallenge extends Challenge
 
     protected TravelDistanceChallenge(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
     {
-        super(ID);
+        super();
         this.formatter = formatter;
         this.movementTypes = movementTypes;
         this.totalDistanceInCm = totalDistanceInCm;
@@ -58,16 +58,6 @@ public class TravelDistanceChallenge extends Challenge
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.formatter, this.movementTypes, this.totalDistanceInCm);
-    }
-
-    public static class Serializer extends ChallengeSerializer<TravelDistanceChallenge>
-    {
-
-        @Override
-        public Codec<TravelDistanceChallenge> codec()
-        {
-            return TravelDistanceChallenge.CODEC;
-        }
     }
 
     public static class Tracker extends CountProgressTracker

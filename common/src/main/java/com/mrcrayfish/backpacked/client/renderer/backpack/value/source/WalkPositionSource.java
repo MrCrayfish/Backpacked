@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack.value.source;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import net.minecraft.resources.ResourceLocation;
 
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class WalkPositionSource implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation("walk_position"), Codec.unit(new WalkPositionSource()));
+    public static final Type TYPE = new Type(new ResourceLocation("walk_position"), MapCodec.unit(new WalkPositionSource()));
 
     @Override
     public Type type()

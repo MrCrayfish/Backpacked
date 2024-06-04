@@ -4,8 +4,8 @@ import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.framework.api.network.FrameworkResponse;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
@@ -15,22 +15,10 @@ import java.util.function.Consumer;
  */
 public record MessageSyncBackpacks(List<Backpack> backpacks)
 {
-    public static void encode(MessageSyncBackpacks message, FriendlyByteBuf buffer)
-    {
-        buffer.writeVarInt(message.backpacks.size());
-        message.backpacks.forEach(backpack -> backpack.write(buffer));
-    }
-
-    public static MessageSyncBackpacks decode(FriendlyByteBuf buffer)
-    {
-        List<Backpack> backpacks = new ArrayList<>();
-        int size = buffer.readVarInt();
-        for(int i = 0; i < size; i++)
-        {
-            backpacks.add(new Backpack(buffer));
-        }
-        return new MessageSyncBackpacks(backpacks);
-    }
+    public static final StreamCodec<FriendlyByteBuf, MessageSyncBackpacks> STREAM_CODEC = StreamCodec.composite(
+        Backpack.LIST_STREAM_CODEC, MessageSyncBackpacks::backpacks,
+        MessageSyncBackpacks::new
+    );
 
     public static FrameworkResponse handle(MessageSyncBackpacks message, Consumer<Runnable> executor)
     {

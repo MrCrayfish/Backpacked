@@ -5,13 +5,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.platform.Services;
-import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -28,9 +28,17 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
     private static final String DIRECTORY = "backpacked";
     private static final Gson GSON = new GsonBuilder().create();
 
-    public BackpackLoader()
+    private final HolderLookup.Provider provider;
+
+    public BackpackLoader(HolderLookup.Provider provider)
     {
         super(GSON, DIRECTORY);
+        this.provider = provider;
+    }
+
+    protected HolderLookup.Provider getProvider()
+    {
+        return this.provider;
     }
 
     @Override
@@ -51,7 +59,9 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
                     return;
                 }
             }
-            Backpack backpack = Util.getOrThrow(Backpack.CODEC.parse(JsonOps.INSTANCE, object), s -> {
+
+            RegistryOps<JsonElement> ops = this.getProvider().createSerializationContext(JsonOps.INSTANCE);
+            Backpack backpack = Backpack.CODEC.parse(ops, object).getOrThrow(s -> {
                 Constants.LOG.error("An error occurred when parsing the backpack '{}'", location);
                 return new JsonParseException(s);
             });

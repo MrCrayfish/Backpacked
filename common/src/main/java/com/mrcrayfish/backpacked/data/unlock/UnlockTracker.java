@@ -4,14 +4,16 @@ import com.google.common.collect.ImmutableMap;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
-import com.mrcrayfish.backpacked.util.Serializable;
-import com.mrcrayfish.framework.api.sync.IDataSerializer;
-import com.mrcrayfish.framework.entity.sync.Updatable;
+import com.mrcrayfish.framework.api.sync.DataSerializer;
+import com.mrcrayfish.framework.api.sync.SyncedObject;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -22,25 +24,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
 
-public class UnlockTracker implements Serializable
+public class UnlockTracker extends SyncedObject
 {
-    public static final IDataSerializer<UnlockTracker> SERIALIZER = new Serializer();
+    public static final StreamCodec<RegistryFriendlyByteBuf, UnlockTracker> STREAM_CODEC = StreamCodec.of(UnlockTracker::write, UnlockTracker::read);
+    public static final DataSerializer<UnlockTracker> SERIALIZER = new DataSerializer<>(STREAM_CODEC, UnlockTracker::write, UnlockTracker::read);
 
-    private final Updatable updatable;
     private final Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
     private final Map<ResourceLocation, IProgressTracker> backpackToProgressTracker;
     private final Map<Class<?>, List<IProgressTracker>> classToProgressTrackers;
 
-    public UnlockTracker(Updatable updatable)
+    public UnlockTracker()
     {
-        this.updatable = updatable;
-        if(updatable == Updatable.NULL) {
-            // Don't create trackers on the client
-            this.backpackToProgressTracker = ImmutableMap.of();
-            this.classToProgressTrackers = ImmutableMap.of();
-            return;
-        }
         Map<ResourceLocation, IProgressTracker> backpackMap = new HashMap<>();
         Map<Class<?>, List<IProgressTracker>> classMap = new HashMap<>();
         BackpackManager.instance().getBackpacks().forEach(backpack -> {
@@ -103,8 +99,7 @@ public class UnlockTracker implements Serializable
         return false;
     }
 
-    @Override
-    public CompoundTag serialize()
+    private CompoundTag write(HolderLookup.Provider provider)
     {
         CompoundTag tag = new CompoundTag();
 
@@ -126,73 +121,51 @@ public class UnlockTracker implements Serializable
         return tag;
     }
 
-    @Override
-    public void deserialize(CompoundTag tag)
+    private static UnlockTracker read(Tag tag, HolderLookup.Provider provider)
     {
-        this.unlockedBackpacks.clear();
+        CompoundTag data = (CompoundTag) tag;
+        UnlockTracker tracker = new UnlockTracker();
 
-        ListTag unlockedBackpacks = tag.getList("UnlockedBackpacks", Tag.TAG_STRING);
-        unlockedBackpacks.forEach(t -> this.unlockedBackpacks.add(ResourceLocation.tryParse(t.getAsString())));
+        ListTag unlockedBackpacks = data.getList("UnlockedBackpacks", Tag.TAG_STRING);
+        unlockedBackpacks.forEach(t -> tracker.unlockedBackpacks.add(ResourceLocation.tryParse(t.getAsString())));
 
-        ListTag progressTrackers = tag.getList("ProgressTrackers", Tag.TAG_COMPOUND);
-        progressTrackers.forEach(t ->
-        {
+        ListTag progressTrackers = data.getList("ProgressTrackers", Tag.TAG_COMPOUND);
+        progressTrackers.forEach(t -> {
             CompoundTag progressTag = (CompoundTag) t;
             ResourceLocation id = new ResourceLocation(progressTag.getString("Id"));
-            IProgressTracker tracker = this.backpackToProgressTracker.get(id);
-            if(tracker != null)
-            {
+            IProgressTracker progressTracker = tracker.backpackToProgressTracker.get(id);
+            if(progressTracker != null) {
                 CompoundTag dataTag = progressTag.getCompound("Data");
-                tracker.read(dataTag);
+                progressTracker.read(dataTag);
             }
+        });
+        return tracker;
+    }
+
+    private static void write(RegistryFriendlyByteBuf buf, UnlockTracker tracker)
+    {
+        buf.writeCollection(tracker.unlockedBackpacks, FriendlyByteBuf::writeResourceLocation);
+        buf.writeVarInt(tracker.backpackToProgressTracker.size());
+        tracker.backpackToProgressTracker.forEach((id, progressTracker) -> {
+            buf.writeResourceLocation(id);
+            CompoundTag tag = new CompoundTag();
+            progressTracker.write(tag);
+            buf.writeNbt(tag);
         });
     }
 
-    public static class Serializer implements IDataSerializer<UnlockTracker>
+    private static UnlockTracker read(RegistryFriendlyByteBuf buf)
     {
-        @Override
-        public void write(FriendlyByteBuf buf, UnlockTracker value)
-        {
-            buf.writeNbt(value.serialize());
-        }
-
-        @Override
-        @SuppressWarnings("removal")
-        public UnlockTracker read(FriendlyByteBuf buf)
-        {
-            throw new UnsupportedOperationException("Use new method");
-        }
-
-        @Override
-        public UnlockTracker read(Updatable updatable, FriendlyByteBuf buf)
-        {
-            UnlockTracker tracker = new UnlockTracker(updatable);
-            Optional.ofNullable(buf.readNbt()).ifPresent(tracker::deserialize);
-            return tracker;
-        }
-
-        @Override
-        public Tag write(UnlockTracker value)
-        {
-            return value.serialize();
-        }
-
-        @Override
-        @SuppressWarnings("removal")
-        public UnlockTracker read(Tag nbt)
-        {
-            throw new UnsupportedOperationException("Use new method");
-        }
-
-        @Override
-        public UnlockTracker read(Updatable updatable, Tag nbt)
-        {
-            UnlockTracker tracker = new UnlockTracker(updatable);
-            if(nbt instanceof CompoundTag tag)
-            {
-                tracker.deserialize(tag);
+        UnlockTracker tracker = new UnlockTracker();
+        tracker.unlockedBackpacks.addAll(buf.readCollection(HashSet::new, FriendlyByteBuf::readResourceLocation));
+        IntStream.range(0, buf.readVarInt()).forEach(value -> {
+            ResourceLocation id = buf.readResourceLocation();
+            CompoundTag tag = buf.readNbt();
+            IProgressTracker progressTracker = tracker.backpackToProgressTracker.get(id);
+            if(progressTracker != null) {
+                progressTracker.read(tag);
             }
-            return tracker;
-        }
+        });
+        return tracker;
     }
 }

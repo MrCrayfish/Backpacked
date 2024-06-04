@@ -1,20 +1,21 @@
 package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.ClientUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -27,13 +28,13 @@ public class BackpackItem extends Item
 
     public BackpackItem(Properties properties)
     {
-        super(properties);
+        super(properties.component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT));
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag)
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag flag)
     {
-        if(level != null)
+        if(context != TooltipContext.EMPTY)
         {
             ClientUtils.createBackpackTooltip(stack, list);
         }
@@ -48,7 +49,7 @@ public class BackpackItem extends Item
             if(backpackInventory == null)
                 return false;
             BackpackItem backpackItem = (BackpackItem) backpack.getItem();
-            Component title = backpack.hasCustomHoverName() ? backpack.getHoverName() : BACKPACK_TRANSLATION;
+            Component title = backpack.has(DataComponents.CUSTOM_NAME) ? backpack.getHoverName() : BACKPACK_TRANSLATION;
             int cols = backpackItem.getColumnCount();
             int rows = backpackItem.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);

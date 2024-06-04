@@ -1,18 +1,17 @@
 package com.mrcrayfish.backpacked.integration;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.platform.Services;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
+
+import java.util.stream.StreamSupport;
 
 /**
  * Author: MrCrayfish
@@ -23,7 +22,7 @@ public class CuriosBackpack implements ICurioItem
     @Override
     public ICurio.SoundInfo getEquipSound(SlotContext context, ItemStack stack)
     {
-        return new ICurio.SoundInfo(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+        return new ICurio.SoundInfo(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0F, 1.0F);
     }
 
     @Override
@@ -32,7 +31,8 @@ public class CuriosBackpack implements ICurioItem
         return true;
     }
 
-    @NotNull
+    // TODO do I need this?
+    /*@NotNull
     @Override
     public CompoundTag writeSyncData(SlotContext context, ItemStack stack)
     {
@@ -46,7 +46,7 @@ public class CuriosBackpack implements ICurioItem
         if(context.cosmetic())
             return;
         stack.setTag(compound);
-    }
+    }*/
 
     @Override
     public boolean canSync(SlotContext context, ItemStack stack)
@@ -59,8 +59,9 @@ public class CuriosBackpack implements ICurioItem
     {
         if(!Config.SERVER.backpack.lockIntoSlot.get())
             return true;
-        CompoundTag tag = stack.getTag();
-        return tag == null || tag.getList("Items", Tag.TAG_COMPOUND).isEmpty();
+        ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
+        // TODO look into better checking if empty
+        return contents == null || StreamSupport.stream(contents.nonEmptyItems().spliterator(), false).allMatch(ItemStack::isEmpty);
     }
 
     @NotNull

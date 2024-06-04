@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.function.BaseFunction;
 import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
 
@@ -28,9 +27,9 @@ public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay
     });
     public static final ModelMeta DEFAULT = new ModelMeta(new Vector3f(), Optional.empty(), Optional.empty());
     public static final Codec<ModelMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-        ExtraCodecs.strictOptionalField(ExtraCodecs.VECTOR3F, "shelf_offset", new Vector3f()).forGetter(o -> o.shelfOffset),
-        ExtraCodecs.strictOptionalField(ITEM_TRANSFORM_CODEC, "gui_display").forGetter(o -> o.guiDisplay),
-        ExtraCodecs.strictOptionalField(BaseFunction.CODEC.listOf(), "renderer").forGetter(o -> o.renderer)
+        ExtraCodecs.VECTOR3F.optionalFieldOf("shelf_offset", new Vector3f()).forGetter(o -> o.shelfOffset),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf("gui_display").forGetter(o -> o.guiDisplay),
+        BaseFunction.CODEC.listOf().optionalFieldOf("renderer").forGetter(o -> o.renderer)
     ).apply(builder, ModelMeta::new));
 
 }

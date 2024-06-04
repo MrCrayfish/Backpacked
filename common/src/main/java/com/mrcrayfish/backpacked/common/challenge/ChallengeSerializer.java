@@ -2,13 +2,13 @@ package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
 
 /**
  * Author: MrCrayfish
  */
-public abstract class ChallengeSerializer<T extends Challenge>
+public record ChallengeSerializer<T extends Challenge>(ResourceLocation id, MapCodec<T> codec)
 {
     public static final Codec<ChallengeSerializer<?>> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
         ChallengeSerializer<?> serializer = ChallengeManager.instance().getSerializer(id);
@@ -17,6 +17,4 @@ public abstract class ChallengeSerializer<T extends Challenge>
         ResourceLocation id = ChallengeManager.instance().getSerializerId(serializer);
         return id != null ? DataResult.success(id) : DataResult.error(() -> "Unregistered serializer");
     });
-
-    public abstract Codec<T> codec();
 }

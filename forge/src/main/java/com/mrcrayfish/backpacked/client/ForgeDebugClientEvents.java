@@ -33,9 +33,9 @@ public class ForgeDebugClientEvents
 
         if(!Config.SERVER.pickpocketing.enabled.get())
             return;
-
-        PoseStack stack = event.getPoseStack();
-        stack.pushPose();
+        
+        PoseStack stack = new PoseStack();
+        stack.mulPose(event.getPoseStack());
         Vec3 view = event.getCamera().getPosition();
         stack.translate(-view.x(), -view.y(), -view.z());
         MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();

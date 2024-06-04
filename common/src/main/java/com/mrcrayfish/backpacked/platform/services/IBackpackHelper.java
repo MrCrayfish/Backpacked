@@ -9,7 +9,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -20,8 +19,6 @@ public interface IBackpackHelper
     ItemStack getBackpackStack(Player player);
 
     boolean setBackpackStack(Player player, ItemStack stack);
-
-    EnchantmentCategory getEnchantmentCategory();
 
     boolean isBackpackVisible(Player player);
 

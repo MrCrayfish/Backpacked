@@ -1,5 +1,5 @@
 package com.mrcrayfish.backpacked.integration;
-
+/*
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -12,13 +12,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.MinecraftForge;
+*/
 
 /**
  * Author: MrCrayfish
  */
 public class Controllable
 {
-    public static final ButtonBinding BACKPACK_BUTTON = new ButtonBinding(-1, "backpacked.button.open_backpack", "button.categories.backpacked", BindingContext.IN_GAME);
+    /*public static final ButtonBinding BACKPACK_BUTTON = new ButtonBinding(-1, "backpacked.button.open_backpack", "button.categories.backpacked", BindingContext.IN_GAME);
 
     public static void init()
     {
@@ -43,5 +44,5 @@ public class Controllable
         }
 
         return false;
-    }
+    }*/
 }

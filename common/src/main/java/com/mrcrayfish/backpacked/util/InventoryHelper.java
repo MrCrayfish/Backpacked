@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.util;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.Container;
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
  */
 public class InventoryHelper
 {
-    public static ListTag saveAllItems(ListTag list, SimpleContainer container)
+    public static ListTag saveAllItems(HolderLookup.Provider provider, ListTag list, SimpleContainer container)
     {
         for(int i = 0; i < container.getContainerSize(); ++i)
         {
@@ -26,14 +27,14 @@ public class InventoryHelper
             {
                 CompoundTag compound = new CompoundTag();
                 compound.putByte("Slot", (byte) i);
-                itemstack.save(compound);
+                itemstack.save(provider, compound);
                 list.add(compound);
             }
         }
         return list;
     }
 
-    public static void loadAllItems(ListTag list, SimpleContainer container, Level level, Vec3 pos)
+    public static void loadAllItems(HolderLookup.Provider provider, ListTag list, SimpleContainer container, Level level, Vec3 pos)
     {
         for(int i = 0; i < list.size(); i++)
         {
@@ -41,14 +42,17 @@ public class InventoryHelper
             int slot = compound.getByte("Slot") & 255;
             if(slot < container.getContainerSize())
             {
-                container.setItem(slot, ItemStack.of(compound));
+                container.setItem(slot, ItemStack.parse(provider, compound).orElse(ItemStack.EMPTY));
             }
             else if(!level.isClientSide())
             {
-                ItemStack stack = ItemStack.of(compound);
-                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, container.addItem(stack));
-                entity.setDefaultPickUpDelay();
-                level.addFreshEntity(entity);
+                ItemStack stack = ItemStack.parse(provider, compound).orElse(ItemStack.EMPTY);
+                if(!stack.isEmpty())
+                {
+                    ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, container.addItem(stack));
+                    entity.setDefaultPickUpDelay();
+                    level.addFreshEntity(entity);
+                }
             }
         }
     }

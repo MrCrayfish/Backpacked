@@ -2,58 +2,54 @@ import net.minecraftforge.gradle.common.tasks.SignJar
 import org.apache.commons.io.FilenameUtils
 
 plugins {
-    id 'java'
-    id 'eclipse'
-    id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'multiloader-loader'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
-base {
-    archivesName = "${mod_id}-forge"
+// Fixes an issue where net.sf.jopt-simple:jopt-simple cannot be resolved
+configurations.configureEach {
+    resolutionStrategy {
+        it.force 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    }
 }
 
 mixin {
-    add(sourceSets.main, "${mod_id}.refmap.json")
-    config("${mod_id}.forge.mixins.json")
+    config "${mod_id}.forge.mixins.json"
     config "${mod_id}.common.mixins.json"
 }
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
-
+    reobf = false
     copyIdeResources = true
 
-    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    }
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    /*def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers = at
+    }*/
 
     runs {
         configureEach {
-            workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
             property 'forge.logging.markers', 'REGISTRIES,SCAN,LOADING'
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                backpacked {
-                    source sourceSets.main
-                    source project(":common").sourceSets.main
-                }
-            }
         }
         client {
-            taskName "Client"
+            workingDirectory project.file('runs/client')
             property 'forge.enabledGameTestNamespaces', mod_id
         }
         server {
-            taskName "Server"
+            workingDirectory project.file('runs/server')
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }
         data {
-            taskName "Data"
+            workingDirectory project.file('runs/data')
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
         }
     }
@@ -63,10 +59,8 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
     maven {
-        url = "https://www.cursemaven.com"
-    }
-    maven {
-        url = "https://maven.theillusivec4.top/"
+        name = 'Curios API'
+        url = 'https://maven.theillusivec4.top/'
     }
 }
 
@@ -76,84 +70,20 @@ configurations {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation fg.deobf("com.mrcrayfish:framework-forge:${minecraft_version}-${framework_version}")
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    compileOnly fg.deobf('curse.maven:controllable-317269:4598985')
-    compileOnly project(":common")
-    runtimeOnly fg.deobf("com.mrcrayfish:catalogue-forge:${minecraft_version}-${catalogue_version}")
+    implementation "com.mrcrayfish:framework-forge:${minecraft_version}-${framework_version}"
+    implementation "top.theillusivec4.curios:curios-forge:${curios_version}"
+    runtimeOnly "com.mrcrayfish:catalogue-forge:${minecraft_version}-${catalogue_version}"
+    // Temp hack fix in Forge.
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
-}
 
-Spec<Task> notForge = { Task it -> !it.name.startsWith("forge") && !it.name.contains("Test") } as Spec<Task>
-tasks.withType(JavaCompile).matching(notForge).configureEach {
-    source(project(":common").sourceSets.main.allSource)
-}
-tasks.withType(Javadoc).matching(notForge).configureEach {
-    source(project(":common").sourceSets.main.allJava)
-}
-tasks.named("sourcesJar", Jar) {
-    from(project(":common").sourceSets.main.allSource)
-}
-tasks.withType(ProcessResources).matching(notForge).configureEach {
-    from project(":common").sourceSets.main.resources
-}
-
-jar.finalizedBy('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-
-            artifact jar
-            artifact sourcesJar
-
-            pom.withXml {
-                def depsNode = asNode().appendNode('dependencies')
-                [this.configurations.library].each {
-                    it.allDependencies.each {
-                        def depNode = depsNode.appendNode('dependency')
-                        depNode.appendNode('groupId', it.group)
-                        depNode.appendNode('artifactId', it.name)
-                        depNode.appendNode('version', it.version)
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        if (System.getenv("CI")) {
-            maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/MrCrayfish/Maven"
-                credentials {
-                    username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-                    password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
-                }
-            }
-        } else {
-            maven {
-                url "file://" + System.getenv("LOCAL_MAVEN")
-            }
-        }
-    }
-}
-
-signing {
-    if (System.getenv("SIGNING_KEY")) {
-        def signingKey = System.getenv("SIGNING_KEY")
-        def signingPassword = System.getenv("SIGNING_PASSPHRASE")
-        useInMemoryPgpKeys(signingKey, signingPassword)
-    }
-    sign publishing.publications.mavenJava
+    //compileOnly fg.deobf('curse.maven:controllable-317269:4598985')
 }
 
 tasks.register('signJar', SignJar) {
     dependsOn jar
     onlyIf {
-        project.hasProperty('keyStore') || System.getenv("KEYSTORE")
+        hasProperty('keyStore') || System.getenv("KEYSTORE")
     }
     keyStore = findProperty('keyStore') ?: System.getenv("KEYSTORE")
     alias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
@@ -164,7 +94,6 @@ tasks.register('signJar', SignJar) {
 }
 
 jar.finalizedBy 'signJar'
-signJar.mustRunAfter 'reobfJar'
 
 sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")

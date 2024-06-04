@@ -3,7 +3,10 @@ package com.mrcrayfish.backpacked.network.message;
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
@@ -14,27 +17,16 @@ import java.util.Map;
  */
 public record MessageOpenCustomisation(Map<ResourceLocation, Component> progressMap)
 {
-    public static void encode(MessageOpenCustomisation message, FriendlyByteBuf buffer)
-    {
-        buffer.writeInt(message.progressMap.size());
-        message.progressMap.forEach((location, formattedProgress) -> {
-            buffer.writeResourceLocation(location);
-            buffer.writeComponent(formattedProgress);
+    public static final StreamCodec<RegistryFriendlyByteBuf, MessageOpenCustomisation> STREAM_CODEC = StreamCodec.of((buf, message) -> {
+        buf.writeMap(message.progressMap, FriendlyByteBuf::writeResourceLocation, (buf2, label) -> {
+            ComponentSerialization.STREAM_CODEC.encode(buf, label);
         });
-    }
-
-    public static MessageOpenCustomisation decode(FriendlyByteBuf buffer)
-    {
-        Map<ResourceLocation, Component> map = new HashMap<>();
-        int size = buffer.readInt();
-        for(int i = 0; i < size; i++)
-        {
-            ResourceLocation id = buffer.readResourceLocation();
-            Component formattedProgress = buffer.readComponent();
-            map.put(id, formattedProgress);
-        }
+    }, buf -> {
+        Map<ResourceLocation, Component> map = buf.readMap(HashMap::new, FriendlyByteBuf::readResourceLocation, buf1 -> {
+            return ComponentSerialization.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf1);
+        });
         return new MessageOpenCustomisation(map);
-    }
+    });
 
     public static void handle(MessageOpenCustomisation message, MessageContext context)
     {

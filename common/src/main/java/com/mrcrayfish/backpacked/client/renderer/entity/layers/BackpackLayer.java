@@ -5,8 +5,9 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.joml.Matrix4f;
 
 /**
  * Author: MrCrayfish
@@ -44,15 +44,15 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         ItemStack stack = Services.BACKPACK.getBackpackStack(player);
         if(stack.getItem() instanceof BackpackItem)
         {
+            BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
             ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
-            if(chestStack.getItem() == Items.ELYTRA && !canRenderWithElytra(stack))
+            if(chestStack.getItem() == Items.ELYTRA && !properties.showWithElytra())
                 return;
 
             if(!Services.BACKPACK.isBackpackVisible(player))
                 return;
 
-            String modelName = stack.getOrCreateTag().getString("BackpackModel");
-            Backpack backpack = BackpackManager.instance().getClientBackpack(modelName);
+            Backpack backpack = BackpackManager.instance().getClientBackpack(properties.model());
             if(backpack == null)
                 return;
 
@@ -84,15 +84,5 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
     {
         BakedModel model = ClientServices.MODEL.getBakedModel(location);
         return model != null ? model : this.itemRenderer.getItemModelShaper().getModelManager().getMissingModel();
-    }
-
-    public static boolean canRenderWithElytra(ItemStack stack)
-    {
-        return stack.getOrCreateTag().getBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName());
-    }
-
-    public static boolean canShowEnchantmentGlint(ItemStack stack)
-    {
-        return stack.getOrCreateTag().getBoolean(ModelProperty.SHOW_GLINT.getTagName());
     }
 }

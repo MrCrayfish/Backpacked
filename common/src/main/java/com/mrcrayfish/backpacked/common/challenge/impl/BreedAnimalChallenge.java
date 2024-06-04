@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -24,17 +23,18 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class BreedAnimalChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "breed_animal");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<BreedAnimalChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.BRED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "animal").forGetter(challenge -> {
-            return challenge.entity;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, BreedAnimalChallenge::new);
-    });
+    public static final ChallengeSerializer<BreedAnimalChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "breed_animal"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.BRED_X_OF_X).forGetter(challenge -> {
+                return challenge.formatter;
+            }), EntityPredicate.CODEC.optionalFieldOf("animal").forGetter(challenge -> {
+                return challenge.entity;
+            }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
+                return challenge.count;
+            })).apply(builder, BreedAnimalChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -42,7 +42,6 @@ public class BreedAnimalChallenge extends Challenge
 
     protected BreedAnimalChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, int count)
     {
-        super(ID);
         this.formatter = formatter;
         this.entity = entity;
         this.count = count;
@@ -58,16 +57,6 @@ public class BreedAnimalChallenge extends Challenge
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.count, this.formatter, this.entity);
-    }
-
-    public static class Serializer extends ChallengeSerializer<BreedAnimalChallenge>
-    {
-
-        @Override
-        public Codec<BreedAnimalChallenge> codec()
-        {
-            return BreedAnimalChallenge.CODEC;
-        }
     }
 
     public static class Tracker extends CountProgressTracker

@@ -2,19 +2,18 @@ package com.mrcrayfish.backpacked.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.core.HolderLookup;
 
-import java.util.function.BiConsumer;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Author: MrCrayfish
  */
 public class LootTableGen extends FabricBlockLootTableProvider
 {
-    protected LootTableGen(FabricDataOutput dataOutput)
+    protected LootTableGen(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
-        super(dataOutput);
+        super(dataOutput, registriesFuture);
     }
 
     @Override

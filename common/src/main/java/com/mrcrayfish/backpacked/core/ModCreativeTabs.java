@@ -34,7 +34,7 @@ public class ModCreativeTabs
             });
             for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
                 Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.getKey(enchantment)).ifPresent(id -> {
-                    if(id.getNamespace().equals(Constants.MOD_ID) && enchantment.category == Services.BACKPACK.getEnchantmentCategory()) {
+                    if(id.getNamespace().equals(Constants.MOD_ID) && enchantment.getSupportedItems() == ModTags.Items.BACKPACK_ENCHANTABLE) {
                         Services.REGISTRATION.addEnchantedBookToCreativeTab(output, enchantment);
                     }
                 });

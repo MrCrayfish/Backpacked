@@ -11,13 +11,14 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record TranslateFunction(Value x, Value y, Value z) implements BaseFunction
 {
-    public static final Type TYPE = new Type(new ResourceLocation("translate"), RecordCodecBuilder.<TranslateFunction>create(builder -> {
-        return builder.group(
+    public static final Type TYPE = new Type(
+        new ResourceLocation("translate"),
+        RecordCodecBuilder.<TranslateFunction>mapCodec(builder -> builder.group(
             Value.CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
             Value.CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),
             Value.CODEC.fieldOf("z").orElse(Value.ZERO).forGetter(o -> o.z)
-        ).apply(builder, TranslateFunction::new);
-    }));
+        ).apply(builder, TranslateFunction::new))
+    );
 
     @Override
     public Type type()

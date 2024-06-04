@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
@@ -24,9 +25,9 @@ public class BackpackContainerMenu extends AbstractContainerMenu
     private final int rows;
     private final boolean owner;
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, int cols, int rows, boolean owner)
+    public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(cols, 1, MAX_COLUMNS) * Mth.clamp(rows, 1, MAX_ROWS)), cols, rows, owner);
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner());
     }
 
     public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner)

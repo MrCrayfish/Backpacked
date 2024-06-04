@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -29,19 +28,20 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MineBlockChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_block");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<MineBlockChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.MINED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(BlockPredicate.CODEC, "block").forGetter(challenge -> {
-            return challenge.block;
-        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(challenge -> {
-            return challenge.item;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, MineBlockChallenge::new);
-    });
+    public static final ChallengeSerializer<MineBlockChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "mine_block"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.MINED_X_OF_X).forGetter(challenge -> {
+                return challenge.formatter;
+            }), BlockPredicate.CODEC.optionalFieldOf("block").forGetter(challenge -> {
+                return challenge.block;
+            }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
+                return challenge.item;
+            }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
+                return challenge.count;
+            })).apply(builder, MineBlockChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final Optional<BlockPredicate> block;
@@ -50,7 +50,7 @@ public class MineBlockChallenge extends Challenge
 
     public MineBlockChallenge(ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
     {
-        super(ID);
+        super();
         this.formatter = formatter;
         this.block = block;
         this.item = item;
@@ -67,16 +67,6 @@ public class MineBlockChallenge extends Challenge
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.count, this.formatter, this.block, this.item);
-    }
-
-    public static class Serializer extends ChallengeSerializer<MineBlockChallenge>
-    {
-
-        @Override
-        public Codec<MineBlockChallenge> codec()
-        {
-            return MineBlockChallenge.CODEC;
-        }
     }
 
     public static class Tracker extends CountProgressTracker

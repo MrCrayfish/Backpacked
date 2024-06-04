@@ -4,7 +4,8 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
+import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
@@ -16,7 +17,6 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,19 +45,15 @@ public class ServerPlayHandler
         ItemStack stack = Services.BACKPACK.getBackpackStack(player);
         if(!stack.isEmpty())
         {
-            ResourceLocation id = message.cosmeticId();
-            Backpack backpack = BackpackManager.instance().getBackpack(id);
+            BackpackProperties properties = message.properties();
+            Backpack backpack = BackpackManager.instance().getBackpack(properties.model());
             if(backpack == null)
                 return;
 
             if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
                 return;
 
-            CompoundTag tag = stack.getOrCreateTag();
-            tag.putString("BackpackModel", id.toString());
-            tag.putBoolean(ModelProperty.SHOW_GLINT.getTagName(), message.showGlint());
-            tag.putBoolean(ModelProperty.SHOW_WITH_ELYTRA.getTagName(), message.showElytra());
-            tag.putBoolean(ModelProperty.SHOW_EFFECTS.getTagName(), message.showEffects());
+            stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);
         }
     }
 
@@ -92,7 +88,7 @@ public class ServerPlayHandler
             if(BackpackItem.openBackpack(otherPlayer, (ServerPlayer) player))
             {
                 otherPlayer.displayClientMessage(Component.translatable("message.backpacked.player_opened"), true);
-                player.level().playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.75F, 1.0F);
+                player.level().playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.75F, 1.0F);
             }
         }
         else if(otherEntity instanceof WanderingTrader trader)

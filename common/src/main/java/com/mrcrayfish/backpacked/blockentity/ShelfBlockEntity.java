@@ -10,6 +10,8 @@ import com.mrcrayfish.backpacked.util.BlockEntityUtil;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,16 +21,18 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -111,7 +115,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             this.getBackpackItem().ifPresent(backpackItem ->
             {
-                Component title = this.backpack.hasCustomHoverName() ? this.backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
+                Component title = this.backpack.has(DataComponents.CUSTOM_NAME) ? this.backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
                 int cols = backpackItem.getColumnCount();
                 int rows = backpackItem.getRowCount();
                 Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, title);
@@ -125,7 +129,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             this.getBackpackInventory().ifPresent(inventory ->
             {
-                stack.getOrCreateTag().put("Items", InventoryHelper.saveAllItems(new ListTag(), inventory));
+                stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(inventory.getItems()));
             });
         }
     }
@@ -149,9 +153,9 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             SimpleContainer oldInventory = this.inventory;
             this.inventory = new ShelfContainer(this.getBackpackSize());
-            CompoundTag compound = this.backpack.getOrCreateTag();
-            this.loadBackpackItems(compound);
-            compound.remove("Items");
+            ItemContainerContents contents = this.backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            contents.copyInto(this.inventory.getItems());
+            this.backpack.remove(DataComponents.CONTAINER);
             if(resized && oldInventory != null)
             {
                 InventoryHelper.mergeInventory(oldInventory, this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
@@ -163,39 +167,43 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
     }
 
-    private void loadBackpackItems(CompoundTag compound)
+    private void loadBackpackItems(HolderLookup.Provider provider, CompoundTag compound)
     {
         if(compound.contains("Items", Tag.TAG_LIST))
         {
-            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
+            InventoryHelper.loadAllItems(provider, compound.getList("Items", Tag.TAG_COMPOUND), this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
         }
     }
 
     @Override
-    public void load(CompoundTag tag)
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider)
     {
-        super.load(tag);
-        this.backpack = ItemStack.of(tag.getCompound("Backpack"));
+        super.loadAdditional(tag, provider);
+        this.backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
         this.inventory = this.backpack.isEmpty() ? null : new ShelfContainer(this.getBackpackSize());
-        this.loadBackpackItems(tag);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag)
-    {
-        tag.put("Backpack", this.backpack.save(new CompoundTag()));
         if(this.inventory != null)
         {
-            ListTag items = new ListTag();
-            InventoryHelper.saveAllItems(items, this.inventory);
-            tag.put("Items", items);
+            ContainerHelper.loadAllItems(tag, this.inventory.getItems(), provider);
         }
     }
 
     @Override
-    public CompoundTag getUpdateTag()
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider)
     {
-        return this.saveWithFullMetadata();
+        super.saveAdditional(tag, provider);
+        tag.put("Backpack", this.backpack.saveOptional(provider));
+        if(this.inventory != null)
+        {
+            ContainerHelper.saveAllItems(tag, this.inventory.getItems(), provider);
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider)
+    {
+        CompoundTag tag = new CompoundTag();
+        tag.put("Backpack", this.backpack.saveOptional(provider));
+        return tag;
     }
 
     @Nullable

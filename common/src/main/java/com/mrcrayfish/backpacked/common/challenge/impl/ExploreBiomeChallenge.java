@@ -21,7 +21,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashSet;
@@ -34,32 +33,30 @@ import java.util.function.Function;
  */
 public class ExploreBiomeChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "explore_biome");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<List<ResourceKey<Biome>>> BIOME_LIST_CODEC = ExtraCodecs.validate(Codec.either(ResourceKey.codec(Registries.BIOME), ResourceKey.codec(Registries.BIOME).listOf()).xmap(either -> {
+    public static final Codec<List<ResourceKey<Biome>>> BIOME_LIST_CODEC = Codec.either(ResourceKey.codec(Registries.BIOME), ResourceKey.codec(Registries.BIOME).listOf()).xmap(either -> {
         return either.map(List::of, Function.identity());
     }, keys -> {
         return keys.size() == 1 ? Either.left(keys.get(0)) : Either.right(keys);
-    }), keys -> {
-        if(keys.isEmpty()) {
-            return DataResult.error(() -> "Must specify at least one biome");
-        }
-        return DataResult.success(keys);
+    }).validate(keys -> {
+        return keys.isEmpty() ? DataResult.error(() -> "Must specify at least one biome") : DataResult.success(keys);
     });
-    public static final Codec<ExploreBiomeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.EXPLORED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
-            return challenge.biomes;
-        })).apply(builder, ExploreBiomeChallenge::new);
-    });
+    public static final ChallengeSerializer<ExploreBiomeChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "explore_biome"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.EXPLORED_X_OF_X).forGetter(challenge -> {
+                return challenge.formatter;
+            }), BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
+                return challenge.biomes;
+            })).apply(builder, ExploreBiomeChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final List<ResourceKey<Biome>> biomes;
 
     public ExploreBiomeChallenge(ProgressFormatter formatter, List<ResourceKey<Biome>> biomes)
     {
-        super(ID);
+        super();
         this.formatter = formatter;
         this.biomes = biomes;
     }
@@ -74,16 +71,6 @@ public class ExploreBiomeChallenge extends Challenge
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.formatter, this.biomes);
-    }
-
-    public static class Serializer extends ChallengeSerializer<ExploreBiomeChallenge>
-    {
-
-        @Override
-        public Codec<ExploreBiomeChallenge> codec()
-        {
-            return ExploreBiomeChallenge.CODEC;
-        }
     }
 
     public static class Tracker implements IProgressTracker

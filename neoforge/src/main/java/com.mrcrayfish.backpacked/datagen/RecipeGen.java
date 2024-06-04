@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -9,14 +10,16 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * Author: MrCrayfish
  */
 public class RecipeGen extends RecipeProvider
 {
-    public RecipeGen(PackOutput output)
+    public RecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> provider)
     {
-        super(output);
+        super(output, provider);
     }
 
     @Override
@@ -28,7 +31,7 @@ public class RecipeGen extends RecipeProvider
                 .pattern("SIS")
                 .pattern("HHH")
                 .define('H', Items.RABBIT_HIDE)
-                .define('S', Tags.Items.STRING)
+                .define('S', Tags.Items.STRINGS)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_hide", has(Items.RABBIT_HIDE))
                 .save(output);

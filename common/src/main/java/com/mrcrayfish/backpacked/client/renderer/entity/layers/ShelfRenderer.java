@@ -6,7 +6,9 @@ import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.Minecraft;
@@ -17,7 +19,6 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -47,10 +48,9 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         if(stack.getItem() != ModItems.BACKPACK.get())
             return;
 
-        CompoundTag tag = stack.getOrCreateTag();
-        String modelName = tag.getString("BackpackModel");
-        Backpack backpack = BackpackManager.instance().getClientBackpack(modelName);
-        if(backpack == null) // TODO render default
+        BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        Backpack backpack = BackpackManager.instance().getClientBackpack(properties.model());
+        if(backpack == null)
             return;
 
         Direction facing = entity.getDirection();

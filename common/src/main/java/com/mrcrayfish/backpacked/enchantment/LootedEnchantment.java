@@ -1,13 +1,13 @@
 package com.mrcrayfish.backpacked.enchantment;
 
 import com.mrcrayfish.backpacked.core.ModEnchantments;
+import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -22,7 +22,7 @@ public class LootedEnchantment extends Enchantment
 {
     public LootedEnchantment()
     {
-        super(Rarity.UNCOMMON, Services.BACKPACK.getEnchantmentCategory(), new EquipmentSlot[]{});
+        super(Enchantment.definition(ModTags.Items.BACKPACK_ENCHANTABLE, 1, 1, Enchantment.constantCost(25), Enchantment.constantCost(50), 8));
     }
 
     @Override

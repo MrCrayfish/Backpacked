@@ -1,12 +1,9 @@
 package com.mrcrayfish.backpacked.common;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 
 import java.util.HashSet;

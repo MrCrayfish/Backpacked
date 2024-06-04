@@ -1,11 +1,9 @@
 package com.mrcrayfish.backpacked.item;
 
-import net.minecraft.world.item.Vanishable;
-
 /**
  * Author: MrCrayfish
  */
-public class FabricBackpackItem extends BackpackItem implements Vanishable
+public class FabricBackpackItem extends BackpackItem
 {
     public FabricBackpackItem(Properties properties)
     {

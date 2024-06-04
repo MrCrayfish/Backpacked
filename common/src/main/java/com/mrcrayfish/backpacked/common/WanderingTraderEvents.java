@@ -48,7 +48,7 @@ import java.util.stream.StreamSupport;
  */
 public class WanderingTraderEvents
 {
-    public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
+    public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpack.backpacked.wandering_bag");
 
     public static void init()
     {
@@ -209,7 +209,7 @@ public class WanderingTraderEvents
                 });*/
             }
             Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), 8, 1, false, WANDERING_BAG_TRANSLATION);
-            openingPlayer.level().playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.15F, 1.0F);
+            openingPlayer.level().playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.15F, 1.0F);
         });
     }
 

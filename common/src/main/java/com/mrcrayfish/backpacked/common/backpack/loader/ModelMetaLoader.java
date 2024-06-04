@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.backpack.loader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
@@ -45,7 +46,7 @@ public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Resource
                     String raw = location.getPath();
                     String path = location.getPath().substring((DIRECTORY + "/").length(), raw.length() - EXTENSION.length());
                     ResourceLocation key = new ResourceLocation(location.getNamespace(), path);
-                    map.put(key, result.getOrThrow(false, Constants.LOG::error));
+                    map.put(key, result.getOrThrow(JsonParseException::new));
                 }
             } catch(IOException e) {
                 Constants.LOG.error("Failed to load backpack meta: %s".formatted(location), e);

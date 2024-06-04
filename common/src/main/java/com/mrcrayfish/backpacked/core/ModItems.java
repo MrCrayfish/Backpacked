@@ -1,15 +1,11 @@
 package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 /**
  * Author: MrCrayfish

@@ -2,7 +2,10 @@ package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
-import net.minecraft.network.FriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashSet;
@@ -13,22 +16,13 @@ import java.util.Set;
  */
 public record MessageSyncUnlockTracker(Set<ResourceLocation> unlockedBackpacks)
 {
-    public static void encode(MessageSyncUnlockTracker message, FriendlyByteBuf buffer)
-    {
-        buffer.writeInt(message.unlockedBackpacks.size());
-        message.unlockedBackpacks.forEach(buffer::writeResourceLocation);
-    }
-
-    public static MessageSyncUnlockTracker decode(FriendlyByteBuf buffer)
-    {
-        int size = buffer.readInt();
-        Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
-        for(int i = 0; i < size; i++)
-        {
-            unlockedBackpacks.add(buffer.readResourceLocation());
-        }
-        return new MessageSyncUnlockTracker(unlockedBackpacks);
-    }
+    public static final StreamCodec<ByteBuf, Set<ResourceLocation>> RESOURCE_LOCATION_SET_STREAM_CODEC = ResourceLocation.STREAM_CODEC.apply(
+        ByteBufCodecs.collection(HashSet::new)
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, MessageSyncUnlockTracker> STREAM_CODEC = StreamCodec.composite(
+        RESOURCE_LOCATION_SET_STREAM_CODEC, MessageSyncUnlockTracker::unlockedBackpacks,
+        MessageSyncUnlockTracker::new
+    );
 
     public static void handle(MessageSyncUnlockTracker message, MessageContext context)
     {

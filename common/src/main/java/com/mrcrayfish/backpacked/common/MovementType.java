@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import net.minecraft.ChatFormatting;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Arrays;

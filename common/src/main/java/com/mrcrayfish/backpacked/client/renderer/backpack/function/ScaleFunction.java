@@ -11,13 +11,14 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record ScaleFunction(Value x, Value y, Value z) implements BaseFunction
 {
-    public static final Type TYPE = new Type(new ResourceLocation("scale"), RecordCodecBuilder.<ScaleFunction>create(builder -> {
-        return builder.group(
+    public static final Type TYPE = new Type(
+        new ResourceLocation("scale"),
+        RecordCodecBuilder.<ScaleFunction>mapCodec(builder -> builder.group(
             Value.CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
             Value.CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),
             Value.CODEC.fieldOf("z").orElse(Value.ZERO).forGetter(o -> o.z)
-        ).apply(builder, ScaleFunction::new);
-    }));
+        ).apply(builder, ScaleFunction::new))
+    );
 
     @Override
     public Type type()

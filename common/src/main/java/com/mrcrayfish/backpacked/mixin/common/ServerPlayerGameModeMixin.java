@@ -67,7 +67,7 @@ public class ServerPlayerGameModeMixin
             BlockEntity entity = this.player.level().getBlockEntity(pos);
             if(entity != null)
             {
-                this.backpacked$capturedMinedTag = entity.saveWithFullMetadata();
+                this.backpacked$capturedMinedTag = entity.saveWithFullMetadata(this.player.level().registryAccess());
             }
         }
     }
@@ -92,9 +92,9 @@ public class ServerPlayerGameModeMixin
         this.backpacked$capturedMinedTag = null;
     }
 
-    /***************************
-     * Use item on block event *
-     ***************************/
+    /* **************************
+     * Use item on block event  *
+     ************************** */
 
     @Unique
     private BlockState backpacked$capturedUseState;
@@ -115,7 +115,7 @@ public class ServerPlayerGameModeMixin
             BlockEntity entity = level.getBlockEntity(result.getBlockPos());
             if(entity != null)
             {
-                this.backpacked$capturedUseTag = entity.saveWithFullMetadata();
+                this.backpacked$capturedUseTag = entity.saveWithFullMetadata(level.registryAccess());
             }
         }
     }

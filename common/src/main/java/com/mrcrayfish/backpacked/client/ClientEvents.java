@@ -1,7 +1,8 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
+import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
@@ -14,8 +15,6 @@ import com.mrcrayfish.framework.api.event.TickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
@@ -95,12 +94,7 @@ public class ClientEvents
 
     public static boolean canShowBackpackEffects(ItemStack stack)
     {
-        CompoundTag tag = stack.getOrCreateTag();
-        if(tag.contains(ModelProperty.SHOW_EFFECTS.getTagName(), Tag.TAG_BYTE))
-        {
-            return tag.getBoolean(ModelProperty.SHOW_EFFECTS.getTagName());
-        }
-        return true;
+        return stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT).showEffects();
     }
 
     private static boolean onInteraction(boolean attack, boolean use, boolean pick, InteractionHand hand)
@@ -119,15 +113,15 @@ public class ClientEvents
                 return !Services.BACKPACK.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
-        entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.gameMode.getPickRange()), entity -> {
-            return TraderPickpocketing.get(entity).map(TraderPickpocketing::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player, mc.gameMode.getPickRange());
+        entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {
+            return TraderPickpocketing.get(entity).map(TraderPickpocketing::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player, mc.player.entityInteractionRange());
         }));
 
         if(entities.isEmpty())
             return false;
 
         Vec3 start = mc.player.getEyePosition(1.0F);
-        Vec3 end = mc.player.getViewVector(1.0F).scale(mc.gameMode.getPickRange()).add(start);
+        Vec3 end = mc.player.getViewVector(1.0F).scale(mc.player.entityInteractionRange()).add(start);
 
         double closestDistance = Double.MAX_VALUE;
         LivingEntity hitEntity = null;

@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
@@ -13,25 +13,17 @@ import net.minecraft.resources.ResourceLocation;
 public final class DummyChallenge extends Challenge
 {
     public static final DummyChallenge INSTANCE = new DummyChallenge();
-    public static final Codec<DummyChallenge> CODEC = Codec.unit(INSTANCE);
+    public static final MapCodec<DummyChallenge> CODEC = MapCodec.unit(INSTANCE);
 
     private DummyChallenge()
     {
-        super(new ResourceLocation(Constants.MOD_ID, "dummy"));
+        super();
     }
 
     @Override
     public ChallengeSerializer<?> getSerializer()
     {
-        return new ChallengeSerializer<DummyChallenge>()
-        {
-
-            @Override
-            public Codec<DummyChallenge> codec()
-            {
-                return DummyChallenge.CODEC;
-            }
-        };
+        return new ChallengeSerializer<>(new ResourceLocation(Constants.MOD_ID, "dummy"), DummyChallenge.CODEC);
     }
 
     @Override

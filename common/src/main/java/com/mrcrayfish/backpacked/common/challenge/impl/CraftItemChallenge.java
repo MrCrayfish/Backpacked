@@ -30,17 +30,18 @@ import java.util.Set;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class CraftItemChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<CraftItemChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.CRAFT_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(CraftedItemPredicate.CODEC, "crafted_item").forGetter(challenge -> {
-            return challenge.predicate;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(challenge -> {
-            return challenge.count;
-        })).apply(builder, CraftItemChallenge::new);
-    });
+    public static final ChallengeSerializer<CraftItemChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "craft_item"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.CRAFT_X_OF_X).forGetter(challenge -> {
+                return challenge.formatter;
+            }), CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
+                return challenge.predicate;
+            }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
+                return challenge.count;
+            })).apply(builder, CraftItemChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final Optional<CraftedItemPredicate> predicate;
@@ -48,7 +49,7 @@ public class CraftItemChallenge extends Challenge
 
     public CraftItemChallenge(ProgressFormatter formatter, Optional<CraftedItemPredicate> predicate, int count)
     {
-        super(ID);
+        super();
         this.formatter = formatter;
         this.predicate = predicate;
         this.count = count;
@@ -64,16 +65,6 @@ public class CraftItemChallenge extends Challenge
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return new Tracker(this.formatter, this.predicate, this.count);
-    }
-
-    public static class Serializer extends ChallengeSerializer<CraftItemChallenge>
-    {
-
-        @Override
-        public Codec<CraftItemChallenge> codec()
-        {
-            return CraftItemChallenge.CODEC;
-        }
     }
 
     public static class Tracker extends CountProgressTracker
@@ -105,9 +96,9 @@ public class CraftItemChallenge extends Challenge
     public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey<Item>> tag, Optional<HolderSet<Item>> items)
     {
         public static final Codec<CraftedItemPredicate> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ExtraCodecs.strictOptionalField(BackpackedCodecs.STRING_SET, "namespace").forGetter(o -> o.modIds),
-            ExtraCodecs.strictOptionalField(TagKey.codec(Registries.ITEM), "tag").forGetter(CraftedItemPredicate::tag),
-            ExtraCodecs.strictOptionalField(BackpackedCodecs.ITEMS, "items").forGetter(CraftedItemPredicate::items)
+            BackpackedCodecs.STRING_SET.optionalFieldOf("namespace").forGetter(o -> o.modIds),
+            TagKey.codec(Registries.ITEM).optionalFieldOf("tag").forGetter(CraftedItemPredicate::tag),
+            BackpackedCodecs.ITEMS.optionalFieldOf("items").forGetter(CraftedItemPredicate::items)
         ).apply(builder, CraftedItemPredicate::new));
 
         public boolean test(ItemStack stack)

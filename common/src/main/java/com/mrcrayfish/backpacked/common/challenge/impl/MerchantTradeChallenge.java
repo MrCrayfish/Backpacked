@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
@@ -26,19 +25,20 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MerchantTradeChallenge extends Challenge
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merchant_trade");
-    public static final Serializer SERIALIZER = new Serializer();
-    public static final Codec<MerchantTradeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.TRADED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), ExtraCodecs.strictOptionalField(EntityPredicate.CODEC, "merchant").forGetter(o -> {
-            return o.entity;
-        }), ExtraCodecs.strictOptionalField(ItemPredicate.CODEC, "item").forGetter(o -> {
-            return o.item;
-        }), ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(o -> {
-            return o.count;
-        })).apply(builder, MerchantTradeChallenge::new);
-    });
+    public static final ChallengeSerializer<MerchantTradeChallenge> SERIALIZER = new ChallengeSerializer<>(
+        new ResourceLocation(Constants.MOD_ID, "merchant_trade"),
+        RecordCodecBuilder.mapCodec(builder -> {
+            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.TRADED_X_OF_X).forGetter(challenge -> {
+                return challenge.formatter;
+            }), EntityPredicate.CODEC.optionalFieldOf("merchant").forGetter(o -> {
+                return o.entity;
+            }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(o -> {
+                return o.item;
+            }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(o -> {
+                return o.count;
+            })).apply(builder, MerchantTradeChallenge::new);
+        })
+    );
 
     private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
@@ -47,7 +47,7 @@ public class MerchantTradeChallenge extends Challenge
 
     protected MerchantTradeChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
-        super(ID);
+        super();
         this.formatter = formatter;
         this.entity = entity;
         this.item = item;
@@ -66,16 +66,6 @@ public class MerchantTradeChallenge extends Challenge
         return new Tracker(this.count, this.formatter, this.entity, this.item);
     }
 
-    public static class Serializer extends ChallengeSerializer<MerchantTradeChallenge>
-    {
-
-        @Override
-        public Codec<MerchantTradeChallenge> codec()
-        {
-            return MerchantTradeChallenge.CODEC;
-        }
-    }
-
     public static class Tracker extends CountProgressTracker
     {
         private final Optional<EntityPredicate> entity;
@@ -90,7 +80,7 @@ public class MerchantTradeChallenge extends Challenge
 
         private boolean test(ServerPlayer player, Entity merchant, ItemStack stack)
         {
-            return this.entity.map(p -> p.matches(player, merchant)).orElse(true) && this.item.map(p -> p.matches(stack)).orElse(true);
+            return this.entity.map(p -> p.matches(player, merchant)).orElse(true) && this.item.map(p -> p.test(stack)).orElse(true);
         }
 
         public static void registerEvent()
