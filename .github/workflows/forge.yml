@@ -38,7 +38,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.gradle/caches
-        key: gradle-minecraft-${{ steps.mc_version.outputs.value }}
+        key: gradle-minecraft-${{ steps.mc_version.outputs.value }}-forge
     - name: Load Keystore
       id: load_keystore
       env:
