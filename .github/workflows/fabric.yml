@@ -56,7 +56,7 @@ jobs:
         SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
         SIGNING_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         TARGET_LOADER: "fabric"
-      run: ./gradlew build
+      run: ./gradlew :fabric:build
     - name: Stop Gradle
       run: ./gradlew --stop
     - name: Construct artifact files

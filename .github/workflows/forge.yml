@@ -68,7 +68,7 @@ jobs:
         KEYSTORE_ALIAS: ${{ secrets.MRCRAYFISH_JKS_ALIAS }}
         KEYSTORE_PASS: ${{ secrets.MRCRAYFISH_JKS_PASSPHRASE }}
         TARGET_LOADER: "forge"
-      run: ./gradlew build
+      run: ./gradlew :forge:build
     - name: Stop Gradle
       run: ./gradlew --stop
     - name: Construct artifact files

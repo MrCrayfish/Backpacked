@@ -68,7 +68,7 @@ jobs:
         KEYSTORE_ALIAS: ${{ secrets.MRCRAYFISH_JKS_ALIAS }}
         KEYSTORE_PASS: ${{ secrets.MRCRAYFISH_JKS_PASSPHRASE }}
         TARGET_LOADER: "neoforge"
-      run: ./gradlew build
+      run: ./gradlew :neoforge:build
     - name: Stop Gradle
       run: ./gradlew --stop
     - name: Construct artifact files
