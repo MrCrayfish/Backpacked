@@ -57,7 +57,7 @@ jobs:
         SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
         SIGNING_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         TARGET_LOADER: "forge"
-      run: ./gradlew :forge:Data
+      run: ./gradlew :forge:runData
     - name: Build and Publish
       env:
         GPR_USER: "MrCrayfish"
