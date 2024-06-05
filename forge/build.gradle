@@ -80,6 +80,14 @@ dependencies {
     //compileOnly fg.deobf('curse.maven:controllable-317269:4598985')
 }
 
+jar {
+    manifest {
+        attributes([
+            'MixinConfigs': "${mod_id}.common.mixins.json, ${mod_id}.forge.mixins.json"
+        ])
+    }
+}
+
 tasks.register('signJar', SignJar) {
     dependsOn jar
     onlyIf {
