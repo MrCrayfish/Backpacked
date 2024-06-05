@@ -13,6 +13,7 @@ public class FabricModelHelper implements IModelHelper
     @Override
     public BakedModel getBakedModel(ResourceLocation id)
     {
-        return Minecraft.getInstance().getModelManager().getModel(id);
+        BakedModel model = Minecraft.getInstance().getModelManager().getModel(id);
+        return model != null ? model : Minecraft.getInstance().getModelManager().getMissingModel();
     }
 }
