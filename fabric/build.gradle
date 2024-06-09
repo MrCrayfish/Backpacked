@@ -66,6 +66,9 @@ loom {
     if (aw.exists()) {
         accessWidenerPath.set(aw)
     }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
     runs {
         client {
             client()
