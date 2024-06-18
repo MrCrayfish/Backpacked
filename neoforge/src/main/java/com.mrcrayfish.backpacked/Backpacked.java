@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
+import com.mrcrayfish.backpacked.common.Tags;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
@@ -9,6 +10,7 @@ import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
+import com.mrcrayfish.backpacked.enchantment.FunnellingEnchantment;
 import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.integration.CuriosBackpack;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -19,11 +21,15 @@ import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -37,6 +43,7 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -62,6 +69,7 @@ public class Backpacked
         NeoForge.EVENT_BUS.addListener(this::onInteract);
         NeoForge.EVENT_BUS.addListener(this::onGetProjectile);
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBlockDrops);
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event)
@@ -135,6 +143,23 @@ public class Backpacked
             if(!projectile.isEmpty())
             {
                 event.setProjectileItemStack(projectile);
+            }
+        }
+    }
+
+    private void onBlockDrops(BlockDropsEvent event)
+    {
+        BlockState state = event.getState();
+        Entity breaker = event.getBreaker();
+        if(state.is(Tags.Blocks.FUNNELLING) && breaker instanceof ServerPlayer serverPlayer)
+        {
+            if(FunnellingEnchantment.onBreakBlock(state, event.getLevel(), event.getPos(), event.getBlockEntity(), serverPlayer, event.getTool()))
+            {
+                event.setCanceled(true);
+                if(event.getDroppedExperience() > 0)
+                {
+                    state.getBlock().popExperience(event.getLevel(), event.getPos(), event.getDroppedExperience());
+                }
             }
         }
     }
