@@ -27,17 +27,6 @@ repositories {
             includeGroup("org.ladysnake.cardinal-components-api")
         }
     }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'Fabric-ASM and other GitHub repos'
-                url = "https://jitpack.io/"
-            }
-        }
-        filter {
-            includeGroup("com.github.Chocohead")
-        }
-    }
 }
 
 configurations {

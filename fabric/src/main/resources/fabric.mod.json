@@ -22,9 +22,6 @@
         ],
         "fabric-datagen": [
             "com.mrcrayfish.backpacked.datagen.DataGeneration"
-        ],
-        "mm:early_risers": [
-            "com.mrcrayfish.backpacked.asm.Loader"
         ]
     },
     "mixins": [
@@ -35,7 +32,7 @@
         "fabricloader": ">=${fabric_loader_version}",
         "fabric": "*",
         "minecraft": "${minecraft_version}",
-        "java": ">=17",
+        "java": ">=21",
         "framework": ">=${framework_version}",
         "trinkets": ">=${trinkets_version}"
     },
