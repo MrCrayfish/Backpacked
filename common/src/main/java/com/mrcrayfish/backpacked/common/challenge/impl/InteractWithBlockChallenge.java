@@ -26,7 +26,7 @@ import java.util.Optional;
 public class InteractWithBlockChallenge extends Challenge
 {
     public static final ChallengeSerializer<InteractWithBlockChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "interact_with_block"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_block"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
                 return challenge.formatter;

@@ -8,6 +8,8 @@ import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.DummyChallenge;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -25,7 +27,7 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class Backpack
 {
-    public static final ResourceLocation DEFAULT_MODEL = new ResourceLocation(Constants.MOD_ID, "standard");
+    public static final ResourceLocation DEFAULT_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "standard");
     public static final StreamCodec<FriendlyByteBuf, Backpack> STREAM_CODEC = StreamCodec.of((buf, backpack) -> {
         buf.writeResourceLocation(backpack.id);
         buf.writeBoolean(backpack.challenge.isPresent());
@@ -41,8 +43,8 @@ public class Backpack
 
     private final Optional<Challenge> challenge;
     private ResourceLocation id;
-    private ResourceLocation baseModel;
-    private ResourceLocation strapsModel;
+    private ModelResourceLocation baseModel;
+    private ModelResourceLocation strapsModel;
     private String translationKey;
     private boolean setup = false;
 
@@ -74,13 +76,13 @@ public class Backpack
         return this.translationKey;
     }
 
-    public ResourceLocation getBaseModel()
+    public ModelResourceLocation getBaseModel()
     {
         this.checkSetup();
         return this.baseModel;
     }
 
-    public ResourceLocation getStrapsModel()
+    public ModelResourceLocation getStrapsModel()
     {
         this.checkSetup();
         return this.strapsModel;
@@ -111,8 +113,8 @@ public class Backpack
         {
             this.id = id;
             String name = "backpacked/" + id.getPath();
-            this.baseModel = new ResourceLocation(id.getNamespace(), name);
-            this.strapsModel = new ResourceLocation(id.getNamespace(), name + "_straps");
+            this.baseModel = FrameworkClientAPI.createModelResourceLocation(id.getNamespace(), name);
+            this.strapsModel = FrameworkClientAPI.createModelResourceLocation(id.getNamespace(), name + "_straps");
             this.translationKey = "backpack.%s.%s".formatted(id.getNamespace(), id.getPath());
             this.setup = true;
         }

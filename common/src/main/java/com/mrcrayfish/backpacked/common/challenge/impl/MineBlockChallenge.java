@@ -29,7 +29,7 @@ import java.util.Optional;
 public class MineBlockChallenge extends Challenge
 {
     public static final ChallengeSerializer<MineBlockChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "mine_block"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "mine_block"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.MINED_X_OF_X).forGetter(challenge -> {
                 return challenge.formatter;

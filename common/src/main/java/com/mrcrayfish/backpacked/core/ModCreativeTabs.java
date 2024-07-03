@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.Registration;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @RegistryContainer
 public class ModCreativeTabs
 {
-    public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(new ResourceLocation(Constants.MOD_ID, "creative_tab"), builder -> {
+    public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "creative_tab"), builder -> {
         builder.title(Component.translatable("itemGroup." + Constants.MOD_ID));
         builder.icon(() -> new ItemStack(ModItems.BACKPACK.get()));
         builder.displayItems((params, output) -> {
@@ -32,13 +33,12 @@ public class ModCreativeTabs
             Registration.get(Registries.ITEM).stream().filter(entry -> entry.getId().getNamespace().equals(Constants.MOD_ID)).forEach(entry -> {
                 output.accept((ItemLike) entry.get());
             });
-            for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
-                Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.getKey(enchantment)).ifPresent(id -> {
-                    if(id.getNamespace().equals(Constants.MOD_ID) && enchantment.getSupportedItems() == ModTags.Items.BACKPACK_ENCHANTABLE) {
-                        Services.REGISTRATION.addEnchantedBookToCreativeTab(output, enchantment);
-                    }
-                });
-            }
+            HolderLookup.RegistryLookup<Enchantment> lookup = params.holders().lookupOrThrow(Registries.ENCHANTMENT);
+            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.FUNNELLING));
+            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.REPAIRMAN));
+            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.LOOTED));
+            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.IMBUED_HIDE));
+            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.MARKSMAN));
         });
     });
 }

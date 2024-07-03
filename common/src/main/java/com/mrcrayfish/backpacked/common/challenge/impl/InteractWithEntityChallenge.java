@@ -27,7 +27,7 @@ import java.util.Optional;
 public class InteractWithEntityChallenge extends Challenge
 {
     public static final ChallengeSerializer<InteractWithEntityChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "interact_with_entity"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_entity"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
                 return challenge.formatter;

@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 public record RotateFunction(Value x, Value y, Value z) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        new ResourceLocation("rotate"),
+        ResourceLocation.withDefaultNamespace("rotate"),
         RecordCodecBuilder.<RotateFunction>mapCodec(builder -> builder.group(
             Value.CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
             Value.CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),

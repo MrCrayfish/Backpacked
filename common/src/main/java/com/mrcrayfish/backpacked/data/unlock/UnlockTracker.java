@@ -132,7 +132,7 @@ public class UnlockTracker extends SyncedObject
         ListTag progressTrackers = data.getList("ProgressTrackers", Tag.TAG_COMPOUND);
         progressTrackers.forEach(t -> {
             CompoundTag progressTag = (CompoundTag) t;
-            ResourceLocation id = new ResourceLocation(progressTag.getString("Id"));
+            ResourceLocation id = ResourceLocation.tryParse(progressTag.getString("Id"));
             IProgressTracker progressTracker = tracker.backpackToProgressTracker.get(id);
             if(progressTracker != null) {
                 CompoundTag dataTag = progressTag.getCompound("Data");

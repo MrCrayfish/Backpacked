@@ -27,7 +27,7 @@ public record ProgressFormatter(ResourceLocation id, BiFunction<Integer, Integer
 
     private static ProgressFormatter register(String name, BiFunction<Integer, Integer, Component> function)
     {
-        ResourceLocation id = new ResourceLocation(Constants.MOD_ID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
         ProgressFormatter formatter = new ProgressFormatter(id, function);
         REGISTERED_FORMATTERS.put(id, formatter);
         return formatter;

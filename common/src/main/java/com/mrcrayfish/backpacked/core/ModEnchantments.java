@@ -1,14 +1,11 @@
 package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.enchantment.FunnellingEnchantment;
-import com.mrcrayfish.backpacked.enchantment.ImbuedHideEnchantment;
-import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
-import com.mrcrayfish.backpacked.enchantment.MarksmanEnchantment;
-import com.mrcrayfish.backpacked.enchantment.RepairmanEnchantment;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
-import com.mrcrayfish.framework.api.registry.RegistryEntry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
  * Author: MrCrayfish
@@ -16,9 +13,14 @@ import net.minecraft.resources.ResourceLocation;
 @RegistryContainer
 public class ModEnchantments
 {
-    public static final RegistryEntry<FunnellingEnchantment> FUNNELLING = RegistryEntry.enchantment(new ResourceLocation(Constants.MOD_ID, "funnelling"), FunnellingEnchantment::new);
-    public static final RegistryEntry<RepairmanEnchantment> REPAIRMAN = RegistryEntry.enchantment(new ResourceLocation(Constants.MOD_ID, "repairman"), RepairmanEnchantment::new);
-    public static final RegistryEntry<LootedEnchantment> LOOTED = RegistryEntry.enchantment(new ResourceLocation(Constants.MOD_ID, "looted"), LootedEnchantment::new);
-    public static final RegistryEntry<ImbuedHideEnchantment> IMBUED_HIDE = RegistryEntry.enchantment(new ResourceLocation(Constants.MOD_ID, "imbued_hide"), ImbuedHideEnchantment::new);
-    public static final RegistryEntry<MarksmanEnchantment> MARKSMAN = RegistryEntry.enchantment(new ResourceLocation(Constants.MOD_ID, "marksman"), MarksmanEnchantment::new);
+    public static final ResourceKey<Enchantment> FUNNELLING = create("funnelling");
+    public static final ResourceKey<Enchantment> REPAIRMAN = create("repairman");
+    public static final ResourceKey<Enchantment> LOOTED = create("looted");
+    public static final ResourceKey<Enchantment> IMBUED_HIDE = create("imbued_hide");
+    public static final ResourceKey<Enchantment> MARKSMAN = create("marksman");
+
+    private static ResourceKey<Enchantment> create(String name)
+    {
+        return ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name));
+    }
 }

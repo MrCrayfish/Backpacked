@@ -31,7 +31,7 @@ import java.util.Set;
 public class CraftItemChallenge extends Challenge
 {
     public static final ChallengeSerializer<CraftItemChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "craft_item"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "craft_item"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.CRAFT_X_OF_X).forGetter(challenge -> {
                 return challenge.formatter;

@@ -15,5 +15,5 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 @RegistryContainer
 public class ModBlockEntities
 {
-    public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> SHELF = RegistryEntry.blockEntity(new ResourceLocation(Constants.MOD_ID, "shelf"), Services.BACKPACK::createShelfBlockEntityType, () -> new Block[]{ModBlocks.OAK_BACKPACK_SHELF.get(), ModBlocks.SPRUCE_BACKPACK_SHELF.get(), ModBlocks.BIRCH_BACKPACK_SHELF.get(), ModBlocks.JUNGLE_BACKPACK_SHELF.get(), ModBlocks.DARK_OAK_BACKPACK_SHELF.get(), ModBlocks.ACACIA_BACKPACK_SHELF.get(), ModBlocks.CRIMSON_BACKPACK_SHELF.get(), ModBlocks.WARPED_BACKPACK_SHELF.get(), ModBlocks.CHERRY_BACKPACK_SHELF.get()});
+    public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> SHELF = RegistryEntry.blockEntity(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "shelf"), Services.BACKPACK::createShelfBlockEntityType, () -> new Block[]{ModBlocks.OAK_BACKPACK_SHELF.get(), ModBlocks.SPRUCE_BACKPACK_SHELF.get(), ModBlocks.BIRCH_BACKPACK_SHELF.get(), ModBlocks.JUNGLE_BACKPACK_SHELF.get(), ModBlocks.DARK_OAK_BACKPACK_SHELF.get(), ModBlocks.ACACIA_BACKPACK_SHELF.get(), ModBlocks.CRIMSON_BACKPACK_SHELF.get(), ModBlocks.WARPED_BACKPACK_SHELF.get(), ModBlocks.CHERRY_BACKPACK_SHELF.get()});
 }

@@ -23,7 +23,7 @@ public final class DummyChallenge extends Challenge
     @Override
     public ChallengeSerializer<?> getSerializer()
     {
-        return new ChallengeSerializer<>(new ResourceLocation(Constants.MOD_ID, "dummy"), DummyChallenge.CODEC);
+        return new ChallengeSerializer<>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "dummy"), DummyChallenge.CODEC);
     }
 
     @Override

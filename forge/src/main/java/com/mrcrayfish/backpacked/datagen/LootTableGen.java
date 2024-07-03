@@ -36,9 +36,9 @@ public class LootTableGen extends LootTableProvider
 
     private static class BlockProvider extends BlockLootSubProvider
     {
-        protected BlockProvider()
+        protected BlockProvider(HolderLookup.Provider provider)
         {
-            super(ImmutableSet.of(), FeatureFlags.REGISTRY.allFlags());
+            super(ImmutableSet.of(), FeatureFlags.REGISTRY.allFlags(), provider);
         }
 
         @Override

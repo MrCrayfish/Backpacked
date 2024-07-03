@@ -45,7 +45,7 @@ public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Resource
                 } else {
                     String raw = location.getPath();
                     String path = location.getPath().substring((DIRECTORY + "/").length(), raw.length() - EXTENSION.length());
-                    ResourceLocation key = new ResourceLocation(location.getNamespace(), path);
+                    ResourceLocation key = ResourceLocation.fromNamespaceAndPath(location.getNamespace(), path);
                     map.put(key, result.getOrThrow(JsonParseException::new));
                 }
             } catch(IOException e) {

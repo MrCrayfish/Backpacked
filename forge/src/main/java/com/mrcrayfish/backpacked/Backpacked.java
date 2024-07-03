@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.client.ClientHandler;
+import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
@@ -9,18 +10,19 @@ import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
-import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.integration.CuriosBackpack;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +40,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.concurrent.CompletableFuture;
@@ -107,7 +108,7 @@ public class Backpacked
 
     private void onDropLoot(LivingDropsEvent event)
     {
-        if(LootedEnchantment.onDropLoot(event.getDrops(), event.getSource()))
+        if(EnchantmentHandler.onDropLoot(event.getDrops(), event.getSource()))
         {
             event.setCanceled(true);
         }
@@ -130,7 +131,8 @@ public class Backpacked
             if(backpack.isEmpty())
                 return;
 
-            if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MARKSMAN.get(), backpack) <= 0)
+            HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
+            if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN), backpack) <= 0)
                 return;
 
             BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();

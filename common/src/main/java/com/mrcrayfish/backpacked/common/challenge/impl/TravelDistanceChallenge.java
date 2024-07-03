@@ -24,7 +24,7 @@ import java.util.Optional;
 public class TravelDistanceChallenge extends Challenge
 {
     public static final ChallengeSerializer<TravelDistanceChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "travel_distance"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "travel_distance"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.INT_PERCENT).forGetter(challenge -> {
                 return challenge.formatter;

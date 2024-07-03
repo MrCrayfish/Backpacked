@@ -1,17 +1,16 @@
 package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
-import com.mrcrayfish.backpacked.common.Tags;
+import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
-import com.mrcrayfish.backpacked.enchantment.FunnellingEnchantment;
-import com.mrcrayfish.backpacked.enchantment.LootedEnchantment;
 import com.mrcrayfish.backpacked.integration.CuriosBackpack;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -19,15 +18,16 @@ import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
@@ -98,7 +98,7 @@ public class Backpacked
 
     private void onDropLoot(LivingDropsEvent event)
     {
-        if(LootedEnchantment.onDropLoot(event.getDrops(), event.getSource()))
+        if(EnchantmentHandler.onDropLoot(event.getDrops(), event.getSource()))
         {
             event.setCanceled(true);
         }
@@ -126,7 +126,8 @@ public class Backpacked
             if(backpack.isEmpty())
                 return;
 
-            if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MARKSMAN.get(), backpack) <= 0)
+            HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
+            if(backpack.getEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN)) <= 0)
                 return;
 
             BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
@@ -151,9 +152,9 @@ public class Backpacked
     {
         BlockState state = event.getState();
         Entity breaker = event.getBreaker();
-        if(state.is(Tags.Blocks.FUNNELLING) && breaker instanceof ServerPlayer serverPlayer)
+        if(state.is(ModTags.Blocks.FUNNELLING) && breaker instanceof ServerPlayer serverPlayer)
         {
-            if(FunnellingEnchantment.onBreakBlock(state, event.getLevel(), event.getPos(), event.getBlockEntity(), serverPlayer, event.getTool()))
+            if(EnchantmentHandler.onBreakBlock(state, event.getLevel(), event.getPos(), event.getBlockEntity(), serverPlayer, event.getTool()))
             {
                 event.setCanceled(true);
                 if(event.getDroppedExperience() > 0)

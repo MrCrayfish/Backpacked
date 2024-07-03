@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 @RegistryContainer
 public class ModDataComponents
 {
-    public static final RegistryEntry<DataComponentType<BackpackProperties>> BACKPACK_PROPERTIES = RegistryEntry.dataComponentType(new ResourceLocation(Constants.MOD_ID, "backpack_properties"), builder -> {
+    public static final RegistryEntry<DataComponentType<BackpackProperties>> BACKPACK_PROPERTIES = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_properties"), builder -> {
         return builder.persistent(BackpackProperties.CODEC).networkSynchronized(BackpackProperties.STREAM_CODEC);
     });
 }

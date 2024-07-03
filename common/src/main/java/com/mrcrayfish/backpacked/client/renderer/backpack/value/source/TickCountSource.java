@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class TickCountSource implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation("tick_count"), MapCodec.unit(new TickCountSource()));
+    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("tick_count"), MapCodec.unit(new TickCountSource()));
 
     @Override
     public Type type()

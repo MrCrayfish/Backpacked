@@ -231,7 +231,7 @@ public class Config
 
     public static void updateBannedItemsList()
     {
-        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.backpack.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
+        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.backpack.bannedItems.get().stream().map(ResourceLocation::tryParse).collect(Collectors.toSet()));
     }
 
     public static Set<ResourceLocation> getBannedItemsList()

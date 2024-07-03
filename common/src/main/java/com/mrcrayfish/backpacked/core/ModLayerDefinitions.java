@@ -24,6 +24,6 @@ public class ModLayerDefinitions
 
     private static ModelLayerLocation register(String name)
     {
-        return new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, name), "main");
+        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name), "main");
     }
 }

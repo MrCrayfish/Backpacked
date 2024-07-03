@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.MenuType;
 public class ModContainers
 {
     public static final RegistryEntry<MenuType<BackpackContainerMenu>> BACKPACK = RegistryEntry.menuTypeWithData(
-        new ResourceLocation(Constants.MOD_ID, "backpack"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"),
         BackpackContainerData.STREAM_CODEC,
         BackpackContainerMenu::new
     );

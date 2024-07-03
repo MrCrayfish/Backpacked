@@ -25,7 +25,7 @@ public class ForgeDebugClientEvents
     public void onRenderWorldLastEvent(RenderLevelStageEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
-        if(!mc.getEntityRenderDispatcher().shouldRenderHitBoxes())
+        if(mc.level == null || !mc.getEntityRenderDispatcher().shouldRenderHitBoxes())
             return;
 
         if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
@@ -65,10 +65,10 @@ public class ForgeDebugClientEvents
             Vec3 pos = player.getPosition(event.getPartialTick());
             Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.pickpocketing.maxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketing.maxReachDistance.get());
             Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.pickpocketing.maxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketing.maxReachDistance.get());
-            builder.vertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();
-            builder.vertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();
-            builder.vertex(matrix4f, (float) (pos.x + end.x),(float) (pos.y + end.y), (float) (pos.z + end.z)).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();
-            builder.vertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).color(lineRed, lineGreen, lineBlue, 1.0F).normal(0.0F, 1.0F, 0.0F).endVertex();
+            builder.addVertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);
+            builder.addVertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);
+            builder.addVertex(matrix4f, (float) (pos.x + end.x),(float) (pos.y + end.y), (float) (pos.z + end.z)).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);
+            builder.addVertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);
 
             stack.popPose();
         }

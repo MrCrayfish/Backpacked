@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -78,14 +79,13 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             renderer.forEach(function -> function.apply(context));
             pose.popPose();
         }, () -> {
-            BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+            BakedModel model = this.getModel(backpack.getBaseModel());
             this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
         });
     }
 
-    private BakedModel getModel(ResourceLocation location)
+    private BakedModel getModel(ModelResourceLocation location)
     {
-        BakedModel model = ClientServices.MODEL.getBakedModel(location);
-        return model != null ? model : this.missingModel.get();
+        return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
     }
 }

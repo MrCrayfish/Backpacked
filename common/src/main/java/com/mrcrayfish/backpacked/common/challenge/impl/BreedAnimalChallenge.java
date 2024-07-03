@@ -24,7 +24,7 @@ import java.util.Optional;
 public class BreedAnimalChallenge extends Challenge
 {
     public static final ChallengeSerializer<BreedAnimalChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "breed_animal"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "breed_animal"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.BRED_X_OF_X).forGetter(challenge -> {
                 return challenge.formatter;

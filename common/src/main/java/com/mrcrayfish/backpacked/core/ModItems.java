@@ -13,5 +13,5 @@ import net.minecraft.world.item.Item;
 @RegistryContainer
 public class ModItems
 {
-    public static final RegistryEntry<Item> BACKPACK = RegistryEntry.item(new ResourceLocation(Constants.MOD_ID, "backpack"), () -> Services.BACKPACK.createBackpackItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryEntry<Item> BACKPACK = RegistryEntry.item(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"), () -> Services.BACKPACK.createBackpackItem(new Item.Properties().stacksTo(1)));
 }

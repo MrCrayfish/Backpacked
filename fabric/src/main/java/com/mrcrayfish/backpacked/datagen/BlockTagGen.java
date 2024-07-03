@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.datagen;
 
-import com.mrcrayfish.backpacked.common.Tags;
+import com.mrcrayfish.backpacked.core.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
@@ -22,7 +22,7 @@ public class BlockTagGen extends FabricTagProvider.BlockTagProvider
     protected void addTags(HolderLookup.Provider arg)
     {
         // Does Fabric have any standard tags?
-        this.getOrCreateTagBuilder(Tags.Blocks.FUNNELLING)
+        this.getOrCreateTagBuilder(ModTags.Blocks.FUNNELLING)
                 .forceAddTag(BlockTags.GOLD_ORES)
                 .forceAddTag(BlockTags.IRON_ORES)
                 .forceAddTag(BlockTags.DIAMOND_ORES)

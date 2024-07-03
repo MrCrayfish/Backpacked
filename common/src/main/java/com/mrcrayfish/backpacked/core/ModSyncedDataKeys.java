@@ -15,14 +15,14 @@ import net.minecraft.world.entity.player.Player;
 public class ModSyncedDataKeys
 {
     public static final SyncedDataKey<Player, UnlockTracker> UNLOCK_TRACKER = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockTracker.SERIALIZER)
-        .id(new ResourceLocation(Constants.MOD_ID, "unlock_tracker"))
+        .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlock_tracker"))
         .defaultValueSupplier(UnlockTracker::new)
         .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
         .saveToFile()
         .build();
 
     public static final SyncedDataKey<WanderingTrader, TraderPickpocketing> TRADER_PICKPOCKETING = SyncedDataKey.builder(SyncedClassKey.WANDERING_TRADER, TraderPickpocketing.SERIALIZER)
-        .id(new ResourceLocation(Constants.MOD_ID, "trader_pickpocketing"))
+        .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "trader_pickpocketing"))
         .defaultValueSupplier(TraderPickpocketing::new)
         .syncMode(SyncedDataKey.SyncMode.TRACKING_ONLY)
         .saveToFile()

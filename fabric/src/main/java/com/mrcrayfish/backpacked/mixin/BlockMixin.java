@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.mixin;
 
-import com.mrcrayfish.backpacked.common.Tags;
-import com.mrcrayfish.backpacked.enchantment.FunnellingEnchantment;
+import com.mrcrayfish.backpacked.common.EnchantmentHandler;
+import com.mrcrayfish.backpacked.core.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,9 +27,9 @@ public class BlockMixin
             cancellable = true)
     private static void backpacked$CaptureDrops(BlockState state, Level level, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci)
     {
-        if(state.is(Tags.Blocks.FUNNELLING) && entity instanceof ServerPlayer serverPlayer)
+        if(state.is(ModTags.Blocks.FUNNELLING) && entity instanceof ServerPlayer serverPlayer)
         {
-            if(FunnellingEnchantment.onBreakBlock(state, (ServerLevel) level, pos, blockEntity, serverPlayer, stack))
+            if(EnchantmentHandler.onBreakBlock(state, (ServerLevel) level, pos, blockEntity, serverPlayer, stack))
             {
                 ci.cancel();
             }

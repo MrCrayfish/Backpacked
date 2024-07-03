@@ -26,7 +26,7 @@ import java.util.Optional;
 public class MerchantTradeChallenge extends Challenge
 {
     public static final ChallengeSerializer<MerchantTradeChallenge> SERIALIZER = new ChallengeSerializer<>(
-        new ResourceLocation(Constants.MOD_ID, "merchant_trade"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "merchant_trade"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.TRADED_X_OF_X).forGetter(challenge -> {
                 return challenge.formatter;

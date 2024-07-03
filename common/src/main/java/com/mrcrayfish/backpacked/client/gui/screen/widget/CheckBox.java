@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class CheckBox extends Button
 {
-    private static final ResourceLocation GUI = new ResourceLocation(Constants.MOD_ID, "textures/gui/widgets.png");
+    private static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/widgets.png");
 
     private boolean toggled = false;
 

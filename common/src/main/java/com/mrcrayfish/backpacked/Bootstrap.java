@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.BackpackEvents;
+import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
@@ -8,7 +9,6 @@ import com.mrcrayfish.backpacked.common.tracker.impl.UniqueCraftingProgressTrack
 import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.enchantment.RepairmanEnchantment;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 
@@ -24,7 +24,7 @@ public class Bootstrap
         Network.init();
         UnlockManager.instance();
         BackpackEvents.init();
-        RepairmanEnchantment.init();
+        EnchantmentHandler.init();
         WanderingTraderEvents.init();
         Config.init();
         ModCommands.init();

@@ -24,7 +24,7 @@ import java.util.List;
 public class Network
 {
     public static final FrameworkNetwork PLAY = FrameworkAPI
-        .createNetworkBuilder(new ResourceLocation(Constants.MOD_ID, "play"), 1)
+        .createNetworkBuilder(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "play"), 1)
         .registerConfigurationMessage("sync_backpacks", MessageSyncBackpacks.class, MessageSyncBackpacks.STREAM_CODEC, MessageSyncBackpacks::handle, () -> List.of(BackpackManager.instance().getSyncMessage()))
         .registerPlayMessage("open_backpack", MessageOpenBackpack.class, MessageOpenBackpack.STREAM_CODEC, MessageOpenBackpack::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("entity_backpack", MessageEntityBackpack.class, MessageEntityBackpack.STREAM_CODEC, MessageEntityBackpack::handle, PacketFlow.SERVERBOUND)

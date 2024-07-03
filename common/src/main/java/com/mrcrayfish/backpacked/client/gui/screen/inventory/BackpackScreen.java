@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
 {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/backpack.png");
+    private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/backpack.png");
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
 

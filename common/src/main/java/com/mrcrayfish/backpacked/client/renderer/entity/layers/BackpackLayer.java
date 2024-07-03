@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -71,7 +73,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
                 renderer.forEach(function -> function.apply(context));
                 pose.popPose();
             }, () -> {
-                BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+                BakedModel model = this.getModel(backpack.getBaseModel());
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
             });
             this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, this.getModel(backpack.getStrapsModel()));
@@ -80,9 +82,8 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         }
     }
 
-    private BakedModel getModel(ResourceLocation location)
+    private BakedModel getModel(ModelResourceLocation location)
     {
-        BakedModel model = ClientServices.MODEL.getBakedModel(location);
-        return model != null ? model : this.itemRenderer.getItemModelShaper().getModelManager().getMissingModel();
+        return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
     }
 }

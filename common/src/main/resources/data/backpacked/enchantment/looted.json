@@ -1,0 +1,20 @@
+{
+    "description": {
+        "translate": "enchantment.backpacked.looted"
+    },
+    "supported_items": "#backpacked:enchantable/backpack",
+    "weight": 1,
+    "anvil_cost": 8,
+    "max_level": 1,
+    "max_cost": {
+        "base": 65,
+        "per_level_above_first": 9
+    },
+    "min_cost": {
+        "base": 15,
+        "per_level_above_first": 9
+    },
+    "slots": [
+        "any"
+    ]
+}

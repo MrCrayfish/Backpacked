@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 public class FabricBackpackLoader extends BackpackLoader implements IdentifiableResourceReloadListener
 {
-    private static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "backpack_loader");
+    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_loader");
     private static WeakReference<HolderLookup.Provider> providerRef;
 
     public static void setProvider(HolderLookup.Provider provider)

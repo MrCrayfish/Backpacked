@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class UnlockBackpackToast implements Toast
 {
-    private static final ResourceLocation BACKGROUND_SPRITE = new ResourceLocation("toast/recipe");
+    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/recipe");
     private static final Component TITLE = Component.translatable("backpacked.toast.unlocked_backpack").withStyle(ChatFormatting.GOLD);
 
     private final Backpack backpack;

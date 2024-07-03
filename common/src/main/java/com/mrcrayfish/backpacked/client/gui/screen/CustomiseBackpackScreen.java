@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  */
 public class CustomiseBackpackScreen extends Screen
 {
-    public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/customise_backpack.png");
+    public static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/customise_backpack.png");
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
     private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
     private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
@@ -240,7 +240,7 @@ public class CustomiseBackpackScreen extends Screen
             renderer.forEach(function -> function.apply(context));
             pose.popPose();
         }, () -> {
-            BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+            BakedModel model = mc.getModelManager().getModel(backpack.getBaseModel());
             mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
             graphics.flush();
         });

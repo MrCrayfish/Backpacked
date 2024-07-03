@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class WalkPositionSource implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation("walk_position"), MapCodec.unit(new WalkPositionSource()));
+    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("walk_position"), MapCodec.unit(new WalkPositionSource()));
 
     @Override
     public Type type()

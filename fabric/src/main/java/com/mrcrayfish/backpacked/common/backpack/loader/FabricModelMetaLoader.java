@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class FabricModelMetaLoader extends ModelMetaLoader implements IdentifiableResourceReloadListener
 {
-    private static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "model_meta_loader");
+    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "model_meta_loader");
 
     @Override
     public ResourceLocation getFabricId()

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class WalkSpeedSource implements BaseSource
 {
-    public static final Type TYPE = new Type(new ResourceLocation("walk_speed"), MapCodec.unit(new WalkSpeedSource()));
+    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("walk_speed"), MapCodec.unit(new WalkSpeedSource()));
 
     @Override
     public Type type()

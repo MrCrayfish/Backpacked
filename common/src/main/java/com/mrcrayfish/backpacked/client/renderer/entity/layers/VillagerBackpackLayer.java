@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class VillagerBackpackLayer<T extends AbstractVillager, M extends VillagerModel<T>> extends RenderLayer<T, M>
 {
-    private static final ResourceLocation WANDERING_BACKPACK = new ResourceLocation(Constants.MOD_ID, "wandering_bag");
+    private static final ResourceLocation WANDERING_BACKPACK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "wandering_bag");
 
     private final ItemStack displayStack = new ItemStack(ModItems.BACKPACK.get());
     private final ItemRenderer itemRenderer;
@@ -65,7 +65,7 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
                 renderer.forEach(function -> function.apply(context));
                 pose.popPose();
             }, () -> {
-                BakedModel model = ClientServices.MODEL.getBakedModel(backpack.getBaseModel());
+                BakedModel model = this.itemRenderer.getItemModelShaper().getModelManager().getModel(backpack.getBaseModel());
                 this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
             });
             pose.popPose();

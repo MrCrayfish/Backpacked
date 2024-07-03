@@ -13,7 +13,7 @@ import java.util.List;
 public record StackFunction(List<BaseFunction> functions) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        new ResourceLocation("stack"),
+        ResourceLocation.withDefaultNamespace("stack"),
         RecordCodecBuilder.<StackFunction>mapCodec(builder -> builder.group(
             BaseFunction.CODEC.listOf().fieldOf("functions").forGetter(o -> o.functions)
         ).apply(builder, StackFunction::new))
