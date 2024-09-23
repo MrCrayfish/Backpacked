@@ -59,11 +59,17 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
                 return;
 
             pose.pushPose();
+
+            // Transforms the pose to player's body
+            this.getParentModel().body.translateAndRotate(pose);
+
+            // Apply transforms to fix rotation and inverted model
             pose.mulPose(Axis.YP.rotationDegrees(180.0F));
             pose.scale(1.05F, -1.05F, -1.05F);
             int offset = !chestStack.isEmpty() ? 3 : 2;
             pose.translate(0, -0.06, offset * 0.0625);
 
+            // Draw the backpack model
             ModelMeta meta = BackpackManager.instance().getModelMeta(backpack);
             meta.renderer().ifPresentOrElse(renderer -> {
                 pose.pushPose();
