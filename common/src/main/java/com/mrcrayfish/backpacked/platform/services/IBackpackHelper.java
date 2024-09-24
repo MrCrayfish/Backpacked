@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IBackpackHelper
 {
+    ItemStack getStackInBackpackSlot(Player player);
+
     ItemStack getBackpackStack(Player player);
 
     boolean setBackpackStack(Player player, ItemStack stack);

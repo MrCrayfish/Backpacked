@@ -26,6 +26,12 @@ import net.minecraftforge.network.NetworkHooks;
 public class ForgeBackpackHelper implements IBackpackHelper
 {
     @Override
+    public ItemStack getStackInBackpackSlot(Player player)
+    {
+        return Curios.getStackInBackpackSlot(player);
+    }
+
+    @Override
     public ItemStack getBackpackStack(Player player)
     {
         return Curios.getBackpackStack(player);

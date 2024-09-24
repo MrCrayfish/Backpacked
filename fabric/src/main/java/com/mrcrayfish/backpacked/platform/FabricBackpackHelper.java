@@ -28,6 +28,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FabricBackpackHelper implements IBackpackHelper
 {
     @Override
+    public ItemStack getStackInBackpackSlot(Player player)
+    {
+        return Trinkets.getStackInBackpackSlot(player);
+    }
+
+    @Override
     public ItemStack getBackpackStack(Player player)
     {
         return Trinkets.getBackpackStack(player);

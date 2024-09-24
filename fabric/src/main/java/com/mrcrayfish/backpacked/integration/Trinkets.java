@@ -15,6 +15,22 @@ import java.util.Optional;
  */
 public class Trinkets
 {
+    /**
+     * Gets the ItemStack in the trinket slot the backpack uses. The returned ItemStack may not be a
+     * backpack.
+     *
+     * @param player the player to get the stack from
+     * @return An ItemStack from the slot the backpack uses. This may not be a backpack
+     */
+    public static ItemStack getStackInBackpackSlot(Player player)
+    {
+        return TrinketsApi.getTrinketComponent(player)
+            .flatMap(component -> Optional.ofNullable(component.getInventory().get("chest")))
+            .flatMap(map -> Optional.ofNullable(map.get("back")))
+            .map(inventory -> inventory.getItem(0))
+            .orElse(ItemStack.EMPTY);
+    }
+
     public static ItemStack getBackpackStack(Player player)
     {
         ItemStack stack = TrinketsApi.getTrinketComponent(player)
