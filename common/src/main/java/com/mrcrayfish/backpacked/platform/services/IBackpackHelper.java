@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public interface IBackpackHelper
 {
+    ItemStack getStackInBackpackSlot(Player player);
+
     ItemStack getBackpackStack(Player player);
 
     boolean setBackpackStack(Player player, ItemStack stack);
