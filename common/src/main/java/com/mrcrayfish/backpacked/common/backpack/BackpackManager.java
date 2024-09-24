@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
@@ -19,6 +20,8 @@ import java.util.Map;
  */
 public final class BackpackManager
 {
+    private static final ResourceLocation FALLBACK_BACKPACK = new ResourceLocation(Constants.MOD_ID, "standard");
+
     private static BackpackManager instance;
 
     public static BackpackManager instance()
@@ -74,20 +77,30 @@ public final class BackpackManager
     }
 
     @Nullable
-    public Backpack getClientBackpack(String id)
+    public Backpack getClientBackpackOrDefault(ResourceLocation id)
     {
-        return this.clientBackpacks.get(ResourceLocation.tryParse(id));
+        Backpack backpack = this.clientBackpacks.get(id);
+        if(backpack != null)
+        {
+            return backpack;
+        }
+        return this.clientBackpacks.get(FALLBACK_BACKPACK);
+    }
+
+    @Nullable
+    public Backpack getClientBackpackOrDefault(String id)
+    {
+        Backpack backpack = this.clientBackpacks.get(ResourceLocation.tryParse(id));
+        if(backpack != null)
+        {
+            return backpack;
+        }
+        return this.clientBackpacks.get(FALLBACK_BACKPACK);
     }
 
     public List<Backpack> getClientBackpacks()
     {
         return ImmutableList.copyOf(this.clientBackpacks.values());
-    }
-
-    // TODO move out
-    public ModelMeta getModelMeta(ResourceLocation id)
-    {
-        return this.clientModelMeta.getOrDefault(id, ModelMeta.DEFAULT);
     }
 
     public ModelMeta getModelMeta(Backpack backpack)

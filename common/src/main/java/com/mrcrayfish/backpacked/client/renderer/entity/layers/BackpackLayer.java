@@ -54,7 +54,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             if(!Services.BACKPACK.isBackpackVisible(player))
                 return;
 
-            Backpack backpack = BackpackManager.instance().getClientBackpack(properties.model());
+            Backpack backpack = BackpackManager.instance().getClientBackpackOrDefault(properties.model());
             if(backpack == null)
                 return;
 

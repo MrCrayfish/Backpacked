@@ -50,7 +50,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             return;
 
         BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
-        Backpack backpack = BackpackManager.instance().getClientBackpack(properties.model());
+        Backpack backpack = BackpackManager.instance().getClientBackpackOrDefault(properties.model());
         if(backpack == null)
             return;
 
