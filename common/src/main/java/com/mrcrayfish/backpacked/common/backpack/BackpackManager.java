@@ -79,11 +79,22 @@ public final class BackpackManager
     @Nullable
     public Backpack getClientBackpackOrDefault(String id)
     {
+        // Try getting the backpack with the given id
         Backpack backpack = this.clientBackpacks.get(ResourceLocation.tryParse(id));
         if(backpack != null)
         {
             return backpack;
         }
+
+        // Otherwise try getting the default backpack defined by the server config
+        ResourceLocation defaultId = ResourceLocation.tryParse(Config.SERVER.backpack.defaultCosmetic.get());
+        backpack = this.clientBackpacks.get(defaultId);
+        if(backpack != null)
+        {
+            return backpack;
+        }
+
+        // Otherwise try getting the fallback. If this fails, then something went really wrong
         return this.clientBackpacks.get(FALLBACK_BACKPACK);
     }
 

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientEvents;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
@@ -58,7 +59,6 @@ import java.util.stream.Collectors;
  */
 public class CustomiseBackpackScreen extends Screen
 {
-    public static final String DEFAULT_BACKPACK = "backpacked:standard";
     public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/customise_backpack.png");
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
     private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
@@ -118,7 +118,7 @@ public class CustomiseBackpackScreen extends Screen
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
         this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.reset"), onPress -> {
-            this.displayBackpackModel = DEFAULT_BACKPACK;
+            this.displayBackpackModel = Config.SERVER.backpack.defaultCosmetic.get();
         }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(new ResourceLocation(this.displayBackpackModel), this.displayShowEnchantmentGlint, this.displayShowWithElytra, this.displayShowEffects));
@@ -147,7 +147,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.getBackpackModel().equals(DEFAULT_BACKPACK);
+        this.resetButton.active = !this.getBackpackModel().equals(Config.SERVER.backpack.defaultCosmetic.get());
         this.saveButton.active = this.needsToSave();
     }
 
@@ -361,6 +361,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void scrollToIndex(int index)
     {
+        // 123 is the height of the scrollbar area
         this.scroll = (int) (123.0 * ((double) index / (double) Math.max(this.models.size() - 7, 1)));
         this.scroll = Mth.clamp(this.scroll, 0, 123);
     }
@@ -380,7 +381,7 @@ public class CustomiseBackpackScreen extends Screen
                 }
             }
         }
-        return DEFAULT_BACKPACK;
+        return Config.SERVER.backpack.defaultCosmetic.get();
     }
 
     private void setLocalBackpackModel(String model)
