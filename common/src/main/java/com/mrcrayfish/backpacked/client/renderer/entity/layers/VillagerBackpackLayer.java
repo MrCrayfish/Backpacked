@@ -47,6 +47,10 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
             if(!data.isBackpackEquipped())
                 return;
 
+            // Since wandering traders drink invisibility potion at night, stop drawing the backpack
+            if(villager.isInvisible())
+                return;
+
             Backpack backpack = BackpackManager.instance().getClientBackpack(WANDERING_BACKPACK);
             if(backpack == null)
                 return;
