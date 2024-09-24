@@ -52,7 +52,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
                 return;
 
             String modelName = stack.getOrCreateTag().getString("BackpackModel");
-            Backpack backpack = BackpackManager.instance().getClientBackpack(modelName);
+            Backpack backpack = BackpackManager.instance().getClientBackpackOrDefault(modelName);
             if(backpack == null)
                 return;
 

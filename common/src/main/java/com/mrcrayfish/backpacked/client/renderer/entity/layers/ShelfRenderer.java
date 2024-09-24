@@ -49,8 +49,8 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 
         CompoundTag tag = stack.getOrCreateTag();
         String modelName = tag.getString("BackpackModel");
-        Backpack backpack = BackpackManager.instance().getClientBackpack(modelName);
-        if(backpack == null) // TODO render default
+        Backpack backpack = BackpackManager.instance().getClientBackpackOrDefault(modelName);
+        if(backpack == null)
             return;
 
         Direction facing = entity.getDirection();
