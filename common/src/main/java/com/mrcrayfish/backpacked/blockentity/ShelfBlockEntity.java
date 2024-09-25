@@ -82,7 +82,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return InteractionResult.SUCCESS;
     }
 
-    public boolean shelveBackpack(Player player)
+    private boolean shelveBackpack(Player player)
     {
         ItemStack stack = Services.BACKPACK.getStackInBackpackSlot(player);
         if(stack.getItem() instanceof BackpackItem || stack.isEmpty() && !this.backpack.isEmpty())
