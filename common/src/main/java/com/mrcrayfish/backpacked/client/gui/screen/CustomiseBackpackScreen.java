@@ -436,8 +436,11 @@ public class CustomiseBackpackScreen extends Screen
         matrixStack.translate(0, -this.windowHeight / 2, 0);
         matrixStack.scale(scale, scale, scale);
         float origBodyRot = player.yBodyRot;
+        float origBodyRotOld = player.yBodyRotO;
         float origYaw = player.getYRot();
+        float origYawOld = player.yRotO;
         float origPitch = player.getXRot();
+        float origPitchOld = player.xRotO;
         float origHeadYawOld = player.yHeadRotO;
         float origHeadYaw = player.yHeadRot;
         String origBackpackModel = this.getBackpackModel();
@@ -465,8 +468,11 @@ public class CustomiseBackpackScreen extends Screen
         source.endBatch();
         manager.setRenderShadow(true);
         player.yBodyRot = origBodyRot;
+        player.yBodyRotO = origBodyRotOld;
         player.setYRot(origYaw);
+        player.yRotO = origYawOld;
         player.setXRot(origPitch);
+        player.xRotO = origPitchOld;
         player.yHeadRotO = origHeadYawOld;
         player.yHeadRot = origHeadYaw;
         this.setLocalBackpackModel(origBackpackModel);
