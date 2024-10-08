@@ -17,6 +17,23 @@ public class CuriosHelper
 {
     public static final String SLOT_BACK = "back";
 
+    /**
+     * Gets the ItemStack in the curio slot the backpack uses. The returned ItemStack may not be a
+     * backpack.
+     *
+     * @param player the player to get the stack from
+     * @return An ItemStack from the slot the backpack uses. This may not be a backpack
+     */
+    public static ItemStack getStackInBackpackSlot(Player player)
+    {
+        AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);
+        Optional<ICuriosItemHandler> optional = CuriosApi.getCuriosInventory(player);
+        optional.flatMap(handler -> handler.getStacksHandler(SLOT_BACK)).ifPresent(handler -> {
+            backpack.set(handler.getStacks().getStackInSlot(0));
+        });
+        return backpack.get();
+    }
+
     public static ItemStack getBackpackStack(Player player)
     {
         AtomicReference<ItemStack> backpack = new AtomicReference<>(ItemStack.EMPTY);

@@ -23,6 +23,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class NeoForgeBackpackHelper implements IBackpackHelper
 {
     @Override
+    public ItemStack getStackInBackpackSlot(Player player)
+    {
+        return CuriosHelper.getStackInBackpackSlot(player);
+    }
+
+    @Override
     public ItemStack getBackpackStack(Player player)
     {
         return CuriosHelper.getBackpackStack(player);
