@@ -11,12 +11,13 @@ import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
-import com.mrcrayfish.backpacked.integration.CuriosBackpack;
+import com.mrcrayfish.backpacked.integration.BackpackAccessory;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
+import io.wispforest.accessories.api.AccessoriesAPI;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
@@ -28,7 +29,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -45,7 +45,6 @@ import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -76,7 +75,7 @@ public class Backpacked
     {
         event.enqueueWork(() -> {
             Bootstrap.init();
-            CuriosApi.registerCurio(ModItems.BACKPACK.get(), new CuriosBackpack());
+            AccessoriesAPI.registerAccessory(ModItems.BACKPACK.get(), new BackpackAccessory());
         });
     }
 

@@ -8,6 +8,10 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackL
 import com.mrcrayfish.backpacked.common.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModItems;
+import io.wispforest.accessories.api.AccessoriesAPI;
+import io.wispforest.accessories.api.client.AccessoriesRendererRegistry;
+import io.wispforest.accessories.api.client.AccessoryRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
@@ -36,6 +40,7 @@ public class ClientHandler
     {
         event.enqueueWork(() -> {
             ClientBootstrap.init();
+            AccessoriesRendererRegistry.registerNoRenderer(ModItems.BACKPACK.get());
             if(!FMLLoader.isProduction()) {
                 NeoForge.EVENT_BUS.register(new PickpocketDebugRenderer());
             }

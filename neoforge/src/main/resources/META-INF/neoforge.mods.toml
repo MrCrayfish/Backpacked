@@ -39,9 +39,9 @@ config = "${mod_id}.common.mixins.json"
     side="BOTH"
 
 [[dependencies."${mod_id}"]]
-    modId="curios"
+    modId="accessories"
     type="required"
-    versionRange="[${curios_version},)"
+    versionRange="[${accessories_version},)"
     ordering="NONE"
     side="BOTH"
 

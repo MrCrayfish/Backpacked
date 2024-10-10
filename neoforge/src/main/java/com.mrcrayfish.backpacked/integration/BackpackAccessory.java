@@ -1,32 +1,33 @@
 package com.mrcrayfish.backpacked.integration;
 
 import com.mrcrayfish.backpacked.Config;
+import io.wispforest.accessories.api.Accessory;
+import io.wispforest.accessories.api.DropRule;
+import io.wispforest.accessories.api.SoundEventData;
+import io.wispforest.accessories.api.slot.SlotReference;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurio;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.StreamSupport;
 
 /**
  * Author: MrCrayfish
  */
-public class CuriosBackpack implements ICurioItem
+public class BackpackAccessory implements Accessory
 {
-    @NotNull
     @Override
-    public ICurio.SoundInfo getEquipSound(SlotContext context, ItemStack stack)
+    @Nullable
+    public SoundEventData getEquipSound(ItemStack stack, SlotReference reference)
     {
-        return new ICurio.SoundInfo(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0F, 1.0F);
+        return new SoundEventData(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
     }
 
     @Override
-    public boolean canEquipFromUse(SlotContext context, ItemStack stack)
+    public boolean canEquipFromUse(ItemStack stack)
     {
         return true;
     }
@@ -49,13 +50,7 @@ public class CuriosBackpack implements ICurioItem
     }*/
 
     @Override
-    public boolean canSync(SlotContext context, ItemStack stack)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean canUnequip(SlotContext context, ItemStack stack)
+    public boolean canUnequip(ItemStack stack, SlotReference reference)
     {
         if(!Config.SERVER.backpack.lockIntoSlot.get())
             return true;
@@ -64,10 +59,9 @@ public class CuriosBackpack implements ICurioItem
         return contents == null || StreamSupport.stream(contents.nonEmptyItems().spliterator(), false).allMatch(ItemStack::isEmpty);
     }
 
-    @NotNull
     @Override
-    public ICurio.DropRule getDropRule(SlotContext context, DamageSource source, int lootingLevel, boolean recentlyHit, ItemStack stack)
+    public DropRule getDropRule(ItemStack stack, SlotReference reference, DamageSource source)
     {
-        return Config.SERVER.backpack.keepOnDeath.get() ? ICurio.DropRule.ALWAYS_KEEP : ICurio.DropRule.DEFAULT;
+        return Config.SERVER.backpack.keepOnDeath.get() ? DropRule.KEEP : DropRule.DEFAULT;
     }
 }

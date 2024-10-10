@@ -23,7 +23,7 @@ public class NeoForgeScreenHelper implements IScreenHelper
         Minecraft minecraft = Minecraft.getInstance();
         ModList.get().getModContainerById(Constants.MOD_ID).ifPresent(container ->
         {
-            Screen screen = container.getCustomExtension(IConfigScreenFactory.class).map(function -> function.createScreen(minecraft, null)).orElse(null);
+            Screen screen = container.getCustomExtension(IConfigScreenFactory.class).map(function -> function.createScreen(container, null)).orElse(null);
             if(screen != null)
             {
                 minecraft.setScreen(screen);

@@ -29,23 +29,16 @@ runs {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'Curios API'
-                url = 'https://maven.theillusivec4.top/'
-            }
-        }
-        filter {
-            includeGroup("top.theillusivec4.curios")
-        }
-    }
+    maven { url = "https://maven.wispforest.io/releases" }
+    maven { url 'https://maven.su5ed.dev/releases' }
+    maven { url 'https://maven.fabricmc.net' }
+    maven { url 'https://maven.shedaniel.me/' }
 }
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
-    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    implementation "io.wispforest:accessories-neoforge:${accessories_version}"
     runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
 }
 

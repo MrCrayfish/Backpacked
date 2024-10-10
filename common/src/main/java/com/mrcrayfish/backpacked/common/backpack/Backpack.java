@@ -29,6 +29,7 @@ public class Backpack
 {
     public static final ResourceLocation DEFAULT_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "standard");
     public static final StreamCodec<FriendlyByteBuf, Backpack> STREAM_CODEC = StreamCodec.of((buf, backpack) -> {
+        backpack.checkSetup();
         buf.writeResourceLocation(backpack.id);
         buf.writeBoolean(backpack.challenge.isPresent());
     }, Backpack::new);
@@ -97,14 +98,6 @@ public class Backpack
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
         return this.challenge.map(c -> c.createProgressTracker(backpackId)).orElse(null);
-    }
-
-    // TODO switch to streamcodec in 1.20.6
-    public void write(FriendlyByteBuf buf)
-    {
-        this.checkSetup();
-        buf.writeResourceLocation(this.id);
-        buf.writeBoolean(this.challenge.isPresent());
     }
 
     public void setup(ResourceLocation id)

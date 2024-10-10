@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.integration.CuriosHelper;
+import com.mrcrayfish.backpacked.integration.AccessoriesHelper;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -25,7 +25,7 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     @Override
     public ItemStack getBackpackStack(Player player)
     {
-        return CuriosHelper.getBackpackStack(player);
+        return AccessoriesHelper.getBackpackStack(player);
     }
 
     @Override
@@ -33,14 +33,14 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     {
         if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
             return false;
-        CuriosHelper.setBackpackStack(player, stack);
+        AccessoriesHelper.setBackpackStack(player, stack);
         return true;
     }
 
     @Override
     public boolean isBackpackVisible(Player player)
     {
-        return CuriosHelper.isBackpackVisible(player);
+        return AccessoriesHelper.isBackpackVisible(player);
     }
 
     @Override
