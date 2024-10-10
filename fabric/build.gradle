@@ -39,7 +39,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
-    modImplementation "io.wispforest:accessories-fabric:${accessories_version}"
+    modImplementation ("io.wispforest:accessories-fabric:${accessories_version}") {
+        exclude group: "net.fabricmc"
+    }
     modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
     modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
 }
