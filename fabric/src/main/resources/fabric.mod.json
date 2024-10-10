@@ -34,7 +34,7 @@
         "minecraft": "${minecraft_version}",
         "java": ">=21",
         "framework": ">=${framework_version}",
-        "trinkets": ">=${trinkets_version}"
+        "accessories": ">=${accessories_version}"
     },
     "accessWidener": "backpacked.accesswidener",
     "custom": {
