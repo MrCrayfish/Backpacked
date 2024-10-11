@@ -17,11 +17,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Optional;
+
 /**
  * Author: MrCrayfish
  */
 public class FabricBackpackHelper implements IBackpackHelper
 {
+    @Override
+    public Optional<ItemStack> getStackInBackpackSlot(Player player)
+    {
+        return AccessoriesHelper.getStackInBackpackSlot(player);
+    }
+
     @Override
     public ItemStack getBackpackStack(Player player)
     {

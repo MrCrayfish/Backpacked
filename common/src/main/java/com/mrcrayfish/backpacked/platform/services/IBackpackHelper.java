@@ -11,11 +11,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Optional;
+
 /**
  * Author: MrCrayfish
  */
 public interface IBackpackHelper
 {
+    Optional<ItemStack> getStackInBackpackSlot(Player player);
+
     ItemStack getBackpackStack(Player player);
 
     boolean setBackpackStack(Player player, ItemStack stack);

@@ -72,19 +72,12 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     public InteractionResult interact(Player player)
     {
-        if(player.isCrouching() || this.backpack.isEmpty())
+        if(player.isCrouching())
         {
-            ItemStack stack = Services.BACKPACK.getBackpackStack(player);
-            if(!stack.isEmpty() && !(stack.getItem() instanceof BackpackItem))
+            if(!this.shelveBackpack(player))
             {
-                if(!this.backpack.isEmpty())
-                {
-                    player.displayClientMessage(Component.translatable("message.backpacked.occupied_back_slot"), true);
-                }
                 return InteractionResult.FAIL;
             }
-            ItemStack result = this.shelveBackpack(stack);
-            Services.BACKPACK.setBackpackStack(player, result);
         }
         else if(player instanceof ServerPlayer serverPlayer)
         {
@@ -93,20 +86,42 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return InteractionResult.SUCCESS;
     }
 
-    public ItemStack shelveBackpack(ItemStack stack)
+    public boolean shelveBackpack(Player player)
     {
-        ItemStack shelvedBackpack = this.backpack.copy();
-        this.copyInventoryToStack(shelvedBackpack);
-        this.backpack = stack.copy();
-        if(!this.backpack.isEmpty() || !shelvedBackpack.isEmpty())
+        Optional<ItemStack> optional = Services.BACKPACK.getStackInBackpackSlot(player);
+        if(optional.isEmpty())
+            return false;
+
+        ItemStack stack = optional.get();
+        if(stack.getItem() instanceof BackpackItem || stack.isEmpty() && !this.backpack.isEmpty())
         {
+            ItemStack shelvedBackpack = this.backpack.copy();
+            this.copyInventoryToStack(shelvedBackpack);
+            this.backpack = stack.copy();
+
+            // Update the stack in the backpack slot
+            Services.BACKPACK.setBackpackStack(player, shelvedBackpack);
+
+            // Play a sound
             boolean removed = this.backpack.isEmpty();
+            float soundPitch = removed ? 0.75F : 1.0F;
+            this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, soundPitch);
+
+            // Update the shelf inventory
             this.updateInventory(false);
+
+            // Send changes to client and mark block entity as dirty
             BlockEntityUtil.sendUpdatePacket(this);
-            this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, removed ? 0.75F : 1.0F);
             this.setChanged();
+
+            return true;
         }
-        return shelvedBackpack;
+        else if(!stack.isEmpty())
+        {
+            player.displayClientMessage(Component.translatable("message.backpacked.occupied_back_slot"), true);
+            return false;
+        }
+        return true;
     }
 
     private void openBackpackInventory(ServerPlayer player)
