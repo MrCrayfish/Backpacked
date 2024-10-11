@@ -27,7 +27,6 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class Backpack
 {
-    public static final ResourceLocation DEFAULT_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "standard");
     public static final StreamCodec<FriendlyByteBuf, Backpack> STREAM_CODEC = StreamCodec.of((buf, backpack) -> {
         backpack.checkSetup();
         buf.writeResourceLocation(backpack.id);

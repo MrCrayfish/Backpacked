@@ -11,6 +11,7 @@ import com.mrcrayfish.framework.api.config.EnumProperty;
 import com.mrcrayfish.framework.api.config.FrameworkConfig;
 import com.mrcrayfish.framework.api.config.IntProperty;
 import com.mrcrayfish.framework.api.config.ListProperty;
+import com.mrcrayfish.framework.api.config.StringProperty;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import com.mrcrayfish.framework.api.config.validate.Validator;
 import net.minecraft.network.chat.Component;
@@ -55,6 +56,9 @@ public class Config
 
         public static class Backpack
         {
+            @ConfigProperty(name = "defaultCosmetic", comment = "The default cosmetic (model) of the backpack. This should generally be a backpack that is unlocked by default")
+            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:standard", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
+
             @ConfigProperty(name = "keepOnDeath", comment = "If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.")
             public final BoolProperty keepOnDeath = BoolProperty.create(false);
 

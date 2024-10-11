@@ -1,8 +1,10 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
@@ -105,7 +107,7 @@ public class CustomiseBackpackScreen extends Screen
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
         this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.reset"), onPress -> {
-            this.displayBackpack = this.displayBackpack.setModel(Backpack.DEFAULT_MODEL);
+            this.displayBackpack = this.displayBackpack.setModel(BackpackManager.getDefaultOrFallbackCosmetic());
         }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.displayBackpack));
@@ -134,7 +136,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.displayBackpack.model().equals(Backpack.DEFAULT_MODEL);
+        this.resetButton.active = !this.displayBackpack.model().equals(BackpackManager.getDefaultCosmetic());
         this.saveButton.active = this.needsToSave();
     }
 
@@ -341,6 +343,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void scrollToIndex(int index)
     {
+        // 123 is the height of the scrollbar area
         this.scroll = (int) (123.0 * ((double) index / (double) Math.max(this.models.size() - 7, 1)));
         this.scroll = Mth.clamp(this.scroll, 0, 123);
     }

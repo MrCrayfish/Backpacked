@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.framework.api.FrameworkAPI;
+import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 
 /**
  * Author: MrCrayfish

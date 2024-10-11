@@ -1,18 +1,20 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
+import com.google.common.base.MoreObjects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: MrCrayfish
  */
 public record BackpackProperties(ResourceLocation model, boolean showWithElytra, boolean showEffects, boolean showEnchantmentGlint)
 {
-    public static final BackpackProperties DEFAULT = new BackpackProperties(Backpack.DEFAULT_MODEL, false, true, false);
+    public static final BackpackProperties DEFAULT = new BackpackProperties(null, false, true, false);
 
     public static final Codec<BackpackProperties> CODEC = RecordCodecBuilder.create(builder -> builder.group(
         ResourceLocation.CODEC.fieldOf("model").forGetter(o -> o.model),
@@ -28,6 +30,16 @@ public record BackpackProperties(ResourceLocation model, boolean showWithElytra,
         ByteBufCodecs.BOOL, BackpackProperties::showEnchantmentGlint,
         BackpackProperties::new
     );
+
+    @Override
+    public ResourceLocation model()
+    {
+        if(this.model != null)
+        {
+            return this.model;
+        }
+        return BackpackManager.getDefaultOrFallbackCosmetic();
+    }
 
     public BackpackProperties setModel(ResourceLocation model)
     {

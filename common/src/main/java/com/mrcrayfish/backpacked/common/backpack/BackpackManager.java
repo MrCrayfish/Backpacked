@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
+import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -20,8 +21,8 @@ import java.util.Map;
  */
 public final class BackpackManager
 {
-    private static final ResourceLocation FALLBACK_BACKPACK = new ResourceLocation(Constants.MOD_ID, "standard");
-
+    private static final ResourceLocation FALLBACK_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "standard");
+    private static ResourceLocation defaultCosmetic;
     private static BackpackManager instance;
 
     public static BackpackManager instance()
@@ -34,12 +35,23 @@ public final class BackpackManager
     }
 
     private Map<ResourceLocation, Backpack> loadedBackpacks = new HashMap<>();
-
-    // Client only
     private Map<ResourceLocation, Backpack> clientBackpacks = new HashMap<>();
     private Map<ResourceLocation, ModelMeta> clientModelMeta = new HashMap<>();
 
-    private BackpackManager() {}
+    private BackpackManager()
+    {
+        // Update the default backpack on load/reload of config
+        FrameworkConfigEvents.LOAD.register(object -> {
+            if(object == Config.SERVER) {
+                updateDefaultCosmetic();
+            }
+        });
+        FrameworkConfigEvents.RELOAD.register(object -> {
+            if(object == Config.SERVER) {
+                updateDefaultCosmetic();
+            }
+        });
+    }
 
     public void updateBackpacks(Map<ResourceLocation, Backpack> map)
     {
@@ -79,23 +91,14 @@ public final class BackpackManager
     @Nullable
     public Backpack getClientBackpackOrDefault(ResourceLocation id)
     {
+        // Try getting the backpack with the given id
         Backpack backpack = this.clientBackpacks.get(id);
         if(backpack != null)
         {
             return backpack;
         }
-        return this.clientBackpacks.get(FALLBACK_BACKPACK);
-    }
-
-    @Nullable
-    public Backpack getClientBackpackOrDefault(String id)
-    {
-        Backpack backpack = this.clientBackpacks.get(ResourceLocation.tryParse(id));
-        if(backpack != null)
-        {
-            return backpack;
-        }
-        return this.clientBackpacks.get(FALLBACK_BACKPACK);
+        // Otherwise get the default cosmetic.
+        return this.clientBackpacks.get(getDefaultOrFallbackCosmetic());
     }
 
     public List<Backpack> getClientBackpacks()
@@ -128,5 +131,21 @@ public final class BackpackManager
     public MessageSyncBackpacks getSyncMessage()
     {
         return new MessageSyncBackpacks(this.getBackpacks());
+    }
+
+    private static void updateDefaultCosmetic()
+    {
+        defaultCosmetic = ResourceLocation.tryParse(Config.SERVER.backpack.defaultCosmetic.get());
+    }
+
+    @Nullable
+    public static ResourceLocation getDefaultCosmetic()
+    {
+        return defaultCosmetic;
+    }
+
+    public static ResourceLocation getDefaultOrFallbackCosmetic()
+    {
+        return defaultCosmetic != null ? defaultCosmetic : FALLBACK_MODEL;
     }
 }
