@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.util.Serializable;
 import com.mrcrayfish.framework.api.sync.IDataSerializer;
+import com.mrcrayfish.framework.api.sync.SyncedObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class UnlockTracker implements Serializable
+public class UnlockTracker extends SyncedObject implements Serializable
 {
     public static final Serializer SERIALIZER = new Serializer();
 
@@ -55,12 +56,6 @@ public class UnlockTracker implements Serializable
         return this.backpackToProgressTracker;
     }
 
-    void setUnlockedBackpacks(Set<ResourceLocation> unlockedBackpacks)
-    {
-        this.unlockedBackpacks.clear();
-        this.unlockedBackpacks.addAll(unlockedBackpacks);
-    }
-
     public boolean isUnlocked(ResourceLocation id)
     {
         return this.unlockedBackpacks.contains(id);
@@ -89,7 +84,11 @@ public class UnlockTracker implements Serializable
     {
         if(BackpackManager.instance().getBackpack(id) != null)
         {
-            return this.unlockedBackpacks.add(id);
+            if(this.unlockedBackpacks.add(id))
+            {
+                this.markDirty();
+                return true;
+            }
         }
         return false;
     }
@@ -146,8 +145,6 @@ public class UnlockTracker implements Serializable
         {
             buf.writeNbt(value.serialize());
         }
-
-        // TODO convert to updatable
 
         @Override
         public UnlockTracker read(FriendlyByteBuf buf)
