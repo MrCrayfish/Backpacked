@@ -379,9 +379,11 @@ public class CustomiseBackpackScreen extends Screen
         float origBodyRot = player.yBodyRot;
         float origBodyRotOld = player.yBodyRotO;
         float origYaw = player.getYRot();
+        float origYawOld = player.yRotO;
         float origPitch = player.getXRot();
-        float origHeadYawOld = player.yHeadRotO;
+        float origPitchOld = player.xRotO;
         float origHeadYaw = player.yHeadRot;
+        float origHeadYawOld = player.yHeadRotO;
         player.yBodyRot = 0.0F;
         player.yBodyRotO = 0.0F;
         player.setYRot(0.0F);
@@ -400,9 +402,11 @@ public class CustomiseBackpackScreen extends Screen
         player.yBodyRot = origBodyRot;
         player.yBodyRotO = origBodyRotOld;
         player.setYRot(origYaw);
+        player.yRotO = origYawOld;
         player.setXRot(origPitch);
-        player.yHeadRotO = origHeadYawOld;
+        player.xRotO = origPitchOld;
         player.yHeadRot = origHeadYaw;
+        player.yHeadRotO = origHeadYawOld;
         this.setLocalBackpackProperties(originalProperties);
     }
 
