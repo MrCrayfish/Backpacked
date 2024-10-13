@@ -8,7 +8,8 @@
         "BlockMixin",
         "EntityMixin",
         "LivingEntityMixin",
-        "ReloadableServerResourcesMixin"
+        "ReloadableServerResourcesMixin",
+        "FabricPlayerMixin"
     ],
     "client": [ ],
     "injectors": {
