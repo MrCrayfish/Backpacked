@@ -60,12 +60,6 @@ public class UnlockTracker extends SyncedObject
         return this.backpackToProgressTracker;
     }
 
-    void setUnlockedBackpacks(Set<ResourceLocation> unlockedBackpacks)
-    {
-        this.unlockedBackpacks.clear();
-        this.unlockedBackpacks.addAll(unlockedBackpacks);
-    }
-
     public boolean isUnlocked(ResourceLocation id)
     {
         return this.unlockedBackpacks.contains(id);
@@ -94,6 +88,7 @@ public class UnlockTracker extends SyncedObject
     {
         if(BackpackManager.instance().getBackpack(id) != null)
         {
+            this.markDirty();
             return this.unlockedBackpacks.add(id);
         }
         return false;
