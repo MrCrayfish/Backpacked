@@ -32,7 +32,7 @@ public class BackpackArgument implements ArgumentType<Backpack>
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
     {
-        BackpackManager.instance().getBackpacks().forEach(backpack -> builder.suggest(backpack.getId().toString()));
+        BackpackManager.instance().getClientBackpacks().forEach(backpack -> builder.suggest(backpack.getId().toString()));
         return builder.buildFuture();
     }
 }
