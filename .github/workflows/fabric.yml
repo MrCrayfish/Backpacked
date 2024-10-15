@@ -29,6 +29,12 @@ jobs:
           key: gradle-minecraft-${{ steps.mod_data.outputs.minecraft_version }}-fabric
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+      - name: Run Data Gen
+        env:
+          GPR_USER: "MrCrayfish"
+          GPR_KEY: ${{ secrets.GPR_TOKEN }}
+          TARGET_LOADER: "fabric"
+        run: ./gradlew :fabric:runDatagen
       - name: Build and Publish
         env:
           TARGET_LOADER: "fabric"
