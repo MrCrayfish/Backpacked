@@ -38,6 +38,12 @@ jobs:
           encodedString: ${{ env.JKS }}
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+      - name: Run Data Gen
+        env:
+          GPR_USER: "MrCrayfish"
+          GPR_KEY: ${{ secrets.GPR_TOKEN }}
+          TARGET_LOADER: "neoforge"
+        run: ./gradlew :neoforge:runData
       - name: Build and Publish
         env:
           TARGET_LOADER: "neoforge"
