@@ -28,7 +28,7 @@ import java.util.Map;
 public class ModelMetaLoader extends SimplePreparableReloadListener<Map<ResourceLocation, ModelMeta>>
 {
     private static final String DIRECTORY = "backpacked";
-    private static final String EXTENSION = ".backpack";
+    private static final String EXTENSION = ".json";
     private static final FileToIdConverter CONVERTER = new FileToIdConverter(DIRECTORY, EXTENSION);
     private static final Gson GSON = new GsonBuilder().create();
 
