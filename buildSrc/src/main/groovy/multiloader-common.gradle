@@ -16,6 +16,18 @@ java {
     withJavadocJar()
 }
 
+def getGprUser() {
+    return project.findProperty('gpr.user') ?: System.getenv("GPR_USER")
+}
+
+def getGprKey() {
+    return project.findProperty('gpr.key') ?: System.getenv("GPR_KEY")
+}
+
+def getPackagesRepo() {
+    return project.findProperty('packagesRepo') ?: System.getenv("PACKAGES_REPO")
+}
+
 repositories {
     mavenCentral()
     // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
@@ -28,22 +40,17 @@ repositories {
         }
         filter { includeGroupAndSubgroups("org.spongepowered") }
     }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "MrCrayfish (GitHub)"
-                url = "https://maven.pkg.github.com/MrCrayfish/Maven"
-                credentials {
-                    username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-                    password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
-                }
+    if(getGprUser() && getGprKey()) {
+        maven {
+            name = "MrCrayfish (GitHub)"
+            url = getPackagesRepo()
+            credentials {
+                username = getGprUser()
+                password = getGprKey()
             }
         }
-        filter {
-            includeGroupAndSubgroups("com.mrcrayfish")
-        }
     }
-    if (!System.getenv("CI")) {
+    if (!System.getenv("CI") && System.getenv("LOCAL_MAVEN")) {
         maven {
             url "file://" + System.getenv("LOCAL_MAVEN")
         }
@@ -161,16 +168,18 @@ publishing {
         }
     }
     repositories {
-        if (System.getenv("CI")) {
-            maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/MrCrayfish/Maven"
-                credentials {
-                    username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-                    password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
+        if (System.getenv("CI") == 'true') {
+            if (getGprUser() && getGprKey()) {
+                maven {
+                    name = "GitHubPackages"
+                    url = uri(getPackagesRepo())
+                    credentials {
+                        username = getGprUser()
+                        password = getGprKey()
+                    }
                 }
             }
-        } else {
+        } else if (System.getenv("LOCAL_MAVEN")) {
             maven {
                 url "file://" + System.getenv("LOCAL_MAVEN")
             }
