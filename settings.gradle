@@ -65,6 +65,5 @@ def includeModloader(String name) {
 
 rootProject.name = 'Backpacked'
 include("common")
-//includeModloader("forge")
 includeModloader("fabric")
 includeModloader("neoforge")
