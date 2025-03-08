@@ -29,10 +29,7 @@ runs {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven { url = "https://maven.wispforest.io/releases" }
-    maven { url 'https://maven.su5ed.dev/releases' }
-    maven { url 'https://maven.fabricmc.net' }
-    maven { url 'https://maven.shedaniel.me/' }
+
 }
 
 dependencies {
