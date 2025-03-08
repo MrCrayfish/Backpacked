@@ -3,8 +3,11 @@ package com.mrcrayfish.backpacked.item;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
+import com.mrcrayfish.backpacked.inventory.ManagementInventory;
+import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.ClientUtils;
 import net.minecraft.ChatFormatting;
@@ -12,6 +15,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -56,7 +61,15 @@ public class BackpackItem extends Item
             Services.BACKPACK.openBackpackScreen(openingPlayer, backpackInventory, cols, rows, owner, title);
             return true;
         }
+        openBackpackManagement(ownerPlayer);
         return false;
+    }
+
+    public static void openBackpackManagement(ServerPlayer player)
+    {
+        player.openMenu(new SimpleMenuProvider((windowId, inventory, player1) -> {
+            return new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
+        }, Component.literal("Hello")));
     }
 
     public int getColumnCount()

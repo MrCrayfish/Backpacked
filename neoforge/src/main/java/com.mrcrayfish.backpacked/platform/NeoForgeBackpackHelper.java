@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.integration.AccessoriesHelper;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -27,13 +27,13 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     @Override
     public Optional<ItemStack> getStackInBackpackSlot(Player player)
     {
-        return AccessoriesHelper.getStackInBackpackSlot(player);
+        return Optional.of(this.getBackpackStack(player));
     }
 
     @Override
     public ItemStack getBackpackStack(Player player)
     {
-        return AccessoriesHelper.getBackpackStack(player);
+        return ModSyncedDataKeys.BACKPACK.getValue(player);
     }
 
     @Override
@@ -41,14 +41,14 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     {
         if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
             return false;
-        AccessoriesHelper.setBackpackStack(player, stack);
+        ModSyncedDataKeys.BACKPACK.setValue(player, stack);
         return true;
     }
 
     @Override
     public boolean isBackpackVisible(Player player)
     {
-        return AccessoriesHelper.isBackpackVisible(player);
+        return true;
     }
 
     @Override

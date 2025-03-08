@@ -1,5 +1,7 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
+import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -14,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -83,5 +86,25 @@ public class PlayerMixin implements BackpackedInventoryAccess
             ItemStack stack = serverPlayer.getItemInHand(hand);
             BackpackedEvents.INTERACTED_WITH_ENTITY_CAPTURE.post().handle(serverPlayer, stack, entity, capturedIds::add);
         }
+    }
+
+    @Inject(method = "dropEquipment", at = @At(value = "TAIL"))
+    private void backpacked$DropBackpack(CallbackInfo ci)
+    {
+        // TODO consider gravestone mods
+
+        Player player = (Player) (Object) this;
+        if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+            return;
+
+        if(Config.SERVER.backpack.keepOnDeath.get())
+            return;
+
+        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
+        if(stack.isEmpty())
+            return;
+
+        player.drop(stack, true, false);
+        ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
     }
 }

@@ -9,11 +9,7 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
-import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
+import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
@@ -123,6 +119,13 @@ public class ServerPlayHandler
                 }
             }
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map));
+        });
+    }
+
+    public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)
+    {
+        context.getPlayer().filter(player -> player instanceof ServerPlayer).ifPresent(player -> {
+            BackpackItem.openBackpackManagement((ServerPlayer) player);
         });
     }
 }

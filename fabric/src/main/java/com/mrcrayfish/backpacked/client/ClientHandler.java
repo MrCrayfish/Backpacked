@@ -8,7 +8,6 @@ import com.mrcrayfish.backpacked.common.backpack.loader.FabricModelMetaLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
-import io.wispforest.accessories.api.client.AccessoriesRendererRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
@@ -32,7 +31,6 @@ public class ClientHandler implements ClientModInitializer
         ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
         BlockEntityRenderers.register(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
-        AccessoriesRendererRegistry.registerNoRenderer(ModItems.BACKPACK.get());
 
         // Add backpack layers for player and wandering trader
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {

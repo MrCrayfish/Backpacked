@@ -33,8 +33,7 @@
         "fabric": "*",
         "minecraft": "${minecraft_version}",
         "java": ">=21",
-        "framework": ">=${framework_version}",
-        "accessories": ">=${accessories_version}"
+        "framework": ">=${framework_version}"
     },
     "accessWidener": "backpacked.accesswidener",
     "custom": {

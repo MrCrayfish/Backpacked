@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
@@ -10,9 +11,6 @@ import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
-import io.wispforest.accessories.api.AccessoriesAPI;
-import io.wispforest.accessories.api.client.AccessoriesRendererRegistry;
-import io.wispforest.accessories.api.client.AccessoryRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -49,7 +47,6 @@ public class ClientHandler
     {
         event.enqueueWork(() -> {
             ClientBootstrap.init();
-            AccessoriesRendererRegistry.registerNoRenderer(ModItems.BACKPACK.get());
             if(!FMLLoader.isProduction()) {
                 NeoForge.EVENT_BUS.register(new PickpocketDebugRenderer());
             }
@@ -66,6 +63,7 @@ public class ClientHandler
     private static void onRegisterMenuScreens(RegisterMenuScreensEvent event)
     {
         event.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
+        event.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
     }
 
     @SubscribeEvent

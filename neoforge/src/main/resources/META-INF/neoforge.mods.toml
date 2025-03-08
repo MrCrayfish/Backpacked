@@ -39,13 +39,6 @@ config = "${mod_id}.common.mixins.json"
     side="BOTH"
 
 [[dependencies."${mod_id}"]]
-    modId="accessories"
-    type="required"
-    versionRange="[${accessories_version},)"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies."${mod_id}"]]
     modId="controllable"
     type="optional"
     versionRange="[0.17.0,)"

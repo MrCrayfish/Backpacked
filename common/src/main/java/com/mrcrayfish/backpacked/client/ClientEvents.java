@@ -55,10 +55,7 @@ public class ClientEvents
             LocalPlayer player = mc.player;
             if(Keys.KEY_BACKPACK.isDown() && Keys.KEY_BACKPACK.consumeClick())
             {
-                if(!Services.BACKPACK.getBackpackStack(player).isEmpty())
-                {
-                    Network.getPlay().sendToServer(new MessageOpenBackpack());
-                }
+                Network.getPlay().sendToServer(new MessageOpenBackpack());
             }
         }
     }

@@ -2,15 +2,7 @@ package com.mrcrayfish.backpacked.network;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
-import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
-import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
-import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
+import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.FrameworkNetwork;
 import net.minecraft.network.protocol.PacketFlow;
@@ -34,6 +26,7 @@ public class Network
         .registerPlayMessage("request_customisation", MessageRequestCustomisation.class, MessageRequestCustomisation.STREAM_CODEC, MessageRequestCustomisation::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("open_customisation", MessageOpenCustomisation.class, MessageOpenCustomisation.STREAM_CODEC, MessageOpenCustomisation::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("sync_villager_backpack", MessageSyncVillagerBackpack.class, MessageSyncVillagerBackpack.STREAM_CODEC, MessageSyncVillagerBackpack::handle, PacketFlow.CLIENTBOUND)
+        .registerPlayMessage("request_management", MessageRequestManagement.class, MessageRequestManagement.STREAM_CODEC, MessageRequestManagement::handle, PacketFlow.SERVERBOUND)
         .build();
 
     public static void init() {}

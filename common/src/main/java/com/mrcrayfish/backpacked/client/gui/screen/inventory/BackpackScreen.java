@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
+import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -80,6 +81,9 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private List<MiniButton> gatherButtons()
     {
         List<MiniButton> buttons = new ArrayList<>();
+        buttons.add(new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, button -> {
+            Network.getPlay().sendToServer(new MessageRequestManagement());
+        }));
         boolean canCustomise = this.owner && !Config.SERVER.backpack.disableCustomisation.get();
         if(canCustomise)
         {
