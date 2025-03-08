@@ -3,11 +3,11 @@ package com.mrcrayfish.backpacked.item;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
+import com.mrcrayfish.backpacked.inventory.container.OnPlacedBackpackListener;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.ClientUtils;
 import net.minecraft.ChatFormatting;
@@ -15,13 +15,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Author: MrCrayfish
@@ -30,6 +30,7 @@ public class BackpackItem extends Item
 {
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
     public static final MutableComponent REMOVE_ITEMS_TOOLTIP = Component.translatable("backpacked.tooltip.remove_items").withStyle(ChatFormatting.RED);
+    private static final AtomicBoolean OPENING_MANAGEMENT = new AtomicBoolean(false);
 
     public BackpackItem(Properties properties)
     {
@@ -47,6 +48,10 @@ public class BackpackItem extends Item
 
     public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
     {
+        // Fixes an issue when opening management, the slot listener tries to reopen the backpack
+        if(OPENING_MANAGEMENT.get())
+            return false;
+
         ItemStack backpack = Services.BACKPACK.getBackpackStack(ownerPlayer);
         if(!backpack.isEmpty())
         {
@@ -67,9 +72,13 @@ public class BackpackItem extends Item
 
     public static void openBackpackManagement(ServerPlayer player)
     {
+        OPENING_MANAGEMENT.set(true);
         player.openMenu(new SimpleMenuProvider((windowId, inventory, player1) -> {
-            return new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
+            BackpackManagementMenu menu = new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
+            menu.addSlotListener(new OnPlacedBackpackListener());
+            return menu;
         }, Component.literal("Hello")));
+        OPENING_MANAGEMENT.set(false);
     }
 
     public int getColumnCount()

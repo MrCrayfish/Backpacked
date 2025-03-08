@@ -17,6 +17,7 @@ public class BackpackManagementMenu extends AbstractContainerMenu
 {
     private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
 
+    private final Inventory inventory;
     private final Container container;
 
     public BackpackManagementMenu(int windowId, Inventory inventory)
@@ -27,6 +28,7 @@ public class BackpackManagementMenu extends AbstractContainerMenu
     public BackpackManagementMenu(int windowId, Inventory inventory, Container container)
     {
         super(ModContainers.MANAGEMENT.get(), windowId);
+        this.inventory = inventory;
         this.container = container;
         this.addSlot(new ConditionalSlot(container, 0, 80, 8, stack -> {
             return stack.getItem() instanceof BackpackItem;
@@ -86,5 +88,10 @@ public class BackpackManagementMenu extends AbstractContainerMenu
     public boolean stillValid(Player player)
     {
         return this.container.stillValid(player);
+    }
+
+    public Player getPlayer()
+    {
+        return this.inventory.player;
     }
 }
