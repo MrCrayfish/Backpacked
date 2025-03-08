@@ -21,6 +21,13 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     }
 
     @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    {
+        super.render(graphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
     {
         graphics.blit(GUI_TEXTURE, this.leftPos, this.topPos, 0, 0, 176, 119);
