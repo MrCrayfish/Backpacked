@@ -111,7 +111,6 @@ processResources {
             "group"                        : project.group, //Else we target the task's group.
             "version"                      : project.version,
             "minecraft_version"            : minecraft_version,
-            "forge_version"                : forge_version,
             "fabric_version"               : fabric_version,
             "fabric_loader_version"        : fabric_loader_version,
             "neoforge_version"             : neoforge_version,
