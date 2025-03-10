@@ -1,19 +1,20 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "com.mrcrayfish.backpacked.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "refmap": "backpacked.refmap.json",
-    "mixins": [
-        "BlockMixin",
-        "EntityMixin",
-        "LivingEntityMixin",
-        "FabricPlayerMixin"
-    ],
-    "client": [ ],
-    "injectors": {
-        "defaultRequire": 1,
-        "maxShiftBy": 1
-    }
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.mrcrayfish.backpacked.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "backpacked.refmap.json",
+  "mixins": [
+    "BlockMixin",
+    "EntityMixin",
+    "FabricPlayerMixin",
+    "LivingEntityMixin",
+    "integration.InvModCompatMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 1
+  }
 }
   

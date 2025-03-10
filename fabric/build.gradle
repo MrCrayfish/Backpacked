@@ -15,6 +15,14 @@ repositories {
             includeGroup("com.terraformersmc")
         }
     }
+    repositories {
+        maven {
+            url "https://cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -25,6 +33,9 @@ dependencies {
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
     modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
     modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
+
+    // Integrations
+    modCompileOnly "curse.maven:youre-in-grave-danger-544912:6100937"
 }
 
 sourceSets.main.resources.srcDirs += "src/generated/resources"

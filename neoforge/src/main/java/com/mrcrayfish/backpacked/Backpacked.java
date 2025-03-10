@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
+import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -72,6 +74,11 @@ public class Backpacked
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBlockDrops);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onLivingDrops);
+
+        if(ModList.get().isLoaded("yigd"))
+        {
+            YoureInGraveDangerSupport.init();
+        }
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event)

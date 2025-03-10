@@ -29,13 +29,25 @@ runs {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-
+    repositories {
+        maven {
+            url "https://cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
+    }
 }
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
     runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
+
+    // Integrations
+    //runtimeOnly "curse.maven:gravestone-mod-238551:5794085"
+    compileOnly "curse.maven:youre-in-grave-danger-544912:6100952"
+    compileOnly "curse.maven:cloth-config-348521:5729127"
 }
 
 tasks.register('signJar', PotentiallySignJar) {
