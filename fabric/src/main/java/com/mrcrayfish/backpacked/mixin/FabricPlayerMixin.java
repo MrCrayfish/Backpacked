@@ -1,6 +1,8 @@
 package com.mrcrayfish.backpacked.mixin;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -11,9 +13,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -53,5 +57,23 @@ public class FabricPlayerMixin
         {
             cir.setReturnValue(projectile);
         }
+    }
+
+    @Inject(method = "dropEquipment", at = @At(value = "TAIL"))
+    private void backpacked$DropBackpack(CallbackInfo ci)
+    {
+        Player player = (Player) (Object) this;
+        if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+            return;
+
+        if(Config.SERVER.backpack.keepOnDeath.get())
+            return;
+
+        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
+        if(stack.isEmpty())
+            return;
+
+        player.drop(stack, true, false);
+        ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
     }
 }

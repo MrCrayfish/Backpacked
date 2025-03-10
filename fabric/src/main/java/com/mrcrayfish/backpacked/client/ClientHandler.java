@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
@@ -30,6 +31,7 @@ public class ClientHandler implements ClientModInitializer
         ClientBootstrap.init();
         ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
+        MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
         BlockEntityRenderers.register(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
 
         // Add backpack layers for player and wandering trader

@@ -87,24 +87,4 @@ public class PlayerMixin implements BackpackedInventoryAccess
             BackpackedEvents.INTERACTED_WITH_ENTITY_CAPTURE.post().handle(serverPlayer, stack, entity, capturedIds::add);
         }
     }
-
-    @Inject(method = "dropEquipment", at = @At(value = "TAIL"))
-    private void backpacked$DropBackpack(CallbackInfo ci)
-    {
-        // TODO consider gravestone mods
-
-        Player player = (Player) (Object) this;
-        if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
-            return;
-
-        if(Config.SERVER.backpack.keepOnDeath.get())
-            return;
-
-        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
-        if(stack.isEmpty())
-            return;
-
-        player.drop(stack, true, false);
-        ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
-    }
 }
