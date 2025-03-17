@@ -121,7 +121,19 @@ public class ServerPlayerGameModeMixin
     }
 
     @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/ItemUsedOnLocationTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
-    private void backpacked$BeforeTriggers(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    private void backpacked$BeforeTriggerItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
+    {
+        if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)
+        {
+            BackpackedEvents.INTERACTED_WITH_BLOCK.post().handle(this.backpacked$capturedUseState, this.backpacked$capturedUseItem, this.backpacked$capturedUseTag, player);
+            this.backpacked$capturedUseState = null;
+            this.backpacked$capturedUseItem = null;
+            this.backpacked$capturedUseTag = null;
+        }
+    }
+
+    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/DefaultBlockInteractionTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;)V"))
+    private void backpacked$BeforeTriggerDefault(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)
         {
