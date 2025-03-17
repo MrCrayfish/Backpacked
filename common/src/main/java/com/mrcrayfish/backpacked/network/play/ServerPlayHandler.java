@@ -13,6 +13,7 @@ import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import com.mrcrayfish.framework.entity.sync.SyncedEntityData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -96,7 +97,7 @@ public class ServerPlayHandler
     public static void handleRequestCustomisation(MessageRequestCustomisation message, MessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
-        if(player == null)
+        if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
         if(Config.SERVER.backpack.disableCustomisation.get())
@@ -118,6 +119,7 @@ public class ServerPlayHandler
                     });
                 }
             }
+            serverPlayer.closeContainer();
             Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map));
         });
     }
