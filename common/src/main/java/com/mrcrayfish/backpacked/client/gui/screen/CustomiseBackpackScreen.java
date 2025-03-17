@@ -16,6 +16,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.platform.ClientServices;
@@ -352,7 +353,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private BackpackProperties getCurrentBackpackProperties()
     {
-        ItemStack stack = Services.BACKPACK.getBackpackStack(this.minecraft.player);
+        ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(this.minecraft.player);
         return this.getBackpackProperties(stack);
     }
 
@@ -363,7 +364,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void setLocalBackpackProperties(BackpackProperties properties)
     {
-        ItemStack stack = Services.BACKPACK.getBackpackStack(this.minecraft.player);
+        ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(this.minecraft.player);
         if(!stack.isEmpty())
         {
             stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);

@@ -11,7 +11,6 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.framework.api.FrameworkAPI;
-import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 
 /**
  * Author: MrCrayfish
@@ -23,6 +22,8 @@ public class Bootstrap
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.UNLOCK_TRACKER);
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.TRADER_PICKPOCKETING);
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.BACKPACK);
+        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.COSMETIC_BACKPACK);
+
         Network.init();
         UnlockManager.instance();
         BackpackEvents.init();
