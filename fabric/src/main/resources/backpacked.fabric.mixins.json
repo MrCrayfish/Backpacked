@@ -9,6 +9,8 @@
     "EntityMixin",
     "FabricPlayerMixin",
     "LivingEntityMixin",
+    "PackRepositoryMixin",
+    "ServerPacksSourceMixin",
     "integration.InvModCompatMixin"
   ],
   "client": [],

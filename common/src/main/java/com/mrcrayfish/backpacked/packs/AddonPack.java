@@ -1,0 +1,37 @@
+package com.mrcrayfish.backpacked.packs;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackSelectionConfig;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+
+public class AddonPack extends Pack
+{
+    private static final PackSelectionConfig SELECTION_CONFIG = new PackSelectionConfig(true, Pack.Position.TOP, false);
+
+    private final AddonMetadata metadata;
+
+    public AddonPack(PackLocationInfo info, ResourcesSupplier supplier, AddonMetadata metadata, PackSelectionConfig config)
+    {
+        super(info, supplier, metadata.toVanilla(), config);
+        this.metadata = metadata;
+    }
+
+    @Override
+    public Component getTitle()
+    {
+        return this.metadata.name();
+    }
+
+    public Component getAuthor()
+    {
+        return this.metadata.author();
+    }
+
+    public static AddonPack tryAndReadAddonPack(PackLocationInfo info, ResourcesSupplier resourcesSupplier, PackType type)
+    {
+        AddonMetadata metadata = AddonMetadata.readAddonMetadata(info, resourcesSupplier, type);
+        return metadata != null ? new AddonPack(info, resourcesSupplier, metadata, SELECTION_CONFIG) : null;
+    }
+}
