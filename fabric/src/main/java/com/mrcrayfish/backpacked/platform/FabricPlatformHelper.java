@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.platform;
 
-import com.mrcrayfish.backpacked.platform.services.IRegistrationHelper;
+import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.CreativeModeTab;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 /**
  * Author: MrCrayfish
  */
-public class FabricRegistrationHelper implements IRegistrationHelper
+public class FabricPlatformHelper implements IPlatformHelper
 {
     @Override
     public void addEnchantedBookToCreativeTab(CreativeModeTab.Output output, Holder.Reference<Enchantment> enchantment)

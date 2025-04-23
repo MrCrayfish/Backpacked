@@ -55,7 +55,7 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
             JsonObject object = element.getAsJsonObject();
             if(object.has("mod_loaded") && object.get("mod_loaded").isJsonPrimitive()) {
                 String modId = object.get("mod_loaded").getAsString();
-                if(!Services.REGISTRATION.isModLoaded(modId)) {
+                if(!Services.PLATFORM.isModLoaded(modId)) {
                     return;
                 }
             }

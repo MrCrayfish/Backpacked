@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.platform;
 
-import com.mrcrayfish.backpacked.platform.services.IRegistrationHelper;
+import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -11,7 +11,7 @@ import net.neoforged.fml.ModList;
 /**
  * Author: MrCrayfish
  */
-public class NeoForgeRegistrationHelper implements IRegistrationHelper
+public class NeoForgePlatformHelper implements IPlatformHelper
 {
     @Override
     public void addEnchantedBookToCreativeTab(CreativeModeTab.Output output, Holder.Reference<Enchantment> enchantment)

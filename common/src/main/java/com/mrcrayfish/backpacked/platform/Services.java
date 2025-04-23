@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
 import com.mrcrayfish.backpacked.platform.services.IEntityHelper;
-import com.mrcrayfish.backpacked.platform.services.IRegistrationHelper;
+import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 
@@ -11,7 +11,7 @@ public class Services
 {
     public static final IBackpackHelper BACKPACK = load(IBackpackHelper.class);
     public static final IEntityHelper ENTITY = load(IEntityHelper.class);
-    public static final IRegistrationHelper REGISTRATION = load(IRegistrationHelper.class);
+    public static final IPlatformHelper PLATFORM = load(IPlatformHelper.class);
 
     public static <T> T load(Class<T> clazz)
     {

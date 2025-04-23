@@ -7,7 +7,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 /**
  * Author: MrCrayfish
  */
-public interface IRegistrationHelper
+public interface IPlatformHelper
 {
     void addEnchantedBookToCreativeTab(CreativeModeTab.Output output, Holder.Reference<Enchantment> enchantment);
 

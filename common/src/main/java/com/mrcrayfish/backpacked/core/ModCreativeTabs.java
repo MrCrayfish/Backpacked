@@ -6,7 +6,6 @@ import com.mrcrayfish.framework.Registration;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,8 +13,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
-
-import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -34,11 +31,11 @@ public class ModCreativeTabs
                 output.accept((ItemLike) entry.get());
             });
             HolderLookup.RegistryLookup<Enchantment> lookup = params.holders().lookupOrThrow(Registries.ENCHANTMENT);
-            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.FUNNELLING));
-            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.REPAIRMAN));
-            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.LOOTED));
-            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.IMBUED_HIDE));
-            Services.REGISTRATION.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.MARKSMAN));
+            Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.FUNNELLING));
+            Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.REPAIRMAN));
+            Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.LOOTED));
+            Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.IMBUED_HIDE));
+            Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.MARKSMAN));
         });
     });
 }
