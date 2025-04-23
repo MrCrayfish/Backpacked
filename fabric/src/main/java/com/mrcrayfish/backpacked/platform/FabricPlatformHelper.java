@@ -1,8 +1,12 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
+import net.fabricmc.fabric.impl.resource.loader.BuiltinModResourcePackSource;
+import net.fabricmc.fabric.impl.resource.loader.ModResourcePackCreator;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -23,5 +27,17 @@ public class FabricPlatformHelper implements IPlatformHelper
     public boolean isModLoaded(String modId)
     {
         return FabricLoader.getInstance().isModLoaded(modId);
+    }
+
+    @Override
+    @SuppressWarnings("UnstableApiUsage")
+    public boolean isBuiltinOrModResourcePack(PackLocationInfo info)
+    {
+        if(info.source() == PackSource.BUILT_IN) return true;
+        if(info.id().equals("fabric")) return true;
+        if(info.source() == ModResourcePackCreator.RESOURCE_PACK_SOURCE) return true;
+        if(info.source() instanceof BuiltinModResourcePackSource) return true;
+        if(info.knownPackInfo().stream().anyMatch(pack -> pack.namespace().equals("minecraft"))) return true;
+        return false;
     }
 }

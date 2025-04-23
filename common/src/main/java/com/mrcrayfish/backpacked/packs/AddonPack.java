@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.packs;
 
+import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackSelectionConfig;
@@ -31,6 +32,9 @@ public class AddonPack extends Pack
 
     public static AddonPack tryAndReadAddonPack(PackLocationInfo info, ResourcesSupplier resourcesSupplier, PackType type)
     {
+        // Don't load builtin packs or mods as a Backpacked addon
+        if(Services.PLATFORM.isBuiltinOrModResourcePack(info))
+            return null;
         AddonMetadata metadata = AddonMetadata.readAddonMetadata(info, resourcesSupplier, type);
         return metadata != null ? new AddonPack(info, resourcesSupplier, metadata, SELECTION_CONFIG) : null;
     }
