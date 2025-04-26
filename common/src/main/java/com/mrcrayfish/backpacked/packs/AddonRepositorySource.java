@@ -36,21 +36,22 @@ public class AddonRepositorySource implements RepositorySource
     }
 
     @Override
+    @SuppressWarnings("SimplifyOptionalCallChains")
     public void loadPacks(Consumer<Pack> consumer)
     {
-        Constants.LOG.info("Looking for Backpacked addons in '{}'", this.path.getFileName().toString());
         try
         {
+            Constants.LOG.info("Looking for Backpacked addons in '{}'", this.path.getFileName().toString());
             int[] counter = {0};
             FileUtil.createDirectoriesSafe(this.path);
             FolderRepositorySource.discoverPacks(this.path, this.validator, (packPath, resourcesSupplier) -> {
                 String name = packPath.getFileName().toString();
                 PackLocationInfo info = new PackLocationInfo("file/" + name, Component.literal(name), this.source, Optional.empty());
-                AddonPack pack = AddonPack.tryAndReadAddonPack(info, resourcesSupplier, this.type);
-                if(pack != null) {
+                Optional<Optional<AddonPack>> result = AddonPack.tryAndReadAddonPack(info, resourcesSupplier, this.type);
+                result.ifPresent(value -> value.ifPresent(pack -> {
                     consumer.accept(pack);
                     counter[0] = counter[0] + 1;
-                }
+                }));
             });
             Constants.LOG.info("Found {} Backpacked addons", counter[0]);
         }

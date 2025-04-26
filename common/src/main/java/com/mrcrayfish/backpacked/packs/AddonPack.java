@@ -7,6 +7,8 @@ import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 
+import java.util.Optional;
+
 public class AddonPack extends Pack
 {
     private static final PackSelectionConfig SELECTION_CONFIG = new PackSelectionConfig(true, Pack.Position.TOP, false);
@@ -30,12 +32,12 @@ public class AddonPack extends Pack
         return this.metadata.author();
     }
 
-    public static AddonPack tryAndReadAddonPack(PackLocationInfo info, ResourcesSupplier resourcesSupplier, PackType type)
+    public static Optional<Optional<AddonPack>> tryAndReadAddonPack(PackLocationInfo info, ResourcesSupplier resourcesSupplier, PackType type)
     {
         // Don't load builtin packs or mods as a Backpacked addon
         if(Services.PLATFORM.isBuiltinOrModResourcePack(info))
-            return null;
-        AddonMetadata metadata = AddonMetadata.readAddonMetadata(info, resourcesSupplier, type);
-        return metadata != null ? new AddonPack(info, resourcesSupplier, metadata, SELECTION_CONFIG) : null;
+            return Optional.empty();
+        Optional<Optional<AddonMetadata>> result = AddonMetadata.readAddonMetadata(info, resourcesSupplier, type);
+        return result.map(optional -> optional.map(metadata -> new AddonPack(info, resourcesSupplier, metadata, SELECTION_CONFIG)));
     }
 }

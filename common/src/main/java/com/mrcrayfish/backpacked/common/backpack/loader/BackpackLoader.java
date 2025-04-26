@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
@@ -61,12 +62,14 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
             }
 
             RegistryOps<JsonElement> ops = this.getProvider().createSerializationContext(JsonOps.INSTANCE);
-            Backpack backpack = Backpack.CODEC.parse(ops, object).getOrThrow(s -> {
-                Constants.LOG.error("An error occurred when parsing the backpack '{}'", location);
-                return new JsonParseException(s);
+            DataResult<Backpack> result = Backpack.CODEC.parse(ops, object);
+            result.resultOrPartial(s -> {
+                Constants.LOG.error("An error occurred when loading the backpack '{}' - {}", location, s);
+            }).ifPresent(backpack -> {
+                backpack.setup(location);
+                backpacks.put(location, backpack);
+                Constants.LOG.info("Adding backpack '{}'", location);
             });
-            backpack.setup(location);
-            backpacks.put(location, backpack);
         });
         BackpackManager.instance().updateBackpacks(backpacks);
     }
