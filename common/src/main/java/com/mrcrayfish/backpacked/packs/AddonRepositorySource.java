@@ -20,8 +20,6 @@ import java.util.function.Consumer;
 
 public class AddonRepositorySource implements RepositorySource
 {
-    private static final PackSelectionConfig SELECTION_CONFIG = new PackSelectionConfig(true, Pack.Position.TOP, false);
-
     private final Path path;
     private final PackType type;
     private final PackSource source;
