@@ -10,7 +10,7 @@ const AddonDocumentationList = [
         Custom Backpacks <span class="badge badge--warning">Moderate</span>
       </>
     ),
-    link: '/docs/custom-backpack',
+    link: '/docs/custom-backpack/introduction',
     description: (
       <>
         This guide will show you how to add even more backpacks to Backpacked using either a resource/data packs or by integrating into a mod. This guide will cover registering new backpacks, creating the models, and setting the challenges to unlock backpacks.
