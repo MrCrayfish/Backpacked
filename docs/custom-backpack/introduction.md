@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction
 
-Addons for Backpacked are simply the combination of a resource and data pack. This makes them very veristile, since you can release them as is, in a mod, or in a modpack as default resources. Backpacked itself uses the same methods in this guide to add the backpacks found by default in the mod.
+Addons for Backpacked are simply the combination of a carefully constructed resource and data pack. This has many advantages, resource and data packs are already familiar in the community, they are easy to create, can be installed via drag-and-drop, and have been highly documentated. They are also very veristile, allowing you to release them as is, in a mod, or in a modpack as default resources. Backpacked itself uses a built-in resource and data pack to add the backpacks found by default in the mod.
 
 ## Requirements
 
@@ -32,4 +32,4 @@ You can continue with this guide even if one or more of these do not apply, but 
 
 ## Let's Begin
 
-You are now ready to start making custom backpacks.
+Head over the the [Getting Started](./getting-started.md) section to begin creating an addon!
