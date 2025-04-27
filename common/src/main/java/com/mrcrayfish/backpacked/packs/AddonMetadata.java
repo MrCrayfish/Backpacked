@@ -104,6 +104,6 @@ public record AddonMetadata(Component name, Component description, Component aut
                 Codec.INT.fieldOf("assets_format").forGetter(AddonMetadataSection::assetsFormat),
                 Codec.INT.fieldOf("data_format").forGetter(AddonMetadataSection::dataFormat)
         ).apply(builder, AddonMetadataSection::new));
-        public static final MetadataSectionType<AddonMetadataSection> TYPE = MetadataSectionType.fromCodec("addon", CODEC);
+        public static final MetadataSectionType<AddonMetadataSection> TYPE = MetadataSectionType.fromCodec("backpacked_addon", CODEC);
     }
 }
