@@ -8,11 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public record StaticSource(double value) implements BaseSource
+public record ConstantSource(double value) implements BaseSource
 {
-    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("static"), RecordCodecBuilder.<StaticSource>mapCodec(builder ->
+    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("constant"), RecordCodecBuilder.<ConstantSource>mapCodec(builder ->
         builder.group(Codec.DOUBLE.fieldOf("value").forGetter(o -> o.value)
-    ).apply(builder, StaticSource::new)));
+    ).apply(builder, ConstantSource::new)));
 
     @Override
     public Type type()
