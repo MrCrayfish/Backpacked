@@ -1,16 +1,13 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
@@ -19,7 +16,6 @@ import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
-import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.ChatFormatting;
@@ -240,9 +236,9 @@ public class CustomiseBackpackScreen extends Screen
             BackpackRenderContext context = new BackpackRenderContext(pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, partialTick, mc.player.tickCount, model -> {
                 mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
                 graphics.flush();
-            });
+            }, mc.getItemRenderer());
             pose.pushPose();
-            renderer.forEach(function -> function.apply(context));
+            renderer.render(context);
             pose.popPose();
         }, () -> {
             BakedModel model = mc.getModelManager().getModel(backpack.getBaseModel());

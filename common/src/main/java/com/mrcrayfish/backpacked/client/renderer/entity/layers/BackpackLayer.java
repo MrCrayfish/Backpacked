@@ -24,8 +24,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.Optional;
-
 /**
  * Author: MrCrayfish
  */
@@ -72,11 +70,11 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         // Draw the backpack model
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresentOrElse(renderer -> {
-            pose.pushPose();
             BackpackRenderContext context = new BackpackRenderContext(pose, source, light, stack, backpack, player, partialTick, player.tickCount, model -> {
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
-            });
-            renderer.forEach(function -> function.apply(context));
+            }, this.itemRenderer);
+            pose.pushPose();
+            renderer.render(context);
             pose.popPose();
         }, () -> {
             BakedModel model = this.getModel(backpack.getBaseModel());

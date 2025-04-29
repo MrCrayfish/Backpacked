@@ -6,12 +6,9 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.common.backpack.Backpack;
-import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
-import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -64,11 +61,11 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
 
             ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
             meta.renderer().ifPresentOrElse(renderer -> {
-                pose.pushPose();
                 BackpackRenderContext context = new BackpackRenderContext(pose, source, light, this.displayStack, backpack, villager, partialTick, villager.tickCount, model -> {
                     this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
-                });
-                renderer.forEach(function -> function.apply(context));
+                }, this.itemRenderer);
+                pose.pushPose();
+                renderer.render(context);
                 pose.popPose();
             }, () -> {
                 BakedModel model = this.itemRenderer.getItemModelShaper().getModelManager().getModel(backpack.getBaseModel());

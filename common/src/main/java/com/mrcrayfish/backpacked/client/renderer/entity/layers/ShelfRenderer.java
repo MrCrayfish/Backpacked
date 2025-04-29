@@ -70,11 +70,11 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 
         int animationTick = Optional.ofNullable(Minecraft.getInstance().player).map(player -> player.tickCount).orElse(0);
         meta.renderer().ifPresentOrElse(renderer -> {
-            pose.pushPose();
             BackpackRenderContext context = new BackpackRenderContext(pose, buffer, light, stack, backpack, null, partialTick, animationTick, model -> {
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
-            });
-            renderer.forEach(function -> function.apply(context));
+            }, this.itemRenderer);
+            pose.pushPose();
+            renderer.render(context);
             pose.popPose();
         }, () -> {
             BakedModel model = this.getModel(backpack.getBaseModel());

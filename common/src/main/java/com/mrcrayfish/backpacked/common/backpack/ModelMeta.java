@@ -2,19 +2,18 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrcrayfish.backpacked.client.renderer.backpack.function.BaseFunction;
+import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Author: MrCrayfish
  */
-public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay, Optional<List<BaseFunction>> renderer)
+public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay, Optional<BackpackRenderer> renderer)
 {
     public static final Codec<ItemTransform> ITEM_TRANSFORM_CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(
@@ -29,7 +28,7 @@ public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay
     public static final Codec<ModelMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
         ExtraCodecs.VECTOR3F.optionalFieldOf("shelf_offset", new Vector3f()).forGetter(o -> o.shelfOffset),
         ITEM_TRANSFORM_CODEC.optionalFieldOf("gui_display").forGetter(o -> o.guiDisplay),
-        BaseFunction.CODEC.listOf().optionalFieldOf("renderer").forGetter(o -> o.renderer)
+        BackpackRenderer.CODEC.optionalFieldOf("renderer").forGetter(o -> o.renderer)
     ).apply(builder, ModelMeta::new));
 
 }

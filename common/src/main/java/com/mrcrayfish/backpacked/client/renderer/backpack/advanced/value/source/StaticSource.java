@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.value.source;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

@@ -1,10 +1,10 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.function;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.value.Value;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.Value;
 import net.minecraft.resources.ResourceLocation;
 
 /**

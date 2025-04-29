@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.function;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.function;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

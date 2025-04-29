@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.function;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

@@ -1,11 +1,11 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.value;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.BaseSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.value.source.StaticSource;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.BaseSource;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.StaticSource;
 
 import java.util.function.Function;
 

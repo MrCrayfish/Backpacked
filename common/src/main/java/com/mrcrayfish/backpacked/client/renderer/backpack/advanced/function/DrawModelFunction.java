@@ -1,8 +1,7 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.function;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
@@ -35,6 +34,6 @@ public record DrawModelFunction(ModelResourceLocation model, Optional<Vector3f> 
     public void apply(BackpackRenderContext context)
     {
         BakedModel model = Minecraft.getInstance().getModelManager().getModel(this.model);
-        context.renderer().draw(model);
+        context.bakedModelRenderer().accept(model);
     }
 }
