@@ -32,3 +32,4 @@ Once you've created the file, open it with your text editor and simply add an em
 
 ## Next Step
 
+It's time to move on to [creating the backpack model](/docs/custom-backpack/creating-the-model), and start to bringing your designs into the game!
