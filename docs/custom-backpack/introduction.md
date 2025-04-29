@@ -34,4 +34,4 @@ You can continue with this guide even if one or more of these do not apply, but 
 
 ## Next Step
 
-Head over the the [Getting Started](./getting-started.md) section to begin creating an addon!
+Head over the the [Getting Started](./getting-started.mdx) section to begin creating an addon!
