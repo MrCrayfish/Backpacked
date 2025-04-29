@@ -80,3 +80,5 @@ If you've followed the guide correctly so far, you should now see your backpack 
 ![Test](/img/model_loaded.png) ![Test](/img/model_loaded_2.png)
 
 ## Next Step
+
+It's time to update the display properties of the backpack model in the GUI and the position on the shelf using [model metadata](/docs/custom-backpack/model-metadata.md)!
