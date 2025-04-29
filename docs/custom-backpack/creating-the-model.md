@@ -5,7 +5,7 @@ sidebar_position: 4
 # Creating the Model
 
 ## Standard Template
-By using the same model format of blocks and items, creating a new backpack is as simple as it gets. However to ensure new backpack models are going to work correctly with Backpacked, models begin by using the [📦Standard Template](/content/template.bbmodel) (click to download). This file is to be opened with [Blockbench](https://www.blockbench.net/). 
+By using the same model format of blocks and items, creating a new backpack is as simple as it gets. However to ensure new backpack models are going to work correctly with Backpacked, models begin by using the [📦Standard Template](/content/template.bbmodel). This file is to be opened with [Blockbench](https://www.blockbench.net/). 
 
 After loading the template, create a new copy by navigating to `File > Save Project As` and set the file name to the name of your backpack. This will help avoid overriding the original template if you plan to create multiple backpacks.
 
