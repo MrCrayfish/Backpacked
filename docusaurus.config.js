@@ -60,12 +60,12 @@ const config = {
       navbar: {
         title: 'Documentation',
         logo: {
-          alt: 'MrCrayfish\'s Furniture Mod Logo',
+          alt: 'Backpacked Logo',
           src: 'img/logo.png',
         },
         items: [
           {
-            href: 'https://github.com/MrCrayfish/MrCrayfishFurnitureMod-Refurbished/tree/documentation',
+            href: 'https://github.com/MrCrayfish/Backpacked/tree/documentation',
             label: 'GitHub',
             position: 'right',
           },
