@@ -8,7 +8,7 @@ sidebar_position: 3
 
 Registering a new backpack is as simple as creating a JSON file, however they need to be placed in a specific directory for Backpacked to detect them. In your `data` directory, create the directory structure: `data/<namespace>/backpacked/`.
 
-If you downloaded the **Base Resource & Data Pack** from the [Assets](./assets.md) page. The directory should have already be created.
+If you downloaded the **Base Addon Pack** from the [Assets](./assets.md) page. The directory should have already be created, just make sure to change the `example` namespace as mentioned in the [Getting Started](/docs/custom-backpack/getting-started.mdx#steps) section.
 
 If you are developing a mod or integrating into an existing mod, create the structure from your `src/main/resources` directory. If you are working in a multiloader project, make sure it is created in your common module.
 
