@@ -28,3 +28,10 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.code-block {
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: var(--ifm-alert-border-radius);
+  padding: 1em 1em 0;
+  margin-bottom: 1em;
+}
