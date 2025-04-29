@@ -23,7 +23,7 @@ For clarification, the directory is named `backpacked` and not `backpack`. This 
 In the model meta directory, as created in the previous section, create a new JSON file with name of your backpack. The name must be the same as when you [registered the backpack](./register-the-backpack.md#registering), e.g. `<your_backpack_name>.json`. 
 
 Inside the newly created file, copy and paste in the following contents:
-```json
+```json title="<your_backpack_name>.json"
 {
     "shelf_offset": [0, 0, 0],
     "gui_display": {
@@ -33,29 +33,26 @@ Inside the newly created file, copy and paste in the following contents:
     }
 }
 ```
+<div className="code-block">
+    ### Property: `shelf_offset`
 
-### Breakdown
+    This is an array that contains local XYZ offset in pixel space to fix the positioning of your backpack model on the shelf. By default, the ground plane in Blockbench when using the stardard template is the position the backpack sits on. However if your backpack model exceeds the ground place or is not positioned to your liking, it can be adjust by changing the values.
 
-#### Property: `shelf_offset`
+    ![Test](/img/breakdown_shelf_offset.png)
 
-##### Description
-This is an array that contains local XYZ offset in pixel space to fix the positioning of your backpack model on the shelf. By default, the ground plane in Blockbench when using the stardard template is the position the backpack sits on. However if your backpack model exceeds the ground place or is not positioned to your liking, it can be adjust by changing the values.
+    #### How to Configure
 
-![Test](/img/breakdown_shelf_offset.png)
+    In game, place down a **Shelf**. Get a backpack and update the cosmetic to your model. Place the backpack onto the **Shelf** by right clicking while sneaking. In your model meta JSON file, locate the `shelf_offset` array. The array is represented as `[X, Y, Z]` and each unit is in pixel space, e.g. `[1, 0, 0]` moves the backpack model one pixel to the right relative to the facing direction of the shelf. Adjust the values, save the file, then press **F3 + T** in-game to reload your resources. Check the model is sitting on the shelf without clipping into the shelf model and is centered. Repeat adjustments to the array and reload until you are satisfied.
 
-##### How to Configure
+    :::note
+    If you are developing or integrating into a mod, you will need to rebuild your project to update the resources, then you can press **F3 + T** in-game to reload your resources.
+    :::
+</div>
 
-In game, place down a **Shelf**. Get a backpack and update the cosmetic to your model. Place the backpack onto the **Shelf** by right clicking while sneaking. In your model meta JSON file, locate the `shelf_offset` array. The array is represented as `[X, Y, Z]` and each unit is in pixel space, e.g. `[1, 0, 0]` moves the backpack model one pixel to the right relative to the facing direction of the shelf. Adjust the values, save the file, then press **F3 + T** in-game to reload your resources. Check the model is sitting on the shelf without clipping into the shelf model and is centered. Repeat adjustments to the array and reload until you are satisfied.
+<div className="code-block">
 
-:::note
-If you are developing or integrating into a mod, you will need to rebuild your project to update the resources, then you can press **F3 + T** in-game to reload your resources.
-:::
+### Property: `gui_display`
 
----
-
-#### Property: `gui_display`
-
-##### Description
 This is an object that holds a GUI transform. This is applied when rendering the backpack model in list of available cosmetics.
     - `rotation` is an array that contains a local XYZ rotation for the model
     - `translation` is an array that contains a local XYZ translation for the model.
@@ -63,7 +60,7 @@ This is an object that holds a GUI transform. This is applied when rendering the
 
 ![Test](/img/breakdown_gui_display.png)
 
-##### How to Configure
+#### How to Configure
 
 Open Blocbench and load the project for your backpack model. Disable the visibility of the `Straps` and `Player Model`, so only the `Backpack` elements are visible. Navigate to the **Display** tab at the top right, and under the **Slot** in the left sidebar, click the **GUI** icon. Configure your backpack to fit nicely into the GUI slot preview. Try to fill it without going outside the slot borders and set the `X` and `Y` rotation to `30` for convention. Then simply copy the values shown in Bloclbench to the `gui_display` property as shown below.
 
@@ -81,6 +78,7 @@ Converts into:
     }
 }
 ```
+</div>
 
 ## Advanced Rendering 
 
@@ -92,8 +90,15 @@ Model metadata also supports a property called `renderer`, and is used for advan
 
 ```json
 {
-    "renderer": [
-        ...
-    ]
+    "renderer": {
+        "type": "backpacked:advanced",
+        "functions": [
+            ...
+        ]
+    }
 }
 ```
+
+## Next Step
+
+You may have noticed that the name of the backpack in the GUI is using translation key. It's now time to add [translations](/docs/custom-backpack/translations.md)!
