@@ -10,7 +10,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
+import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;

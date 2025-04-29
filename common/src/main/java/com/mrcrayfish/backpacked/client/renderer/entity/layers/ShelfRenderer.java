@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
+import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.client.Minecraft;

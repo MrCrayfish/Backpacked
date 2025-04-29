@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
-import com.mrcrayfish.backpacked.common.backpack.loader.ModelMetaLoader;
+import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.packs.AddonRepositorySource;

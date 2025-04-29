@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.common.backpack;
+package com.mrcrayfish.backpacked.client.backpack;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

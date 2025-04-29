@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
+import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 

@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.common.backpack.ModelMeta;
+import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import net.minecraft.client.model.VillagerModel;

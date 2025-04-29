@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common.backpack.loader;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 
