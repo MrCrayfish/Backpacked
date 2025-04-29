@@ -6,6 +6,8 @@ sidebar_position: 1
 
 Addons for Backpacked are simply the combination of a carefully constructed resource and data pack. This has many advantages, resource and data packs are already familiar in the community, they are easy to create, can be installed via drag-and-drop, and have been highly documentated. They are also very veristile, allowing you to release them as is, in a mod, or in a modpack as default resources. Backpacked itself uses a built-in resource and data pack to add the backpacks found by default in the mod.
 
+However, Backpacked has taken it a step further and introduced its own special addon pack format, which allows resource and data packs to be merged into a single ZIP file. This has great advantages and will be explained further in the [Getting Started](/docs/custom-backpack/getting-started.mdx#-addon-pack) section.
+
 ## Requirements
 
 1. Must be using Backpacked `3.0` or above. Prior versions of Backpacked do not have addon support as described in these guides.
@@ -30,6 +32,6 @@ You can continue with this guide even if one or more of these do not apply, but 
 - [An Introduction to JSON by Digital Ocean](https://www.digitalocean.com/community/tutorials/an-introduction-to-json)
 :::
 
-## Let's Begin
+## Next Step
 
 Head over the the [Getting Started](./getting-started.md) section to begin creating an addon!
