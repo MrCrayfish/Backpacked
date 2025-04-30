@@ -81,4 +81,4 @@ If you've followed the guide correctly so far, you should now see your backpack 
 
 ## Next Step
 
-It's time to update the display properties of the backpack model in the GUI and the position on the shelf using [model metadata](/docs/custom-backpack/model-metadata.md)!
+It's time to update the display properties of the backpack model in the GUI and the position on the shelf using [model metadata](/docs/custom-backpack/model-metadata.mdx)!
