@@ -191,7 +191,11 @@ public class CustomiseBackpackScreen extends Screen
         int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
         for(int i = startIndex; i < this.models.size() && i < startIndex + 7; i++)
         {
-            this.drawBackpackItem(graphics, this.windowLeft + 82, this.windowTop + 17 + (i - startIndex) * 20, mouseX, mouseY, partialTick, this.models.get(i));
+            int itemX = this.windowLeft + 82;
+            int itemY = this.windowTop + 17 + (i - startIndex) * 20;
+            graphics.enableScissor(itemX, itemY, itemX + 97, itemY + 20);
+            this.drawBackpackItem(graphics, itemX, itemY, mouseX, mouseY, partialTick, this.models.get(i));
+            graphics.disableScissor();
         }
 
         int hoveredIndex = this.getHoveredIndex(mouseX, mouseY);
