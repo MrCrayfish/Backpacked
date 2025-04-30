@@ -60,6 +60,15 @@ public class CustomiseBackpackScreen extends Screen
     private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
 
+    private static final int ITEM_WIDTH = 97;
+    private static final int ITEM_HEIGHT = 20;
+    private static final int ITEM_LIST_WIDTH = 97;
+    private static final int ITEM_LIST_HEIGHT = 140;
+    private static final int MAX_VISIBLE_ITEMS = ITEM_LIST_HEIGHT / ITEM_HEIGHT; // Should have no remainder
+    private static final int SCROLL_BAR_WIDTH = 12;
+    private static final int SCROLL_BAR_HEIGHT = 15;
+    private static final int SCROLLABLE_HEIGHT = 138;
+
     private final ItemStack displayStack;
     private final int windowWidth;
     private final int windowHeight;
@@ -182,18 +191,23 @@ public class CustomiseBackpackScreen extends Screen
         }
 
         // Draw scroll bar
-        boolean canScroll = this.models.size() > 7;
+        boolean canScroll = this.models.size() > MAX_VISIBLE_ITEMS;
         int scroll = (canScroll ? this.scroll : 0) + (this.scrollGrabbed ? mouseY - this.mouseClickedY : 0);
-        scroll = Mth.clamp(scroll, 0, 123);
-        graphics.blit(GUI_TEXTURE, this.windowLeft + 181, this.windowTop + 18 + scroll, 201 + (!canScroll ? 12 : 0), 0, 12, 15);
+        scroll = Mth.clamp(scroll, 0, SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT);
+        int scrollBarX = this.windowLeft + 181;
+        int scrollBarY = this.windowTop + 18 + scroll;
+        int scrollBarTexU = 201 + (!canScroll ? SCROLL_BAR_WIDTH : 0);
+        graphics.blit(GUI_TEXTURE, scrollBarX, scrollBarY, scrollBarTexU, 0, SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT);
 
         // Draw backpack items
-        int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((scroll + 15.0) / 123.0, 0.0, 1.0));
-        for(int i = startIndex; i < this.models.size() && i < startIndex + 7; i++)
+        int scrollableContentHeight = Math.max(this.models.size() * ITEM_HEIGHT - ITEM_LIST_HEIGHT, 0);
+        float scrollNormal = (float) scroll / (SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT);
+        int startIndex = (int) (scrollableContentHeight * scrollNormal) / ITEM_HEIGHT;
+        for(int i = startIndex; i < this.models.size() && i < startIndex + MAX_VISIBLE_ITEMS; i++)
         {
             int itemX = this.windowLeft + 82;
-            int itemY = this.windowTop + 17 + (i - startIndex) * 20;
-            graphics.enableScissor(itemX, itemY, itemX + 97, itemY + 20);
+            int itemY = this.windowTop + 17 + (i - startIndex) * ITEM_HEIGHT;
+            graphics.enableScissor(itemX, itemY, itemX + ITEM_WIDTH, itemY + ITEM_HEIGHT);
             this.drawBackpackItem(graphics, itemX, itemY, mouseX, mouseY, partialTick, this.models.get(i));
             graphics.disableScissor();
         }
@@ -213,11 +227,11 @@ public class CustomiseBackpackScreen extends Screen
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
         boolean selected = unlocked && entry.getCosmeticId().equals(this.displayBackpack.model());
-        boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, 97, 20);
+        boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT);
 
         // Draw background for item
         int offset = (unlocked ? 0 : 60) + (selected ? 20 : 0) + (hovered ? 40 : 0);
-        graphics.blit(GUI_TEXTURE, x, y, 0, 166 + offset, 97, 20);
+        graphics.blit(GUI_TEXTURE, x, y, 0, 166 + offset, ITEM_WIDTH, ITEM_HEIGHT);
 
         // Draw label. TODO convert dumb values into readable hex
         int color = selected ? 4226832 : (hovered ? 16777088 : (unlocked ? 6839882 : 0x4E1C1C));
@@ -337,18 +351,18 @@ public class CustomiseBackpackScreen extends Screen
     {
         if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + 82, this.windowTop + 17, 112, 140))
         {
-            int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
-            int newIndex = startIndex - (int) Math.signum(deltaY);
-            this.scrollToIndex(newIndex);
+            int scrollableContentHeight = Math.max(this.models.size() * ITEM_HEIGHT - ITEM_LIST_HEIGHT, 0);
+            float scrollNormal = (float) this.scroll / (SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT);
+            int startIndex = (int) (scrollableContentHeight * scrollNormal) / ITEM_HEIGHT;
+            this.scrollToIndex(startIndex + Mth.sign(-deltaY));
         }
         return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
     }
 
     private void scrollToIndex(int index)
     {
-        // 123 is the height of the scrollbar area
-        this.scroll = (int) (123.0 * ((double) index / (double) Math.max(this.models.size() - 7, 1)));
-        this.scroll = Mth.clamp(this.scroll, 0, 123);
+        this.scroll = Mth.ceil((SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT) * ((double) index / (double) Math.max(this.models.size() - MAX_VISIBLE_ITEMS, 1)));
+        this.scroll = Mth.clamp(this.scroll, 0, (SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT));
     }
 
     private BackpackProperties getCurrentBackpackProperties()
