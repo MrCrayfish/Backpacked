@@ -68,6 +68,7 @@ public class CustomiseBackpackScreen extends Screen
     private static final int SCROLL_BAR_WIDTH = 12;
     private static final int SCROLL_BAR_HEIGHT = 15;
     private static final int SCROLLABLE_HEIGHT = 138;
+    private static final int SCROLLABLE_AREA = SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT;
 
     private final ItemStack displayStack;
     private final int windowWidth;
@@ -200,9 +201,7 @@ public class CustomiseBackpackScreen extends Screen
         graphics.blit(GUI_TEXTURE, scrollBarX, scrollBarY, scrollBarTexU, 0, SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT);
 
         // Draw backpack items
-        int scrollableContentHeight = Math.max(this.models.size() * ITEM_HEIGHT - ITEM_LIST_HEIGHT, 0);
-        float scrollNormal = (float) scroll / (SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT);
-        int startIndex = (int) (scrollableContentHeight * scrollNormal) / ITEM_HEIGHT;
+        int startIndex = (int) (Math.max(0, this.models.size() - MAX_VISIBLE_ITEMS) * Mth.clamp(scroll / (double) SCROLLABLE_AREA, 0, 1));
         for(int i = startIndex; i < this.models.size() && i < startIndex + MAX_VISIBLE_ITEMS; i++)
         {
             int itemX = this.windowLeft + 82;
@@ -268,14 +267,14 @@ public class CustomiseBackpackScreen extends Screen
 
     private int getHoveredIndex(int mouseX, int mouseY)
     {
-        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + 82, this.windowTop + 17, 97, 140))
+        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + 82, this.windowTop + 17, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
         {
-            int startIndex = (int) (Math.max(0, this.models.size() - 7) * Mth.clamp((this.scroll + 15.0) / 123.0, 0.0, 1.0));
-            int displayIndex = (mouseY - this.windowTop - 17) / 20;
-            int actualIndex = startIndex + displayIndex;
-            if(actualIndex >= 0 && actualIndex < this.models.size())
+            int startIndex = (int) (Math.max(0, this.models.size() - MAX_VISIBLE_ITEMS) * Mth.clamp(this.scroll / (double) SCROLLABLE_AREA, 0, 1));
+            int offsetIndex = (mouseY - this.windowTop - 17) / ITEM_HEIGHT;
+            int hoveredIndex = startIndex + offsetIndex;
+            if(hoveredIndex >= 0 && hoveredIndex < this.models.size())
             {
-                return actualIndex;
+                return hoveredIndex;
             }
         }
         return -1;
