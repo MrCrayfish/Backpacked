@@ -86,7 +86,9 @@ Converts into:
 This is a very advanced topic. Unless you have at least high level understanding of operations like, push/pop matrix, translate, rotate, and scale, it will be difficult to understand the guide.
 :::
 
-Model metadata also supports a property called `renderer`, and is used for advanced model rendering. This enable the ability to create animations and more for your backpack. This section has been moved to it's own dedicated guide.
+Model metadata also supports a property called `renderer`. In the `renderer` object, a `type` can be set to determine the rendering controller of the backpack. If the `renderer` property is absent, then the backpack will be rendered using the default renderering controller (`backpacked:default`).
+
+Addons can also perform advanced rendering, using the `backpacked:advanced` controller. This enable the ability to create animations and contextual rendering for your backpack. This section has been moved to it's own dedicated guide.
 
 ```json
 {
