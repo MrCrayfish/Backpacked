@@ -25,7 +25,7 @@
                             "source": {
                                 "type": "minecraft:tick_count"
                             },
-                            "multiplier": 4.0
+                            "scale": 4.0
                         }
                     },
                     {
@@ -34,7 +34,7 @@
                             "source": {
                                 "type": "minecraft:walk_position"
                             },
-                            "multiplier": 16.0
+                            "scale": 16.0
                         }
                     },
                     {

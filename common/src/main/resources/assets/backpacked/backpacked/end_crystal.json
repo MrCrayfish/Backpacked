@@ -23,13 +23,13 @@
                                 "waveform": "sine",
                                 "wavelength": 20
                             },
-                            "multiplier": 0.0625
+                            "scale": 0.0625
                         },
                         "z": {
                             "source": {
                                 "type": "minecraft:walk_speed"
                             },
-                            "multiplier": 0.1
+                            "scale": 0.1
                         }
                     },
                     {
@@ -47,21 +47,21 @@
                                         "type": "minecraft:walk_speed"
                                     },
                                     "base": 1.0,
-                                    "multiplier": 0.25
+                                    "scale": 0.25
                                 },
                                 "y": {
                                     "source": {
                                         "type": "minecraft:walk_speed"
                                     },
                                     "base": 1.0,
-                                    "multiplier": 0.25
+                                    "scale": 0.25
                                 },
                                 "z": {
                                     "source": {
                                         "type": "minecraft:walk_speed"
                                     },
                                     "base": 1.0,
-                                    "multiplier": 0.25
+                                    "scale": 0.25
                                 }
                             },
                             {
@@ -86,7 +86,7 @@
                             "source": {
                                 "type": "minecraft:animation_tick"
                             },
-                            "multiplier": 3
+                            "scale": 3
                         }
                     },
                     {
@@ -95,7 +95,7 @@
                             "source": {
                                 "type": "minecraft:walk_position"
                             },
-                            "multiplier": 8
+                            "scale": 8
                         }
                     },
                     {
@@ -110,21 +110,21 @@
                                 "type": "minecraft:walk_speed"
                             },
                             "base": 1.0,
-                            "multiplier": 0.25
+                            "scale": 0.25
                         },
                         "y": {
                             "source": {
                                 "type": "minecraft:walk_speed"
                             },
                             "base": 1.0,
-                            "multiplier": 0.25
+                            "scale": 0.25
                         },
                         "z": {
                             "source": {
                                 "type": "minecraft:walk_speed"
                             },
                             "base": 1.0,
-                            "multiplier": 0.25
+                            "scale": 0.25
                         }
                     },
                     {

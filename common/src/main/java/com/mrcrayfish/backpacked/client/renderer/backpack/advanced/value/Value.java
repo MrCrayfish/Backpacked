@@ -18,7 +18,7 @@ public final class Value
     public static final Codec<Value> VALUE_CODEC = RecordCodecBuilder.create(builder -> builder.group(
         BaseSource.CODEC.fieldOf("source").forGetter(o -> o.source),
         Codec.DOUBLE.optionalFieldOf("base", 0.0).forGetter(o -> o.base),
-        Codec.DOUBLE.optionalFieldOf("multiplier", 1.0).forGetter(o -> o.multiplier)
+        Codec.DOUBLE.optionalFieldOf("scale", 1.0).forGetter(o -> o.scale)
     ).apply(builder, Value::new));
 
     // We want to accept either a raw double or a full value object
@@ -32,18 +32,18 @@ public final class Value
     });
 
     private final BaseSource source;
-    private final double multiplier;
+    private final double scale;
     private final double base;
 
-    public Value(BaseSource source, double base, double multiplier)
+    public Value(BaseSource source, double base, double scale)
     {
         this.source = source;
         this.base = base;
-        this.multiplier = multiplier;
+        this.scale = scale;
     }
 
     public double getValue(BackpackRenderContext context)
     {
-        return this.base + this.source.apply(context) * this.multiplier;
+        return (this.base + this.source.apply(context)) * this.scale;
     }
 }
