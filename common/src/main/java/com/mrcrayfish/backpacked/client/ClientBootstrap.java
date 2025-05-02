@@ -34,6 +34,7 @@ public class ClientBootstrap
         ValueTypes.register(WaveformValue.TYPE);
         ValueTypes.register(AnimationTickValue.TYPE);
         ValueTypes.register(AndValue.TYPE);
+        ValueTypes.register(ExpressionValue.TYPE);
     }
 
     public static void init()
