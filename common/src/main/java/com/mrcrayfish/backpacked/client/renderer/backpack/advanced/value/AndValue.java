@@ -21,6 +21,6 @@ public record AndValue(Value first, Value second, Operator operator) implements 
     @Override
     public double get(BackpackRenderContext context)
     {
-        return this.first.get(context) + this.second.get(context);
+        return this.operator.function().apply(this.first.get(context), this.second.get(context));
     }
 }
