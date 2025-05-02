@@ -18,18 +18,22 @@
                     {
                         "type": "minecraft:translate",
                         "y": {
-                            "source": {
+                            "type": "minecraft:and",
+                            "first": {
                                 "type": "backpacked:waveform",
                                 "waveform": "sine",
                                 "wavelength": 20
                             },
-                            "scale": 0.0625
+                            "second": 0.0625,
+                            "op": "multiply"
                         },
                         "z": {
-                            "source": {
+                            "type": "minecraft:and",
+                            "first": {
                                 "type": "minecraft:walk_speed"
                             },
-                            "scale": 0.1
+                            "second": 0.1,
+                            "op": "multiply"
                         }
                     },
                     {
@@ -43,25 +47,40 @@
                             {
                                 "type": "minecraft:scale",
                                 "x": {
-                                    "source": {
-                                        "type": "minecraft:walk_speed"
-                                    },
-                                    "base": 1.0,
-                                    "scale": 0.25
+                                    "type": "minecraft:and",
+                                    "first": 1.0,
+                                    "second": {
+                                        "type": "minecraft:and",
+                                        "first": {
+                                            "type": "minecraft:walk_speed"
+                                        },
+                                        "second": 0.25,
+                                        "op": "multiply"
+                                    }
                                 },
                                 "y": {
-                                    "source": {
-                                        "type": "minecraft:walk_speed"
-                                    },
-                                    "base": 1.0,
-                                    "scale": 0.25
+                                    "type": "minecraft:and",
+                                    "first": 1.0,
+                                    "second": {
+                                        "type": "minecraft:and",
+                                        "first": {
+                                            "type": "minecraft:walk_speed"
+                                        },
+                                        "second": 0.25,
+                                        "op": "multiply"
+                                    }
                                 },
                                 "z": {
-                                    "source": {
-                                        "type": "minecraft:walk_speed"
-                                    },
-                                    "base": 1.0,
-                                    "scale": 0.25
+                                    "type": "minecraft:and",
+                                    "first": 1.0,
+                                    "second": {
+                                        "type": "minecraft:and",
+                                        "first": {
+                                            "type": "minecraft:walk_speed"
+                                        },
+                                        "second": 0.25,
+                                        "op": "multiply"
+                                    }
                                 }
                             },
                             {
@@ -83,19 +102,23 @@
                     {
                         "type": "minecraft:rotate",
                         "y": {
-                            "source": {
+                            "type": "minecraft:and",
+                            "first": {
                                 "type": "minecraft:animation_tick"
                             },
-                            "scale": 3
+                            "second": 3,
+                            "op": "multiply"
                         }
                     },
                     {
                         "type": "minecraft:rotate",
                         "y": {
-                            "source": {
+                            "type": "minecraft:and",
+                            "first": {
                                 "type": "minecraft:walk_position"
                             },
-                            "scale": 8
+                            "second": 8,
+                            "op": "multiply"
                         }
                     },
                     {
@@ -106,25 +129,40 @@
                     {
                         "type": "minecraft:scale",
                         "x": {
-                            "source": {
-                                "type": "minecraft:walk_speed"
-                            },
-                            "base": 1.0,
-                            "scale": 0.25
+                            "type": "minecraft:and",
+                            "first": 1.0,
+                            "second": {
+                                "type": "minecraft:and",
+                                "first": {
+                                    "type": "minecraft:walk_speed"
+                                },
+                                "second": 0.25,
+                                "op": "multiply"
+                            }
                         },
                         "y": {
-                            "source": {
-                                "type": "minecraft:walk_speed"
-                            },
-                            "base": 1.0,
-                            "scale": 0.25
+                            "type": "minecraft:and",
+                            "first": 1.0,
+                            "second": {
+                                "type": "minecraft:and",
+                                "first": {
+                                    "type": "minecraft:walk_speed"
+                                },
+                                "second": 0.25,
+                                "op": "multiply"
+                            }
                         },
                         "z": {
-                            "source": {
-                                "type": "minecraft:walk_speed"
-                            },
-                            "base": 1.0,
-                            "scale": 0.25
+                            "type": "minecraft:and",
+                            "first": 1.0,
+                            "second": {
+                                "type": "minecraft:and",
+                                "first": {
+                                    "type": "minecraft:walk_speed"
+                                },
+                                "second": 0.25,
+                                "op": "multiply"
+                            }
                         }
                     },
                     {

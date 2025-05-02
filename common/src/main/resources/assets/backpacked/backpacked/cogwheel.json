@@ -22,19 +22,23 @@
                     {
                         "type": "minecraft:rotate",
                         "z": {
-                            "source": {
+                            "type": "minecraft:and",
+                            "first": {
                                 "type": "minecraft:tick_count"
                             },
-                            "scale": 4.0
+                            "second": 4,
+                            "op": "multiply"
                         }
                     },
                     {
                         "type": "minecraft:rotate",
                         "z": {
-                            "source": {
+                            "type": "minecraft:and",
+                            "first": {
                                 "type": "minecraft:walk_position"
                             },
-                            "scale": 16.0
+                            "second": 16,
+                            "op": "multiply"
                         }
                     },
                     {
