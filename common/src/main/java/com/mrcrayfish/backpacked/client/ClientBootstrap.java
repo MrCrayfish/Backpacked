@@ -29,12 +29,11 @@ public class ClientBootstrap
         FunctionTypes.register(DrawModelFunction.TYPE);
         ValueTypes.register(ConstantValue.TYPE);
         ValueTypes.register(TickCountValue.TYPE);
-        ValueTypes.register(WalkPositionValue.TYPE);
-        ValueTypes.register(WalkSpeedValue.TYPE);
         ValueTypes.register(WaveformValue.TYPE);
         ValueTypes.register(AnimationTickValue.TYPE);
         ValueTypes.register(AndValue.TYPE);
         ValueTypes.register(ExpressionValue.TYPE);
+        ValueTypes.register(LivingEntityDataValue.TYPE);
     }
 
     public static void init()
