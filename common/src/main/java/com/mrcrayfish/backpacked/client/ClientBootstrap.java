@@ -33,6 +33,7 @@ public class ClientBootstrap
         ValueTypes.register(WalkSpeedValue.TYPE);
         ValueTypes.register(WaveformValue.TYPE);
         ValueTypes.register(AnimationTickValue.TYPE);
+        ValueTypes.register(AndValue.TYPE);
     }
 
     public static void init()
