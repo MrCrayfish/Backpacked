@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -11,15 +11,14 @@ import net.minecraft.util.StringRepresentable;
 /**
  * Author: MrCrayfish
  */
-public record WaveformSource(Waveform waveform, double wavelength, double amplitude, double phase) implements BaseSource
+public record WaveformValue(Waveform waveform, double wavelength, double amplitude, double phase) implements Value
 {
-    public static final Type TYPE = new Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "waveform"), RecordCodecBuilder.<WaveformSource>mapCodec(builder ->
-        builder.group(
-            Waveform.CODEC.fieldOf("waveform").forGetter(o -> o.waveform),
-            Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),
-            Codec.DOUBLE.fieldOf("amplitude").orElse(1.0).forGetter(o -> o.amplitude),
-            Codec.DOUBLE.fieldOf("phase").orElse(0.0).forGetter(o -> o.phase)
-    ).apply(builder, WaveformSource::new)));
+    public static final Type TYPE = new Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "waveform"), RecordCodecBuilder.<WaveformValue>mapCodec(builder -> builder.group(
+        Waveform.CODEC.fieldOf("waveform").forGetter(o -> o.waveform),
+        Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),
+        Codec.DOUBLE.fieldOf("amplitude").orElse(1.0).forGetter(o -> o.amplitude),
+        Codec.DOUBLE.fieldOf("phase").orElse(0.0).forGetter(o -> o.phase)
+    ).apply(builder, WaveformValue::new)));
 
     @Override
     public Type type()
@@ -28,7 +27,7 @@ public record WaveformSource(Waveform waveform, double wavelength, double amplit
     }
 
     @Override
-    public double apply(BackpackRenderContext context)
+    public double get(BackpackRenderContext context)
     {
         double time = context.animationTick() + context.partialTick();
         return this.waveform.function.apply(time, this.wavelength, this.amplitude, this.phase);

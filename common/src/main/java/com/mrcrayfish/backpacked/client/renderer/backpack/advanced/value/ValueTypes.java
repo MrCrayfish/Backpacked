@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -10,18 +10,18 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public final class SourceTypes
+public final class ValueTypes
 {
-    private static final BiMap<ResourceLocation, BaseSource.Type> SOURCES = HashBiMap.create();
+    private static final BiMap<ResourceLocation, Value.Type> SOURCES = HashBiMap.create();
 
-    public static void register(BaseSource.Type type)
+    public static void register(Value.Type type)
     {
-        BaseSource.Type existing = SOURCES.putIfAbsent(type.id(), type);
+        Value.Type existing = SOURCES.putIfAbsent(type.id(), type);
         if(existing != null)
             throw new IllegalStateException("Source already registered: " + type.id());
     }
 
-    public static Map<ResourceLocation, BaseSource.Type> getAll()
+    public static Map<ResourceLocation, Value.Type> getAll()
     {
         return Collections.unmodifiableMap(SOURCES);
     }

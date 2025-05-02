@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source;
+package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
@@ -7,9 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class AnimationTickSource implements BaseSource
+public class AnimationTickValue implements Value
 {
-    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("animation_tick"), MapCodec.unit(new AnimationTickSource()));
+    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("animation_tick"), MapCodec.unit(new AnimationTickValue()));
 
     @Override
     public Type type()
@@ -18,7 +18,7 @@ public class AnimationTickSource implements BaseSource
     }
 
     @Override
-    public double apply(BackpackRenderContext context)
+    public double get(BackpackRenderContext context)
     {
         return context.animationTick() + context.partialTick();
     }

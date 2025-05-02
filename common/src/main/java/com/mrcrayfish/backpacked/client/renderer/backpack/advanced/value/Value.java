@@ -2,48 +2,54 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.BaseSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.ConstantSource;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
 /**
  * Author: MrCrayfish
  */
-public final class Value
+public interface Value
 {
-    public static final Value ZERO = new Value(new ConstantSource(0), 0.0, 1.0);
-    public static final Codec<Value> VALUE_CODEC = RecordCodecBuilder.create(builder -> builder.group(
-        BaseSource.CODEC.fieldOf("source").forGetter(o -> o.source),
-        Codec.DOUBLE.optionalFieldOf("base", 0.0).forGetter(o -> o.base),
-        Codec.DOUBLE.optionalFieldOf("scale", 1.0).forGetter(o -> o.scale)
-    ).apply(builder, Value::new));
-
-    // We want to accept either a raw double or a full value object
-    public static final Codec<Value> CODEC = Codec.either(Codec.DOUBLE, VALUE_CODEC).xmap(either -> {
-        return either.map(val -> new Value(new ConstantSource(val), 0.0, 1.0), Function.identity());
+    Codec<Value> CODEC = Type.CODEC.dispatch(Type::get, Type::codec);
+    Codec<Value> EITHER_CODEC = Codec.either(Codec.DOUBLE, Value.CODEC).xmap(either -> {
+        return either.map(ConstantValue::new, Function.identity());
     }, value -> {
-        if(value.source instanceof ConstantSource source) {
-            return Either.left(source.value());
+        if(value instanceof ConstantValue(double v)) {
+            return Either.left(v);
         }
         return Either.right(value);
     });
+    Value ZERO = new ConstantValue(0);
 
-    private final BaseSource source;
-    private final double scale;
-    private final double base;
+    Type type();
 
-    public Value(BaseSource source, double base, double scale)
+    double get(BackpackRenderContext context);
+
+    record Type(ResourceLocation id, MapCodec<? extends Value> codec)
     {
-        this.source = source;
-        this.base = base;
-        this.scale = scale;
-    }
+        private static final Codec<Type> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+            Type codec = ValueTypes.getAll().get(id);
+            if(codec != null) {
+                return DataResult.success(codec);
+            }
+            return DataResult.error(() -> "Unregistered value type: " + id);
+        }, codec -> {
+            if(ValueTypes.getAll().containsKey(codec.id)) {
+                return DataResult.success(codec.id);
+            }
+            return DataResult.error(() -> "Unregistered value type: " + codec.id);
+        });
 
-    public double getValue(BackpackRenderContext context)
-    {
-        return (this.base + this.source.apply(context)) * this.scale;
+        private static Type get(Value source)
+        {
+            ResourceLocation id = source.type().id();
+            if(!ValueTypes.getAll().containsKey(id))
+                throw new IllegalArgumentException("Unregistered value type: " + id);
+            return ValueTypes.getAll().get(id);
+        }
     }
 }

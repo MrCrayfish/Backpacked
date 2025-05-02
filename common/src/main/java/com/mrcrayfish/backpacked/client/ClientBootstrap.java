@@ -9,13 +9,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.Rota
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.ScaleFunction;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.StackFunction;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.TranslateFunction;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.AnimationTickSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.SourceTypes;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.ConstantSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.TickCountSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.WalkPositionSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.WalkSpeedSource;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.source.WaveformSource;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.framework.api.event.InputEvents;
 
 /**
@@ -33,12 +27,12 @@ public class ClientBootstrap
         FunctionTypes.register(RotateFunction.TYPE);
         FunctionTypes.register(ScaleFunction.TYPE);
         FunctionTypes.register(DrawModelFunction.TYPE);
-        SourceTypes.register(ConstantSource.TYPE);
-        SourceTypes.register(TickCountSource.TYPE);
-        SourceTypes.register(WalkPositionSource.TYPE);
-        SourceTypes.register(WalkSpeedSource.TYPE);
-        SourceTypes.register(WaveformSource.TYPE);
-        SourceTypes.register(AnimationTickSource.TYPE);
+        ValueTypes.register(ConstantValue.TYPE);
+        ValueTypes.register(TickCountValue.TYPE);
+        ValueTypes.register(WalkPositionValue.TYPE);
+        ValueTypes.register(WalkSpeedValue.TYPE);
+        ValueTypes.register(WaveformValue.TYPE);
+        ValueTypes.register(AnimationTickValue.TYPE);
     }
 
     public static void init()

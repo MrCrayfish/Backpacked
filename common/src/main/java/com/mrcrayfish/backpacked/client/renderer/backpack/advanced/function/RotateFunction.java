@@ -15,9 +15,9 @@ public record RotateFunction(Value x, Value y, Value z) implements BaseFunction
     public static final Type TYPE = new Type(
         ResourceLocation.withDefaultNamespace("rotate"),
         RecordCodecBuilder.<RotateFunction>mapCodec(builder -> builder.group(
-            Value.CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
-            Value.CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),
-            Value.CODEC.fieldOf("z").orElse(Value.ZERO).forGetter(o -> o.z)
+            Value.EITHER_CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
+            Value.EITHER_CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),
+            Value.EITHER_CODEC.fieldOf("z").orElse(Value.ZERO).forGetter(o -> o.z)
         ).apply(builder, RotateFunction::new))
     );
 
@@ -30,9 +30,9 @@ public record RotateFunction(Value x, Value y, Value z) implements BaseFunction
     @Override
     public void apply(BackpackRenderContext context)
     {
-        double x = this.x.getValue(context);
-        double y = this.y.getValue(context);
-        double z = this.z.getValue(context);
+        double x = this.x.get(context);
+        double y = this.y.get(context);
+        double z = this.z.get(context);
         PoseStack pose = context.pose();
         pose.mulPose(Axis.XP.rotationDegrees((float) x));
         pose.mulPose(Axis.YP.rotationDegrees((float) y));
