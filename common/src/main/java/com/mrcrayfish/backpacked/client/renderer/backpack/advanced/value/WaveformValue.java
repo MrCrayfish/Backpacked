@@ -2,23 +2,25 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Author: MrCrayfish
  */
 public record WaveformValue(Waveform waveform, double wavelength, double amplitude, double phase) implements Value
 {
-    public static final Type TYPE = new Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "waveform"), RecordCodecBuilder.<WaveformValue>mapCodec(builder -> builder.group(
-        Waveform.CODEC.fieldOf("waveform").forGetter(o -> o.waveform),
-        Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),
-        Codec.DOUBLE.fieldOf("amplitude").orElse(1.0).forGetter(o -> o.amplitude),
-        Codec.DOUBLE.fieldOf("phase").orElse(0.0).forGetter(o -> o.phase)
-    ).apply(builder, WaveformValue::new)));
+    public static final Type TYPE = new Type(
+        Utils.rl("waveform"),
+        RecordCodecBuilder.<WaveformValue>mapCodec(builder -> builder.group(
+            Waveform.CODEC.fieldOf("waveform").forGetter(o -> o.waveform),
+            Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),
+            Codec.DOUBLE.fieldOf("amplitude").orElse(1.0).forGetter(o -> o.amplitude),
+            Codec.DOUBLE.fieldOf("phase").orElse(0.0).forGetter(o -> o.phase)
+        ).apply(builder, WaveformValue::new)));
 
     @Override
     public Type type()
@@ -29,7 +31,8 @@ public record WaveformValue(Waveform waveform, double wavelength, double amplitu
     @Override
     public double get(BackpackRenderContext context)
     {
-        double time = context.animationTick() + context.partialTick();
+        LivingEntity entity = context.entity();
+        double time = entity != null ? entity.tickCount + context.partialTick() : 0;
         return this.waveform.function.apply(time, this.wavelength, this.amplitude, this.phase);
     }
 

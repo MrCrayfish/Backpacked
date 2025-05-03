@@ -9,33 +9,33 @@
         "type": "backpacked:advanced",
         "functions": [
             {
-                "type": "minecraft:draw_model",
+                "type": "backpacked:draw_model",
                 "model": "backpacked:backpacked/cogwheel"
             },
             {
-                "type": "minecraft:stack",
+                "type": "backpacked:push_matrix",
                 "functions": [
                     {
-                        "type": "minecraft:translate",
+                        "type": "backpacked:translate_matrix",
                         "y": -0.21875
                     },
                     {
-                        "type": "minecraft:rotate",
+                        "type": "backpacked:rotate_matrix",
                         "z": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": {
-                                "type": "minecraft:tick_count"
+                                "type": "backpacked:tick_count"
                             },
                             "second": 4,
                             "op": "multiply"
                         }
                     },
                     {
-                        "type": "minecraft:rotate",
+                        "type": "backpacked:rotate_matrix",
                         "z": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": {
-                                "type": "minecraft:living_entity_data",
+                                "type": "backpacked:living_entity_data",
                                 "property": "walk_position"
                             },
                             "second": 16,
@@ -43,11 +43,11 @@
                         }
                     },
                     {
-                        "type": "minecraft:translate",
+                        "type": "backpacked:translate",
                         "y": 0.21875
                     },
                     {
-                        "type": "minecraft:draw_model",
+                        "type": "backpacked:draw_model",
                         "model": "backpacked:backpacked/cogwheel_wheel"
                     }
                 ]

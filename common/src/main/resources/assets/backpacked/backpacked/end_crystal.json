@@ -9,16 +9,16 @@
         "type": "backpacked:advanced",
         "functions": [
             {
-                "type": "minecraft:draw_model",
+                "type": "backpacked:draw_model",
                 "model": "backpacked:backpacked/end_crystal"
             },
             {
-                "type": "minecraft:stack",
+                "type": "backpacked:push_matrix",
                 "functions": [
                     {
-                        "type": "minecraft:translate",
+                        "type": "backpacked:translate_matrix",
                         "y": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": {
                                 "type": "backpacked:waveform",
                                 "waveform": "sine",
@@ -28,9 +28,9 @@
                             "op": "multiply"
                         },
                         "z": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": {
-                                "type": "minecraft:living_entity_data",
+                                "type": "backpacked:entity_data",
                                 "property": "walk_speed"
                             },
                             "second": 0.1,
@@ -38,22 +38,22 @@
                         }
                     },
                     {
-                        "type": "minecraft:stack",
+                        "type": "backpacked:push_matrix",
                         "functions": [
                             {
-                                "type": "minecraft:translate",
+                                "type": "backpacked:translate_matrix",
                                 "y": -0.1875,
                                 "z": 0.328125
                             },
                             {
-                                "type": "minecraft:scale",
+                                "type": "backpacked:scale_matrix",
                                 "x": {
-                                    "type": "minecraft:and",
+                                    "type": "backpacked:and",
                                     "first": 1.0,
                                     "second": {
-                                        "type": "minecraft:and",
+                                        "type": "backpacked:and",
                                         "first": {
-                                            "type": "minecraft:living_entity_data",
+                                            "type": "backpacked:entity_data",
                                             "property": "walk_speed"
                                         },
                                         "second": 0.25,
@@ -61,12 +61,12 @@
                                     }
                                 },
                                 "y": {
-                                    "type": "minecraft:and",
+                                    "type": "backpacked:and",
                                     "first": 1.0,
                                     "second": {
-                                        "type": "minecraft:and",
+                                        "type": "backpacked:and",
                                         "first": {
-                                            "type": "minecraft:living_entity_data",
+                                            "type": "backpacked:entity_data",
                                             "property": "walk_speed"
                                         },
                                         "second": 0.25,
@@ -74,12 +74,12 @@
                                     }
                                 },
                                 "z": {
-                                    "type": "minecraft:and",
+                                    "type": "backpacked:and",
                                     "first": 1.0,
                                     "second": {
-                                        "type": "minecraft:and",
+                                        "type": "backpacked:and",
                                         "first": {
-                                            "type": "minecraft:living_entity_data",
+                                            "type": "backpacked:entity_data",
                                             "property": "walk_speed"
                                         },
                                         "second": 0.25,
@@ -88,38 +88,38 @@
                                 }
                             },
                             {
-                                "type": "minecraft:translate",
+                                "type": "backpacked:translate_matrix",
                                 "y": 0.1875,
                                 "z": -0.328125
                             },
                             {
-                                "type": "minecraft:draw_model",
+                                "type": "backpacked:draw_model",
                                 "model": "backpacked:backpacked/end_crystal_inner"
                             }
                         ]
                     },
                     {
-                        "type": "minecraft:translate",
+                        "type": "backpacked:translate_matrix",
                         "y": -0.1875,
                         "z": 0.328125
                     },
                     {
-                        "type": "minecraft:rotate",
+                        "type": "backpacked:rotate_matrix",
                         "y": {
-                            "type": "minecraft:and",
-                            "first": {
-                                "type": "minecraft:animation_tick"
+                            "type": "backpacked:and",
+                            "first": {  
+                                "type": "backpacked:animation_tick"
                             },
                             "second": 3,
                             "op": "multiply"
                         }
                     },
                     {
-                        "type": "minecraft:rotate",
+                        "type": "backpacked:rotate_matrix",
                         "y": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": {
-                                "type": "minecraft:living_entity_data",
+                                "type": "backpacked:entity_data",
                                 "property": "walk_position"
                             },
                             "second": 8,
@@ -127,19 +127,19 @@
                         }
                     },
                     {
-                        "type": "minecraft:rotate",
+                        "type": "backpacked:rotate_matrix",
                         "x": 45,
                         "z": 30
                     },
                     {
-                        "type": "minecraft:scale",
+                        "type": "backpacked:scale_matrix",
                         "x": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": 1.0,
                             "second": {
-                                "type": "minecraft:and",
+                                "type": "backpacked:and",
                                 "first": {
-                                    "type": "minecraft:living_entity_data",
+                                    "type": "backpacked:entity_data",
                                     "property": "walk_speed"
                                 },
                                 "second": 0.25,
@@ -147,12 +147,12 @@
                             }
                         },
                         "y": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": 1.0,
                             "second": {
-                                "type": "minecraft:and",
+                                "type": "backpacked:and",
                                 "first": {
-                                    "type": "minecraft:living_entity_data",
+                                    "type": "backpacked:entity_data",
                                     "property": "walk_speed"
                                 },
                                 "second": 0.25,
@@ -160,12 +160,12 @@
                             }
                         },
                         "z": {
-                            "type": "minecraft:and",
+                            "type": "backpacked:and",
                             "first": 1.0,
                             "second": {
-                                "type": "minecraft:and",
+                                "type": "backpacked:and",
                                 "first": {
-                                    "type": "minecraft:living_entity_data",
+                                    "type": "backpacked:entity_data",
                                     "property": "walk_speed"
                                 },
                                 "second": 0.25,
@@ -174,12 +174,12 @@
                         }
                     },
                     {
-                        "type": "minecraft:translate",
+                        "type": "backpacked:translate_matrix",
                         "y": 0.1875,
                         "z": -0.328125
                     },
                     {
-                        "type": "minecraft:draw_model",
+                        "type": "backpacked:draw_model",
                         "model": "backpacked:backpacked/end_crystal_frame"
                     }
                 ]

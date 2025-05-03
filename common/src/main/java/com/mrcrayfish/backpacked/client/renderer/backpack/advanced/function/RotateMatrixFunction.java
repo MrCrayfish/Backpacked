@@ -5,20 +5,20 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.Value;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.backpacked.util.Utils;
 
 /**
  * Author: MrCrayfish
  */
-public record RotateFunction(Value x, Value y, Value z) implements BaseFunction
+public record RotateMatrixFunction(Value x, Value y, Value z) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        ResourceLocation.withDefaultNamespace("rotate"),
-        RecordCodecBuilder.<RotateFunction>mapCodec(builder -> builder.group(
+        Utils.rl("rotate_matrix"),
+        RecordCodecBuilder.<RotateMatrixFunction>mapCodec(builder -> builder.group(
             Value.EITHER_CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
             Value.EITHER_CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),
             Value.EITHER_CODEC.fieldOf("z").orElse(Value.ZERO).forGetter(o -> o.z)
-        ).apply(builder, RotateFunction::new))
+        ).apply(builder, RotateMatrixFunction::new))
     );
 
     @Override

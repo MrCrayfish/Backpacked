@@ -3,18 +3,20 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.function.BiFunction;
 
-public record LivingEntityDataValue(Data data) implements Value
+public record EntityDataValue(Data data) implements Value
 {
-    public static final Type TYPE = new Type(ResourceLocation.withDefaultNamespace("living_entity_data"), RecordCodecBuilder.<LivingEntityDataValue>mapCodec(builder -> builder.group(
-        Data.CODEC.fieldOf("property").forGetter(o -> o.data)
-    ).apply(builder, LivingEntityDataValue::new)));
+    public static final Type TYPE = new Type(
+        Utils.rl("entity_data"),
+        RecordCodecBuilder.<EntityDataValue>mapCodec(builder -> builder.group(
+            Data.CODEC.fieldOf("property").forGetter(o -> o.data)
+        ).apply(builder, EntityDataValue::new)));
 
     @Override
     public Type type()

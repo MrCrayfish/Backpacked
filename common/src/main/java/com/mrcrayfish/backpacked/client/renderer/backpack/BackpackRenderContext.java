@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * Author: MrCrayfish
  */
 public record BackpackRenderContext(PoseStack pose, MultiBufferSource source, int light, ItemStack stack,
-                                    ClientBackpack backpack, @Nullable LivingEntity entity, float partialTick, int animationTick, Consumer<BakedModel> bakedModelRenderer, ItemRenderer itemRenderer)
+                                    ClientBackpack backpack, @Nullable LivingEntity entity, float partialTick, Consumer<BakedModel> bakedModelRenderer, ItemRenderer itemRenderer)
 {
 
 }

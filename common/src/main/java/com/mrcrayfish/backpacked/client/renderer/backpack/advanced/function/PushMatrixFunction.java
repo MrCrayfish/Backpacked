@@ -3,20 +3,20 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.backpacked.util.Utils;
 
 import java.util.List;
 
 /**
  * Author: MrCrayfish
  */
-public record StackFunction(List<BaseFunction> functions) implements BaseFunction
+public record PushMatrixFunction(List<BaseFunction> functions) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        ResourceLocation.withDefaultNamespace("stack"),
-        RecordCodecBuilder.<StackFunction>mapCodec(builder -> builder.group(
+        Utils.rl("push_matrix"),
+        RecordCodecBuilder.<PushMatrixFunction>mapCodec(builder -> builder.group(
             BaseFunction.CODEC.listOf().fieldOf("functions").forGetter(o -> o.functions)
-        ).apply(builder, StackFunction::new))
+        ).apply(builder, PushMatrixFunction::new))
     );
 
     @Override

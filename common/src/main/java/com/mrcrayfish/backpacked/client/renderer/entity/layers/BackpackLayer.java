@@ -70,7 +70,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         // Draw the backpack model
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(pose, source, light, stack, backpack, player, partialTick, player.tickCount, model -> {
+            BackpackRenderContext context = new BackpackRenderContext(pose, source, light, stack, backpack, player, partialTick, model -> {
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
             }, this.itemRenderer);
             pose.pushPose();
