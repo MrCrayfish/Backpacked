@@ -250,8 +250,7 @@ public class CustomiseBackpackScreen extends Screen
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
         meta.renderer().ifPresentOrElse(renderer -> {
-            float tickCount = mc.player.tickCount + partialTick;
-            BackpackRenderContext context = new BackpackRenderContext(pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, partialTick, model -> {
+            BackpackRenderContext context = new BackpackRenderContext(pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, mc.level, partialTick, model -> {
                 mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
                 graphics.flush();
             }, mc.getItemRenderer());

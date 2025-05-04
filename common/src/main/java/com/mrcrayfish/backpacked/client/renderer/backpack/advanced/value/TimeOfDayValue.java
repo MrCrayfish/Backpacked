@@ -3,14 +3,11 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
-/**
- * Author: MrCrayfish
- */
-public class TickCountValue implements Value
+public class TimeOfDayValue implements Value
 {
-    public static final Type TYPE = new Type(Utils.rl("tick_count"), MapCodec.unit(new TickCountValue()));
+    public static final Type TYPE = new Type(Utils.rl("time_of_day"), MapCodec.unit(new TimeOfDayValue()));
 
     @Override
     public Type type()
@@ -21,7 +18,7 @@ public class TickCountValue implements Value
     @Override
     public double get(BackpackRenderContext context)
     {
-        LivingEntity entity = context.entity();
-        return entity != null ? entity.tickCount + context.partialTick() : 0;
+        Level level = context.level();
+        return level != null ? level.getTimeOfDay(context.partialTick()) : 0;
     }
 }

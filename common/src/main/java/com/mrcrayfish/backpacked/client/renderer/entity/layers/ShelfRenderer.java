@@ -68,9 +68,8 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         pose.mulPose(Axis.XP.rotationDegrees(90F));
         pose.scale(1.0F, -1.0F, -1.0F);
 
-        int animationTick = Optional.ofNullable(Minecraft.getInstance().player).map(player -> player.tickCount).orElse(0);
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(pose, buffer, light, stack, backpack, null, partialTick, model -> {
+            BackpackRenderContext context = new BackpackRenderContext(pose, buffer, light, stack, backpack, null, entity.getLevel(), partialTick, model -> {
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
             }, this.itemRenderer);
             pose.pushPose();
