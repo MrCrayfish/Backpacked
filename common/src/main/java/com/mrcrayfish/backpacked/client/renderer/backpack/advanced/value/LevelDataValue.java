@@ -35,14 +35,19 @@ public record LevelDataValue(Property property) implements Value
 
     private enum Property implements StringRepresentable
     {
-        TIME_OF_DAY("time_of_day", (level, context) -> level.getTimeOfDay(context.partialTick()));
+        TIME_OF_DAY("time_of_day", (level, context) -> (double) level.getTimeOfDay(context.partialTick())),
+        TEST("game_time", (level, context) -> (double) level.getGameTime()),
+        RAIN_LEVELS("rain_levels", (level, context) -> (double) level.getRainLevel(context.partialTick())),
+        THUNDER_LEVELS("thunder_levels", (level, context) -> (double) level.getThunderLevel(context.partialTick())),
+        SEA_LEVEL("sea_level", (level, context) -> (double) level.getSeaLevel()),
+        MAX_LIGHT_LEVEL("max_light_level", (level, context) -> (double) level.getMaxLightLevel());
 
         public static final Codec<Property> CODEC = StringRepresentable.fromEnum(Property::values);
 
         private final String name;
-        private final BiFunction<Level, BackpackRenderContext, Float> function;
+        private final BiFunction<Level, BackpackRenderContext, Double> function;
 
-        Property(String name, BiFunction<Level, BackpackRenderContext, Float> function)
+        Property(String name, BiFunction<Level, BackpackRenderContext, Double> function)
         {
             this.name = name;
             this.function = function;
