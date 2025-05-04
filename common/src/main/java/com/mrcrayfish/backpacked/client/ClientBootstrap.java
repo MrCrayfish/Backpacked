@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRende
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.ConditionTypes;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.FallFlyingCondition;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -31,6 +32,7 @@ public class ClientBootstrap
         ValueTypes.register(AndValue.TYPE);
         ValueTypes.register(ExpressionValue.TYPE);
         ValueTypes.register(EntityDataValue.TYPE);
+        ConditionTypes.register(FallFlyingCondition.TYPE);
     }
 
     public static void init()

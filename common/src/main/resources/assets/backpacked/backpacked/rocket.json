@@ -13,17 +13,25 @@
                 "model": "backpacked:backpacked/rocket"
             },
             {
-                "type": "backpacked:spawn_particle",
-                "particle": {
-                    "type": "minecraft:smoke"
+                "type": "backpacked:conditional",
+                "condition": {
+                    "type": "backpacked:fall_flying"
                 },
-                "position": {
-                    "y": -0.5625,
-                    "z": 0.125
-                },
-                "motion": {
-                    "y": -1
-                }
+                "functions": [
+                    {
+                        "type": "backpacked:spawn_particle",
+                        "particle": {
+                            "type": "minecraft:smoke"
+                        },
+                        "position": {
+                            "y": -0.625,
+                            "z": 0.125
+                        },
+                        "motion": {
+                            "y": -0.25
+                        }
+                    }
+                ]
             }
         ]
     }
