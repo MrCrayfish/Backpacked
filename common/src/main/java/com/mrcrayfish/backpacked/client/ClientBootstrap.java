@@ -3,10 +3,7 @@ package com.mrcrayfish.backpacked.client;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.AndCondition;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.ConditionTypes;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.ManyCondition;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.TestValueCondition;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -36,6 +33,7 @@ public class ClientBootstrap
         ValueTypes.register(EntityDataValue.TYPE);
         ConditionTypes.register(AndCondition.TYPE);
         ConditionTypes.register(ManyCondition.TYPE);
+        ConditionTypes.register(InvertedCondition.TYPE);
         ConditionTypes.register(TestValueCondition.TYPE);
     }
 
