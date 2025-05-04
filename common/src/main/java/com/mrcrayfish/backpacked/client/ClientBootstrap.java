@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.ConditionTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -23,6 +24,7 @@ public class ClientBootstrap
         FunctionTypes.register(ScaleMatrixFunction.TYPE);
         FunctionTypes.register(DrawModelFunction.TYPE);
         FunctionTypes.register(SpawnParticleFunction.TYPE);
+        FunctionTypes.register(ConditionalFunction.TYPE);
         ValueTypes.register(ConstantValue.TYPE);
         ValueTypes.register(TickCountValue.TYPE);
         ValueTypes.register(WaveformValue.TYPE);
