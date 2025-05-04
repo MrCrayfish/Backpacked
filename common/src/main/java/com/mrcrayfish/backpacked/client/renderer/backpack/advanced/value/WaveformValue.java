@@ -20,7 +20,8 @@ public record WaveformValue(Waveform waveform, double wavelength, double amplitu
             Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),
             Codec.DOUBLE.fieldOf("amplitude").orElse(1.0).forGetter(o -> o.amplitude),
             Codec.DOUBLE.fieldOf("phase").orElse(0.0).forGetter(o -> o.phase)
-        ).apply(builder, WaveformValue::new)));
+        ).apply(builder, WaveformValue::new))
+    );
 
     @Override
     public Type type()

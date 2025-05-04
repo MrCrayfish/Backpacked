@@ -14,7 +14,8 @@ public record ConstantValue(double value) implements Value
         Utils.rl("constant"),
         RecordCodecBuilder.<ConstantValue>mapCodec(builder -> builder.group(
             Codec.DOUBLE.fieldOf("value").forGetter(o -> o.value)
-        ).apply(builder, ConstantValue::new)));
+        ).apply(builder, ConstantValue::new))
+    );
 
     @Override
     public Type type()

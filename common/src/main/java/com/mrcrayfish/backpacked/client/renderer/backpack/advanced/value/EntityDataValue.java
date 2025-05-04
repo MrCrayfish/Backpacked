@@ -16,7 +16,8 @@ public record EntityDataValue(Data data) implements Value
         Utils.rl("entity_data"),
         RecordCodecBuilder.<EntityDataValue>mapCodec(builder -> builder.group(
             Data.CODEC.fieldOf("property").forGetter(o -> o.data)
-        ).apply(builder, EntityDataValue::new)));
+        ).apply(builder, EntityDataValue::new))
+    );
 
     @Override
     public Type type()

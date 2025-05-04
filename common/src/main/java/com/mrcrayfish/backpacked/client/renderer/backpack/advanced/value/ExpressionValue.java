@@ -13,7 +13,8 @@ public record ExpressionValue(List<Operation> operations) implements Value
         Utils.rl("expression"),
         RecordCodecBuilder.<ExpressionValue>mapCodec(builder -> builder.group(
             Operation.CODEC.listOf().fieldOf("operations").forGetter(o -> o.operations)
-        ).apply(builder, ExpressionValue::new)));
+        ).apply(builder, ExpressionValue::new))
+    );
 
     @Override
     public Type type()

@@ -12,7 +12,8 @@ public record AndValue(Value first, Value second, Operator operator) implements 
             Value.EITHER_CODEC.fieldOf("first").forGetter(o -> o.first),
             Value.EITHER_CODEC.fieldOf("second").forGetter(o -> o.second),
             Operator.CODEC.fieldOf("op").orElse(Operator.ADD).forGetter(o -> o.operator)
-        ).apply(builder, AndValue::new)));
+        ).apply(builder, AndValue::new))
+    );
 
     @Override
     public Type type()

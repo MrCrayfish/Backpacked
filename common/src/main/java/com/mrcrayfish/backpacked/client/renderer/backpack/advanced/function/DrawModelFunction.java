@@ -23,7 +23,8 @@ public record DrawModelFunction(ModelResourceLocation model, Optional<Vector3f> 
         RecordCodecBuilder.<DrawModelFunction>mapCodec(builder -> builder.group(
             ResourceLocation.CODEC.fieldOf("model").xmap(FrameworkClientAPI::createModelResourceLocation, ModelResourceLocation::id).forGetter(o -> o.model),
             ExtraCodecs.VECTOR3F.optionalFieldOf("origin").forGetter(o -> o.origin)
-        ).apply(builder, DrawModelFunction::new)));
+        ).apply(builder, DrawModelFunction::new))
+    );
 
     @Override
     public Type type()

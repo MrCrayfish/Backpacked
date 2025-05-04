@@ -14,7 +14,8 @@ public record ConditionalFunction(BaseCondition condition, List<BaseFunction> fu
         RecordCodecBuilder.<ConditionalFunction>mapCodec(builder -> builder.group(
             BaseCondition.CODEC.fieldOf("condition").forGetter(o -> o.condition),
             BaseFunction.CODEC.listOf().fieldOf("functions").forGetter(o -> o.functions)
-        ).apply(builder, ConditionalFunction::new)));
+        ).apply(builder, ConditionalFunction::new))
+    );
 
     @Override
     public Type type()

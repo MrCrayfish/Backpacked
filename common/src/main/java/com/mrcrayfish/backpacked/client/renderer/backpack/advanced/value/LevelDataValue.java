@@ -15,7 +15,8 @@ public record LevelDataValue(Property property) implements Value
         Utils.rl("level_data"),
         RecordCodecBuilder.<LevelDataValue>mapCodec(builder -> builder.group(
             Property.CODEC.fieldOf("property").forGetter(o -> o.property)
-        ).apply(builder, LevelDataValue::new)));
+        ).apply(builder, LevelDataValue::new))
+    );
 
     @Override
     public Type type()
