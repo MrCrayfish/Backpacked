@@ -3,12 +3,7 @@ package com.mrcrayfish.backpacked.client;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.DrawModelFunction;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.FunctionTypes;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.RotateMatrixFunction;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.ScaleMatrixFunction;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.PushMatrixFunction;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.TranslateMatrixFunction;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.framework.api.event.InputEvents;
 
@@ -27,6 +22,7 @@ public class ClientBootstrap
         FunctionTypes.register(RotateMatrixFunction.TYPE);
         FunctionTypes.register(ScaleMatrixFunction.TYPE);
         FunctionTypes.register(DrawModelFunction.TYPE);
+        FunctionTypes.register(SpawnParticleFunction.TYPE);
         ValueTypes.register(ConstantValue.TYPE);
         ValueTypes.register(TickCountValue.TYPE);
         ValueTypes.register(WaveformValue.TYPE);

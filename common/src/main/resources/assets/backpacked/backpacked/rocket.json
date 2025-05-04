@@ -4,5 +4,27 @@
         "rotation": [30, 30, 0],
         "translation": [-1.25, 5.25, 0],
         "scale": [1.4, 1.4, 1.4]
+    },
+    "renderer": {
+        "type": "backpacked:advanced",
+        "functions": [
+            {
+                "type": "backpacked:draw_model",
+                "model": "backpacked:backpacked/rocket"
+            },
+            {
+                "type": "backpacked:spawn_particle",
+                "particle": {
+                    "type": "minecraft:smoke"
+                },
+                "position": {
+                    "y": -0.5625,
+                    "z": 0.125
+                },
+                "motion": {
+                    "y": -1
+                }
+            }
+        ]
     }
 }

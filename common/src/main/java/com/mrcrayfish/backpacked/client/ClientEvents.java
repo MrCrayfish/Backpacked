@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
@@ -62,6 +63,8 @@ public class ClientEvents
 
     private static void onClientTickEnd()
     {
+        SpawnParticleFunction.clearSpawned();
+
         Minecraft mc = Minecraft.getInstance();
         if(mc.level == null || mc.player == null)
             return;
