@@ -58,7 +58,7 @@ public record EntityDataValue(Data data) implements Value
         MOTION_X("motion_x", (entity, context) -> entity.getDeltaMovement().x),
         MOTION_Y("motion_y", (entity, context) -> entity.getDeltaMovement().y),
         MOTION_Z("motion_z", (entity, context) -> entity.getDeltaMovement().z),
-        LIGHT_LEVEL("light_level", (entity, context) -> (double) entity.level().getLightEmission(entity.blockPosition()));
+        LIGHT_LEVEL("light_level", (entity, context) -> (double) entity.level().getLightEngine().getRawBrightness(entity.blockPosition(), 0));
 
         public static final Codec<Data> CODEC = StringRepresentable.fromEnum(Data::values);
 
