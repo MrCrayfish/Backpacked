@@ -31,7 +31,7 @@ public class ClientBootstrap
         ValueTypes.register(AndValue.TYPE);
         ValueTypes.register(ExpressionValue.TYPE);
         ValueTypes.register(EntityDataValue.TYPE);
-        ValueTypes.register(TimeOfDayValue.TYPE);
+        ValueTypes.register(LevelDataValue.TYPE);
         ConditionTypes.register(AndCondition.TYPE);
         ConditionTypes.register(ManyCondition.TYPE);
         ConditionTypes.register(InvertedCondition.TYPE);
