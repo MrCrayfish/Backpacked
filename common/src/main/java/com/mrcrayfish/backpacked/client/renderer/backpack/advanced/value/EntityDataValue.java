@@ -42,7 +42,7 @@ public record EntityDataValue(Data data) implements Value
         BODY_ROTATION("body_rotation", (entity, context) -> Mth.rotLerp(context.partialTick(), entity.yBodyRotO, entity.yBodyRot)),
         SWIM_ANGLE("swimming", (entity, context) -> entity.getSwimAmount(context.partialTick())),
         ATTACK_SWING("attack_swing", (entity, context) -> entity.getAttackAnim(context.partialTick())),
-        FALL_FLYING_COUNTER("fall_flying_counter", (entity, context) -> (float) entity.getFallFlyingTicks() + context.partialTick()),
+        FALL_FLYING_COUNTER("fall_flying_counter", (entity, context) -> entity.isFallFlying() ? (float) entity.getFallFlyingTicks() + context.partialTick() : 0F),
         HEALTH("health", (entity, context) -> entity.getHealth()),
         MAX_HEALTH("max_health", (entity, context) -> entity.getMaxHealth()),
         ABSORPTION("absorption", (entity, context) -> entity.getAbsorptionAmount()),

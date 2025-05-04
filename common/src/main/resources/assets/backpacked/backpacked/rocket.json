@@ -15,7 +15,13 @@
             {
                 "type": "backpacked:conditional",
                 "condition": {
-                    "type": "backpacked:fall_flying"
+                    "type": "backpacked:test_value",
+                    "first": {
+                        "type": "backpacked:entity_data",
+                        "property": "fall_flying_counter"
+                    },
+                    "second": 0.1,
+                    "comparison": "greater_than"
                 },
                 "functions": [
                     {
