@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
+import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
@@ -21,7 +22,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -63,15 +63,15 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
 
             ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
             meta.renderer().ifPresentOrElse(renderer -> {
-                BackpackRenderContext context = new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.ALL, pose, source, light, this.displayStack, backpack, villager, villager.level(), partialTick, model -> {
-                    this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+                BackpackRenderContext context = new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.ALL, pose, source, light, backpack, villager, villager.level(), partialTick, model -> {
+                    BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
                 });
                 pose.pushPose();
                 renderer.render(context);
                 pose.popPose();
             }, () -> {
                 BakedModel model = this.itemRenderer.getItemModelShaper().getModelManager().getModel(backpack.getBaseModel());
-                this.itemRenderer.render(this.displayStack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
+                BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
             });
             pose.popPose();
         });

@@ -66,7 +66,7 @@ public class SpawnParticleFunction implements BaseFunction
             return;
 
         // Create a key to keep track if particle has already been spawned
-        int key = Objects.hash(context.stack(), context.scene(), context.entity(), this);
+        int key = Objects.hash(context.scene(), context.entity(), this);
         if(SPAWNED.contains(key))
             return;
 

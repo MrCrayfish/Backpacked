@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
+import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
@@ -20,7 +21,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 
@@ -32,19 +32,17 @@ import java.util.function.Supplier;
 public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 {
     private final ItemRenderer itemRenderer;
-    private final Supplier<BakedModel> missingModel;
 
     public ShelfRenderer(BlockEntityRendererProvider.Context context)
     {
         this.itemRenderer = context.getItemRenderer();
-        this.missingModel = () -> this.itemRenderer.getItemModelShaper().getModelManager().getMissingModel();
     }
 
     @Override
     public void render(ShelfBlockEntity entity, float partialTick, PoseStack pose, MultiBufferSource buffer, int light, int overlay)
     {
         ItemStack stack = entity.getBackpack();
-        if(stack.getItem() != ModItems.BACKPACK.get())
+        if(!stack.is(ModItems.BACKPACK.get()))
             return;
 
         BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
@@ -69,15 +67,15 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         pose.scale(1.0F, -1.0F, -1.0F);
 
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(Scene.ON_SHELF, RenderMode.MODELS_ONLY, pose, buffer, light, stack, backpack, null, entity.getLevel(), partialTick, model -> {
-                this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
+            BackpackRenderContext context = new BackpackRenderContext(Scene.ON_SHELF, RenderMode.MODELS_ONLY, pose, buffer, light, backpack, null, entity.getLevel(), partialTick, model -> {
+                BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
             });
             pose.pushPose();
             renderer.render(context);
             pose.popPose();
         }, () -> {
             BakedModel model = this.getModel(backpack.getBaseModel());
-            this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
+            BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
         });
     }
 

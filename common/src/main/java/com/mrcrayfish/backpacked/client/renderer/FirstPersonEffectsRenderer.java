@@ -54,7 +54,7 @@ public class FirstPersonEffectsRenderer
         if(!player.isSpectator())
         {
             int light = mc.getEntityRenderDispatcher().getPackedLightCoords(player, partialTick);
-            renderBackpack(player, renderer.getModel().body, pose, source, light, partialTick);
+            renderBackpack(player, pose, source, light, partialTick);
         }
         pose.popPose();
     }
@@ -100,7 +100,7 @@ public class FirstPersonEffectsRenderer
         body.translateAndRotate(pose);
     }
 
-    private static void renderBackpack(AbstractClientPlayer player, ModelPart body, PoseStack pose, MultiBufferSource source, int light, float partialTick)
+    private static void renderBackpack(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, int light, float partialTick)
     {
         ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(player);
         if(stack.isEmpty())
@@ -126,7 +126,7 @@ public class FirstPersonEffectsRenderer
 
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresent(renderer -> {
-            renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, stack, backpack, player, player.level(), partialTick, model -> {}));
+            renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, backpack, player, player.level(), partialTick, model -> {}));
         });
     }
 }

@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
+import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
@@ -18,7 +19,6 @@ import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -27,6 +27,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -38,7 +39,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -72,7 +72,6 @@ public class CustomiseBackpackScreen extends Screen
     private static final int SCROLLABLE_HEIGHT = 138;
     private static final int SCROLLABLE_AREA = SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT;
 
-    private final ItemStack displayStack;
     private final int windowWidth;
     private final int windowHeight;
     private int windowLeft;
@@ -94,7 +93,6 @@ public class CustomiseBackpackScreen extends Screen
     public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
-        this.displayStack = new ItemStack(ModItems.BACKPACK.get());
         this.windowWidth = 201;
         this.windowHeight = 166;
         Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
@@ -242,10 +240,10 @@ public class CustomiseBackpackScreen extends Screen
         graphics.drawString(this.font, entry.getLabel(), x + 20, y + 6, color, false);
 
         // Draw backpack model
-        drawBackpackInGui(this.minecraft, graphics, this.displayStack, entry.getBackpack(), x + 10, y + 10, partialTick);
+        drawBackpackInGui(this.minecraft, graphics, entry.getBackpack(), x + 10, y + 10, partialTick);
     }
 
-    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ItemStack stack, ClientBackpack backpack, int x, int y, float partialTick)
+    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick)
     {
         PoseStack pose = graphics.pose();
         pose.pushPose();
@@ -255,17 +253,17 @@ public class CustomiseBackpackScreen extends Screen
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, mc.level, partialTick, model -> {
-                mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
-                graphics.flush();
+            BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, backpack, mc.player, mc.level, partialTick, model -> {
+                BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), 15728880, OverlayTexture.NO_OVERLAY);
+                graphics.bufferSource().endBatch();
             });
             pose.pushPose();
             renderer.render(context);
             pose.popPose();
         }, () -> {
             BakedModel model = mc.getModelManager().getModel(backpack.getBaseModel());
-            mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
-            graphics.flush();
+            BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), 15728880, OverlayTexture.NO_OVERLAY);
+            graphics.bufferSource().endBatch();
         });
         pose.popPose();
     }

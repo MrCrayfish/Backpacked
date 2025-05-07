@@ -36,7 +36,7 @@ public class UnlockBackpackToast implements Toast
         graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
         graphics.drawString(gui.getMinecraft().font, TITLE, 35, 7, 0xFFFFFF, false);
         graphics.drawString(gui.getMinecraft().font, this.name, 35, 18, 0xFFFFFF, false);
-        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, new ItemStack(ModItems.BACKPACK.get()), this.backpack, 18, 16, 0);
+        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, this.backpack, 18, 16, 0);
         return delta >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
 }
