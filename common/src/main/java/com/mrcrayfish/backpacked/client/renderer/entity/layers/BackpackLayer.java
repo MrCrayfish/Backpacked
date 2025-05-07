@@ -5,6 +5,8 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
+import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
+import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -70,9 +72,9 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         // Draw the backpack model
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(pose, source, light, stack, backpack, player, player.level(), partialTick, model -> {
+            BackpackRenderContext context = new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.ALL, pose, source, light, stack, backpack, player, player.level(), partialTick, model -> {
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, source, light, OverlayTexture.NO_OVERLAY, model);
-            }, this.itemRenderer);
+            });
             pose.pushPose();
             renderer.render(context);
             pose.popPose();

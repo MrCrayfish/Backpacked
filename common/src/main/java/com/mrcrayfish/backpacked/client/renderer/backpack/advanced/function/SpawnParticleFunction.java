@@ -3,23 +3,24 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.ConstantValue;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.Value;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.entity.LivingEntity;
-import org.joml.*;
+import net.minecraft.world.level.Level;
+import org.joml.Quaterniond;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 public class SpawnParticleFunction implements BaseFunction
 {
-    private static final Set<UUID> SPAWNED = new HashSet<>();
+    private static final Set<Integer> SPAWNED = new HashSet<>();
 
     public static final Type TYPE = new Type(
         Utils.rl("spawn_particle"),
@@ -50,11 +51,23 @@ public class SpawnParticleFunction implements BaseFunction
     @Override
     public void apply(BackpackRenderContext context)
     {
-        LivingEntity entity = context.entity();
-        if(entity == null || SPAWNED.contains(entity.getUUID()))
+        // Don't spawn particles in customisation menu
+        if(context.scene().isCustomisationMenu())
+            return;
+
+        if(!context.renderMode().canShowEffects())
             return;
 
         if(Minecraft.getInstance().isPaused())
+            return;
+
+        Level level = context.level();
+        if(level == null)
+            return;
+
+        // Create a key to keep track if particle has already been spawned
+        int key = Objects.hash(context.stack(), context.scene(), context.entity(), this);
+        if(SPAWNED.contains(key))
             return;
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -76,9 +89,9 @@ public class SpawnParticleFunction implements BaseFunction
         double particleX = pos.x + offset.x;
         double particleY = pos.y + offset.y;
         double particleZ = pos.z + offset.z;
-        entity.level().addParticle(this.particle, particleX, particleY, particleZ, motion.x, motion.y, motion.z);
+        level.addParticle(this.particle, particleX, particleY, particleZ, motion.x, motion.y, motion.z);
 
-        SPAWNED.add(entity.getUUID());
+        SPAWNED.add(key);
     }
 
     public static void clearSpawned()

@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.renderer.entity.layers;
+package com.mrcrayfish.backpacked.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -6,11 +6,12 @@ import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
+import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
+import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -23,7 +24,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -69,9 +69,9 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         pose.scale(1.0F, -1.0F, -1.0F);
 
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(pose, buffer, light, stack, backpack, null, entity.getLevel(), partialTick, model -> {
+            BackpackRenderContext context = new BackpackRenderContext(Scene.ON_SHELF, RenderMode.MODELS_ONLY, pose, buffer, light, stack, backpack, null, entity.getLevel(), partialTick, model -> {
                 this.itemRenderer.render(stack, ItemDisplayContext.NONE, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
-            }, this.itemRenderer);
+            });
             pose.pushPose();
             renderer.render(context);
             pose.popPose();

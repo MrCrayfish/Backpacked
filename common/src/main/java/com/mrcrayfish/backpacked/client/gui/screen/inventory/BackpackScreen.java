@@ -144,7 +144,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
 
     private void openConfigScreen()
     {
-        ClientServices.SCREEN.openConfigScreen();
+        ClientServices.CLIENT.openConfigScreen();
     }
 
     @Override

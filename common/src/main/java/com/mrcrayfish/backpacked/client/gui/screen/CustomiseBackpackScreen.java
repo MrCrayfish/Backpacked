@@ -8,6 +8,8 @@ import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
+import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
+import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
@@ -250,10 +252,10 @@ public class CustomiseBackpackScreen extends Screen
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
         meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, mc.level, partialTick, model -> {
+            BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, stack, backpack, mc.player, mc.level, partialTick, model -> {
                 mc.getItemRenderer().render(stack, ItemDisplayContext.NONE, false, pose, graphics.bufferSource(), 0xF000F0, OverlayTexture.NO_OVERLAY, model);
                 graphics.flush();
-            }, mc.getItemRenderer());
+            });
             pose.pushPose();
             renderer.render(context);
             pose.popPose();

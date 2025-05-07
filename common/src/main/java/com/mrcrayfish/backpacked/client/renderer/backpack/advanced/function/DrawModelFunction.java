@@ -35,7 +35,10 @@ public record DrawModelFunction(ModelResourceLocation model, Optional<Vector3f> 
     @Override
     public void apply(BackpackRenderContext context)
     {
-        BakedModel model = Minecraft.getInstance().getModelManager().getModel(this.model);
-        context.bakedModelRenderer().accept(model);
+        if(context.renderMode().canDrawModels())
+        {
+            BakedModel model = Minecraft.getInstance().getModelManager().getModel(this.model);
+            context.bakedModelRenderer().accept(model);
+        }
     }
 }

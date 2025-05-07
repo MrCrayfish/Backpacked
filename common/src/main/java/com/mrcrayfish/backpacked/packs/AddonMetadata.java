@@ -24,6 +24,8 @@ import java.util.Optional;
 
 public record AddonMetadata(Component name, Component description, Component author, PackCompatibility assetsCompatibility, PackCompatibility dataCompatibility, PackType type)
 {
+    public static final String FILE_NAME = "backpacked_addon.mcmeta";
+
     public Pack.Metadata toVanilla()
     {
         PackCompatibility compatibility = switch(this.type) {

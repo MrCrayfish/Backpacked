@@ -1,22 +1,29 @@
 package com.mrcrayfish.backpacked.platform;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.platform.services.IScreenHelper;
+import com.mrcrayfish.backpacked.platform.services.IClientHelper;
+import com.mrcrayfish.backpacked.util.ReflectedMethod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 /**
  * Author: MrCrayfish
  */
-public class NeoForgeScreenHelper implements IScreenHelper
+public class NeoForgeClientHelper implements IClientHelper
 {
+    private static final ReflectedMethod<PlayerRenderer, Void> SETUP_ROTATIONS = new ReflectedMethod<>(PlayerRenderer.class, "setupRotations", AbstractClientPlayer.class, PoseStack.class, float.class, float.class, float.class, float.class);
+
     @Override
     public void openConfigScreen()
     {
@@ -40,5 +47,11 @@ public class NeoForgeScreenHelper implements IScreenHelper
                 minecraft.player.displayClientMessage(message, false);
             }
         });
+    }
+
+    @Override
+    public void invokeRotationSetup(PlayerRenderer renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick)
+    {
+        SETUP_ROTATIONS.invoke(renderer, player, stack, 0, bodyRot, partialTick, scale);
     }
 }
