@@ -40,7 +40,7 @@ public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Resource
                 JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
                 DataResult<ModelMeta> result = ModelMeta.CODEC.parse(JsonOps.INSTANCE, element);
                 if(result.error().isPresent()) {
-                    Constants.LOG.error("Failed to parse backpack meta: %s".formatted(location));
+                    Constants.LOG.error("Failed to parse backpack meta: {}", location);
                     Constants.LOG.error(result.error().get().message());
                 } else {
                     String raw = location.getPath();
@@ -49,7 +49,7 @@ public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Resource
                     map.put(key, result.getOrThrow(JsonParseException::new));
                 }
             } catch(IOException e) {
-                Constants.LOG.error("Failed to load backpack meta: %s".formatted(location), e);
+                Constants.LOG.error("Failed to load backpack meta: {}", location, e);
             }
         });
         return map;
