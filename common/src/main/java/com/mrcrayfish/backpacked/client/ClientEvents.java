@@ -64,32 +64,6 @@ public class ClientEvents
     private static void onClientTickEnd()
     {
         SpawnParticleFunction.clearSpawned();
-
-        Minecraft mc = Minecraft.getInstance();
-        if(mc.level == null || mc.player == null)
-            return;
-
-        List<Player> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(16F), player -> true);
-        for(Player player : players)
-        {
-            if(!Services.BACKPACK.isBackpackVisible(player))
-                continue;
-
-            ItemStack stack = Services.BACKPACK.getBackpackStack(player);
-            if(stack.isEmpty())
-                continue;
-
-            if(!canShowBackpackEffects(stack))
-                continue;
-
-            // TODO add particle emitter
-            /*String modelName = stack.getOrCreateTag().getString("BackpackModel");
-            BackpackModel model = BackpackLayer.getModel(modelName).get();
-            if(model == null)
-                continue;*/
-
-            //model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
-        }
     }
 
     public static boolean canShowBackpackEffects(ItemStack stack)
