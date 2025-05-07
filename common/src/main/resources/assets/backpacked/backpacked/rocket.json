@@ -36,6 +36,19 @@
                         "motion": {
                             "y": -0.25
                         }
+                    },
+                    {
+                        "type": "backpacked:spawn_particle",
+                        "particle": {
+                            "type": "minecraft:poof"
+                        },
+                        "position": {
+                            "y": -0.625,
+                            "z": 0.125
+                        },
+                        "motion": {
+                            "y": -0.25
+                        }
                     }
                 ]
             }
