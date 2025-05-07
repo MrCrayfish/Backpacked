@@ -9,7 +9,6 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.event.TickEvents;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -54,29 +53,23 @@ public class BackpackEvents
         if(player.level().isClientSide())
             return;
 
-        ItemStack cosmeticStack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(player);
+        Optional<BackpackProperties> cosmeticProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
         ItemStack realStack = ModSyncedDataKeys.BACKPACK.getValue(player);
-        if(!realStack.isEmpty())
+        if(realStack.is(ModItems.BACKPACK.get()))
         {
-            if(cosmeticStack.isEmpty() || !cosmeticStack.is(ModItems.BACKPACK.get()))
+            BackpackProperties realProperties = realStack.get(ModDataComponents.BACKPACK_PROPERTIES.get());
+            if(realProperties == null)
             {
-                ItemStack copy = realStack.copy();
-                copy.remove(DataComponents.CONTAINER);
-                ModSyncedDataKeys.COSMETIC_BACKPACK.setValue(player, copy);
-                return;
+                throw new RuntimeException("BackpackProperties is null. This should not happen!");
             }
-            BackpackProperties realProperties = realStack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
-            BackpackProperties cosmeticProperties = cosmeticStack.get(ModDataComponents.BACKPACK_PROPERTIES.get());
-            if(!realProperties.equals(cosmeticProperties))
+            if(cosmeticProperties.isEmpty() || !realProperties.equals(cosmeticProperties.get()))
             {
-                ItemStack copy = cosmeticStack.copy();
-                copy.set(ModDataComponents.BACKPACK_PROPERTIES.get(), realProperties);
-                ModSyncedDataKeys.COSMETIC_BACKPACK.setValue(player, copy);
+                ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(player, Optional.of(realProperties));
             }
         }
-        else if(!cosmeticStack.isEmpty())
+        else if(cosmeticProperties.isPresent())
         {
-            ModSyncedDataKeys.COSMETIC_BACKPACK.setValue(player, ItemStack.EMPTY);
+            ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(player, Optional.empty());
         }
     }
 }

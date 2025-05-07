@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
+import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -21,10 +22,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
-
-import java.util.function.Supplier;
 
 /**
  * Author: MrCrayfish
@@ -46,7 +46,8 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             return;
 
         BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
-        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(properties.model());
+        ResourceLocation modelId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(modelId);
         if(backpack == null)
             return;
 

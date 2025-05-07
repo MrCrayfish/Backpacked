@@ -8,9 +8,9 @@ import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
+import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.client.model.PlayerModel;
@@ -21,11 +21,13 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -43,11 +45,11 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
     @Override
     public void render(PoseStack pose, MultiBufferSource source, int light, T player, float p_225628_5_, float p_225628_6_, float partialTick, float p_225628_8_, float p_225628_9_, float p_225628_10_)
     {
-        ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(player);
-        if(stack.isEmpty())
+        Optional<BackpackProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
+        if(propertiesOptional.isEmpty())
             return;
 
-        BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        BackpackProperties properties = propertiesOptional.get();
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if(chestStack.getItem() == Items.ELYTRA && !properties.showWithElytra())
             return;
@@ -55,7 +57,8 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         if(!Services.BACKPACK.isBackpackVisible(player))
             return;
 
-        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(properties.model());
+        ResourceLocation cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(cosmeticId);
         if(backpack == null)
             return;
 

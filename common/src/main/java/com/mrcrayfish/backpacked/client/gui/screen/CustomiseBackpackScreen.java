@@ -15,7 +15,6 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -27,7 +26,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -45,10 +43,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -118,7 +113,7 @@ public class CustomiseBackpackScreen extends Screen
         this.windowTop = (this.height - this.windowHeight) / 2;
 
         this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.reset"), onPress -> {
-            this.displayBackpack = this.displayBackpack.setModel(BackpackManager.getDefaultOrFallbackCosmetic());
+            this.displayBackpack = this.displayBackpack.setCosmetic(BackpackManager.getDefaultOrFallbackCosmetic());
         }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
 
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
@@ -148,7 +143,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.displayBackpack.model().equals(BackpackManager.getDefaultCosmetic());
+        this.resetButton.active = !this.displayBackpack.cosmetic().equals(BackpackManager.getDefaultCosmetic());
         this.saveButton.active = this.needsToSave();
     }
 
@@ -228,7 +223,7 @@ public class CustomiseBackpackScreen extends Screen
     private void drawBackpackItem(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, BackpackModelEntry entry)
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
-        boolean selected = unlocked && entry.getCosmeticId().equals(this.displayBackpack.model());
+        boolean selected = unlocked && this.displayBackpack.cosmetic().stream().anyMatch(id -> id.equals(entry.getCosmeticId()));
         boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT);
 
         // Draw background for item
@@ -239,7 +234,7 @@ public class CustomiseBackpackScreen extends Screen
         int color = selected ? 4226832 : (hovered ? 16777088 : (unlocked ? 6839882 : 0x4E1C1C));
         graphics.drawString(this.font, entry.getLabel(), x + 20, y + 6, color, false);
 
-        // Draw backpack model
+        // Draw backpack cosmetic
         drawBackpackInGui(this.minecraft, graphics, entry.getBackpack(), x + 10, y + 10, partialTick);
     }
 
@@ -296,7 +291,7 @@ public class CustomiseBackpackScreen extends Screen
                     BackpackModelEntry entry = this.models.get(hoveredIndex);
                     if(entry.getBackpack().isUnlocked(this.minecraft.player))
                     {
-                        this.displayBackpack = this.displayBackpack.setModel(entry.getCosmeticId());
+                        this.displayBackpack = this.displayBackpack.setCosmetic(entry.getCosmeticId());
                         this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     }
                 }
@@ -369,22 +364,12 @@ public class CustomiseBackpackScreen extends Screen
 
     private BackpackProperties getCurrentBackpackProperties()
     {
-        ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(this.minecraft.player);
-        return this.getBackpackProperties(stack);
-    }
-
-    private BackpackProperties getBackpackProperties(ItemStack stack)
-    {
-        return stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        return ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.minecraft.player).orElse(BackpackProperties.DEFAULT);
     }
 
     private void setLocalBackpackProperties(BackpackProperties properties)
     {
-        ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(this.minecraft.player);
-        if(!stack.isEmpty())
-        {
-            stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);
-        }
+        ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(this.minecraft.player, Optional.of(properties));
     }
 
     private void renderPlayer(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, Player player)

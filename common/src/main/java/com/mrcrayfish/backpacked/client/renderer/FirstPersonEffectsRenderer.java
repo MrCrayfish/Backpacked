@@ -8,8 +8,8 @@ import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
+import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -19,12 +19,15 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Optional;
 
 /**
  * Allows particles to be spawned when in first person since the player model is not drawn
@@ -102,11 +105,11 @@ public class FirstPersonEffectsRenderer
 
     private static void renderBackpack(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, int light, float partialTick)
     {
-        ItemStack stack = ModSyncedDataKeys.COSMETIC_BACKPACK.getValue(player);
-        if(stack.isEmpty())
+        Optional<BackpackProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
+        if(propertiesOptional.isEmpty())
             return;
 
-        BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        BackpackProperties properties = propertiesOptional.get();
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if(chestStack.getItem() == Items.ELYTRA && !properties.showWithElytra())
             return;
@@ -114,7 +117,8 @@ public class FirstPersonEffectsRenderer
         if(!Services.BACKPACK.isBackpackVisible(player))
             return;
 
-        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(properties.model());
+        ResourceLocation cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(cosmeticId);
         if(backpack == null)
             return;
 

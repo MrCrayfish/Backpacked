@@ -13,7 +13,6 @@ import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
-import com.mrcrayfish.framework.entity.sync.SyncedEntityData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -43,13 +43,17 @@ public class ServerPlayHandler
         if(!stack.isEmpty())
         {
             BackpackProperties properties = message.properties();
-            Backpack backpack = BackpackManager.instance().getBackpack(properties.model());
-            if(backpack == null)
-                return;
+            Optional<ResourceLocation> cosmeticOptional = properties.cosmetic();
+            if(cosmeticOptional.isPresent())
+            {
+                ResourceLocation cosmetic = cosmeticOptional.get();
+                Backpack backpack = BackpackManager.instance().getBackpack(cosmetic);
+                if(backpack == null)
+                    return;
 
-            if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
-                return;
-
+                if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
+                    return;
+            }
             stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);
         }
     }

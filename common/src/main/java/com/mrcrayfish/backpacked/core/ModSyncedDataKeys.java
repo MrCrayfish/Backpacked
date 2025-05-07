@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.common.CustomDataSerializers;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
-import com.mrcrayfish.framework.api.sync.Serializers;
 import com.mrcrayfish.framework.api.sync.SyncedClassKey;
 import com.mrcrayfish.framework.api.sync.SyncedDataKey;
 import net.minecraft.resources.ResourceLocation;
@@ -27,10 +26,9 @@ public class ModSyncedDataKeys
         .saveToFile()
         .build();
 
-    // We use this to sync the visuals to the clients, rather than syncing the ItemStack (which is expensive)
-    public static final SyncedDataKey<Player, ItemStack> COSMETIC_BACKPACK = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.ITEM_STACK)
+    public static final SyncedDataKey<Player, Optional<BackpackProperties>> COSMETIC_PROPERTIES = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.OPTIONAL_BACKPACK_PROPERTIES)
         .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_backpack"))
-        .defaultValueSupplier(() -> ItemStack.EMPTY)
+        .defaultValueSupplier(Optional::empty)
         .syncMode(SyncedDataKey.SyncMode.ALL)
         .build();
 
