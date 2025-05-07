@@ -115,33 +115,36 @@ public class CustomiseBackpackScreen extends Screen
         {
             this.displayBackpack = this.getCurrentBackpackProperties();
         }
+
         this.windowLeft = (this.width - this.windowWidth) / 2;
         this.windowTop = (this.height - this.windowHeight) / 2;
+
         this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.reset"), onPress -> {
             this.displayBackpack = this.displayBackpack.setModel(BackpackManager.getDefaultOrFallbackCosmetic());
         }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
+
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.displayBackpack));
         }).pos(this.windowLeft + 7, this.windowTop + 137).size(71, 20).build());
+
         this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayBackpack = this.displayBackpack.setShowEnchantmentGlint(!this.displayBackpack.showEnchantmentGlint());
         }));
         this.showEnchantmentGlintButton.setTooltip(Tooltip.create(SHOW_ENCHANTMENT_GLINT));
+        this.showEnchantmentGlintButton.setChecked(this.displayBackpack.showEnchantmentGlint());
+
         this.showWithElytraButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 160, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayBackpack = this.displayBackpack.setShowWithElytra(!this.displayBackpack.showWithElytra());
         }));
         this.showWithElytraButton.setTooltip(Tooltip.create(SHOW_WITH_ELYTRA_TOOLTIP));
+        this.showWithElytraButton.setChecked(this.displayBackpack.showWithElytra());
+
         this.showEffectsButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 186, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayBackpack = this.displayBackpack.setShowEffects(!this.displayBackpack.showEffects());
         }));
         this.showEffectsButton.setTooltip(Tooltip.create(SHOW_EFFECTS_TOOLTIP));
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(this.minecraft.player);
-        if(!backpack.isEmpty())
-        {
-            this.showEnchantmentGlintButton.setChecked(this.displayBackpack.showEnchantmentGlint());
-            this.showWithElytraButton.setChecked(this.displayBackpack.showWithElytra());
-            this.showEffectsButton.setChecked(this.displayBackpack.showEffects());
-        }
+        this.showEffectsButton.setChecked(this.displayBackpack.showEffects());
+
         this.updateButtons();
     }
 
