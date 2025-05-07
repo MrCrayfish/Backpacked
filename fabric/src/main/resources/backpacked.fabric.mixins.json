@@ -13,7 +13,9 @@
     "ServerPacksSourceMixin",
     "integration.InvModCompatMixin"
   ],
-  "client": [],
+  "client": [
+    "client.CreateWorldScreenMixin"
+  ],
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 1
