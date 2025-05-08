@@ -33,9 +33,7 @@ public class CraftItemChallenge extends Challenge
     public static final ChallengeSerializer<CraftItemChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "craft_item"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.CRAFT_X_OF_X).forGetter(challenge -> {
-                return challenge.formatter;
-            }), CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
+            return builder.group(CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
                 return challenge.predicate;
             }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
                 return challenge.count;
@@ -43,14 +41,12 @@ public class CraftItemChallenge extends Challenge
         })
     );
 
-    private final ProgressFormatter formatter;
     private final Optional<CraftedItemPredicate> predicate;
     private final int count;
 
-    public CraftItemChallenge(ProgressFormatter formatter, Optional<CraftedItemPredicate> predicate, int count)
+    public CraftItemChallenge(Optional<CraftedItemPredicate> predicate, int count)
     {
         super();
-        this.formatter = formatter;
         this.predicate = predicate;
         this.count = count;
     }
@@ -62,9 +58,9 @@ public class CraftItemChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.formatter, this.predicate, this.count);
+        return new Tracker(formatter, this.predicate, this.count);
     }
 
     public static class Tracker extends CountProgressTracker

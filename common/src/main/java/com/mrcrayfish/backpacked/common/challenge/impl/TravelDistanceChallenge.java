@@ -26,9 +26,7 @@ public class TravelDistanceChallenge extends Challenge
     public static final ChallengeSerializer<TravelDistanceChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "travel_distance"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.INT_PERCENT).forGetter(challenge -> {
-                return challenge.formatter;
-            }), MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).optionalFieldOf("movement").forGetter(challenge -> {
+            return builder.group(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).optionalFieldOf("movement").forGetter(challenge -> {
                 return challenge.movementTypes;
             }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
                 return challenge.totalDistanceInCm;
@@ -36,14 +34,12 @@ public class TravelDistanceChallenge extends Challenge
         })
     );
 
-    private final ProgressFormatter formatter;
     private final Optional<EnumSet<MovementType>> movementTypes;
     private final int totalDistanceInCm;
 
-    protected TravelDistanceChallenge(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
+    protected TravelDistanceChallenge(Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
     {
         super();
-        this.formatter = formatter;
         this.movementTypes = movementTypes;
         this.totalDistanceInCm = totalDistanceInCm;
     }
@@ -55,9 +51,9 @@ public class TravelDistanceChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.formatter, this.movementTypes, this.totalDistanceInCm);
+        return new Tracker(formatter, this.movementTypes, this.totalDistanceInCm);
     }
 
     public static class Tracker extends CountProgressTracker

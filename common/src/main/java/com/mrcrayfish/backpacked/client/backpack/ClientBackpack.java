@@ -15,7 +15,7 @@ public class ClientBackpack extends Backpack
 
     public ClientBackpack(Backpack backpack)
     {
-        super(backpack.getChallenge());
+        super(backpack.getUnlockChallenge());
         this.setup(backpack.getId());
         ResourceLocation id = backpack.getId();
         String name = "backpacked/" + id.getPath();

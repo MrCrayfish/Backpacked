@@ -28,9 +28,7 @@ public class InteractWithBlockChallenge extends Challenge
     public static final ChallengeSerializer<InteractWithBlockChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_block"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
-                return challenge.formatter;
-            }), BlockPredicate.CODEC.optionalFieldOf("block").forGetter(challenge -> {
+            return builder.group(BlockPredicate.CODEC.optionalFieldOf("block").forGetter(challenge -> {
                 return challenge.block;
             }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
                 return challenge.item;
@@ -40,15 +38,13 @@ public class InteractWithBlockChallenge extends Challenge
         })
     );
 
-    private final ProgressFormatter formatter;
     private final Optional<BlockPredicate> block;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    public InteractWithBlockChallenge(ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
+    public InteractWithBlockChallenge(Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
     {
         super();
-        this.formatter = formatter;
         this.block = block;
         this.item = item;
         this.count = count;
@@ -61,9 +57,9 @@ public class InteractWithBlockChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.formatter, this.block, this.item);
+        return new Tracker(this.count, formatter, this.block, this.item);
     }
 
     public static class Tracker extends CountProgressTracker

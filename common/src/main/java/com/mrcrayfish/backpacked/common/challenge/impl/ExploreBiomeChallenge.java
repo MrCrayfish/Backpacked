@@ -43,21 +43,17 @@ public class ExploreBiomeChallenge extends Challenge
     public static final ChallengeSerializer<ExploreBiomeChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "explore_biome"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.EXPLORED_X_OF_X).forGetter(challenge -> {
-                return challenge.formatter;
-            }), BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
+            return builder.group(BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
                 return challenge.biomes;
             })).apply(builder, ExploreBiomeChallenge::new);
         })
     );
 
-    private final ProgressFormatter formatter;
     private final List<ResourceKey<Biome>> biomes;
 
-    public ExploreBiomeChallenge(ProgressFormatter formatter, List<ResourceKey<Biome>> biomes)
+    public ExploreBiomeChallenge(List<ResourceKey<Biome>> biomes)
     {
         super();
-        this.formatter = formatter;
         this.biomes = biomes;
     }
 
@@ -68,9 +64,9 @@ public class ExploreBiomeChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.formatter, this.biomes);
+        return new Tracker(formatter, this.biomes);
     }
 
     public static class Tracker implements IProgressTracker

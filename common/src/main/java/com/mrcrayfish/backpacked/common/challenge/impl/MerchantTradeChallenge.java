@@ -28,9 +28,7 @@ public class MerchantTradeChallenge extends Challenge
     public static final ChallengeSerializer<MerchantTradeChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "merchant_trade"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.TRADED_X_OF_X).forGetter(challenge -> {
-                return challenge.formatter;
-            }), EntityPredicate.CODEC.optionalFieldOf("merchant").forGetter(o -> {
+            return builder.group(EntityPredicate.CODEC.optionalFieldOf("merchant").forGetter(o -> {
                 return o.entity;
             }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(o -> {
                 return o.item;
@@ -40,15 +38,13 @@ public class MerchantTradeChallenge extends Challenge
         })
     );
 
-    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    protected MerchantTradeChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
+    protected MerchantTradeChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
         super();
-        this.formatter = formatter;
         this.entity = entity;
         this.item = item;
         this.count = count;
@@ -61,9 +57,9 @@ public class MerchantTradeChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.formatter, this.entity, this.item);
+        return new Tracker(this.count, formatter, this.entity, this.item);
     }
 
     public static class Tracker extends CountProgressTracker

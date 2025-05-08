@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.challenge.Challenge;
+import com.mrcrayfish.backpacked.common.challenge.UnlockChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.DummyChallenge;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
@@ -27,37 +27,37 @@ public class Backpack
     public static final StreamCodec<FriendlyByteBuf, Backpack> STREAM_CODEC = StreamCodec.of((buf, backpack) -> {
         backpack.checkSetup();
         buf.writeResourceLocation(backpack.id);
-        buf.writeBoolean(backpack.challenge.isPresent());
+        buf.writeBoolean(backpack.unlockChallenge.isPresent());
     }, Backpack::new);
     public static final StreamCodec<FriendlyByteBuf, List<Backpack>> LIST_STREAM_CODEC = STREAM_CODEC.apply(
         ByteBufCodecs.collection(NonNullList::createWithCapacity)
     );
     public static final Codec<Backpack> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(Challenge.CODEC.optionalFieldOf("unlock_challenge").forGetter(backpack -> {
-            return backpack.challenge;
+        return builder.group(UnlockChallenge.CODEC.optionalFieldOf("unlock_challenge").forGetter(backpack -> {
+            return backpack.unlockChallenge;
         })).apply(builder, Backpack::new);
     });
 
-    private final Optional<Challenge> challenge;
+    private final Optional<UnlockChallenge> unlockChallenge;
     private ResourceLocation id;
     private String translationKey;
     private boolean setup = false;
 
-    public Backpack(Optional<Challenge> challenge)
+    public Backpack(Optional<UnlockChallenge> unlockChallenge)
     {
-        this.challenge = challenge;
+        this.unlockChallenge = unlockChallenge;
     }
 
     public Backpack(FriendlyByteBuf buf)
     {
         ResourceLocation id = buf.readResourceLocation();
         this.setup(id);
-        this.challenge = buf.readBoolean() ? Optional.of(DummyChallenge.INSTANCE) : Optional.empty();
+        this.unlockChallenge = buf.readBoolean() ? Optional.of(UnlockChallenge.DUMMY) : Optional.empty();
     }
 
-    public Optional<Challenge> getChallenge()
+    public Optional<UnlockChallenge> getUnlockChallenge()
     {
-        return this.challenge;
+        return this.unlockChallenge;
     }
 
     public ResourceLocation getId()
@@ -73,13 +73,13 @@ public class Backpack
 
     public boolean isUnlocked(Player player)
     {
-        return UnlockManager.getTracker(player).map(tracker -> tracker.isUnlocked(this.id)).orElse(false) || this.challenge.isEmpty() || Config.SERVER.backpack.unlockAllCosmetics.get();
+        return UnlockManager.getTracker(player).map(tracker -> tracker.isUnlocked(this.id)).orElse(false) || this.unlockChallenge.isEmpty() || Config.SERVER.backpack.unlockAllCosmetics.get();
     }
 
     @Nullable
     public IProgressTracker createProgressTracker(ResourceLocation backpackId)
     {
-        return this.challenge.map(c -> c.createProgressTracker(backpackId)).orElse(null);
+        return this.unlockChallenge.map(c -> c.challenge().createProgressTracker(c.formatter(), backpackId)).orElse(null);
     }
 
     public void setup(ResourceLocation id)

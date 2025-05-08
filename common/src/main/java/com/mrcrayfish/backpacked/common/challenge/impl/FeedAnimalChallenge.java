@@ -26,9 +26,7 @@ public class FeedAnimalChallenge extends Challenge
     public static final ChallengeSerializer<FeedAnimalChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "feed_animal"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.FED_X_OF_X).forGetter(challenge -> {
-                return challenge.formatter;
-            }), EntityPredicate.CODEC.optionalFieldOf("animal").forGetter(challenge -> {
+            return builder.group(EntityPredicate.CODEC.optionalFieldOf("animal").forGetter(challenge -> {
                 return challenge.entity;
             }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
                 return challenge.count;
@@ -36,14 +34,12 @@ public class FeedAnimalChallenge extends Challenge
         })
     );
 
-    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final int count;
 
-    public FeedAnimalChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, int count)
+    public FeedAnimalChallenge(Optional<EntityPredicate> entity, int count)
     {
         super();
-        this.formatter = formatter;
         this.entity = entity;
         this.count = count;
     }
@@ -55,9 +51,9 @@ public class FeedAnimalChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.formatter, this.entity);
+        return new Tracker(this.count, formatter, this.entity);
     }
 
     public static class Tracker extends CountProgressTracker

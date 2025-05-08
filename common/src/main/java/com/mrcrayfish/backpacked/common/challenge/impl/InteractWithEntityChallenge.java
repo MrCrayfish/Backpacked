@@ -29,9 +29,7 @@ public class InteractWithEntityChallenge extends Challenge
     public static final ChallengeSerializer<InteractWithEntityChallenge> SERIALIZER = new ChallengeSerializer<>(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_entity"),
         RecordCodecBuilder.mapCodec(builder -> {
-            return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.USED_X_TIMES).forGetter(challenge -> {
-                return challenge.formatter;
-            }), EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(challenge -> {
+            return builder.group(EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(challenge -> {
                 return challenge.entity;
             }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
                 return challenge.item;
@@ -41,15 +39,13 @@ public class InteractWithEntityChallenge extends Challenge
         })
     );
 
-    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final Optional<ItemPredicate> item;
     private final int count;
 
-    public InteractWithEntityChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
+    public InteractWithEntityChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
     {
         super();
-        this.formatter = formatter;
         this.entity = entity;
         this.item = item;
         this.count = count;
@@ -62,9 +58,9 @@ public class InteractWithEntityChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(backpackId, this.count, this.formatter, this.entity, this.item);
+        return new Tracker(backpackId, this.count, formatter, this.entity, this.item);
     }
 
     public static class Tracker extends CountProgressTracker

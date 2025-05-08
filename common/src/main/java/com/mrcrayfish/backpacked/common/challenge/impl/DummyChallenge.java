@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -27,7 +28,7 @@ public final class DummyChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
         return null;
     }

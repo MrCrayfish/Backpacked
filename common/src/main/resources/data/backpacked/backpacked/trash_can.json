@@ -1,15 +1,17 @@
 {
     "unlock_challenge": {
-        "type": "backpacked:interact_with_block",
         "formatter": "backpacked:completed_x_of_x",
-        "block": {
-            "blocks": [
-                "minecraft:composter"
-            ],
-            "state": {
-                "level": "8"
-            }
-        },
-        "count": 10
+        "challenge": {
+            "type": "backpacked:interact_with_block",
+            "block": {
+                "blocks": [
+                    "minecraft:composter"
+                ],
+                "state": {
+                    "level": "8"
+                }
+            },
+            "count": 10
+        }
     }
 }
