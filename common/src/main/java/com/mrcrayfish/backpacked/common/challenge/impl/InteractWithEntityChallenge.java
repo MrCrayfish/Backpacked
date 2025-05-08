@@ -33,6 +33,8 @@ public class InteractWithEntityChallenge extends Challenge
                 return challenge.entity;
             }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
                 return challenge.item;
+            }), EntityPredicate.CODEC.optionalFieldOf("player").forGetter(challenge -> {
+                return challenge.player;
             }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
                 return challenge.count;
             })).apply(builder, InteractWithEntityChallenge::new);
@@ -41,13 +43,14 @@ public class InteractWithEntityChallenge extends Challenge
 
     private final Optional<EntityPredicate> entity;
     private final Optional<ItemPredicate> item;
+    private final Optional<EntityPredicate> player;
     private final int count;
 
-    public InteractWithEntityChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, int count)
+    public InteractWithEntityChallenge(Optional<EntityPredicate> entity, Optional<ItemPredicate> item, Optional<EntityPredicate> player, int count)
     {
-        super();
         this.entity = entity;
         this.item = item;
+        this.player = player;
         this.count = count;
     }
 
@@ -60,7 +63,7 @@ public class InteractWithEntityChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(backpackId, this.count, formatter, this.entity, this.item);
+        return new Tracker(backpackId, this.count, formatter, this.entity, this.item, this.player);
     }
 
     public static class Tracker extends CountProgressTracker
@@ -68,18 +71,20 @@ public class InteractWithEntityChallenge extends Challenge
         private final ResourceLocation backpackId;
         private final Optional<EntityPredicate> entity;
         private final Optional<ItemPredicate> item;
+        private final Optional<EntityPredicate> player;
 
-        private Tracker(ResourceLocation backpackId, int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item)
+        private Tracker(ResourceLocation backpackId, int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, Optional<EntityPredicate> player)
         {
             super(maxCount, formatter);
             this.backpackId = backpackId;
             this.entity = entity;
             this.item = item;
+            this.player = player;
         }
 
         private boolean test(ServerPlayer player, Entity entity, ItemStack stack)
         {
-            return ChallengeUtils.testPredicate(this.entity, player, entity) && ChallengeUtils.testPredicate(this.item, stack);
+            return ChallengeUtils.testPredicate(this.entity, player, entity) && ChallengeUtils.testPredicate(this.item, stack) && ChallengeUtils.testPredicate(this.player, player);
         }
 
         public static void registerEvent()
