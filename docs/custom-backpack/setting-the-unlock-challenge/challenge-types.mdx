@@ -1,0 +1,296 @@
+# Challenge Types
+
+Backpacked comes with many built-in challenge types
+
+## Breed Animals
+
+**ID:** `backpacked:breed_animal`
+
+**Description:** A challenge that requires the player to breed animals of a specified type together
+
+| Key      | Type    | Required | Default | Description                                                                                                          |
+| -------- | ------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `animal` | Object  | Yes      | —       | An entity predicate object. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for details |
+| `count`  | Integer | No       | 1       | The amount of times to breed the animals together                                                                    |
+
+#### Examples
+<div class="code-block">
+**Breed cows together five times to unlock the backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:bred_x_of_x", // Ideal formatter for this type
+        "challenge": {
+            "type": "backpacked:breed_animal",
+            "animal": {
+                "type": "minecraft:cow"
+            },
+            "count": 5
+        }
+    }
+}
+```
+</div>
+
+<div class="code-block">
+**Breed two `tabby` variant cats together while they are affected with the `jump_boost` status effect to unlock the backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:bred_x_of_x", // Ideal formatter for this type
+        "challenge": {
+            "type": "backpacked:breed_animal",
+            "animal": {
+                "type": "minecraft:cat",
+                "components": { // 1.21.5+
+                    "minecraft:cat/variant": "tabby"
+                },
+                "effects": {
+                    "minecraft:jump_boost": {}
+                }
+            }
+        }
+    }
+}
+```
+</div>
+
+
+
+## Craft Item
+
+**ID:** `backpacked:craft_item`
+
+**Description:** A challenge that requires the player to breed animals of a specified type together
+
+| Key            | Type    | Required | Default | Description                                                                                                                                                                                                                                                                    |
+| -------------- | ------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `crafted_item` | Object  | No       | —       | A crafted item predicate object. If not defined or an empty object, any item will count towards the crafting goal. See [Crafted Item Predicate](/docs/custom-backpack/setting-the-unlock-challenge/predicates.mdx#crafted-item-predicate) for documentation and more examples. |
+| `count`        | Integer | No       | 1       | The amount of items to craft in total                                                                                                                                                                                                                                          |
+
+#### Examples
+<div class="code-block">
+**Craft twenty pieces of `bread` to unlock the backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:crafted_x_of_x", // Ideal formatter for this type
+        "challenge": {
+            "type": "backpacked:craft_item",
+            "crafted_item": {
+                "items": [
+                    "minecraft:bread"
+                ]
+            },
+            "count": 20
+        }
+    }
+}
+```
+</div>
+
+
+## Explore Biome
+
+**ID:** `backpacked:explore_biome`
+
+**Description:** A challenge that requires the player to travel to one or more specified biomes
+
+| Key     | Type         | Required | Default | Description                                                                                                                                                     |
+| ------- | ------------ | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `biome` | String/Array | Yes      | —       | A biome id or a list of biome ids. See the [Minecraft Wiki](https://minecraft.wiki/w/Biome#Biome_IDs) for available biomes. Also supports biomes from mods too! |
+
+#### Examples
+<div class="code-block">
+**Travel to every snowy biome to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:explored_x_of_x", // Ideal formatter for this type
+        "challenge": {
+            "type": "backpacked:explore_biome",
+            "biome": [
+                "minecraft:snowy_plains",
+                "minecraft:snowy_taiga",
+                "minecraft:ice_spikes",
+                "minecraft:snowy_slopes",
+                "minecraft:frozen_peaks",
+                "minecraft:jagged_peaks",
+                "minecraft:snowy_beach",
+                "minecraft:frozen_ocean",
+                "minecraft:deep_frozen_ocean",
+                "minecraft:frozen_river",
+            ]
+        }
+    }
+}
+```
+</div>
+
+<div class="code-block">
+**Travel to the Deep Dark to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:explored_x_of_x", // Ideal formatter for this type
+        "challenge": {
+            "type": "backpacked:explore_biome",
+            "biome": "minecraft:deep_dark" // String instead of array is allowed if only one biome
+        }
+    }
+}
+```
+</div>
+
+## Feed Animal
+
+**ID:** `backpacked:feed_animal`
+
+**Description:** A challenge that requires the player to feed animals (with a matching predicate) an amount of times
+
+| Key      | Type    | Required | Default | Description                                                                                                                                                                                                      |
+| -------- | ------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `animal` | Object  | Yes      | —       | An entity predicate object. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for details. Entity must be an animal regardless of the predicate conditions, other mobs will not work. |
+| `count`  | Integer | No       | 1       | The amount of times to feed the animals                                                                                                                                                                          |
+
+#### Examples
+<div class="code-block">
+**Feed any farm animals twenty times to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:fed_x_of_x", // Ideal formatter for this type
+        "challenge": {
+            "type": "backpacked:feed_animal",
+            "animal": {
+                "type": [
+                    "minecraft:cow",
+                    "minecraft:chicken",
+                    "minecraft:pig",
+                    "minecraft:sheep"
+                ]
+            },
+            "count": 20
+        }
+    }
+}
+```
+</div>
+
+## Interact with Block
+
+**ID:** `backpacked:interact_with_block`
+
+**Description:** A challenge that requires the player to interact with a block
+
+| Key      | Type    | Required | Default | Description                                                                                                                                                                |
+| -------- | ------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block`  | Object  | No       | —       | An optinal blockstate predicate to test the interacting block. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.              |
+| `item`   | Object  | No       | —       | An optional item predicate to test the held item of the interacting player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details. |
+| `player` | Object  | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                |
+| `count`  | Integer | No       | 1       | The amount of times to perform the action                                                                                                                                  |
+
+#### Examples
+<div class="code-block">
+**Fertilize crops one-hundred times using bonemeal to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:interact_with_block",
+            "block": {
+                "blocks": "#minecraft:crops"
+            },
+            "item": {
+                "items": [
+                    "minecraft:bonemeal"
+                ]
+            },
+            "count": 100
+        }
+    }
+}
+```
+</div>
+
+<div class="code-block">
+**Cook a piece of food on a campfire to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:interact_with_block",
+            "block": {
+                "blocks": [
+                    "minecraft:campfire"
+                ],
+                "state": {
+                    "lit": true
+                }
+            }
+        }
+    }
+}
+```
+**Notes:** No item is checked as the interaction only triggers when a valid item can be placed on the campfire, however you could check for a specific item using the `item` predicate.
+
+</div>
+
+<div class="code-block">
+**Process bonemeal from a Composter five times to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:interact_with_block",
+            "block": {
+                "blocks": {
+                    "minecraft:composter"
+                },
+                "state": {
+                    "level": "8"
+                }
+            },
+            "count": 5
+        }
+    }
+}
+```
+**Notes:** Level 8 is the final stage of the composter before it drops bonemeal. The next interaction will match the above predicate, drop bonemeal, and will count towards the challenge progress.
+</div>
+
+<div class="code-block">
+**Press a stone button one-million times to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:interact_with_block",
+            "block": {
+                "blocks": [
+                    "minecraft:stone_button"
+                ],
+                "state": {
+                    "powered": "false"
+                }
+            },
+            "count": 1000000
+        }
+    }
+}
+```
+</div>

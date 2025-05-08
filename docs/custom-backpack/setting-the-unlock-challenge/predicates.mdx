@@ -1,0 +1,50 @@
+# Predicates
+
+## Entity Predicate
+
+Entity Predicates are a vanilla feature, and are used in Advancements. See the [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for full documentation.
+
+:::important TIP
+The Minecraft Wiki only shows documentation for the most recent version of Minecraft. If designing an addon for Backpacked on an older version of Minecraft, the wiki may not be 100% accurate. You may find this [**generator**](https://misode.github.io/predicate/) helpful as it will generate the JSON and also allow you to select the Minecraft version to target.
+:::
+
+## Crafted Item Predicate
+
+Crafted Item Predicates are a custom predicate implemented by Backpacked just for crafted items.
+
+| Key         | Type         | Required | Default | Description                                                                                                                                    |
+| ----------- | ------------ | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespace` | String/Array | No       | —       | The owner namespace of the item. Example: `minecraft` or `backpacked`. Can also be an array of namespaces `["minecraft", "backpacked", "create"]`. |
+| `tag`       | String       | No       | —       | An optional item tag. See [Minecraft Wiki](https://minecraft.wiki/w/Item_tag_(Java_Edition)) for more details.                                 |
+| `items`     | Array        | No       | —       | An optional array of item id(s). Example: `["minecraft:stick"]`                                                                                          |
+
+### Examples
+<div class="code-block">
+**Match any item**
+```json
+"predicate": {
+    // an empty object will match everything
+}
+```
+</div>
+
+<div class="code-block">
+**Match exactly a stick item**
+```json
+"predicate": {
+    "items": [
+        "minecraft:stick"
+    ]
+}
+```
+</div>
+
+<div class="code-block">
+**Match items that come from the mod with the namespace `create` and must also have the item tag `create:seats`**
+```json
+"predicate": {
+    "namespace": "create",
+    "tag": "create:seats"
+}
+```
+</div>
