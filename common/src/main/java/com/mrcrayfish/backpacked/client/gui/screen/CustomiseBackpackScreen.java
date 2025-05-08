@@ -67,6 +67,12 @@ public class CustomiseBackpackScreen extends Screen
     private static final int SCROLLABLE_HEIGHT = 138;
     private static final int SCROLLABLE_AREA = SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT;
 
+    private static final int DEFAULT_ITEM_TEXT_COLOUR = 0x4E1C1C;
+    private static final int SELECTED_ITEM_TEXT_COLOUR = 0x407F10;
+    private static final int HOVERED_ITEM_TEXT_COLOUR = 0xFFFF80;
+    private static final int UNLOCKED_ITEM_TEXT_COLOUR = 0x685E4A;
+    private static final int MODEL_LIGHTING = 0xF000F0;
+
     private final int windowWidth;
     private final int windowHeight;
     private int windowLeft;
@@ -230,12 +236,20 @@ public class CustomiseBackpackScreen extends Screen
         int offset = (unlocked ? 0 : 60) + (selected ? 20 : 0) + (hovered ? 40 : 0);
         graphics.blit(GUI_TEXTURE, x, y, 0, 166 + offset, ITEM_WIDTH, ITEM_HEIGHT);
 
-        // Draw label. TODO convert dumb values into readable hex
-        int color = selected ? 4226832 : (hovered ? 16777088 : (unlocked ? 6839882 : 0x4E1C1C));
+        // Draw label
+        int color = this.getItemTextColour(unlocked, selected, hovered);
         graphics.drawString(this.font, entry.getLabel(), x + 20, y + 6, color, false);
 
         // Draw backpack cosmetic
         drawBackpackInGui(this.minecraft, graphics, entry.getBackpack(), x + 10, y + 10, partialTick);
+    }
+
+    private int getItemTextColour(boolean unlocked, boolean selected, boolean hovered)
+    {
+        if(selected) return SELECTED_ITEM_TEXT_COLOUR;
+        if(hovered) return HOVERED_ITEM_TEXT_COLOUR;
+        if(unlocked) return UNLOCKED_ITEM_TEXT_COLOUR;
+        return DEFAULT_ITEM_TEXT_COLOUR;
     }
 
     public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick)
@@ -249,7 +263,7 @@ public class CustomiseBackpackScreen extends Screen
         meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
         meta.renderer().ifPresentOrElse(renderer -> {
             BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, backpack, mc.player, mc.level, partialTick, model -> {
-                BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), 15728880, OverlayTexture.NO_OVERLAY);
+                BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
                 graphics.bufferSource().endBatch();
             });
             pose.pushPose();
@@ -257,7 +271,7 @@ public class CustomiseBackpackScreen extends Screen
             pose.popPose();
         }, () -> {
             BakedModel model = mc.getModelManager().getModel(backpack.getBaseModel());
-            BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), 15728880, OverlayTexture.NO_OVERLAY);
+            BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
             graphics.bufferSource().endBatch();
         });
         pose.popPose();
@@ -428,7 +442,7 @@ public class CustomiseBackpackScreen extends Screen
             this.label = Component.translatable(backpack.getTranslationKey());
             Component unlockMessage = Component.translatable(backpack.getTranslationKey() + ".unlock");
             List<FormattedCharSequence> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
-            list.add(0, Language.getInstance().getVisualOrder(LOCKED));
+            list.addFirst(Language.getInstance().getVisualOrder(LOCKED));
             if(progressMap.containsKey(backpack.getId()))
             {
                 Component component = progressMap.get(backpack.getId()).plainCopy().withStyle(ChatFormatting.YELLOW);
