@@ -46,4 +46,12 @@ public final class ChallengeUtils
         EntityPredicate predicate = optional.get();
         return predicate.matches(player, entity);
     }
+
+    public static boolean testPredicate(Optional<EntityPredicate> optional, ServerPlayer player)
+    {
+        if(optional.isEmpty())
+            return true;
+        EntityPredicate predicate = optional.get();
+        return predicate.matches(player.serverLevel(), null, player);
+    }
 }
