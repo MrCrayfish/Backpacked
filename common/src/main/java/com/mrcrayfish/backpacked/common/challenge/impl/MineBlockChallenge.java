@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -35,6 +36,8 @@ public class MineBlockChallenge extends Challenge
                 return challenge.block;
             }), ItemPredicate.CODEC.optionalFieldOf("item").forGetter(challenge -> {
                 return challenge.item;
+            }), EntityPredicate.CODEC.optionalFieldOf("player").forGetter(challenge -> {
+                return challenge.entity;
             }), ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(challenge -> {
                 return challenge.count;
             })).apply(builder, MineBlockChallenge::new);
@@ -43,13 +46,15 @@ public class MineBlockChallenge extends Challenge
 
     private final Optional<BlockPredicate> block;
     private final Optional<ItemPredicate> item;
+    private final Optional<EntityPredicate> entity;
     private final int count;
 
-    public MineBlockChallenge(Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
+    public MineBlockChallenge(Optional<BlockPredicate> block, Optional<ItemPredicate> item, Optional<EntityPredicate> entity, int count)
     {
         super();
         this.block = block;
         this.item = item;
+        this.entity = entity;
         this.count = count;
     }
 
@@ -62,24 +67,26 @@ public class MineBlockChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.count, formatter, this.block, this.item);
+        return new Tracker(this.count, formatter, this.block, this.item, this.entity);
     }
 
     public static class Tracker extends CountProgressTracker
     {
         private final Optional<BlockPredicate> block;
         private final Optional<ItemPredicate> item;
+        private final Optional<EntityPredicate> entity;
 
-        protected Tracker(int maxCount, ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item)
+        protected Tracker(int maxCount, ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item, Optional<EntityPredicate> entity)
         {
             super(maxCount, formatter);
             this.block = block;
             this.item = item;
+            this.entity = entity;
         }
 
-        private boolean test(BlockState state, ItemStack stack, @Nullable CompoundTag tag)
+        private boolean test(BlockState state, ItemStack stack, ServerPlayer player, @Nullable CompoundTag tag)
         {
-            return ChallengeUtils.testPredicate(this.block, state, tag) && ChallengeUtils.testPredicate(this.item, stack);
+            return ChallengeUtils.testPredicate(this.block, state, tag) && ChallengeUtils.testPredicate(this.item, stack) && ChallengeUtils.testPredicate(this.entity, player);
         }
 
         public static void registerEvent()
@@ -89,7 +96,7 @@ public class MineBlockChallenge extends Challenge
                 if(player.level().isClientSide())
                     return false;
                 return UnlockManager.getTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
-                    return !tracker.isComplete() && tracker.test(state, stack, null);
+                    return !tracker.isComplete() && tracker.test(state, stack, (ServerPlayer) player, null);
                 });
             });
 
@@ -98,7 +105,7 @@ public class MineBlockChallenge extends Challenge
                 if(player.level().isClientSide())
                     return;
                 UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete() && tracker.test(state, stack, tag)) {
+                    if(!tracker.isComplete() && tracker.test(state, stack, (ServerPlayer) player, tag)) {
                         tracker.increment((ServerPlayer) player);
                     }
                 });
