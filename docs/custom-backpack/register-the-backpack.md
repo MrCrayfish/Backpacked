@@ -30,6 +30,16 @@ Once you've created the file, open it with your text editor and simply add an em
 
 ![Test](/img/bare_minimum_datapack.png)
 
+## Dependencies
+
+If the backpack should only be registered if a specific mod is present, the tag `mod_loaded` with the specified `mod_id` can be added to the JSON object.
+
+```json title="data/<namespace>/backpacked/<your_backpack_name>.json"
+{
+    "mod_loaded": "create" // Create must be installed for this backpack to be registered
+}
+```
+
 ## Next Step
 
 It's time to move on to [creating the backpack model](/docs/custom-backpack/creating-the-model), and start to bringing your designs into the game!
