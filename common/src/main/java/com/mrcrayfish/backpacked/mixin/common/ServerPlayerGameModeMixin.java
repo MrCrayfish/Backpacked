@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
@@ -52,17 +53,12 @@ public class ServerPlayerGameModeMixin
     @Unique
     private CompoundTag backpacked$capturedMinedTag;
 
-    @Inject(method = "destroyBlock", at = @At(
-        value = "INVOKE_ASSIGN",
-        target = "Lnet/minecraft/server/level/ServerLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
-        ordinal = 0,
-        shift = At.Shift.BY, by = 1),
-        locals = LocalCapture.CAPTURE_FAILHARD)
-    private void backpacked$OnBlockMined(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state)
+    @Inject(method = "destroyBlock", at = @At(value = "HEAD"))
+    private void backpacked$OnBlockMined(BlockPos pos, CallbackInfoReturnable<Boolean> cir)
     {
-        this.backpacked$capturedMinedBlock = state;
+        this.backpacked$capturedMinedBlock = this.player.serverLevel().getBlockState(pos);
         this.backpacked$capturedMinedItem = this.player.getMainHandItem();
-        if(BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.post().handle(this.backpacked$capturedMinedBlock, this.backpacked$capturedMinedItem, this.player))
+        if(BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.post().handle(this.backpacked$capturedMinedBlock, pos, this.backpacked$capturedMinedItem, this.player))
         {
             BlockEntity entity = this.player.level().getBlockEntity(pos);
             if(entity != null)
@@ -80,7 +76,7 @@ public class ServerPlayerGameModeMixin
     {
         if(this.backpacked$capturedMinedBlock != null && this.backpacked$capturedMinedItem != null)
         {
-            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, this.backpacked$capturedMinedItem, this.backpacked$capturedMinedTag, this.player);
+            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, pos, this.backpacked$capturedMinedItem, this.backpacked$capturedMinedTag, this.player);
         }
     }
 
