@@ -2,7 +2,9 @@
 
 Backpacked comes with many built-in challenge types
 
-## Breed Animals
+## List of Challenges
+
+### Breed Animals
 
 **ID:** `backpacked:breed_animal`
 
@@ -59,7 +61,7 @@ Backpacked comes with many built-in challenge types
 
 
 
-## Craft Item
+### Craft Item
 
 **ID:** `backpacked:craft_item`
 
@@ -93,7 +95,7 @@ Backpacked comes with many built-in challenge types
 </div>
 
 
-## Explore Biome
+### Explore Biome
 
 **ID:** `backpacked:explore_biome`
 
@@ -147,7 +149,7 @@ Backpacked comes with many built-in challenge types
 ```
 </div>
 
-## Feed Animal
+### Feed Animal
 
 **ID:** `backpacked:feed_animal`
 
@@ -183,7 +185,7 @@ Backpacked comes with many built-in challenge types
 ```
 </div>
 
-## Interact with Block
+### Interact with Block
 
 **ID:** `backpacked:interact_with_block`
 
@@ -242,7 +244,7 @@ Backpacked comes with many built-in challenge types
     }
 }
 ```
-**Notes:** No item is checked as the interaction only triggers when a valid item can be placed on the campfire, however you could check for a specific item using the `item` predicate.
+**Notes:** No item is checked as the interaction only triggers when a valid item can be placed on the campfire, however you could check for a specific item using the `item` predicate. Also check the lit state to ensure there is a fire, and it has not been put out with water.
 
 </div>
 
@@ -294,3 +296,176 @@ Backpacked comes with many built-in challenge types
 }
 ```
 </div>
+
+### Interact with Entity
+
+**ID:** `backpacked:interact_with_entity`
+
+**Description:** A challenge that requires the player to interact with an entity
+
+| Key      | Type    | Required | Default | Description                                                                                                                                                                              |
+| -------- | ------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity` | Object  | No       | —       | An optional entity predicate to test the interacted entity. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                               |
+| `item`   | Object  | No       | —       | An optional item predicate to test the held item of the player interacting with the entity. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
+| `player` | Object  | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                              |
+| `count`  | Integer | No       | 1       | The amount of times to perform the action                                                                                                                                                |
+
+#### Examples
+<div class="code-block">
+**Start a trade with a Wandering Trader to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:interact_with_entity",
+            "entity": {
+                "type": "minecraft:wandering_trader"
+            }
+        }
+    }
+}
+```
+</div>
+
+### Kill Mob
+
+**ID:** `backpacked:kill_mob`
+
+**Description:** A challenge that requires the player to kill one or more mobs
+
+| Key      | Type    | Required | Default | Description                                                                                                                                                                     |
+| -------- | ------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mob`    | Object  | No       | —       | An optional entity predicate to test against the killed mob. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                     |
+| `item`   | Object  | No       | —       | An optional item predicate to test the item used when the player killed the `mob`. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
+| `player` | Object  | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                     |
+| `count`  | Integer | No       | 1       | The amount of times the player has to kill the `mob`                                                                                                                            |
+
+#### Examples
+<div class="code-block">
+**Battle and kill ten zombies, skeletons, creepers, or spiders using a diamond sword while underground in the overworld to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:kill_mob",
+            "mob": {
+                "type": [
+                    "minecraft:zombie",
+                    "minecraft:skeleton",
+                    "minecraft:creeper",
+                    "minecraft:spider"
+                ]
+            },
+            "item": {
+                "items": [
+                    "minecraft:diamond_sword"
+                ]
+            },
+            "player": {
+                "location": {
+                    "dimension": "minecraft:overworld",
+                    "position": {
+                        "y": {
+                            "max": 63,
+                            "min": -64
+                        }
+                    }
+                }
+            },
+            "count": 10
+        }
+    }
+}
+```
+</div>
+
+### Merchant Trade
+
+**ID:** `backpacked:merchant_trade`
+
+**Description:** A challenge that requires the player to trade with a merchant type entity. Supports Villagers, Wandering Traders, and even modded NPCs like Goblin Traders.
+
+| Key        | Type    | Required | Default | Description                                                                                                                                                                            |
+| ---------- | ------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `merchant` | Object  | No       | —       | An optional entity predicate to test against the merchant. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                              |
+| `item`     | Object  | No       | —       | An optional item predicate to test the item that was received by the player in the trade. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
+| `count`    | Integer | No       | 1       | The amount of trades. Each transaction is consider one trade.                                                                                                                          |
+
+#### Examples
+<div class="code-block">
+**Get scammed by Wandering Trader (aka make any trade with them) to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:incomplete_complete",
+        "challenge": {
+            "type": "backpacked:merchant_trade",
+            "merchant": {
+                "type": "minecraft:wandering_trader"
+            }
+        }
+    }
+}
+```
+</div>
+
+<div class="code-block">
+**Recieve iron ingots from a Goblin Trader five times to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:completed_x_of_x",
+        "challenge": {
+            "type": "backpacked:merchant_trade",
+            "merchant": {
+                "type": "goblintraders:goblin_trader"
+            },
+            "item": {
+                "items": [
+                    "minecraft:iron_ingot"
+                ]
+            },
+            "count": 5
+        }
+    }
+}
+```
+</div>
+
+### Mine Block
+
+**ID:** `backpacked:mine_block`
+
+**Description:** A challenge that requires the player to trade with a merchant type entity. Supports Villagers, Wandering Traders, and even modded NPCs like Goblin Traders.
+
+| Key      | Type    | Required | Default | Description                                                                                                                                                                             |
+| -------- | ------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block`  | Object  | No       | —       | An optional block snapshot predicate to test to against the block that was just mined. See Block Snapshot Predicate for more details.                                                   |
+| `item`   | Object  | No       | —       | An optional item predicate to test the item that was used by the player to mine the block. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
+| `player` | Object  | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                             |
+| `count`  | Number | No       | 1       | The amount of times the `player` has to mine the `block`                                                                                                                                |
+
+#### Examples
+
+TODO
+
+### Travel Distance
+
+**ID:** `backpacked:travel_distance`
+
+**Description:** A challenge that requires the player to trade with a merchant type entity. Supports Villagers, Wandering Traders, and even modded NPCs like Goblin Traders.
+
+| Key              | Type   | Required | Default | Description                                                                                                                                    |
+| ---------------- | ------ | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `movement`       | String | No       | —       | The type of movement. See list below of valid movement types. If left undefined, any type of movement will count towards the `total distance`. |
+| `total_distance` | Number | Yes      | —       | The total distance the player must move while in the correct `movement` type. The number must be positive.                                     |
+
+#### Examples
+
+TODO

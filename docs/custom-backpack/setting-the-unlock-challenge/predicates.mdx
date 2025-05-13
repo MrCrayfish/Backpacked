@@ -1,6 +1,8 @@
 # Predicates
 
-## Entity Predicate
+## List of Predicates
+
+### Entity
 
 Entity Predicates are a vanilla feature, and are used in Advancements. See the [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for full documentation.
 
@@ -8,7 +10,7 @@ Entity Predicates are a vanilla feature, and are used in Advancements. See the [
 The Minecraft Wiki only shows documentation for the most recent version of Minecraft. If designing an addon for Backpacked on an older version of Minecraft, the wiki may not be 100% accurate. You may find this [**generator**](https://misode.github.io/predicate/) helpful as it will generate the JSON and also allow you to select the Minecraft version to target.
 :::
 
-## Crafted Item Predicate
+### Crafted Item
 
 Crafted Item Predicates are a custom predicate implemented by Backpacked just for crafted items.
 
@@ -18,7 +20,7 @@ Crafted Item Predicates are a custom predicate implemented by Backpacked just fo
 | `tag`       | String       | No       | —       | An optional item tag. See [Minecraft Wiki](https://minecraft.wiki/w/Item_tag_(Java_Edition)) for more details.                                     |
 | `items`     | Array        | No       | —       | An optional array of item id(s). Example: `["minecraft:stick"]`                                                                                    |
 
-### Examples
+#### Examples
 <div class="code-block">
 **Match any item**
 ```json
@@ -45,6 +47,138 @@ Crafted Item Predicates are a custom predicate implemented by Backpacked just fo
 "predicate": {
     "namespace": "create",
     "tag": "create:seats"
+}
+```
+</div>
+
+### Block
+
+:::note
+This predicate is a vanilla feature. 
+:::
+
+Block Predicate is a vanilla predicate for matching blocks, blockstates, and/or NBT of the block.
+
+| Key          | Type   | Required | Default | Description                                                                                                                    |
+| ------------ | ------ | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `blocks`     | Array  | No       | —       | An optional. Example: `minecraft` or `backpacked`. Can also be an array of namespaces `["minecraft", "backpacked", "create"]`. |
+| `properties` | Object | No       | —       | An optional block position predicate. See [Block Position Predicate](#block-position) for more details.                        |
+| `nbt`        | Object | No       | —       | An optional NBT predicate to match against the block entity data                                                               |
+
+#### Examples
+
+<div class="code-block">
+</div>
+
+### Block Position
+
+| Key | Type           | Required | Default | Description                                                                                                                                                |
+| --- | -------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `x` | Integer/Object | No       | —       | An optional integer or [Min Max Predicate](#integer-minmax) to match the `x` coordinate of a block. Leaving undefined means it accepts any `x` coordinate. |
+| `y` | Integer/Object | No       | —       | An optional integer or [Min Max Predicate](#integer-minmax) to match the `y` coordinate of a block. Leaving undefined means it accepts any `y` coordinate. |
+| `z` | Integer/Object | No       | —       | An optional integer or [Min Max Predicate](#integer-minmax) to match the `z` coordinate of a block. Leaving undefined means it accepts any `z` coordinate. |
+
+#### Examples
+
+<div class="code-block">
+**Match a block position exactly at the coordiantes (0, 0, 0)**
+```json
+{
+    "x": 0,
+    "y": 0,
+    "z": 0
+}
+```
+</div>
+
+<div class="code-block">
+**Match a block position at the y-level from 0 to 63 (inclusive)**
+```json
+{
+    "y": {
+        "min": 0,
+        "max": 63
+    }
+}
+```
+</div>
+
+### Block Snapshot
+
+Block Snapshot Predicate is a custom predicate implemented by Backpacked that is specific for testing block snapshots. A block snapshot is a capture of a block in the world and its state at the time of capture. The data that is captured is the block state, its position, the biome the block is in, the structure if any, the dimension (e.g. overworld) and the time of day (in the captured dimension).
+
+| Key           | Type           | Required | Default | Description                                                                                                                                                            |
+| ------------- | -------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block`       | Object         | No       | —       | The owner namespace of the item. Example: `minecraft` or `backpacked`. Can also be an array of namespaces `["minecraft", "backpacked", "create"]`.                     |
+| `position`    | Object         | No       | —       | An optional block position predicate. See [Block Position Predicate](#block-position) for more details.                                                                |
+| `biomes`      | Array          | No       | —       | An optional array of biome id(s) to test if the block was contained within                                                                                             |
+| `structures`  | Array          | No       | —       | An optional array of structure id(s) to test if the captured block was contained within.                                                                               |
+| `dimension`   | String         | No       | —       | An optional id of a dimension type (e.g. `minecraft:overworld`) to test against the dimension the block snapshot was captured.                                         |
+| `time_of_day` | Integer/Object | No       | —       | An optional integer or min/max to test the time of day the block snapshot was captured. Ranges from 0 to 24000. The time may be fixed depending on the dimension type. |
+
+#### Examples
+
+<div class="code-block">
+**Match fully grown wheat in the dawn of the morning in the overworld**
+```json
+{
+    "block": {
+        "blocks": "minecraft:wheat",
+        "properties": {
+            "age": 7
+        }
+    },
+    "dimension": "minecraft:overworld",
+    "time_of_day": {
+        "min": 0,
+        "max": 2000
+    }
+}
+```
+</div>
+
+<div class="code-block">
+**Match a decorated pot in a trial chamber**
+```json
+{
+    "block": {
+        "blocks": "minecraft:decorated_pot"
+    },
+    "structures": [
+        "minecraft:trial_chambers"
+    ]
+}
+```
+</div>
+
+### Integer Min/Max
+
+| Key   | Type    | Required | Default | Description                                                                                                                                        |
+| ----- | ------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `min` | Integer | No       | —       | The owner namespace of the item. Example: `minecraft` or `backpacked`. Can also be an array of namespaces `["minecraft", "backpacked", "create"]`. |
+| `max` | Integer | No       | —       | An optional block position predicate. See [Block Position Predicate](#block-position) for more details.                                            |
+
+#### Examples
+
+<div class="code-block">
+**Match a block position exactly at the coordiantes (0, 0, 0)**
+```json
+{
+    "x": 0,
+    "y": 0,
+    "z": 0
+}
+```
+</div>
+
+<div class="code-block">
+**Match a block position at the y-level from 0 to 63 (inclusive)**
+```json
+{
+    "y": {
+        "min": 0,
+        "max": 63
+    }
 }
 ```
 </div>
