@@ -4,7 +4,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
-import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
+import com.mrcrayfish.backpacked.common.challenge.PredicateUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
@@ -84,7 +84,7 @@ public class InteractWithEntityChallenge extends Challenge
 
         private boolean test(ServerPlayer player, Entity entity, ItemStack stack)
         {
-            return ChallengeUtils.testPredicate(this.entity, player, entity) && ChallengeUtils.testPredicate(this.item, stack) && ChallengeUtils.testPredicate(this.player, player);
+            return PredicateUtils.match(this.entity, player, entity) && PredicateUtils.match(this.item, stack) && PredicateUtils.match(this.player, player);
         }
 
         public static void registerEvent()

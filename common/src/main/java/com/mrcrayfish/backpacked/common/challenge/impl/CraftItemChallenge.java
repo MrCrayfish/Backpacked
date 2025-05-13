@@ -1,28 +1,20 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.common.BackpackedCodecs;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
+import com.mrcrayfish.backpacked.common.predicates.CraftedItemPredicate;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Author: MrCrayfish
@@ -89,39 +81,4 @@ public class CraftItemChallenge extends Challenge
         }
     }
 
-    public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey<Item>> tag, Optional<HolderSet<Item>> items)
-    {
-        public static final Codec<CraftedItemPredicate> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            BackpackedCodecs.STRING_SET.optionalFieldOf("namespace").forGetter(o -> o.modIds),
-            TagKey.codec(Registries.ITEM).optionalFieldOf("tag").forGetter(CraftedItemPredicate::tag),
-            BackpackedCodecs.ITEMS.optionalFieldOf("items").forGetter(CraftedItemPredicate::items)
-        ).apply(builder, CraftedItemPredicate::new));
-
-        public boolean test(ItemStack stack)
-        {
-            if(this.modIds.isPresent())
-            {
-                ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
-                if(this.modIds.get().contains(key.getNamespace()))
-                {
-                    return true;
-                }
-            }
-            if(this.tag.isPresent())
-            {
-                if(stack.is(this.tag.get()))
-                {
-                    return true;
-                }
-            }
-            if(this.items.isPresent())
-            {
-                if(this.items.get().contains(stack.getItemHolder()))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }

@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
+import com.mrcrayfish.backpacked.common.BlockSnapshot;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 /**
  * This mixin captures and posts an event when a block is mined by a player. This mixin has been
@@ -45,27 +44,17 @@ public class ServerPlayerGameModeMixin
     protected ServerPlayer player;
 
     @Unique
-    private BlockState backpacked$capturedMinedBlock;
-
-    @Unique
     private ItemStack backpacked$capturedMinedItem;
 
     @Unique
-    private CompoundTag backpacked$capturedMinedTag;
+    private BlockSnapshot backpacked$blockSnapshot;
 
     @Inject(method = "destroyBlock", at = @At(value = "HEAD"))
     private void backpacked$OnBlockMined(BlockPos pos, CallbackInfoReturnable<Boolean> cir)
     {
-        this.backpacked$capturedMinedBlock = this.player.serverLevel().getBlockState(pos);
         this.backpacked$capturedMinedItem = this.player.getMainHandItem();
-        if(BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.post().handle(this.backpacked$capturedMinedBlock, pos, this.backpacked$capturedMinedItem, this.player))
-        {
-            BlockEntity entity = this.player.level().getBlockEntity(pos);
-            if(entity != null)
-            {
-                this.backpacked$capturedMinedTag = entity.saveWithFullMetadata(this.player.level().registryAccess());
-            }
-        }
+        boolean captureTag = BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.post().handle(this.player);
+        this.backpacked$blockSnapshot = captureTag ? BlockSnapshot.captureWithTag(this.player.serverLevel(), pos) : BlockSnapshot.capture(this.player.serverLevel(), pos);
     }
 
     @Inject(method = "destroyAndAck", at = @At(
@@ -74,18 +63,16 @@ public class ServerPlayerGameModeMixin
         ordinal = 0))
     private void backpacked$AfterSuccessfulDestroy(BlockPos pos, int action, String message, CallbackInfo ci)
     {
-        if(this.backpacked$capturedMinedBlock != null && this.backpacked$capturedMinedItem != null)
+        if(this.backpacked$blockSnapshot != null && this.backpacked$capturedMinedItem != null)
         {
-            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$capturedMinedBlock, pos, this.backpacked$capturedMinedItem, this.backpacked$capturedMinedTag, this.player);
+            BackpackedEvents.MINED_BLOCK.post().handle(this.backpacked$blockSnapshot, this.backpacked$capturedMinedItem, this.player);
         }
     }
 
     @Inject(method = "destroyAndAck", at = @At(value = "TAIL"))
     private void backpacked$DestroyTail(BlockPos pos, int action, String message, CallbackInfo ci)
     {
-        this.backpacked$capturedMinedBlock = null;
-        this.backpacked$capturedMinedItem = null;
-        this.backpacked$capturedMinedTag = null;
+        this.backpacked$blockSnapshot = null;
     }
 
     /* **************************

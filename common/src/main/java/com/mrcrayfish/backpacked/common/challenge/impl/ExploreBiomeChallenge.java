@@ -36,7 +36,7 @@ public class ExploreBiomeChallenge extends Challenge
     public static final Codec<List<ResourceKey<Biome>>> BIOME_LIST_CODEC = Codec.either(ResourceKey.codec(Registries.BIOME), ResourceKey.codec(Registries.BIOME).listOf()).xmap(either -> {
         return either.map(List::of, Function.identity());
     }, keys -> {
-        return keys.size() == 1 ? Either.left(keys.get(0)) : Either.right(keys);
+        return keys.size() == 1 ? Either.left(keys.getFirst()) : Either.right(keys);
     }).validate(keys -> {
         return keys.isEmpty() ? DataResult.error(() -> "Must specify at least one biome") : DataResult.success(keys);
     });

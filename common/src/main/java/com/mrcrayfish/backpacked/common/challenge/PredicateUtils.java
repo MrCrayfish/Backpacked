@@ -1,8 +1,11 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
+import com.mrcrayfish.backpacked.common.BlockSnapshot;
+import com.mrcrayfish.backpacked.common.predicates.BlockSnapshotPredicate;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -16,9 +19,9 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public final class ChallengeUtils
+public final class PredicateUtils
 {
-    public static boolean testPredicate(Optional<BlockPredicate> optional, BlockState state, @Nullable CompoundTag tag)
+    public static boolean match(Optional<BlockPredicate> optional, BlockState state, @Nullable CompoundTag tag)
     {
         if(optional.isEmpty())
             return true;
@@ -31,7 +34,7 @@ public final class ChallengeUtils
         return predicate.properties().isEmpty() || predicate.properties().get().matches(state);
     }
 
-    public static boolean testPredicate(Optional<ItemPredicate> optional, ItemStack stack)
+    public static boolean match(Optional<ItemPredicate> optional, ItemStack stack)
     {
         if(optional.isEmpty())
             return true;
@@ -39,7 +42,7 @@ public final class ChallengeUtils
         return predicate.test(stack);
     }
 
-    public static boolean testPredicate(Optional<EntityPredicate> optional, ServerPlayer player, Entity entity)
+    public static boolean match(Optional<EntityPredicate> optional, ServerPlayer player, Entity entity)
     {
         if(optional.isEmpty())
             return true;
@@ -47,11 +50,19 @@ public final class ChallengeUtils
         return predicate.matches(player, entity);
     }
 
-    public static boolean testPredicate(Optional<EntityPredicate> optional, ServerPlayer player)
+    public static boolean match(Optional<EntityPredicate> optional, ServerPlayer player)
     {
         if(optional.isEmpty())
             return true;
         EntityPredicate predicate = optional.get();
         return predicate.matches(player.serverLevel(), null, player);
+    }
+
+    public static boolean match(Optional<BlockSnapshotPredicate> optional, BlockSnapshot snapshot)
+    {
+        if(optional.isEmpty())
+            return true;
+        BlockSnapshotPredicate predicate = optional.get();
+        return predicate.test(snapshot);
     }
 }
