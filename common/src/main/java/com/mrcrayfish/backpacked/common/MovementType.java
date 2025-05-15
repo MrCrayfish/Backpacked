@@ -24,7 +24,8 @@ public enum MovementType implements StringRepresentable
     CLIMB("climb"),
     ELYTRA_FLY("elytra_flying"),
     FLY("fly"),
-    FALL("fall");
+    FALL("fall"),
+    VEHICLE("vehicle");
 
     public static final Map<String, MovementType> BY_NAME = Arrays.stream(values()).collect(Collectors.toMap(MovementType::getSerializedName, Function.identity()));
     public static final Codec<MovementType> CODEC = StringRepresentable.fromEnum(MovementType::values);

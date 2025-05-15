@@ -99,4 +99,10 @@ public abstract class ServerPlayerMixin implements BackpackedInteractAccess
     {
         this.backpacked$PlayerTravelEvent(0, dy, 0, MovementType.FALL);
     }
+
+    @Inject(method = "checkRidingStatistics", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getVehicle()Lnet/minecraft/world/entity/Entity;", ordinal = 0))
+    private void backpacked$MovementVehicle(double dx, double dy, double dz, CallbackInfo ci)
+    {
+        this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.VEHICLE);
+    }
 }
