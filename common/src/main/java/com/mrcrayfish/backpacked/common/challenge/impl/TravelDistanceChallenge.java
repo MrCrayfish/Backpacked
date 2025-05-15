@@ -5,11 +5,13 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.MovementType;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
+import com.mrcrayfish.backpacked.common.challenge.PredicateUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 
@@ -30,18 +32,21 @@ public class TravelDistanceChallenge extends Challenge
                 return challenge.movementTypes;
             }), ExtraCodecs.POSITIVE_INT.fieldOf("total_distance").forGetter(challenge -> {
                 return challenge.totalDistanceInCm;
+            }), EntityPredicate.CODEC.optionalFieldOf("player").forGetter(challenge -> {
+                return challenge.player;
             })).apply(builder, TravelDistanceChallenge::new);
         })
     );
 
     private final Optional<EnumSet<MovementType>> movementTypes;
     private final int totalDistanceInCm;
+    private final Optional<EntityPredicate> player;
 
-    protected TravelDistanceChallenge(Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
+    protected TravelDistanceChallenge(Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm, Optional<EntityPredicate> player)
     {
-        super();
         this.movementTypes = movementTypes;
         this.totalDistanceInCm = totalDistanceInCm;
+        this.player = player;
     }
 
     @Override
@@ -53,17 +58,19 @@ public class TravelDistanceChallenge extends Challenge
     @Override
     public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(formatter, this.movementTypes, this.totalDistanceInCm);
+        return new Tracker(formatter, this.movementTypes, this.totalDistanceInCm, this.player);
     }
 
     public static class Tracker extends CountProgressTracker
     {
         private final Optional<EnumSet<MovementType>> movementTypes;
+        private final Optional<EntityPredicate> player;
 
-        public Tracker(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int maxCount)
+        public Tracker(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int maxCount, Optional<EntityPredicate> player)
         {
             super(maxCount, formatter);
             this.movementTypes = movementTypes;
+            this.player = player;
         }
 
         public static void registerEvent()
@@ -74,7 +81,9 @@ public class TravelDistanceChallenge extends Challenge
                     if(tracker.isComplete())
                         return;
                     if(tracker.movementTypes.map(types -> types.contains(type)).orElse(true)) {
-                        tracker.increment(distanceInCm, player);
+                        if(PredicateUtils.match(tracker.player, player)) {
+                            tracker.increment(distanceInCm, player);
+                        }
                     }
                 });
             });
