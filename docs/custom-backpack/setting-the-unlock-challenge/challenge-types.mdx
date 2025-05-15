@@ -444,11 +444,11 @@ Backpacked comes with many built-in challenge types
 
 **Description:** A challenge that requires the player to trade with a merchant type entity. Supports Villagers, Wandering Traders, and even modded NPCs like Goblin Traders.
 
-| Key      | Type    | Required | Default | Description                                                                                                                                                                             |
-| -------- | ------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `block`  | Object  | No       | —       | An optional block snapshot predicate to test to against the block that was just mined. See Block Snapshot Predicate for more details.                                                   |
-| `item`   | Object  | No       | —       | An optional item predicate to test the item that was used by the player to mine the block. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
-| `player` | Object  | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                             |
+| Key      | Type   | Required | Default | Description                                                                                                                                                                             |
+| -------- | ------ | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block`  | Object | No       | —       | An optional block snapshot predicate to test to against the block that was just mined. See Block Snapshot Predicate for more details.                                                   |
+| `item`   | Object | No       | —       | An optional item predicate to test the item that was used by the player to mine the block. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
+| `player` | Object | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                             |
 | `count`  | Number | No       | 1       | The amount of times the `player` has to mine the `block`                                                                                                                                |
 
 #### Examples
@@ -459,13 +459,60 @@ TODO
 
 **ID:** `backpacked:travel_distance`
 
-**Description:** A challenge that requires the player to trade with a merchant type entity. Supports Villagers, Wandering Traders, and even modded NPCs like Goblin Traders.
+**Description:** A challenge that requires the player to travel a specific
 
-| Key              | Type   | Required | Default | Description                                                                                                                                    |
-| ---------------- | ------ | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `movement`       | String | No       | —       | The type of movement. See list below of valid movement types. If left undefined, any type of movement will count towards the `total distance`. |
-| `total_distance` | Number | Yes      | —       | The total distance the player must move while in the correct `movement` type. The number must be positive.                                     |
+| Key              | Type   | Required | Default | Description                                                                                                                                                                                                                                                 |
+| ---------------- | ------ | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `movement`       | String | No       | —       | The type of movement. If left undefined, any type of movement will count towards the `total distance`. Available list of movements are: `walk`, `sprint`, `sneak`, `swim`, `walk_underwater`, `walk_on_water`, `climb`, `elytra_flying`, `fly`, and `fall`. |
+| `total_distance` | Number | Yes      | —       | The total distance (in centimetres) the player must move while in the correct `movement` type. The number must be positive.                                                                                                                                 |
+| `player`         | Object | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details. **Important:** Keep it simple since this check is run often.                                                    |
+
+:::note
+The `total_distance` is calculated in centimetres. To travel one block is the equivalent of 100 centimetres.
+:::
 
 #### Examples
 
-TODO
+<div class="code-block">
+**Sprint a total of 100km (62.1 miles) to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:travelled_blocks",
+        "challenge": {
+            "type": "backpacked:travel_distance",
+            "movement": "sprint",
+            "total_distance": 10000000
+        }
+    }
+}
+```
+</div>
+
+<div class="code-block">
+**Travel 100 blocks while riding on a Boat on land to unlock this backpack**
+
+```json title="data/<namespace>/backpacked/<your_backpack>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:travelled_blocks",
+        "challenge": {
+            "type": "backpacked:travel_distance",
+            "movement": "vehicle",
+            "total_distance": 10000,
+            "player": {
+                "vehicle": {
+                    "type": [
+                        "minecraft:boat"
+                    ],
+                    "flags": {
+                        "is_on_ground": true
+                    }
+                }
+            }
+        }
+    }
+}
+```
+</div>
