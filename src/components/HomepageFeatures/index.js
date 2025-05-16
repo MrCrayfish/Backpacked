@@ -16,12 +16,13 @@ const AddonDocumentationList = [
         This guide will show you how to add even more backpacks to Backpacked using either a resource/data packs or by integrating into a mod. This guide will cover registering new backpacks, creating the models, and setting the challenges to unlock backpacks.
       </>
     ),
+    action_text: 'View Guide'
   },
 ]
 
-function Documentation({ title, description, link }) {
+function Documentation({ title, description, link, action_text }) {
   return (
-    <div className={clsx('col col--6')}>
+    <div className={clsx('col col--6 margin-bottom--lg')}>
       <div class="card-demo">
         <div class="card shadow--lw">
           <div class="card__header">
@@ -32,7 +33,7 @@ function Documentation({ title, description, link }) {
             <Link
               className="button button--secondary button--lg button--block"
               to={link}>
-              View Guide
+              {action_text}
             </Link>
           </div>
         </div>
@@ -46,7 +47,7 @@ export default function HomepageFeatures() {
     <div>
       <section className={styles.features}>
         <div className="container">
-          <Heading as="h1">📦 Create an Addon</Heading>
+          <Heading as="h1">📦 Addons</Heading>
           <div className="row">
             {AddonDocumentationList.map((props, idx) => (
               <Documentation key={idx} {...props} />
