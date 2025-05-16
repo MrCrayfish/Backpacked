@@ -7,7 +7,7 @@ const AddonDocumentationList = [
   {
     title: (
       <>
-        Custom Backpacks <span class="badge badge--warning">Moderate</span>
+        Create an Addon <span class="badge badge--warning">Intermediate</span>
       </>
     ),
     link: '/docs/custom-backpack/introduction',
