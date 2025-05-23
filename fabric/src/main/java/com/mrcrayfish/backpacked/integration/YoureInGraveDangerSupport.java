@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.integration;
 import com.b1n_ry.yigd.compat.CompatComponent;
 import com.b1n_ry.yigd.compat.InvModCompat;
 import com.b1n_ry.yigd.data.DeathContext;
+import com.b1n_ry.yigd.data.GraveItem;
 import com.b1n_ry.yigd.util.DropRule;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
@@ -11,7 +12,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
@@ -69,13 +69,13 @@ public class YoureInGraveDangerSupport
         }
 
         @Override
-        public NonNullList<ItemStack> merge(CompatComponent<?> otherComponent, ServerPlayer player)
+        public NonNullList<GraveItem> merge(CompatComponent<?> otherComponent, ServerPlayer player)
         {
-            NonNullList<ItemStack> extra = NonNullList.create();
+            NonNullList<GraveItem> extra = NonNullList.create();
             BackpackedCompatComponent component = (BackpackedCompatComponent) otherComponent;
             if(component.inventory.isEmpty())
                 return extra;
-            extra.add(component.inventory);
+            extra.add(new GraveItem(component.inventory, this.getDropRule()));
             ItemStack stack = this.inventory;
             if(stack.isEmpty())
             {
@@ -108,13 +108,13 @@ public class YoureInGraveDangerSupport
         }
 
         @Override
-        public NonNullList<Tuple<ItemStack, DropRule>> getAsStackDropList()
+        public NonNullList<GraveItem> getAsGraveItemList()
         {
-            NonNullList<Tuple<ItemStack, DropRule>> drops = NonNullList.create();
+            NonNullList<GraveItem> drops = NonNullList.create();
             if(!this.inventory.isEmpty())
             {
                 DropRule rule = this.getDropRule();
-                drops.add(new Tuple<>(this.inventory.copy(), rule));
+                drops.add(new GraveItem(this.inventory.copy(), rule));
             }
             return drops;
         }
