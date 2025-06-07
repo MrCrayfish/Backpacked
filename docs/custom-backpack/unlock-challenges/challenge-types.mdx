@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Challenge Types
 
 Backpacked comes with many built-in challenge types
@@ -69,7 +73,7 @@ Backpacked comes with many built-in challenge types
 
 | Key            | Type    | Required | Default | Description                                                                                                                                                                                                                                                                    |
 | -------------- | ------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `crafted_item` | Object  | No       | —       | A crafted item predicate object. If not defined or an empty object, any item will count towards the crafting goal. See [Crafted Item Predicate](/docs/custom-backpack/setting-the-unlock-challenge/predicates.mdx#crafted-item-predicate) for documentation and more examples. |
+| `crafted_item` | Object  | No       | —       | A crafted item predicate object. If not defined or an empty object, any item will count towards the crafting goal. See [Crafted Item Predicate](/docs/custom-backpack/unlock-challenges/predicates.mdx#crafted-item) for documentation and more examples. |
 | `count`        | Integer | No       | 1       | The amount of items to craft in total                                                                                                                                                                                                                                          |
 
 #### Examples
@@ -194,7 +198,7 @@ Backpacked comes with many built-in challenge types
 | Key      | Type    | Required | Default | Description                                                                                                                                                                |
 | -------- | ------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `block`  | Object  | No       | —       | An optinal blockstate predicate to test the interacting block. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.              |
-| `item`   | Object  | No       | —       | An optional item predicate to test the held item of the interacting player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details. |
+| `item`   | Object  | No       | —       | An optional item predicate to test the held item of the interacting player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/item) for more details. |
 | `player` | Object  | No       | —       | An optional entity predicate for the player. See [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/entity) for more details.                                |
 | `count`  | Integer | No       | 1       | The amount of times to perform the action                                                                                                                                  |
 

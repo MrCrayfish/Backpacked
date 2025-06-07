@@ -40,4 +40,4 @@ Every backpack has it's translation key created based on the **namespace** and t
 
 ## Next Step
 
-It's time to [add a challenge](/docs/custom-backpack/setting-the-unlock-challenge/index.md) to unlock the backpack and give the player a fun goal!
+It's time to [add a challenge](/docs/custom-backpack/unlock-challenges/introduction.md) to unlock the backpack and give the player a fun goal!

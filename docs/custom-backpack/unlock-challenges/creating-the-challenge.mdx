@@ -1,0 +1,37 @@
+---
+sidebar_position: 2
+---
+
+# Creating the Challenge
+
+## Getting Started
+
+Unlock challenge are defined in the same file used to [register the backpack](/docs/custom-backpack/register-the-backpack.md#registering). If you have not registered a backpack at this point, what the helly are you doing? Go back! Next you'll want to create a new object called `unlock_challenge` under the root object. This is where the unlock challenge will be defined, which includes an implementation of one of the [challenge types](/docs/custom-backpack/unlock-challenges/challenge-types.mdx), and setting the progress formatter.
+
+The JSON should now look something similar to below:
+```json title="data/<namespace>/backpacked/<your_backpack_name>.json"
+{
+    "unlock_challenge": {
+        ...
+    }
+}
+```
+## Setting the Challenge
+
+TODO
+
+## Customise the Progress Formatter
+
+A progress formatter controls how the unlock challenge displays the progression label. This label is shown in a tooltip when the player hovers a locked backpack in the customisation menu. For example, a formatter type that is available for use in addons is `backpacked:percentage`, and this will display a percentage based completion label. If the challenge is to mine ten diamond blocks, and currently only four have been mined, the tooltip will display as `Completed 40%`. 
+
+There are many progress formatters available to use, and it's best to select the one that fits the most appropriately to the challenge. Simply select one of the [available progress formatters](/docs/custom-backpack/unlock-challenges/formatter-types.mdx) and apply it to the unlock challenge as follows:
+
+```json title="data/<namespace>/backpacked/<your_backpack_name>.json"
+{
+    "unlock_challenge": {
+        "formatter": "backpacked:percentage",
+        ...
+    }
+}
+```
+
