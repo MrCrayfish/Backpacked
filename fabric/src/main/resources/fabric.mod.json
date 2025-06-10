@@ -35,6 +35,9 @@
         "java": ">=21",
         "framework": ">=${framework_version}"
     },
+    "recommends": {
+        "yigd": ">=${yigd_fabric_version}"
+    },
     "accessWidener": "backpacked.accesswidener",
     "custom": {
         "framework": {

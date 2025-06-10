@@ -45,6 +45,20 @@ config = "${mod_id}.common.mixins.json"
     ordering="AFTER"
     side="CLIENT"
 
+[[dependencies."${mod_id}"]]
+    modId="yigd"
+    type="optional"
+    versionRange="[${yigd_neoforge_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId="gravestone"
+    type="optional"
+    versionRange="[${gravestone_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
 [modproperties."${mod_id}"]
     catalogueImageIcon="assets/${mod_id}/icon.png"
     catalogueBackground="assets/${mod_id}/background.png"
