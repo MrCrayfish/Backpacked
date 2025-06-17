@@ -6,9 +6,7 @@ sidebar_position: 2
 
 ## Getting Started
 
-Unlock challenge are defined in the same file used to [register the backpack](/docs/custom-backpack/register-the-backpack.md#registering). If you have not registered a backpack at this point, what the helly are you doing? Go back! Next you'll want to create a new object called `unlock_challenge` under the root object. This is where the unlock challenge will be defined, which includes an implementation of one of the [challenge types](/docs/custom-backpack/unlock-challenges/challenge-types.mdx), and setting the progress formatter.
-
-The JSON should now look something similar to below:
+Unlock challenge are defined in the same file used to [register the backpack](/docs/custom-backpack/register-the-backpack.md#registering). Create a new object called `unlock_challenge` under the root object. This is where the unlock challenge will be defined, which includes an implementation of one of the [challenge types](/docs/custom-backpack/unlock-challenges/challenge-types.mdx), and setting the progress formatter. The contents of the file should now look something similar to below.
 ```json title="data/<namespace>/backpacked/<your_backpack_name>.json"
 {
     "unlock_challenge": {
@@ -18,7 +16,25 @@ The JSON should now look something similar to below:
 ```
 ## Setting the Challenge
 
-TODO
+To set the challenge, start by creating a new object called `challenge` inside of the `unlock_challenge` object. The `challenge` object requires a `type`, which is then followed by an implementation of that type. Select one of the [available challenge types](/docs/custom-backpack/unlock-challenges/challenge-types.mdx) and assign it to the `type` property. For the implementation, it is specific to the type of the challenge. On the list of [available challenge types](/docs/custom-backpack/unlock-challenges/challenge-types.mdx), each challenge will have an **ID**, **Description**, a **table of properties** that can be implemented, and a few **examples** for the challenge type.
+
+Below is an example of the `backpacked:craft_item` [challenge type](/docs/custom-backpack/unlock-challenges/challenge-types.mdx#craft-item). It can be expressed as `The player must craft a total of 64 planks of any type or combination of planks to unlock the backpack`.
+
+```json title="data/<namespace>/backpacked/<your_backpack_name>.json"
+{
+    "unlock_challenge": {
+        "challenge": {
+            "type": "backpacked:craft_item",
+            "crafted_item": {
+                "tag": "minecraft:planks"
+            },
+            "count": 64
+        }
+    }
+}
+```
+
+However based on property table of the [Craft Item](/docs/custom-backpack/unlock-challenges/challenge-types.mdx#craft-item) challenge, `crafted_item` is actually completely optional. Removing this property, the implementation would then be expressed as `The player must craft a total of 64 of any item or combination of items to unlock the backpack`. The `crafted_item` property is simply a filter to match a specific item. It is best to read the **description** of a property on the **property table** to get a full understanding.
 
 ## Customise the Progress Formatter
 
@@ -30,7 +46,9 @@ There are many progress formatters available to use, and it's best to select the
 {
     "unlock_challenge": {
         "formatter": "backpacked:percentage",
-        ...
+        "challenge": {
+            ...
+        }
     }
 }
 ```
