@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModBlocks;
+import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -17,6 +18,7 @@ public class CommonRecipeGen
 {
     public static void generate(RecipeOutput output, Function<ItemLike, Criterion<?>> has)
     {
+        backpack(output, has);
         backpackShelf(output, has, Items.OAK_LOG, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get());
         backpackShelf(output, has, Items.SPRUCE_LOG, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get());
         backpackShelf(output, has, Items.BIRCH_LOG, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get());
@@ -26,6 +28,21 @@ public class CommonRecipeGen
         backpackShelf(output, has, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         backpackShelf(output, has, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
         backpackShelf(output, has, Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
+    }
+
+    private static void backpack(RecipeOutput output, Function<ItemLike, Criterion<?>> has)
+    {
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BACKPACK.get())
+                .pattern("HHH")
+                .pattern("SIS")
+                .pattern("HHH")
+                .define('H', Items.RABBIT_HIDE)
+                .define('S', Items.STRING)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has_leather", has.apply(Items.RABBIT_HIDE))
+                .unlockedBy("has_string", has.apply(Items.STRING))
+                .unlockedBy("has_iron_ingot", has.apply(Items.IRON_INGOT))
+                .save(output);
     }
 
     private static void backpackShelf(RecipeOutput output, Function<ItemLike, Criterion<?>> has, ItemLike log, ItemLike slab, ItemLike craftedItem)
