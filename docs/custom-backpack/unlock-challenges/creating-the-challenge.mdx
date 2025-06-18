@@ -36,6 +36,10 @@ Below is an example of the `backpacked:craft_item` [challenge type](/docs/custom
 
 However based on property table of the [Craft Item](/docs/custom-backpack/unlock-challenges/challenge-types.mdx#craft-item) challenge, `crafted_item` is actually completely optional. Removing this property, the implementation would then be expressed as `The player must craft a total of 64 of any item or combination of items to unlock the backpack`. The `crafted_item` property is simply a filter to match a specific item. It is best to read the **description** of a property on the **property table** to get a full understanding.
 
+### Test the Challenge
+
+After implementing the challenge, it is a good idea to test that it is working. Backpacked has been designed to load backpacks even if the challenges fail to load. This just simply allows outdated addons to still work with future versions of Backpacked. Backpacks will show an icon in game if the backpack had an error during load. *If an error occurs, check the logs for details.*
+
 ## Customise the Progress Formatter
 
 A progress formatter controls how the unlock challenge displays the progression label. This label is shown in a tooltip when the player hovers a locked backpack in the customisation menu. For example, a formatter type that is available for use in addons is `backpacked:percentage`, and this will display a percentage based completion label. If the challenge is to mine ten diamond blocks, and currently only four have been mined, the tooltip will display as `Completed 40%`. 
