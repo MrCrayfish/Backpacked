@@ -63,13 +63,13 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
 
             RegistryOps<JsonElement> ops = this.getProvider().createSerializationContext(JsonOps.INSTANCE);
             DataResult<Backpack> result = Backpack.CODEC.parse(ops, object);
-            result.resultOrPartial(s -> {
+            Backpack backpack = result.getOrThrow(s -> {
                 Constants.LOG.error("An error occurred when loading the backpack '{}' - {}", location, s);
-            }).ifPresent(backpack -> {
-                backpack.setup(location);
-                backpacks.put(location, backpack);
-                Constants.LOG.info("Adding backpack '{}'", location);
+                return new JsonParseException("An error occurred when loading the backpack '" + location + "'");
             });
+            backpack.setup(location);
+            backpacks.put(location, backpack);
+            Constants.LOG.info("Adding backpack '{}'", location);
         });
         BackpackManager.instance().updateBackpacks(backpacks);
     }
