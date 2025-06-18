@@ -63,13 +63,23 @@ public class BackpackLoader extends SimpleJsonResourceReloadListener
 
             RegistryOps<JsonElement> ops = this.getProvider().createSerializationContext(JsonOps.INSTANCE);
             DataResult<Backpack> result = Backpack.CODEC.parse(ops, object);
-            Backpack backpack = result.getOrThrow(s -> {
-                Constants.LOG.error("An error occurred when loading the backpack '{}' - {}", location, s);
-                return new JsonParseException("An error occurred when loading the backpack '" + location + "'");
+            result.promotePartial(s -> {
+                /* Backpacked will still register a backpack if a partial result if available. This
+                 * just allows old addons to still work, however challenges might not work correctly.
+                 * Backpacks will simply be marked that they errored during load. If no partial result
+                 * is available, a full exception will be thrown. */
+                Backpack backpack = result.getPartialOrThrow(msg -> {
+                    Constants.LOG.error("Unable to load the backpack '{}'", location);
+                    return new JsonParseException("Failed to load backpack the backpack '" + location + "' - " + msg);
+                });
+                Constants.LOG.error("An error occurred when loading the backpack '{}' - {}. It will still be registered, it just may not work correctly.", location, s);
+                backpack.markErrored();
             });
-            backpack.setup(location);
-            backpacks.put(location, backpack);
-            Constants.LOG.info("Adding backpack '{}'", location);
+            result.resultOrPartial().ifPresent(backpack -> {
+                backpack.setup(location);
+                backpacks.put(location, backpack);
+                Constants.LOG.info("Adding backpack '{}'", location);
+            });
         });
         BackpackManager.instance().updateBackpacks(backpacks);
     }

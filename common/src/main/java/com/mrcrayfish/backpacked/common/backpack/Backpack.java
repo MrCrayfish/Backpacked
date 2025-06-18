@@ -28,6 +28,7 @@ public class Backpack
         backpack.checkSetup();
         buf.writeResourceLocation(backpack.id);
         buf.writeBoolean(backpack.unlockChallenge.isPresent());
+        buf.writeBoolean(backpack.error);
     }, Backpack::new);
     public static final StreamCodec<FriendlyByteBuf, List<Backpack>> LIST_STREAM_CODEC = STREAM_CODEC.apply(
         ByteBufCodecs.collection(NonNullList::createWithCapacity)
@@ -42,6 +43,7 @@ public class Backpack
     private ResourceLocation id;
     private String translationKey;
     private boolean setup = false;
+    private boolean error = false;
 
     public Backpack(Optional<UnlockChallenge> unlockChallenge)
     {
@@ -53,6 +55,7 @@ public class Backpack
         ResourceLocation id = buf.readResourceLocation();
         this.setup(id);
         this.unlockChallenge = buf.readBoolean() ? Optional.of(UnlockChallenge.DUMMY) : Optional.empty();
+        this.error = buf.readBoolean();
     }
 
     public Optional<UnlockChallenge> getUnlockChallenge()
@@ -98,5 +101,15 @@ public class Backpack
         {
             throw new RuntimeException("Backpack is not setup");
         }
+    }
+
+    public void markErrored()
+    {
+        this.error = true;
+    }
+
+    public boolean isErrored()
+    {
+        return this.error;
     }
 }
