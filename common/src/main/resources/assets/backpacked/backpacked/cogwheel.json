@@ -35,7 +35,7 @@
                         "z": {
                             "type": "backpacked:and",
                             "first": {
-                                "type": "backpacked:living_entity_data",
+                                "type": "backpacked:entity_data",
                                 "property": "walk_position"
                             },
                             "second": 16,
