@@ -1,3 +1,7 @@
+---
+sidebar_position: 10
+---
+
 # Assets
 
 Here you will find assets referenced throughout the guides. They are all placed on a single page for your convenience.

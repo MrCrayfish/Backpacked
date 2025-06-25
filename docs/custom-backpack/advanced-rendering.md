@@ -1,3 +1,7 @@
+---
+sidebar_position: 8
+---
+
 # Advanced Rendering
 
 :::note Work in Progress
