@@ -32,6 +32,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
 
+    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
+    private static final ResourceLocation SLOT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
+    private static final ResourceLocation INVENTORY_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
+
     private final int cols;
     private final int rows;
     private final boolean owner;
@@ -46,7 +50,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.imageWidth = 14 + Math.max(this.cols, 9) * 18;
         this.imageHeight = 114 + this.rows * 18;
         this.inventoryLabelX = Math.max(((this.cols * 18) - (9 * 18)) / 2, 0) + 7;
-        this.inventoryLabelY = this.rows * 18 + 17 + 4;
+        this.inventoryLabelY = this.rows * 18 + 17 + 10;
     }
 
     @Override
@@ -110,36 +114,40 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     }
 
     @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
+    {
+        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF3a2b1b, false);
+        //graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
+    }
+
+    @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
         this.drawBackgroundWindow(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
     }
 
     private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height)
     {
         // Backpack Inventory
-        int backpackHeight = 17 + this.rows * 18;
-        graphics.blit(GUI_TEXTURE, x,             y,          7, backpackHeight, 0, 0, 7, backpackHeight, 256, 256); /* Top left corner */
-        graphics.blit(GUI_TEXTURE, x + width - 7, y,          7, backpackHeight, 8, 0, 7, backpackHeight, 256, 256); /* Top right corner */
-        graphics.blit(GUI_TEXTURE, x + 7,         y, width - 14, backpackHeight, 7, 0, 1, backpackHeight, 256, 256); /* Top border */
+        int backpackHeight = 17 + this.rows * 18 + 18;
+        graphics.blitSprite(BACKGROUND_SPRITE, x - 60, y + 4, 70, backpackHeight - 16);
+        graphics.blitSprite(BACKGROUND_SPRITE, x - 4, y - 4, width + 8, backpackHeight);
+
 
         // Draw Backpack Slots
         int slotWidth = this.cols * 18;
         int slotHeight = this.rows * 18;
         int minSlotWidth = 9 * 18; //Player inventory will always have 9 columns
         int backpackStartX = Math.max((minSlotWidth - slotWidth) / 2, 0);
-        graphics.blit(GUI_TEXTURE, backpackStartX + x + 7, y + 17, slotWidth, slotHeight, 15, 0, slotWidth, slotHeight, 256, 256);
+        graphics.blitSprite(SLOT_SPRITE, backpackStartX + x + 7, y + 17, slotWidth, slotHeight);
 
         // Player Inventory
-        graphics.blit(GUI_TEXTURE, x,             y + backpackHeight,          7, 97, 0, 143,  7, 97, 256, 256); /* Bottom left corner */
-        graphics.blit(GUI_TEXTURE, x + width - 7, y + backpackHeight,          7, 97, 8, 143,  7, 97, 256, 256); /* Bottom right corner */
-        graphics.blit(GUI_TEXTURE, x + 7,         y + backpackHeight, width - 14, 97, 7, 143,  1, 97, 256, 256); /* Bottom border */
+        graphics.blitSprite(INVENTORY_SPRITE, x, y + backpackHeight - 1, width, 90);
+
 
         // Draw Player Inventory Slots
         int inventoryStartX = Math.max((slotWidth - minSlotWidth) / 2, 0);
-        graphics.blit(GUI_TEXTURE, x + inventoryStartX + 7, y + backpackHeight + 14, 163, 76, 15, 157, 163, 76, 256, 256);
+        graphics.blit(GUI_TEXTURE, x + inventoryStartX + 7, y + backpackHeight + 6, 163, 76, 15, 157, 163, 76, 256, 256);
     }
 
     private void openConfigScreen()

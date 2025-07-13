@@ -39,7 +39,7 @@ public class BackpackContainerMenu extends AbstractContainerMenu
         this.owner = owner;
         checkContainerSize(backpackContainer, this.cols * this.rows);
         backpackContainer.startOpen(playerInventory.player);
-        int playerInventoryOffset = this.rows * 18 + 17 + 14 + 1;
+        int playerInventoryOffset = this.rows * 18 + 17 + 14 + 1 + 6;
         int backpackSlotWidth = this.cols * 18;
         int minSlotWidth = 9 * 18;
         int backpackStartX = Math.max((minSlotWidth - backpackSlotWidth) / 2, 0);
