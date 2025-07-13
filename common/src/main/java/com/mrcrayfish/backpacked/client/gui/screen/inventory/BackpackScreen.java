@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
@@ -32,9 +31,12 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
 
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation SLOT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
+    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
+    private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
     private static final ResourceLocation INVENTORY_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
+    private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
+    private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
+    private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
 
     private final int cols;
     private final int rows;
@@ -85,13 +87,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private List<MiniButton> gatherButtons()
     {
         List<MiniButton> buttons = new ArrayList<>();
-        buttons.add(new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, button -> {
+        buttons.add(new MiniButton(0, 0, ICON_CUSTOMISE, button -> {
             Network.getPlay().sendToServer(new MessageRequestManagement());
         }));
         boolean canCustomise = this.owner && !Config.SERVER.backpack.disableCustomisation.get();
         if(canCustomise)
         {
-            MiniButton customiseButton = new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            MiniButton customiseButton = new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
                 Network.getPlay().sendToServer(new MessageRequestCustomisation());
             });
             customiseButton.setTooltip(Tooltip.create(CUSTOMISE_TOOLTIP));
@@ -99,7 +101,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         }
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            MiniButton configButton = new MiniButton(0, 0, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> this.openConfigScreen());
+            MiniButton configButton = new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen());
             configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
             buttons.add(configButton);
         }
@@ -130,16 +132,15 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     {
         // Backpack Inventory
         int backpackHeight = 17 + this.rows * 18 + 18;
-        graphics.blitSprite(BACKGROUND_SPRITE, x - 60, y + 4, 70, backpackHeight - 16);
-        graphics.blitSprite(BACKGROUND_SPRITE, x - 4, y - 4, width + 8, backpackHeight);
-
+        graphics.blitSprite(BACKPACK_BACKGROUND, x - 60, y + 4, 70, backpackHeight - 16);
+        graphics.blitSprite(BACKPACK_BACKGROUND, x - 4, y - 4, width + 8, backpackHeight);
 
         // Draw Backpack Slots
         int slotWidth = this.cols * 18;
         int slotHeight = this.rows * 18;
         int minSlotWidth = 9 * 18; //Player inventory will always have 9 columns
         int backpackStartX = Math.max((minSlotWidth - slotWidth) / 2, 0);
-        graphics.blitSprite(SLOT_SPRITE, backpackStartX + x + 7, y + 17, slotWidth, slotHeight);
+        graphics.blitSprite(BACKPACK_SLOT, backpackStartX + x + 7, y + 17, slotWidth, slotHeight);
 
         // Player Inventory
         graphics.blitSprite(INVENTORY_SPRITE, x, y + backpackHeight - 1, width, 90);
