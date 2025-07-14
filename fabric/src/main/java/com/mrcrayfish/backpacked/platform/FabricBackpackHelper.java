@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.platform;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;

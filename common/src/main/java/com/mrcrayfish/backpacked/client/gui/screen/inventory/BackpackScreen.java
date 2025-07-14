@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
 import com.mrcrayfish.backpacked.network.Network;
@@ -12,6 +13,7 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -21,11 +23,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -49,18 +53,20 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private final int cols;
     private final int rows;
     private final boolean owner;
+    private final Player openingPlayer;
     private boolean opened;
 
     private @Nullable LockedSlot hoveredLockedSlot;
     private LockedSlot clickedLockedSlot;
     private int heldUnlockTime;
 
-    public BackpackScreen(BackpackContainerMenu backpackContainerMenu, Inventory playerInventory, Component titleIn)
+    public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
-        super(backpackContainerMenu, playerInventory, titleIn);
-        this.cols = backpackContainerMenu.getCols();
-        this.rows = backpackContainerMenu.getRows();
-        this.owner = backpackContainerMenu.isOwner();
+        super(menu, playerInventory, titleIn);
+        this.cols = menu.getCols();
+        this.rows = menu.getRows();
+        this.owner = menu.isOwner();
+        this.openingPlayer = playerInventory.player;
         this.imageWidth = 14 + Math.max(this.cols, 9) * 18;
         this.imageHeight = 114 + this.rows * 18;
         this.inventoryLabelX = Math.max(((this.cols * 18) - (9 * 18)) / 2, 0) + 7;
@@ -151,9 +157,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.hoveredLockedSlot = null;
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
+
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
         {
-            graphics.renderTooltip(this.font, Component.literal("Hold to Unlock"), mouseX, mouseY);
+            UnlockedSlots slots = this.getMenu().getUnlockedSlots();
+            int experienceLevelCost = slots.nextUnlockCost();
+            ChatFormatting color = this.openingPlayer.experienceLevel >= experienceLevelCost
+                    ? ChatFormatting.GREEN : ChatFormatting.RED;
+            Component levelCost = Component.literal(Integer.toString(experienceLevelCost)).withStyle(color);
+            Component inputHint = Component.translatable("backpacked.gui.hold_to_unlock");
+            graphics.renderTooltip(this.font, List.of(levelCost, inputHint), Optional.empty(), mouseX, mouseY);
         }
     }
 
@@ -202,7 +215,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         {
             if(slot instanceof LockedSlot lockedSlot)
             {
-                if(this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
+                if(this.owner && this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
                 {
                     this.hoveredLockedSlot = lockedSlot;
                 }
@@ -235,9 +248,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     {
         if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
         {
-            this.heldUnlockTime = UNLOCK_TIME;
-            this.clickedLockedSlot = this.hoveredLockedSlot;
-            return true;
+            UnlockedSlots slots = this.getMenu().getUnlockedSlots();
+            if(slots.isUnlockable(this.hoveredLockedSlot.getContainerSlot()))
+            {
+                int experienceLevelCost = slots.nextUnlockCost();
+                if(this.openingPlayer.experienceLevel >= experienceLevelCost)
+                {
+                    this.heldUnlockTime = UNLOCK_TIME;
+                    this.clickedLockedSlot = this.hoveredLockedSlot;
+                    return true;
+                }
+            }
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }

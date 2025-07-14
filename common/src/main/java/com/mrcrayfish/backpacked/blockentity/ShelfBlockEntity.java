@@ -134,8 +134,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 Component title = this.backpack.has(DataComponents.CUSTOM_NAME) ? this.backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
                 int cols = backpackItem.getColumnCount();
                 int rows = backpackItem.getRowCount();
-                UnlockedSlots slots = this.backpack.getOrDefault(ModDataComponents.UNLOCKED_SLOTS.get(), UnlockedSlots.EMPTY);
-                Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, title);
+                UnlockedSlots slots = backpackItem.getUnlockedSlots(this.backpack);
+                if(slots != null)
+                {
+                    Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, title);
+                }
             });
         });
     }

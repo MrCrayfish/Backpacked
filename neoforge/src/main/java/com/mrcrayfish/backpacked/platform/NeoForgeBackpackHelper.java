@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.platform;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -69,6 +70,8 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     @Override
     public BackpackItem createBackpackItem(Item.Properties properties)
     {
-        return new BackpackItem(properties);
+        int rows = Config.SERVER.backpack.inventorySizeRows.get();
+        int cols = Config.SERVER.backpack.inventorySizeColumns.get();
+        return new BackpackItem(rows, cols, properties);
     }
 }

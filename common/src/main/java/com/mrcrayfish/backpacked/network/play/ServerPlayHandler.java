@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
@@ -146,11 +147,25 @@ public class ServerPlayHandler
         if(backpack.isEmpty())
             return;
 
-        UnlockedSlots slots = backpack.getOrDefault(ModDataComponents.UNLOCKED_SLOTS.get(), UnlockedSlots.EMPTY);
+        // Don't allow unlocking slots unless the wearer
+        if(!(player.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+            return;
+
+        UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        if(slots == null || !slots.isUnlockable(message.slot()))
+            return;
+
+        // Ensure the player has the experience levels
+        int experienceLevelCost = slots.nextUnlockCost();
+        if(experienceLevelCost < player.experienceLevel)
+            return;
+
+        // Take the experience levels from the player
+        player.giveExperienceLevels(-experienceLevelCost);
+
+        // Finally unlock the slot and sync the changes to the client
         slots = slots.unlockSlot(message.slot());
         backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
-
-        // Reopen the backpack
         Network.PLAY.sendToPlayer(() -> serverPlayer, new MessageSyncUnlockSlot(message.slot()));
     }
 }

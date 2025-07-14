@@ -57,6 +57,7 @@
     "backpacked.formatter.travelled_blocks": "Travelled %s / %s Blocks",
     "backpacked.formatter.used_x_times": "Used %s Times",
     "backpacked.gui.locked": "Locked",
+    "backpacked.gui.hold_to_unlock": "Hold to Unlock",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
