@@ -157,7 +157,7 @@ public class ServerPlayHandler
 
         // Ensure the player has the experience levels
         int experienceLevelCost = slots.nextUnlockCost();
-        if(experienceLevelCost < player.experienceLevel)
+        if(player.experienceLevel < experienceLevelCost)
             return;
 
         // Take the experience levels from the player
