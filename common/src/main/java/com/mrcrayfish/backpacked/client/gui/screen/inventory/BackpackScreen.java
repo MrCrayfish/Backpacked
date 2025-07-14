@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -43,11 +44,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
 
+    private static final int UNLOCK_TIME = 20;
+
     private final int cols;
     private final int rows;
     private final boolean owner;
     private boolean opened;
+
     private @Nullable LockedSlot hoveredLockedSlot;
+    private LockedSlot clickedLockedSlot;
+    private int heldUnlockTime;
 
     public BackpackScreen(BackpackContainerMenu backpackContainerMenu, Inventory playerInventory, Component titleIn)
     {
@@ -115,6 +121,31 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     }
 
     @Override
+    protected void containerTick()
+    {
+        if(this.clickedLockedSlot != null)
+        {
+            // Cancel if the user moves the mouse off the locked slot
+            if(this.hoveredLockedSlot != this.clickedLockedSlot)
+            {
+                this.clickedLockedSlot = null;
+                return;
+            }
+            if(this.heldUnlockTime-- <= 0)
+            {
+                Network.PLAY.sendToServer(new MessageUnlockSlot(this.clickedLockedSlot.getContainerSlot()));
+                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.5F));
+                this.clickedLockedSlot = null;
+            }
+            else if(this.heldUnlockTime % 2 == 0)
+            {
+                float pitch = 0.9F + 0.4F * (UNLOCK_TIME - this.heldUnlockTime) / (float) UNLOCK_TIME;
+                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.EXPERIENCE_ORB_PICKUP, pitch, 0.25F));
+            }
+        }
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
         this.hoveredLockedSlot = null;
@@ -122,7 +153,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.renderTooltip(graphics, mouseX, mouseY);
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
         {
-            graphics.renderTooltip(this.font, Component.literal("Unlock"), mouseX, mouseY);
+            graphics.renderTooltip(this.font, Component.literal("Hold to Unlock"), mouseX, mouseY);
         }
     }
 
@@ -159,6 +190,14 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         int inventoryStartX = Math.max((slotWidth - minSlotWidth) / 2, 0);
         graphics.blit(GUI_TEXTURE, x + inventoryStartX + 7, y + backpackHeight + 6, 163, 76, 15, 157, 163, 76, 256, 256);
 
+        if(this.clickedLockedSlot != null)
+        {
+            int progressX = this.leftPos + this.clickedLockedSlot.x;
+            int progressY = this.topPos + this.clickedLockedSlot.y;
+            int progressWidth = (int) (16 * (UNLOCK_TIME - this.heldUnlockTime) / (float) UNLOCK_TIME);
+            graphics.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
+        }
+
         for(Slot slot : this.getMenu().slots)
         {
             if(slot instanceof LockedSlot lockedSlot)
@@ -194,11 +233,23 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
+        if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
         {
-            Network.PLAY.sendToServer(new MessageUnlockSlot(this.hoveredLockedSlot.getContainerSlot()));
+            this.heldUnlockTime = UNLOCK_TIME;
+            this.clickedLockedSlot = this.hoveredLockedSlot;
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    {
+        if(button == 0 && this.clickedLockedSlot != null)
+        {
+            this.clickedLockedSlot = null;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 }
