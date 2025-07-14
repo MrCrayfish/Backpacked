@@ -6,9 +6,11 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
+import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -18,6 +20,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +41,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
     private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
     private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
+    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
 
     private final int cols;
     private final int rows;
     private final boolean owner;
     private boolean opened;
+    private @Nullable LockedSlot hoveredLockedSlot;
 
     public BackpackScreen(BackpackContainerMenu backpackContainerMenu, Inventory playerInventory, Component titleIn)
     {
@@ -111,24 +117,28 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        super.render(graphics, mouseX, mouseY, partialTicks); //Super
-        this.renderTooltip(graphics, mouseX, mouseY); //Render hovered tooltips
+        this.hoveredLockedSlot = null;
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(graphics, mouseX, mouseY);
+        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
+        {
+            graphics.renderTooltip(this.font, Component.literal("Unlock"), mouseX, mouseY);
+        }
     }
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF3a2b1b, false);
-        //graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
+        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF3A2B1B, false);
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
-        this.drawBackgroundWindow(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
+        this.drawBackgroundWindow(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight, mouseX, mouseY);
     }
 
-    private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height)
+    private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
     {
         // Backpack Inventory
         int backpackHeight = 17 + this.rows * 18 + 18;
@@ -145,10 +155,24 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         // Player Inventory
         graphics.blitSprite(INVENTORY_SPRITE, x, y + backpackHeight - 1, width, 90);
 
-
         // Draw Player Inventory Slots
         int inventoryStartX = Math.max((slotWidth - minSlotWidth) / 2, 0);
         graphics.blit(GUI_TEXTURE, x + inventoryStartX + 7, y + backpackHeight + 6, 163, 76, 15, 157, 163, 76, 256, 256);
+
+        for(Slot slot : this.getMenu().slots)
+        {
+            if(slot instanceof LockedSlot lockedSlot)
+            {
+                if(this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
+                {
+                    this.hoveredLockedSlot = lockedSlot;
+                }
+                if(!lockedSlot.isUnlocked())
+                {
+                    graphics.blitSprite(ICON_LOCK, x + slot.x + 2, y + slot.y + 2, 12, 12);
+                }
+            }
+        }
     }
 
     private void openConfigScreen()
@@ -165,5 +189,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             return true;
         }
         return super.keyPressed(key, scanCode, action);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    {
+        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
+        {
+            Network.PLAY.sendToServer(new MessageUnlockSlot(this.hoveredLockedSlot.getContainerSlot()));
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }

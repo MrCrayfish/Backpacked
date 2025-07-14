@@ -1,7 +1,9 @@
 package com.mrcrayfish.backpacked.blockentity;
 
 import com.mrcrayfish.backpacked.block.ShelfBlock;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -13,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -133,7 +134,8 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 Component title = this.backpack.has(DataComponents.CUSTOM_NAME) ? this.backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
                 int cols = backpackItem.getColumnCount();
                 int rows = backpackItem.getRowCount();
-                Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, title);
+                UnlockedSlots slots = this.backpack.getOrDefault(ModDataComponents.UNLOCKED_SLOTS.get(), UnlockedSlots.EMPTY);
+                Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, title);
             });
         });
     }

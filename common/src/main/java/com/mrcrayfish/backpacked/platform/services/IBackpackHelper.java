@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.platform.services;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -28,7 +29,7 @@ public interface IBackpackHelper
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);
 
-    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, Component title);
+    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockedSlots slots, Component title);
 
     BackpackItem createBackpackItem(Item.Properties properties);
 }

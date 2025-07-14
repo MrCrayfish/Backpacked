@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -34,7 +35,10 @@ public class BackpackItem extends Item
 
     public BackpackItem(Properties properties)
     {
-        super(properties.component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT));
+        super(properties
+            .component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT)
+            .component(ModDataComponents.UNLOCKED_SLOTS.get(), UnlockedSlots.EMPTY)
+        );
     }
 
     @Override
@@ -63,7 +67,8 @@ public class BackpackItem extends Item
             int cols = backpackItem.getColumnCount();
             int rows = backpackItem.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
-            Services.BACKPACK.openBackpackScreen(openingPlayer, backpackInventory, cols, rows, owner, title);
+            UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+            Services.BACKPACK.openBackpackScreen(openingPlayer, backpackInventory, cols, rows, owner, slots, title);
             return true;
         }
         openBackpackManagement(ownerPlayer);

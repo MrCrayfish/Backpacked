@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
@@ -58,11 +59,11 @@ public class FabricBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, Component title)
+    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockedSlots slots, Component title)
     {
         FrameworkAPI.openMenuWithData(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
-            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner);
-        }, title), new BackpackContainerData(cols, rows, owner));
+            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner, slots);
+        }, title), new BackpackContainerData(cols, rows, owner, slots));
     }
 
     @Override

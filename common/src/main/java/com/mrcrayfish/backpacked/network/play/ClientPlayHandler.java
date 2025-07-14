@@ -4,14 +4,10 @@ import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
-import com.mrcrayfish.backpacked.common.backpack.Backpack;
-import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.network.message.MessageOpenCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
-import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
-import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
+import com.mrcrayfish.backpacked.inventory.container.LockedSlotController;
+import com.mrcrayfish.backpacked.network.message.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -71,6 +67,15 @@ public class ClientPlayHandler
         if(entity instanceof WanderingTrader trader)
         {
             TraderPickpocketing.get(trader).ifPresent(data -> data.setBackpackEquipped(true));
+        }
+    }
+
+    public static void handleUnlockSlot(MessageSyncUnlockSlot message)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.player != null && minecraft.player.containerMenu instanceof LockedSlotController controller)
+        {
+            controller.unlockSlot(message.slot());
         }
     }
 }

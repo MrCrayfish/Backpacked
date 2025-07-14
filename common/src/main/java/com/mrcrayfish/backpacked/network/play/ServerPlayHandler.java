@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -133,5 +134,23 @@ public class ServerPlayHandler
         context.getPlayer().filter(player -> player instanceof ServerPlayer).ifPresent(player -> {
             BackpackItem.openBackpackManagement((ServerPlayer) player);
         });
+    }
+
+    public static void handleUnlockSlot(MessageUnlockSlot message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+        if(backpack.isEmpty())
+            return;
+
+        UnlockedSlots slots = backpack.getOrDefault(ModDataComponents.UNLOCKED_SLOTS.get(), UnlockedSlots.EMPTY);
+        slots = slots.unlockSlot(message.slot());
+        backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+
+        // Reopen the backpack
+        Network.PLAY.sendToPlayer(() -> serverPlayer, new MessageSyncUnlockSlot(message.slot()));
     }
 }

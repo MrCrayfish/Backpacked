@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
@@ -208,7 +209,7 @@ public class WanderingTraderEvents
                     ((WanderingBagBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
                 });*/
             }
-            Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), 8, 1, false, WANDERING_BAG_TRANSLATION);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), 8, 1, false, UnlockedSlots.EMPTY, WANDERING_BAG_TRANSLATION);
             openingPlayer.level().playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.15F, 1.0F);
         });
     }

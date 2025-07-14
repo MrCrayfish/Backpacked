@@ -1,8 +1,9 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
-import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
+import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -15,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainerMenu extends AbstractContainerMenu
+public class BackpackContainerMenu extends AbstractContainerMenu implements LockedSlotController
 {
     public static final int MAX_COLUMNS = 13;
     public static final int MAX_ROWS = 7;
@@ -24,19 +25,21 @@ public class BackpackContainerMenu extends AbstractContainerMenu
     private final int cols;
     private final int rows;
     private final boolean owner;
+    private UnlockedSlots unlockedSlots;
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner());
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner(), data.slots());
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockedSlots slots)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackContainer;
         this.cols = Mth.clamp(cols, 1, MAX_COLUMNS);
         this.rows = Mth.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
+        this.unlockedSlots = slots;
         checkContainerSize(backpackContainer, this.cols * this.rows);
         backpackContainer.startOpen(playerInventory.player);
         int playerInventoryOffset = this.rows * 18 + 17 + 14 + 1 + 6;
@@ -49,7 +52,7 @@ public class BackpackContainerMenu extends AbstractContainerMenu
         {
             for(int i = 0; i < cols; ++i)
             {
-                this.addSlot(new BackpackSlot(backpackContainer, i + j * cols, 8 + backpackStartX + i * 18, 18 + j * 18));
+                this.addSlot(new LockedSlot(this, backpackContainer, i + j * cols, 8 + backpackStartX + i * 18, 18 + j * 18));
             }
         }
 
@@ -65,6 +68,18 @@ public class BackpackContainerMenu extends AbstractContainerMenu
         {
             this.addSlot(new Slot(playerInventory, i, 8 + inventoryStartX + i * 18, playerInventoryOffset + 58));
         }
+    }
+
+    @Override
+    public void unlockSlot(int slot)
+    {
+        this.unlockedSlots = this.unlockedSlots.unlockSlot(slot);
+    }
+
+    @Override
+    public boolean isSlotUnlocked(int slot)
+    {
+        return this.unlockedSlots.isUnlocked(slot);
     }
 
     @Override
