@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
@@ -41,7 +42,7 @@ public class PickpocketDebugRenderer
         MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();
         for(Player player : mc.level.players())
         {
-            if(Services.BACKPACK.getBackpackStack(player).isEmpty())
+            if(BackpackHelper.getBackpackStack(player).isEmpty())
                 continue;
 
             if(player.isLocalPlayer())
