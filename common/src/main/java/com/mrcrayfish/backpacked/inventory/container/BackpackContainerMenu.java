@@ -42,31 +42,35 @@ public class BackpackContainerMenu extends AbstractContainerMenu implements Lock
         this.unlockedSlots = slots;
         checkContainerSize(backpackContainer, this.cols * this.rows);
         backpackContainer.startOpen(playerInventory.player);
-        int playerInventoryOffset = this.rows * 18 + 17 + 14 + 1 + 6;
-        int backpackSlotWidth = this.cols * 18;
-        int minSlotWidth = 9 * 18;
-        int backpackStartX = Math.max((minSlotWidth - backpackSlotWidth) / 2, 0);
-        int inventoryStartX = Math.max((backpackSlotWidth - minSlotWidth) / 2, 0);
 
-        for(int j = 0; j < rows; j++)
+        int backpackWidth = 11 + Math.max(9 * 18, this.cols * 18) + 11;
+        int backpackSlotWidth = this.cols * 18;
+        int backpackSlotsX = Math.max((backpackWidth - backpackSlotWidth) / 2, 0) + 1;
+        int backpackSlotsY = 22;
+
+        for(int y = 0; y < rows; y++)
         {
-            for(int i = 0; i < cols; ++i)
+            for(int x = 0; x < cols; x++)
             {
-                this.addSlot(new LockedSlot(this, backpackContainer, i + j * cols, 8 + backpackStartX + i * 18, 18 + j * 18));
+                this.addSlot(new LockedSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
             }
         }
 
-        for(int i = 0; i < 3; i++)
+        int inventorySlotsWidth = 9 * 18;
+        int inventorySlotsX = Math.max((backpackWidth - inventorySlotsWidth) / 2, 0) + 1;
+        int inventorySlotsY = 20 + this.rows * 18 + 15 + 3 + 8;
+
+        for(int y = 0; y < 3; y++)
         {
-            for(int j = 0; j < 9; j++)
+            for(int x = 0; x < 9; x++)
             {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + inventoryStartX + j * 18, i * 18 + playerInventoryOffset));
+                this.addSlot(new Slot(playerInventory, x + y * 9 + 9, inventorySlotsX + x * 18, inventorySlotsY + y * 18));
             }
         }
 
         for(int i = 0; i < 9; i++)
         {
-            this.addSlot(new Slot(playerInventory, i, 8 + inventoryStartX + i * 18, playerInventoryOffset + 58));
+            this.addSlot(new Slot(playerInventory, i, inventorySlotsX + i * 18, inventorySlotsY + 58));
         }
     }
 

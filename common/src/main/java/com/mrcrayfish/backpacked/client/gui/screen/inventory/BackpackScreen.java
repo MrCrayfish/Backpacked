@@ -72,10 +72,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.rows = menu.getRows();
         this.owner = menu.isOwner();
         this.openingPlayer = playerInventory.player;
-        this.imageWidth = 14 + Math.max(this.cols, 9) * 18;
-        this.imageHeight = 114 + this.rows * 18;
-        this.inventoryLabelX = Math.max(((this.cols * 18) - (9 * 18)) / 2, 0) + 7;
-        this.inventoryLabelY = this.rows * 18 + 17 + 10;
+        this.imageWidth = 11 + Math.max(this.cols, 9) * 18 + 11;
+        this.imageHeight = 20 + this.rows * 18 + 15 + 3 + 90;
+        this.titleLabelX = 12;
+        this.titleLabelY = 10;
     }
 
     @Override
@@ -96,13 +96,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             {
                 case LEFT -> {
                     int titleWidth = this.minecraft.font.width(this.title);
-                    button.setX(this.leftPos + titleWidth + 8 + 3 + i * 13);
+                    button.setX(this.leftPos + this.titleLabelX + titleWidth + 3 + i * 13);
                 }
                 case RIGHT -> {
                     button.setX(this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13);
                 }
             }
-            button.setY(this.topPos + 5);
+            button.setY(this.topPos + 9);
             this.addRenderableWidget(button);
         }
     }
@@ -192,23 +192,31 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
     {
         // Backpack Inventory
-        int backpackHeight = 17 + this.rows * 18 + 18;
-        graphics.blitSprite(BACKPACK_BACKGROUND, x - 60, y + 4, 70, backpackHeight - 16);
-        graphics.blitSprite(BACKPACK_BACKGROUND, x - 4, y - 4, width + 8, backpackHeight);
+        int backpackHeight = 20 + this.rows * 18 + 15;
+        graphics.blitSprite(BACKPACK_BACKGROUND, x - 60, y + 8, 70, backpackHeight - 16);
+        graphics.blitSprite(BACKPACK_BACKGROUND, x, y, width, backpackHeight);
 
         // Draw Backpack Slots
-        int slotWidth = this.cols * 18;
-        int slotHeight = this.rows * 18;
-        int minSlotWidth = 9 * 18; //Player inventory will always have 9 columns
-        int backpackStartX = Math.max((minSlotWidth - slotWidth) / 2, 0);
-        graphics.blitSprite(BACKPACK_SLOT, backpackStartX + x + 7, y + 17, slotWidth, slotHeight);
+        int backpackSlotsWidth = this.cols * 18;
+        int backpackSlotsHeight = this.rows * 18;
+        int backpackSlotsX = (width - backpackSlotsWidth) / 2;
+        int backpackSlotsY = 21;
+        graphics.blitSprite(BACKPACK_SLOT, x + backpackSlotsX, y + backpackSlotsY, backpackSlotsWidth, backpackSlotsHeight);
 
         // Player Inventory
-        graphics.blitSprite(INVENTORY_SPRITE, x, y + backpackHeight - 1, width, 90);
+        int inventoryWidth = 7 + 9 * 18 + 7;
+        int inventoryHeight = 90;
+        int inventoryX = (width - inventoryWidth) / 2;
+        int inventoryY = backpackHeight + 3;
+        graphics.blitSprite(INVENTORY_SPRITE, x + inventoryX, y + inventoryY, inventoryWidth, inventoryHeight);
 
         // Draw Player Inventory Slots
-        int inventoryStartX = Math.max((slotWidth - minSlotWidth) / 2, 0);
-        graphics.blit(GUI_TEXTURE, x + inventoryStartX + 7, y + backpackHeight + 6, 163, 76, 15, 157, 163, 76, 256, 256);
+        int inventorySlotsWidth = 9 * 18;
+        int inventorySlotsHeight = 3 * 18;
+        int inventorySlotsX = (width - inventorySlotsWidth) / 2;
+        int inventorySlotsY = backpackHeight + 3 + 7;
+        graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
+        graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
 
         if(this.clickedLockedSlot != null)
         {
