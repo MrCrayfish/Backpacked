@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.network.play;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
@@ -41,7 +42,7 @@ public class ServerPlayHandler
         if(player == null)
             return;
 
-        ItemStack stack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack stack = BackpackHelper.getStack(player);
         if(!stack.isEmpty())
         {
             BackpackProperties properties = message.properties();
@@ -109,7 +110,7 @@ public class ServerPlayHandler
         if(Config.SERVER.backpack.disableCustomisation.get())
             return;
 
-        if(Services.BACKPACK.getBackpackStack(player).isEmpty())
+        if(BackpackHelper.getStack(player).isEmpty())
             return;
 
         UnlockManager.getTracker(player).ifPresent(unlockTracker ->
@@ -143,7 +144,7 @@ public class ServerPlayHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack backpack = BackpackHelper.getStack(player);
         if(backpack.isEmpty())
             return;
 

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -39,7 +40,7 @@ public class EnchantmentHandler
 
     public static boolean onBreakBlock(BlockState state, ServerLevel level, BlockPos pos, @Nullable BlockEntity blockEntity, ServerPlayer player, ItemStack stack)
     {
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack backpack = BackpackHelper.getStack(player);
         if(backpack.isEmpty())
             return false;
 
@@ -64,7 +65,7 @@ public class EnchantmentHandler
         if(!(entity instanceof ServerPlayer player))
             return false;
 
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack backpack = BackpackHelper.getStack(player);
         if(backpack.isEmpty())
             return false;
 
@@ -94,7 +95,7 @@ public class EnchantmentHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return false;
 
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack backpack = BackpackHelper.getStack(player);
         if(backpack.isEmpty())
             return false;
 

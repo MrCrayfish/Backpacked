@@ -1,6 +1,8 @@
 package com.mrcrayfish.backpacked.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -25,38 +27,38 @@ public class ManagementInventory implements Container
     @Override
     public boolean isEmpty()
     {
-        return ModSyncedDataKeys.BACKPACK.getValue(this.player).isEmpty();
+        return BackpackHelper.getStack(this.player).isEmpty();
     }
 
     @Override
     public ItemStack getItem(int index)
     {
         Preconditions.checkArgument(index == 0);
-        return ModSyncedDataKeys.BACKPACK.getValue(this.player);
+        return BackpackHelper.getStack(this.player);
     }
 
     @Override
     public ItemStack removeItem(int index, int count)
     {
         Preconditions.checkArgument(index == 0);
-        return count > 0 ? ModSyncedDataKeys.BACKPACK.getValue(this.player).split(count) : ItemStack.EMPTY;
+        return count > 0 ? BackpackHelper.getStack(this.player).split(count) : ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int index)
     {
         Preconditions.checkArgument(index == 0);
-        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(this.player);
+        ItemStack stack = BackpackHelper.getStack(this.player);
         if(stack.isEmpty())
             return ItemStack.EMPTY;
-        ModSyncedDataKeys.BACKPACK.setValue(this.player, ItemStack.EMPTY);
+        BackpackHelper.setStack(this.player, ItemStack.EMPTY);
         return stack;
     }
 
     @Override
     public void setItem(int index, ItemStack stack)
     {
-        ModSyncedDataKeys.BACKPACK.setValue(this.player, stack);
+        BackpackHelper.setStack(this.player, stack);
     }
 
     @Override
@@ -71,6 +73,6 @@ public class ManagementInventory implements Container
     @Override
     public void clearContent()
     {
-        ModSyncedDataKeys.BACKPACK.setValue(this.player, ItemStack.EMPTY);
+        BackpackHelper.setStack(this.player, ItemStack.EMPTY);
     }
 }

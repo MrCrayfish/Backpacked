@@ -5,6 +5,7 @@ import com.b1n_ry.yigd.compat.InvModCompat;
 import com.b1n_ry.yigd.data.DeathContext;
 import com.b1n_ry.yigd.data.GraveItem;
 import com.b1n_ry.yigd.util.DropRule;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -44,7 +45,7 @@ public class YoureInGraveDangerSupport
         @Override
         public void clear(ServerPlayer player)
         {
-            ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
+            BackpackHelper.setStack(player, ItemStack.EMPTY);
         }
 
         @Override
@@ -75,7 +76,7 @@ public class YoureInGraveDangerSupport
         @Override
         public ItemStack getInventory(ServerPlayer player)
         {
-            return ModSyncedDataKeys.BACKPACK.getValue(player);
+            return BackpackHelper.getStack(player);
         }
 
         @Override
@@ -102,11 +103,11 @@ public class YoureInGraveDangerSupport
             if(this.inventory.isEmpty())
                 return extra;
             extra.add(this.inventory);
-            ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
+            ItemStack stack = BackpackHelper.getStack(player);
             if(stack.isEmpty())
             {
                 extra.clear();
-                ModSyncedDataKeys.BACKPACK.setValue(player, this.inventory.copy());
+                BackpackHelper.setStack(player, this.inventory.copy());
             }
             return extra;
         }

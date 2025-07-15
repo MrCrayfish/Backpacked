@@ -19,12 +19,6 @@ import java.util.Optional;
  */
 public interface IBackpackHelper
 {
-    Optional<ItemStack> getStackInBackpackSlot(Player player);
-
-    ItemStack getBackpackStack(Player player);
-
-    boolean setBackpackStack(Player player, ItemStack stack);
-
     boolean isBackpackVisible(Player player);
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);

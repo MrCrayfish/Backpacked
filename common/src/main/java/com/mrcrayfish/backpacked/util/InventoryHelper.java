@@ -1,8 +1,5 @@
 package com.mrcrayfish.backpacked.util;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -18,45 +15,6 @@ import java.util.stream.Stream;
  */
 public class InventoryHelper
 {
-    public static ListTag saveAllItems(HolderLookup.Provider provider, ListTag list, SimpleContainer container)
-    {
-        for(int i = 0; i < container.getContainerSize(); ++i)
-        {
-            ItemStack itemstack = container.getItem(i);
-            if(!itemstack.isEmpty())
-            {
-                CompoundTag compound = new CompoundTag();
-                compound.putByte("Slot", (byte) i);
-                itemstack.save(provider, compound);
-                list.add(compound);
-            }
-        }
-        return list;
-    }
-
-    public static void loadAllItems(HolderLookup.Provider provider, ListTag list, SimpleContainer container, Level level, Vec3 pos)
-    {
-        for(int i = 0; i < list.size(); i++)
-        {
-            CompoundTag compound = list.getCompound(i);
-            int slot = compound.getByte("Slot") & 255;
-            if(slot < container.getContainerSize())
-            {
-                container.setItem(slot, ItemStack.parse(provider, compound).orElse(ItemStack.EMPTY));
-            }
-            else if(!level.isClientSide())
-            {
-                ItemStack stack = ItemStack.parse(provider, compound).orElse(ItemStack.EMPTY);
-                if(!stack.isEmpty())
-                {
-                    ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, container.addItem(stack));
-                    entity.setDefaultPickUpDelay();
-                    level.addFreshEntity(entity);
-                }
-            }
-        }
-    }
-
     public static void mergeInventory(SimpleContainer source, SimpleContainer target, Level level, Vec3 pos)
     {
         for(int i = 0; i < source.getContainerSize(); i++)

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -35,9 +36,9 @@ public class BackpackEvents
             if(!(stack.getItem() instanceof BackpackItem))
                 return false;
 
-            if(Services.BACKPACK.getBackpackStack(serverPlayer).isEmpty())
+            if(BackpackHelper.getStack(serverPlayer).isEmpty())
             {
-                if(Services.BACKPACK.setBackpackStack(serverPlayer, stack))
+                if(BackpackHelper.setStack(serverPlayer, stack))
                 {
                     ((ServerLevel) entity.level()).getChunkSource().broadcast(entity, new ClientboundTakeItemEntityPacket(entity.getId(), serverPlayer.getId(), stack.getCount()));
                     entity.discard();
@@ -54,7 +55,7 @@ public class BackpackEvents
             return;
 
         Optional<BackpackProperties> cosmeticProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
-        ItemStack realStack = ModSyncedDataKeys.BACKPACK.getValue(player);
+        ItemStack realStack = BackpackHelper.getStack(player);
         if(realStack.is(ModItems.BACKPACK.get()))
         {
             BackpackProperties realProperties = realStack.get(ModDataComponents.BACKPACK_PROPERTIES.get());

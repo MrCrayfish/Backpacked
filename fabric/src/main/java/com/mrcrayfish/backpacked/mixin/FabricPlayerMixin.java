@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.mixin;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -34,7 +35,7 @@ public class FabricPlayerMixin
     public void backpackedLocateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
     {
         Player player = (Player) (Object) this;
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack backpack = BackpackHelper.getStack(player);
         if(backpack.isEmpty())
             return;
 
@@ -69,11 +70,11 @@ public class FabricPlayerMixin
         if(Config.SERVER.backpack.keepOnDeath.get())
             return;
 
-        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
+        ItemStack stack = BackpackHelper.getStack(player);
         if(stack.isEmpty())
             return;
 
         player.drop(stack, true, false);
-        ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
+        BackpackHelper.setStack(player, ItemStack.EMPTY);
     }
 }

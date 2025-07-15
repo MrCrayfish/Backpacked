@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
@@ -41,7 +42,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     public BackpackInventory backpacked$GetBackpackInventory()
     {
         Player player = (Player) (Object) this;
-        ItemStack stack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack stack = BackpackHelper.getStack(player);
         if(stack.isEmpty())
         {
             this.backpacked$Inventory = null;

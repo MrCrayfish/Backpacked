@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
@@ -172,7 +173,7 @@ public class WanderingTraderEvents
 
     private static boolean isPlayerInvisible(Player player)
     {
-        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && Services.BACKPACK.getBackpackStack(player).isEmpty();
+        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && BackpackHelper.getStack(player).isEmpty();
     }
 
     private static BlockHitResult performRayTrace(Vec3 start, Vec3 end, Entity source)

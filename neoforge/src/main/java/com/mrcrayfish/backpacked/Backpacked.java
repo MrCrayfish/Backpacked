@@ -127,7 +127,7 @@ public class Backpacked
     {
         if(event.getProjectileItemStack().isEmpty() && event.getEntity() instanceof Player player)
         {
-            ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
+            ItemStack backpack = BackpackHelper.getStack(player);
             if(backpack.isEmpty())
                 return;
 
@@ -180,13 +180,13 @@ public class Backpacked
             if(Config.SERVER.backpack.keepOnDeath.get())
                 return;
 
-            ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
+            ItemStack stack = BackpackHelper.getStack(player);
             if(stack.isEmpty())
                 return;
 
             event.getDrops().add(this.createDrop(player, stack));
 
-            ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
+            BackpackHelper.setStack(player, ItemStack.EMPTY);
         }
     }
 

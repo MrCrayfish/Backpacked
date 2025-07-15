@@ -1,9 +1,7 @@
 package com.mrcrayfish.backpacked.platform;
 
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -16,37 +14,13 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.Optional;
 
 /**
  * Author: MrCrayfish
  */
 public class FabricBackpackHelper implements IBackpackHelper
 {
-    @Override
-    public Optional<ItemStack> getStackInBackpackSlot(Player player)
-    {
-        return Optional.of(this.getBackpackStack(player));
-    }
-
-    @Override
-    public ItemStack getBackpackStack(Player player)
-    {
-        return ModSyncedDataKeys.BACKPACK.getValue(player);
-    }
-
-    @Override
-    public boolean setBackpackStack(Player player, ItemStack stack)
-    {
-        if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
-            return false;
-        ModSyncedDataKeys.BACKPACK.setValue(player, stack);
-        return true;
-    }
-
     @Override
     public boolean isBackpackVisible(Player player)
     {

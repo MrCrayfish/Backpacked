@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.blockentity;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
@@ -89,7 +90,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     private boolean shelveBackpack(Player player)
     {
-        Optional<ItemStack> optional = Services.BACKPACK.getStackInBackpackSlot(player);
+        Optional<ItemStack> optional = Optional.ofNullable(BackpackHelper.getStack(player));
         if(optional.isEmpty())
             return false;
 
@@ -101,7 +102,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             this.backpack = stack.copy();
 
             // Update the stack in the backpack slot
-            Services.BACKPACK.setBackpackStack(player, shelvedBackpack);
+            BackpackHelper.setStack(player, shelvedBackpack);
 
             // Play a sound
             boolean removed = this.backpack.isEmpty();
@@ -184,14 +185,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         else
         {
             this.inventory = null;
-        }
-    }
-
-    private void loadBackpackItems(HolderLookup.Provider provider, CompoundTag compound)
-    {
-        if(compound.contains("Items", Tag.TAG_LIST))
-        {
-            InventoryHelper.loadAllItems(provider, compound.getList("Items", Tag.TAG_COMPOUND), this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
         }
     }
 

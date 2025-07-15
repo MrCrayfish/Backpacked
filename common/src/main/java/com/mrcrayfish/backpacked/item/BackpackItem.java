@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.item;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
@@ -73,7 +74,7 @@ public class BackpackItem extends Item
         if(OPENING_MANAGEMENT.get())
             return false;
 
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(ownerPlayer);
+        ItemStack backpack = BackpackHelper.getStack(ownerPlayer);
         if(!backpack.isEmpty())
         {
             BackpackInventory backpackInventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory();
