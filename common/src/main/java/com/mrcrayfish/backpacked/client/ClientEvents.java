@@ -9,7 +9,6 @@ import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.event.ClientConnectionEvents;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -84,7 +83,7 @@ public class ClientEvents
         List<LivingEntity> entities = new ArrayList<>();
         if(Config.SERVER.pickpocketing.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-                return !BackpackHelper.getStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
+                return !BackpackHelper.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {

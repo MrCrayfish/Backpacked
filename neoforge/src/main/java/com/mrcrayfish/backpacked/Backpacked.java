@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
@@ -14,7 +13,6 @@ import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
@@ -127,7 +125,7 @@ public class Backpacked
     {
         if(event.getProjectileItemStack().isEmpty() && event.getEntity() instanceof Player player)
         {
-            ItemStack backpack = BackpackHelper.getStack(player);
+            ItemStack backpack = BackpackHelper.getBackpackStack(player);
             if(backpack.isEmpty())
                 return;
 
@@ -180,13 +178,13 @@ public class Backpacked
             if(Config.SERVER.backpack.keepOnDeath.get())
                 return;
 
-            ItemStack stack = BackpackHelper.getStack(player);
+            ItemStack stack = BackpackHelper.getBackpackStack(player);
             if(stack.isEmpty())
                 return;
 
             event.getDrops().add(this.createDrop(player, stack));
 
-            BackpackHelper.setStack(player, ItemStack.EMPTY);
+            BackpackHelper.setBackpackStack(player, ItemStack.EMPTY);
         }
     }
 

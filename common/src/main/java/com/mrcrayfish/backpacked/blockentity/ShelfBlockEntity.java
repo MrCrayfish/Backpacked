@@ -4,7 +4,6 @@ import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -16,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -90,7 +88,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     private boolean shelveBackpack(Player player)
     {
-        Optional<ItemStack> optional = Optional.ofNullable(BackpackHelper.getStack(player));
+        Optional<ItemStack> optional = Optional.ofNullable(BackpackHelper.getBackpackStack(player));
         if(optional.isEmpty())
             return false;
 
@@ -102,7 +100,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             this.backpack = stack.copy();
 
             // Update the stack in the backpack slot
-            BackpackHelper.setStack(player, shelvedBackpack);
+            BackpackHelper.setBackpackStack(player, shelvedBackpack);
 
             // Play a sound
             boolean removed = this.backpack.isEmpty();

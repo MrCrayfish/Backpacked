@@ -8,12 +8,10 @@ import com.b1n_ry.yigd.util.DropRule;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
@@ -45,7 +43,7 @@ public class YoureInGraveDangerSupport
         @Override
         public void clear(ServerPlayer player)
         {
-            BackpackHelper.setStack(player, ItemStack.EMPTY);
+            BackpackHelper.setBackpackStack(player, ItemStack.EMPTY);
         }
 
         @Override
@@ -76,7 +74,7 @@ public class YoureInGraveDangerSupport
         @Override
         public ItemStack getInventory(ServerPlayer player)
         {
-            return BackpackHelper.getStack(player);
+            return BackpackHelper.getBackpackStack(player);
         }
 
         @Override
@@ -103,11 +101,11 @@ public class YoureInGraveDangerSupport
             if(this.inventory.isEmpty())
                 return extra;
             extra.add(this.inventory);
-            ItemStack stack = BackpackHelper.getStack(player);
+            ItemStack stack = BackpackHelper.getBackpackStack(player);
             if(stack.isEmpty())
             {
                 extra.clear();
-                BackpackHelper.setStack(player, this.inventory.copy());
+                BackpackHelper.setBackpackStack(player, this.inventory.copy());
             }
             return extra;
         }

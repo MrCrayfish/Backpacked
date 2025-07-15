@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.util;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
@@ -25,7 +24,7 @@ public class ClientUtils
             return;
 
         Minecraft mc = Minecraft.getInstance();
-        if(mc.player != null && BackpackHelper.getStack(mc.player).equals(stack))
+        if(mc.player != null && BackpackHelper.getBackpackStack(mc.player).equals(stack))
         {
             ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
             if(contents.stream().anyMatch(stack1 -> !stack1.isEmpty()))

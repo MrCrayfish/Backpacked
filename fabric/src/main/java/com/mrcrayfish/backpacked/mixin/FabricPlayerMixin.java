@@ -3,10 +3,8 @@ package com.mrcrayfish.backpacked.mixin;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -35,7 +32,7 @@ public class FabricPlayerMixin
     public void backpackedLocateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
     {
         Player player = (Player) (Object) this;
-        ItemStack backpack = BackpackHelper.getStack(player);
+        ItemStack backpack = BackpackHelper.getBackpackStack(player);
         if(backpack.isEmpty())
             return;
 
@@ -70,11 +67,11 @@ public class FabricPlayerMixin
         if(Config.SERVER.backpack.keepOnDeath.get())
             return;
 
-        ItemStack stack = BackpackHelper.getStack(player);
+        ItemStack stack = BackpackHelper.getBackpackStack(player);
         if(stack.isEmpty())
             return;
 
         player.drop(stack, true, false);
-        BackpackHelper.setStack(player, ItemStack.EMPTY);
+        BackpackHelper.setBackpackStack(player, ItemStack.EMPTY);
     }
 }

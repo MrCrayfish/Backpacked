@@ -1,14 +1,11 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,7 +14,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -42,7 +38,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     public BackpackInventory backpacked$GetBackpackInventory()
     {
         Player player = (Player) (Object) this;
-        ItemStack stack = BackpackHelper.getStack(player);
+        ItemStack stack = BackpackHelper.getBackpackStack(player);
         if(stack.isEmpty())
         {
             this.backpacked$Inventory = null;

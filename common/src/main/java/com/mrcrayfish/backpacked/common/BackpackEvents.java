@@ -7,7 +7,6 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.event.TickEvents;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
@@ -36,9 +35,9 @@ public class BackpackEvents
             if(!(stack.getItem() instanceof BackpackItem))
                 return false;
 
-            if(BackpackHelper.getStack(serverPlayer).isEmpty())
+            if(BackpackHelper.getBackpackStack(serverPlayer).isEmpty())
             {
-                if(BackpackHelper.setStack(serverPlayer, stack))
+                if(BackpackHelper.setBackpackStack(serverPlayer, stack))
                 {
                     ((ServerLevel) entity.level()).getChunkSource().broadcast(entity, new ClientboundTakeItemEntityPacket(entity.getId(), serverPlayer.getId(), stack.getCount()));
                     entity.discard();
@@ -55,7 +54,7 @@ public class BackpackEvents
             return;
 
         Optional<BackpackProperties> cosmeticProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
-        ItemStack realStack = BackpackHelper.getStack(player);
+        ItemStack realStack = BackpackHelper.getBackpackStack(player);
         if(realStack.is(ModItems.BACKPACK.get()))
         {
             BackpackProperties realProperties = realStack.get(ModDataComponents.BACKPACK_PROPERTIES.get());

@@ -13,7 +13,6 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.network.chat.Component;
@@ -42,7 +41,7 @@ public class ServerPlayHandler
         if(player == null)
             return;
 
-        ItemStack stack = BackpackHelper.getStack(player);
+        ItemStack stack = BackpackHelper.getBackpackStack(player);
         if(!stack.isEmpty())
         {
             BackpackProperties properties = message.properties();
@@ -110,7 +109,7 @@ public class ServerPlayHandler
         if(Config.SERVER.backpack.disableCustomisation.get())
             return;
 
-        if(BackpackHelper.getStack(player).isEmpty())
+        if(BackpackHelper.getBackpackStack(player).isEmpty())
             return;
 
         UnlockManager.getTracker(player).ifPresent(unlockTracker ->
@@ -144,7 +143,7 @@ public class ServerPlayHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        ItemStack backpack = BackpackHelper.getStack(player);
+        ItemStack backpack = BackpackHelper.getBackpackStack(player);
         if(backpack.isEmpty())
             return;
 

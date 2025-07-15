@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.SimpleContainer;
@@ -45,7 +44,7 @@ public class BackpackInventory extends SimpleContainer
     @Override
     public boolean stillValid(Player player)
     {
-        return this.player.isAlive() && (BackpackHelper.getStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5)));
+        return this.player.isAlive() && (BackpackHelper.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5)));
     }
 
     @Override

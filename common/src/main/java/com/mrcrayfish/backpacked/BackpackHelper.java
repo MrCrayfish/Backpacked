@@ -7,12 +7,12 @@ import net.minecraft.world.item.ItemStack;
 
 public class BackpackHelper
 {
-    public static ItemStack getStack(Player player)
+    public static ItemStack getBackpackStack(Player player)
     {
         return ModSyncedDataKeys.BACKPACK.getValue(player);
     }
 
-    public static boolean setStack(Player player, ItemStack stack)
+    public static boolean setBackpackStack(Player player, ItemStack stack)
     {
         if(stack.is(ModItems.BACKPACK.get()))
         {
