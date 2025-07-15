@@ -125,7 +125,7 @@ public class BackpackItem extends Item
         int maxSlots = this.getColumnCount() * this.getRowCount();
         if(slots.getMaxSlots() != maxSlots)
         {
-            slots = new UnlockedSlots(maxSlots);
+            slots = slots.setMaxSlots(maxSlots);
             stack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
         }
 
