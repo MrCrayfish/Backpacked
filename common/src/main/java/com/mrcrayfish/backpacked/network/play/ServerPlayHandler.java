@@ -162,6 +162,7 @@ public class ServerPlayHandler
 
         // Take the experience levels from the player
         player.giveExperienceLevels(-experienceLevelCost);
+        menu.unlockSlot(message.slot());
 
         // Finally unlock the slot and sync the changes to the client
         slots = slots.unlockSlot(message.slot());
