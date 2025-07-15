@@ -1,13 +1,11 @@
 package com.mrcrayfish.backpacked.common.backpack;
 
-import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,21 +27,23 @@ public final class UnlockedSlots
 
     private final Set<Integer> slots;
     private final int maxSlots;
+    private final int nextCount;
 
     private UnlockedSlots()
     {
-        this.slots = Collections.emptySet();
+        this.slots = new HashSet<>();
         this.maxSlots = -1;
+        this.nextCount = 0;
     }
 
     public UnlockedSlots(int maxSlots)
     {
-        this(Collections.emptySet(), maxSlots);
+        this(new HashSet<>(), maxSlots);
     }
 
     private UnlockedSlots(List<Integer> slots, int maxSlots)
     {
-        this(ImmutableSet.copyOf(slots), maxSlots);
+        this(new HashSet<>(slots), maxSlots);
     }
 
     private UnlockedSlots(Set<Integer> slots, int maxSlots)
@@ -51,6 +51,7 @@ public final class UnlockedSlots
         assert maxSlots > 0;
         this.slots = slots;
         this.maxSlots = maxSlots;
+        this.nextCount = calculateUnlockedCount(slots, maxSlots);
     }
 
     public int getMaxSlots()
@@ -69,7 +70,8 @@ public final class UnlockedSlots
             return this;
         if(!this.isUnlockable(slot))
             return this;
-        Set<Integer> newSlots = ImmutableSet.<Integer>builder().addAll(this.slots).add(slot).build();
+        Set<Integer> newSlots = new HashSet<>(this.slots);
+        newSlots.add(slot);
         return new UnlockedSlots(newSlots, this.maxSlots);
     }
 
@@ -91,11 +93,32 @@ public final class UnlockedSlots
     public int nextUnlockCost()
     {
         int totalSlots = Math.max(1, this.maxSlots); // Prevents div by zero
-        int maxExperienceLevelCost = 50; // TODO config
-        int nextUnlockedCount = this.slots.size() + 1;
-        float experienceLevelCost = maxExperienceLevelCost / (float) (totalSlots * totalSlots * totalSlots);
-        experienceLevelCost = experienceLevelCost * (nextUnlockedCount * nextUnlockedCount * nextUnlockedCount);
-        experienceLevelCost = Math.clamp(experienceLevelCost + 0.5F, 1, maxExperienceLevelCost);
-        return (int) experienceLevelCost;
+        int maxLevelCost = 50; // TODO config
+        float levelCost = maxLevelCost / (float) (totalSlots * totalSlots * totalSlots);
+        levelCost = levelCost * (this.nextCount * this.nextCount * this.nextCount);
+        levelCost = Math.clamp(levelCost + 0.5F, 1, maxLevelCost);
+        return (int) levelCost;
+    }
+
+    /**
+     * Calculates the next unlocked count. Unlocked slots are preserved even if the slot index
+     * is greater than the maxSlots value. This can happen when a user changes the backpack size
+     * in the config. The next unlocked count is used for calculating the experience cost.
+     *
+     * @param slots    the unlocked slots
+     * @param maxSlots the maximum slot count
+     * @return the next unlocked count
+     */
+    private static int calculateUnlockedCount(Set<Integer> slots, int maxSlots)
+    {
+        int count = 1;
+        for(int slot : slots)
+        {
+            if(slot < maxSlots)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 }
