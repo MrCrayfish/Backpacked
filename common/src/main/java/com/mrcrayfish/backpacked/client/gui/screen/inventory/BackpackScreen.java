@@ -259,7 +259,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             if(slots.isUnlockable(this.hoveredLockedSlot.getContainerSlot()))
             {
                 int experienceLevelCost = slots.nextUnlockCost();
-                if(this.openingPlayer.experienceLevel >= experienceLevelCost)
+                if(this.openingPlayer.experienceLevel >= experienceLevelCost || this.openingPlayer.isCreative())
                 {
                     this.heldUnlockTime = UNLOCK_TIME;
                     this.clickedLockedSlot = this.hoveredLockedSlot;
