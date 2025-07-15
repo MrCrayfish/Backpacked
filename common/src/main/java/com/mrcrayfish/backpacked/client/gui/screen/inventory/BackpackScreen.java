@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
+import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
@@ -18,6 +19,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +32,7 @@ import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,11 +167,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         {
             UnlockedSlots slots = this.getMenu().getUnlockedSlots();
             int experienceLevelCost = slots.nextUnlockCost();
-            ChatFormatting color = this.openingPlayer.experienceLevel >= experienceLevelCost
-                    ? ChatFormatting.GREEN : ChatFormatting.RED;
-            Component levelCost = Component.literal(Integer.toString(experienceLevelCost)).withStyle(color);
-            Component inputHint = Component.translatable("backpacked.gui.hold_to_unlock");
-            graphics.renderTooltip(this.font, List.of(levelCost, inputHint), Optional.empty(), mouseX, mouseY);
+            List<ClientTooltipComponent> components = new ArrayList<>();
+            components.add(new ExperienceCostTooltip(experienceLevelCost));
+            Component unlockHint = this.openingPlayer.experienceLevel >= experienceLevelCost || this.openingPlayer.isCreative()
+                    ? Component.translatable("backpacked.gui.hold_to_unlock")
+                    : Component.translatable("backpacked.gui.not_enough_exp").withStyle(ChatFormatting.RED);
+            components.add(new ClientTextTooltip(unlockHint.getVisualOrderText()));
+            ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
         }
     }
 
