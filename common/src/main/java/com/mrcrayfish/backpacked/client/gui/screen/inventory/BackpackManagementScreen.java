@@ -19,9 +19,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     public BackpackManagementScreen(BackpackManagementMenu menu, Inventory inventory, Component title)
     {
         super(menu, inventory, title);
-        this.imageHeight = 119;
-        this.inventoryLabelY = this.imageHeight - 94;
-        this.titleLabelY = Integer.MIN_VALUE;
+        this.imageHeight = 43 + 3 + 90;
     }
 
     @Override
@@ -30,6 +28,9 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         super.render(graphics, mouseX, mouseY, partialTick);
         this.renderTooltip(graphics, mouseX, mouseY);
     }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
