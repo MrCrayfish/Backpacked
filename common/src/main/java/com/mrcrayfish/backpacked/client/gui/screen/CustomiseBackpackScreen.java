@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
+import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
@@ -14,7 +15,6 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -37,7 +37,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -109,6 +108,8 @@ public class CustomiseBackpackScreen extends Screen
     @Override
     protected void init()
     {
+        MouseRestorer.loadCapturedPosition();
+
         super.init();
         if(this.displayBackpack == null)
         {
@@ -426,6 +427,13 @@ public class CustomiseBackpackScreen extends Screen
         player.yHeadRot = origHeadYaw;
         player.yHeadRotO = origHeadYawOld;
         this.setLocalBackpackProperties(originalProperties);
+    }
+
+    @Override
+    public void removed()
+    {
+        super.removed();
+        MouseRestorer.capturePosition();
     }
 
     private static class BackpackModelEntry

@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -16,10 +17,19 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     private static final ResourceLocation INVENTORY_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
     private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
 
+    private boolean opened;
+
     public BackpackManagementScreen(BackpackManagementMenu menu, Inventory inventory, Component title)
     {
         super(menu, inventory, title);
         this.imageHeight = 43 + 3 + 90;
+    }
+
+    @Override
+    protected void init()
+    {
+        MouseRestorer.loadCapturedPosition();
+        super.init();
     }
 
     @Override
@@ -43,5 +53,12 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 46, 176, 90);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 46 + 7, 162, 54);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 46 + 65, 162, 18);
+    }
+
+    @Override
+    public void removed()
+    {
+        super.removed();
+        MouseRestorer.capturePosition();
     }
 }

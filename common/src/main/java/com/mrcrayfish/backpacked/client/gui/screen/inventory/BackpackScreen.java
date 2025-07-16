@@ -4,7 +4,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
-import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
@@ -32,9 +32,7 @@ import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -82,7 +80,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     public void init()
     {
+        MouseRestorer.loadCapturedPosition();
+
         super.init();
+
         if(!this.opened)
         {
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 0.75F, 1.0F));
@@ -294,5 +295,12 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public void removed()
+    {
+        super.removed();
+        MouseRestorer.capturePosition();
     }
 }
