@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
@@ -26,9 +27,7 @@ import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Author: MrCrayfish
@@ -143,12 +142,19 @@ public class ServerPlayHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        ItemStack backpack = BackpackHelper.getBackpackStack(player);
-        if(backpack.isEmpty())
+        // Don't allow unlocking slots unless the wearer
+        if(!(player.containerMenu instanceof BackpackContainerMenu menu))
             return;
 
-        // Don't allow unlocking slots unless the wearer
-        if(!(player.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+        ShelfBlockEntity shelf = null;
+        ItemStack backpack = BackpackHelper.getBackpackStack(player);
+        if(menu.getBackpackInventory() instanceof ShelfBlockEntity.ShelfContainer container)
+        {
+            shelf = container.getShelf();
+            backpack = shelf.getBackpack();
+        }
+
+        if(backpack.isEmpty())
             return;
 
         UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
@@ -167,6 +173,22 @@ public class ServerPlayHandler
         // Finally unlock the slot and sync the changes to the client
         slots = slots.unlockSlot(message.slot());
         backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
-        Network.PLAY.sendToPlayer(() -> serverPlayer, new MessageSyncUnlockSlot(message.slot()));
+
+        // Ensure shelf saves the changes
+        if(shelf != null)
+        {
+            shelf.setChanged();
+        }
+
+        // Sync to players that are currently in the same menu
+        List<ServerPlayer> players = serverPlayer.server.getPlayerList().getPlayers();
+        players.stream().filter(otherPlayer -> {
+            if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
+                return menu.getBackpackInventory() == otherMenu.getBackpackInventory();
+            }
+            return false;
+        }).forEach(otherPlayer -> {
+            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(message.slot()));
+        });
     }
 }

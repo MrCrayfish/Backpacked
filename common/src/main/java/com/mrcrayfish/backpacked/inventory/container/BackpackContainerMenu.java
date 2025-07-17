@@ -74,6 +74,11 @@ public class BackpackContainerMenu extends AbstractContainerMenu implements Lock
         }
     }
 
+    public Container getBackpackInventory()
+    {
+        return this.backpackInventory;
+    }
+
     public UnlockedSlots getUnlockedSlots()
     {
         return this.unlockedSlots;

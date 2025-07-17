@@ -238,7 +238,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         {
             if(slot instanceof LockedSlot lockedSlot)
             {
-                if(this.owner && this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
+                if(this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
                 {
                     this.hoveredLockedSlot = lockedSlot;
                 }

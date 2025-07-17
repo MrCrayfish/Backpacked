@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.renderer.blockentity;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
@@ -78,6 +79,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             BakedModel model = this.getModel(backpack.getBaseModel());
             BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
         });
+        RenderSystem.disableBlend();
     }
 
     private BakedModel getModel(ModelResourceLocation location)

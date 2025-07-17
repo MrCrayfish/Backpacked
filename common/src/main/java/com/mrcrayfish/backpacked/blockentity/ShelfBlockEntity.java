@@ -171,7 +171,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         if(!this.backpack.isEmpty())
         {
             SimpleContainer oldInventory = this.inventory;
-            this.inventory = new ShelfContainer(this.getBackpackSize());
+            this.inventory = new ShelfContainer(this, this.getBackpackSize());
             ItemContainerContents contents = this.backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
             contents.copyInto(this.inventory.getItems());
             this.backpack.remove(DataComponents.CONTAINER);
@@ -191,7 +191,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     {
         super.loadAdditional(tag, provider);
         this.backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
-        this.inventory = this.backpack.isEmpty() ? null : new ShelfContainer(this.getBackpackSize());
+        this.inventory = this.backpack.isEmpty() ? null : new ShelfContainer(this, this.getBackpackSize());
         if(this.inventory != null)
         {
             ContainerHelper.loadAllItems(tag, this.inventory.getItems(), provider);
@@ -263,16 +263,24 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     // Need this to call set changed
     public class ShelfContainer extends SimpleContainer
     {
-        public ShelfContainer(int size)
+        private final ShelfBlockEntity entity;
+
+        public ShelfContainer(ShelfBlockEntity entity, int size)
         {
             super(size);
+            this.entity = entity;
+        }
+
+        public ShelfBlockEntity getShelf()
+        {
+            return this.entity;
         }
 
         @Override
         public void setChanged()
         {
             super.setChanged();
-            ShelfBlockEntity.this.setChanged();
+            this.entity.setChanged();
         }
 
         @Override
