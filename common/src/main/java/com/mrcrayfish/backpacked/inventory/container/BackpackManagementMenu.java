@@ -22,7 +22,7 @@ public class BackpackManagementMenu extends AbstractContainerMenu
 
     public BackpackManagementMenu(int windowId, Inventory inventory)
     {
-        this(windowId, inventory, new SimpleContainer(1));
+        this(windowId, inventory, new SimpleContainer(5));
     }
 
     public BackpackManagementMenu(int windowId, Inventory inventory, Container container)
@@ -30,9 +30,12 @@ public class BackpackManagementMenu extends AbstractContainerMenu
         super(ModContainers.MANAGEMENT.get(), windowId);
         this.inventory = inventory;
         this.container = container;
-        this.addSlot(new ConditionalSlot(container, 0, 80, 12, stack -> {
-            return stack.getItem() instanceof BackpackItem;
-        }).setIcon(EMPTY_SLOT));
+        for(int i = 0; i < 1; i++)
+        {
+            this.addSlot(new ConditionalSlot(container, i, (176 - (1 * 18)) / 2 + 1, 12, stack -> {
+                return stack.getItem() instanceof BackpackItem;
+            }).setIcon(EMPTY_SLOT));
+        }
         this.addInventorySlots(inventory);
     }
 

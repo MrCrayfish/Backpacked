@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.inventory;
 
-import com.google.common.base.Preconditions;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -31,32 +30,29 @@ public class ManagementInventory implements Container
     @Override
     public ItemStack getItem(int index)
     {
-        Preconditions.checkArgument(index == 0);
-        return BackpackHelper.getBackpackStack(this.player);
+        return BackpackHelper.getBackpackStack(this.player, index);
     }
 
     @Override
     public ItemStack removeItem(int index, int count)
     {
-        Preconditions.checkArgument(index == 0);
-        return count > 0 ? BackpackHelper.getBackpackStack(this.player).split(count) : ItemStack.EMPTY;
+        return count > 0 ? BackpackHelper.getBackpackStack(this.player, index).split(count) : ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int index)
     {
-        Preconditions.checkArgument(index == 0);
-        ItemStack stack = BackpackHelper.getBackpackStack(this.player);
+        ItemStack stack = BackpackHelper.getBackpackStack(this.player, index);
         if(stack.isEmpty())
             return ItemStack.EMPTY;
-        BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY);
+        BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, index);
         return stack;
     }
 
     @Override
     public void setItem(int index, ItemStack stack)
     {
-        BackpackHelper.setBackpackStack(this.player, stack);
+        BackpackHelper.setBackpackStack(this.player, stack, index);
     }
 
     @Override
@@ -71,6 +67,9 @@ public class ManagementInventory implements Container
     @Override
     public void clearContent()
     {
-        BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY);
+        for(int i = 0; i < 1; i++)
+        {
+            BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, i);
+        }
     }
 }

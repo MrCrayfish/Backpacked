@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
 import com.mrcrayfish.framework.api.sync.SyncedClassKey;
 import com.mrcrayfish.framework.api.sync.SyncedDataKey;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +26,13 @@ public class ModSyncedDataKeys
         .syncMode(SyncedDataKey.SyncMode.NONE)
         .saveToFile()
         .build();
+
+    public static final SyncedDataKey<Player, NonNullList<ItemStack>> BACKPACKS = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.BACKPACKS)
+            .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpacks"))
+            .defaultValueSupplier(() -> NonNullList.withSize(1, ItemStack.EMPTY))
+            .syncMode(SyncedDataKey.SyncMode.NONE)
+            .saveToFile()
+            .build();
 
     public static final SyncedDataKey<Player, Optional<BackpackProperties>> COSMETIC_PROPERTIES = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.OPTIONAL_BACKPACK_PROPERTIES)
         .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_backpack"))
