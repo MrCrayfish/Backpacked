@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  */
 public class InventoryHelper
 {
-    public static void mergeInventory(SimpleContainer source, SimpleContainer target, Level level, Vec3 pos)
+    public static void mergeInventory(Container source, Container target, Level level, Vec3 pos)
     {
         for(int i = 0; i < source.getContainerSize(); i++)
         {
@@ -26,7 +26,7 @@ public class InventoryHelper
             else if(!level.isClientSide())
             {
                 ItemStack stack = source.getItem(i).copy();
-                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, target.addItem(stack));
+                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
                 entity.setDefaultPickUpDelay();
                 level.addFreshEntity(entity);
             }

@@ -146,12 +146,10 @@ public class ServerPlayHandler
         if(!(player.containerMenu instanceof BackpackContainerMenu menu))
             return;
 
-        ShelfBlockEntity shelf = null;
         ItemStack backpack = BackpackHelper.getBackpackStack(player);
         if(menu.getBackpackInventory() instanceof ShelfBlockEntity.ShelfContainer container)
         {
-            shelf = container.getShelf();
-            backpack = shelf.getBackpack();
+            backpack = container.getBackpack();
         }
 
         if(backpack.isEmpty())
@@ -175,10 +173,7 @@ public class ServerPlayHandler
         backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
 
         // Ensure shelf saves the changes
-        if(shelf != null)
-        {
-            shelf.setChanged();
-        }
+        menu.getBackpackInventory().setChanged();
 
         // Sync to players that are currently in the same menu
         List<ServerPlayer> players = serverPlayer.server.getPlayerList().getPlayers();
