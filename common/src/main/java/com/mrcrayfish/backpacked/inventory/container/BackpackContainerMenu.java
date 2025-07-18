@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainerMenu extends AbstractContainerMenu implements LockedSlotController
+public class BackpackContainerMenu extends CustomContainerMenu implements LockedSlotController
 {
     public static final int MAX_COLUMNS = 13;
     public static final int MAX_ROWS = 7;
@@ -59,19 +59,7 @@ public class BackpackContainerMenu extends AbstractContainerMenu implements Lock
         int inventorySlotsWidth = 9 * 18;
         int inventorySlotsX = Math.max((backpackWidth - inventorySlotsWidth) / 2, 0) + 1;
         int inventorySlotsY = 20 + this.rows * 18 + 15 + 3 + 8;
-
-        for(int y = 0; y < 3; y++)
-        {
-            for(int x = 0; x < 9; x++)
-            {
-                this.addSlot(new Slot(playerInventory, x + y * 9 + 9, inventorySlotsX + x * 18, inventorySlotsY + y * 18));
-            }
-        }
-
-        for(int i = 0; i < 9; i++)
-        {
-            this.addSlot(new Slot(playerInventory, i, inventorySlotsX + i * 18, inventorySlotsY + 58));
-        }
+        this.addPlayerInventorySlots(playerInventory, inventorySlotsX, inventorySlotsY);
     }
 
     public Container getBackpackInventory()

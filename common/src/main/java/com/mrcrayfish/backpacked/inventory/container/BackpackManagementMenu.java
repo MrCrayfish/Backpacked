@@ -9,11 +9,10 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class BackpackManagementMenu extends AbstractContainerMenu
+public class BackpackManagementMenu extends CustomContainerMenu
 {
     private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
 
@@ -36,22 +35,7 @@ public class BackpackManagementMenu extends AbstractContainerMenu
                 return stack.getItem() instanceof BackpackItem;
             }).setIcon(EMPTY_SLOT));
         }
-        this.addInventorySlots(inventory);
-    }
-
-    private void addInventorySlots(Inventory inventory)
-    {
-        for(int y = 0; y < 3; y++)
-        {
-            for(int x = 0; x < 9; x++)
-            {
-                this.addSlot(new Slot(inventory, x + y * 9 + 9, 8 + x * 18, 54 + y * 18));
-            }
-        }
-        for(int x = 0; x < 9; x++)
-        {
-            this.addSlot(new Slot(inventory, x, 8 + x * 18, 112));
-        }
+        this.addPlayerInventorySlots(inventory, 8, 54);
     }
 
     @Override
