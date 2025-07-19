@@ -5,7 +5,10 @@ import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSounds;
+import com.mrcrayfish.backpacked.inventory.ManagementInventory;
+import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
 import com.mrcrayfish.backpacked.inventory.container.LockedContainer;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -23,11 +26,11 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,7 +44,9 @@ import java.util.Optional;
  */
 public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 {
-    private ItemStack backpack = ItemStack.EMPTY;
+    public static final int SIZE = 1;
+
+    private final SimpleContainer container = new ShelfContainer(this);
     private LockedContainer inventory = null;
 
     public ShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
@@ -63,7 +68,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     public ItemStack getBackpackWithContents()
     {
-        ItemStack stack = this.backpack.copy();
+        ItemStack stack = this.getBackpack();
         if(!stack.isEmpty())
         {
             this.copyInventoryToStack(stack);
@@ -73,34 +78,33 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     public InteractionResult interact(Player player)
     {
-        if(player.isCrouching())
+        if(player instanceof ServerPlayer serverPlayer)
         {
-            if(!this.shelveBackpack(player))
+            if(!this.container.getItem(0).isEmpty())
             {
-                return InteractionResult.FAIL;
+                this.openBackpackInventory(serverPlayer);
+                return InteractionResult.SUCCESS;
             }
-        }
-        else if(player instanceof ServerPlayer serverPlayer)
-        {
-            this.openBackpackInventory(serverPlayer);
+            this.openShelfManagement(serverPlayer);
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS;
     }
 
     private boolean shelveBackpack(Player player)
     {
-        ItemStack backpack = BackpackHelper.getBackpackStack(player);
-        if(backpack.getItem() instanceof BackpackItem || backpack.isEmpty() && !this.backpack.isEmpty())
+        ItemStack equippedBackpack = BackpackHelper.getBackpackStack(player);
+        if(equippedBackpack.getItem() instanceof BackpackItem || equippedBackpack.isEmpty() && !this.container.getItem(0).isEmpty())
         {
-            ItemStack shelvedBackpack = this.backpack.copy();
+            ItemStack shelvedBackpack = this.container.getItem(0).copy();
             this.copyInventoryToStack(shelvedBackpack);
-            this.backpack = backpack.copy();
+            this.container.setItem(0, equippedBackpack.copy());
 
             // Update the stack in the backpack slot
             BackpackHelper.setBackpackStack(player, shelvedBackpack);
 
             // Play a sound
-            boolean removed = this.backpack.isEmpty();
+            boolean removed = this.container.getItem(0).isEmpty();
             float soundPitch = removed ? 0.75F : 1.0F;
             this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, soundPitch);
 
@@ -113,7 +117,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
             return true;
         }
-        else if(!backpack.isEmpty())
+        else if(!equippedBackpack.isEmpty())
         {
             player.displayClientMessage(Component.translatable("message.backpacked.occupied_back_slot"), true);
             return false;
@@ -127,10 +131,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             this.getBackpackItem().ifPresent(backpackItem ->
             {
-                Component title = this.backpack.has(DataComponents.CUSTOM_NAME) ? this.backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
+                ItemStack backpack = this.container.getItem(0);
+                Component title = backpack.has(DataComponents.CUSTOM_NAME) ? backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
                 int cols = backpackItem.getColumnCount();
                 int rows = backpackItem.getRowCount();
-                UnlockedSlots slots = backpackItem.getUnlockedSlots(this.backpack);
+                UnlockedSlots slots = backpackItem.getUnlockedSlots(backpack);
                 if(slots != null)
                 {
                     Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, title);
@@ -139,22 +144,29 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         });
     }
 
+    public void openShelfManagement(ServerPlayer player)
+    {
+        player.openMenu(new SimpleMenuProvider((windowId, playerInventory, player1) -> {
+            return new BackpackShelfMenu(windowId, playerInventory, new ManagementInventory(player), this.container);
+        }, Component.translatable("container.backpack_shelf")));
+    }
+
     private void copyInventoryToStack(ItemStack stack)
     {
-        if(!stack.isEmpty())
+        if(stack.isEmpty())
+            return;
+
+        if(this.inventory != null)
         {
-            this.getBackpackInventory().ifPresent(inventory ->
-            {
-                stack.set(DataComponents.CONTAINER, inventory.createContents());
-            });
+            stack.set(DataComponents.CONTAINER, this.inventory.createContents());
         }
     }
 
     private Optional<LockedContainer> getBackpackInventory()
     {
-        if(this.backpack.isEmpty())
+        if(this.container.getItem(0).isEmpty())
         {
-            return Optional.empty();
+            this.inventory = null;
         }
         if(this.inventory != null && this.inventory.getContainerSize() != this.getBackpackSize())
         {
@@ -165,13 +177,14 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     private void updateInventory(boolean resized)
     {
-        if(!this.backpack.isEmpty())
+        ItemStack stack = this.container.getItem(0);
+        if(!stack.isEmpty() && stack.getItem() instanceof BackpackItem)
         {
             Container oldInventory = this.inventory;
-            ItemContainerContents contents = this.backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-            this.inventory = new ShelfContainer(this, this.getBackpackSize());
+            ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            this.inventory = new BackpackShelfContainer(this, this.getBackpackSize());
             this.inventory.copyFrom(contents);
-            this.backpack.remove(DataComponents.CONTAINER);
+            stack.remove(DataComponents.CONTAINER);
             if(resized && oldInventory != null)
             {
                 InventoryHelper.mergeInventory(oldInventory, this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
@@ -187,8 +200,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider)
     {
         super.loadAdditional(tag, provider);
-        this.backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
-        this.inventory = this.backpack.isEmpty() ? null : new ShelfContainer(this, this.getBackpackSize());
+        CompoundTag containerTag = tag.getCompound("Container");
+        ContainerHelper.loadAllItems(containerTag, this.container.getItems(), provider);
+        ItemStack backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
+        this.container.setItem(0, backpack);
+        this.inventory = backpack.isEmpty() ? null : new BackpackShelfContainer(this, this.getBackpackSize());
         if(this.inventory != null)
         {
             this.inventory.load(tag, provider);
@@ -199,7 +215,10 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider)
     {
         super.saveAdditional(tag, provider);
-        tag.put("Backpack", this.backpack.saveOptional(provider));
+        CompoundTag containerTag = new CompoundTag();
+        ContainerHelper.saveAllItems(containerTag, this.container.getItems(), provider);
+        tag.put("Container", containerTag);
+        tag.put("Backpack", this.container.getItem(0).saveOptional(provider));
         if(this.inventory != null)
         {
             this.inventory.save(tag, provider);
@@ -210,7 +229,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public CompoundTag getUpdateTag(HolderLookup.Provider provider)
     {
         CompoundTag tag = new CompoundTag();
-        tag.put("Backpack", this.backpack.saveOptional(provider));
+        tag.put("Backpack", this.container.getItem(0).saveOptional(provider));
         return tag;
     }
 
@@ -223,7 +242,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     public ItemStack getBackpack()
     {
-        return this.backpack;
+        return this.container.getItem(0);
     }
 
     public Direction getDirection()
@@ -234,7 +253,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     @Nullable
     private UnlockedSlots getUnlockedSlots()
     {
-        return this.backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        return this.container.getItem(0).get(ModDataComponents.UNLOCKED_SLOTS.get());
     }
 
     //TODO fabric version?
@@ -245,9 +264,10 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     private Optional<BackpackItem> getBackpackItem()
     {
-        if(this.backpack.getItem() instanceof BackpackItem)
+        ItemStack backpack = this.container.getItem(0);
+        if(backpack.getItem() instanceof BackpackItem item)
         {
-            return Optional.of((BackpackItem) this.backpack.getItem());
+            return Optional.of(item);
         }
         return Optional.empty();
     }
@@ -257,11 +277,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return this.getBackpackItem().map(item -> item.getRowCount() * item.getColumnCount()).orElse(0);
     }
 
-    public static class ShelfContainer extends LockedContainer
+    public static class BackpackShelfContainer extends LockedContainer
     {
         private final ShelfBlockEntity entity;
 
-        public ShelfContainer(ShelfBlockEntity entity, int size)
+        public BackpackShelfContainer(ShelfBlockEntity entity, int size)
         {
             super(size);
             this.entity = entity;
@@ -289,12 +309,76 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         @Override
         public boolean stillValid(Player player)
         {
-            return this.entity.inventory == this && !this.entity.backpack.isEmpty() && !this.entity.remove;
+            return this.entity.inventory == this && !this.entity.getBackpack().isEmpty() && !this.entity.remove;
         }
 
         public ItemStack getBackpack()
         {
-            return this.entity.backpack;
+            return this.entity.getBackpack();
+        }
+
+        public ShelfBlockEntity getBlockEntity()
+        {
+            return this.entity;
+        }
+    }
+
+    private static class ShelfContainer extends SimpleContainer
+    {
+        private final ShelfBlockEntity shelf;
+
+        public ShelfContainer(ShelfBlockEntity shelf)
+        {
+            super(1);
+            this.shelf = shelf;
+        }
+
+        @Override
+        public void setChanged()
+        {
+            Level level = this.shelf.level;
+            if(level != null)
+            {
+                this.shelf.updateInventory(false);
+                this.shelf.setChanged();
+                BlockEntityUtil.sendUpdatePacket(this.shelf);
+            }
+        }
+
+        @Override
+        public ItemStack removeItem(int slot, int count)
+        {
+            ItemStack stack = ContainerHelper.removeItem(this.getItems(), slot, count);
+            if(!stack.isEmpty())
+            {
+                this.shelf.copyInventoryToStack(stack);
+                this.setChanged();
+            }
+            return stack;
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int slot)
+        {
+            ItemStack stack = super.removeItemNoUpdate(slot);
+            if(!stack.isEmpty())
+            {
+                this.shelf.copyInventoryToStack(stack);
+                this.shelf.updateInventory(false);
+            }
+            return stack;
+        }
+
+        @Override
+        public boolean canPlaceItem(int slot, ItemStack stack)
+        {
+            return stack.getItem() instanceof BackpackItem;
+        }
+
+        @Override
+        public int getMaxStackSize()
+        {
+            return 1;
         }
     }
 }

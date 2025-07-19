@@ -1,17 +1,21 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -40,6 +44,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         this.rows = Mth.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
         this.unlockedSlots = slots;
+
         checkContainerSize(backpackContainer, this.cols * this.rows);
         backpackContainer.startOpen(playerInventory.player);
 
@@ -65,6 +70,21 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
     public Container getBackpackInventory()
     {
         return this.backpackInventory;
+    }
+
+    public int getCols()
+    {
+        return this.cols;
+    }
+
+    public int getRows()
+    {
+        return this.rows;
+    }
+
+    public boolean isOwner()
+    {
+        return this.owner;
     }
 
     public UnlockedSlots getUnlockedSlots()
@@ -95,7 +115,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
     {
         ItemStack copy = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if(slot != null && slot.hasItem())
+        if(slot.hasItem())
         {
             ItemStack slotStack = slot.getItem();
             copy = slotStack.copy();
@@ -130,18 +150,22 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         this.backpackInventory.stopOpen(playerIn);
     }
 
-    public int getCols()
+    public ItemStack getBackpackStack(Player player)
     {
-        return this.cols;
+        if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
+        {
+            return container.getBlockEntity().getBackpack();
+        }
+        return BackpackHelper.getBackpackStack(player);
     }
 
-    public int getRows()
+    public void openManagement(ServerPlayer player)
     {
-        return this.rows;
-    }
-
-    public boolean isOwner()
-    {
-        return this.owner;
+        if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
+        {
+            container.getBlockEntity().openShelfManagement(player);
+            return;
+        }
+        BackpackItem.openBackpackManagement(player);
     }
 }

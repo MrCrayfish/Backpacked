@@ -8,6 +8,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class ManagementInventory implements Container
 {
+    public static final int SIZE = 1;
+
     private final ServerPlayer player;
 
     public ManagementInventory(ServerPlayer player)
@@ -18,7 +20,7 @@ public class ManagementInventory implements Container
     @Override
     public int getContainerSize()
     {
-        return 1;
+        return SIZE;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class ManagementInventory implements Container
     @Override
     public void clearContent()
     {
-        for(int i = 0; i < 1; i++)
+        for(int i = 0; i < SIZE; i++)
         {
             BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, i);
         }

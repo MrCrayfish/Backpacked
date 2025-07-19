@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
 import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
@@ -78,6 +79,7 @@ public class ClientBackpacked
     {
         event.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
         event.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
+        event.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
     }
 
     private void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)

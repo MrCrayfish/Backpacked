@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
@@ -21,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -131,8 +133,10 @@ public class ServerPlayHandler
 
     public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)
     {
-        context.getPlayer().filter(player -> player instanceof ServerPlayer).ifPresent(player -> {
-            BackpackItem.openBackpackManagement((ServerPlayer) player);
+        context.getPlayer().ifPresent(player -> {
+            if(player.containerMenu instanceof BackpackContainerMenu menu) {
+                menu.openManagement((ServerPlayer) player);
+            }
         });
     }
 
@@ -146,12 +150,7 @@ public class ServerPlayHandler
         if(!(player.containerMenu instanceof BackpackContainerMenu menu))
             return;
 
-        ItemStack backpack = BackpackHelper.getBackpackStack(player);
-        if(menu.getBackpackInventory() instanceof ShelfBlockEntity.ShelfContainer container)
-        {
-            backpack = container.getBackpack();
-        }
-
+        ItemStack backpack = menu.getBackpackStack(player);
         if(backpack.isEmpty())
             return;
 

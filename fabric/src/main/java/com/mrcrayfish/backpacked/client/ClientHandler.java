@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
 import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
@@ -37,6 +38,7 @@ public class ClientHandler implements ClientModInitializer
         ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
         MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
+        MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
         BlockEntityRenderers.register(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
 
         // Add backpack layers for player and wandering trader
