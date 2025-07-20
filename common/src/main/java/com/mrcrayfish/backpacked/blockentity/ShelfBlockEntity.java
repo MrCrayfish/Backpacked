@@ -358,6 +358,17 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
 
         @Override
+        public void setItem(int slot, ItemStack stack)
+        {
+            super.setItem(slot, stack);
+            if(this.shelf.level instanceof ServerLevel level)
+            {
+                float pitch = stack.isEmpty() ? 0.75F : 1.0F;
+                level.playSound(null, this.shelf.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, pitch);
+            }
+        }
+
+        @Override
         public ItemStack removeItem(int slot, int count)
         {
             ItemStack stack = ContainerHelper.removeItem(this.getItems(), slot, count);
