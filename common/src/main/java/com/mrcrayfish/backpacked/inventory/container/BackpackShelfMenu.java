@@ -31,7 +31,12 @@ public class BackpackShelfMenu extends CustomContainerMenu
         this.managementContainer = managementContainer;
         this.shelfContainer = shelfContainer;
 
-        this.addSlot(new Slot(shelfContainer, 0, (176 - 18) / 2 + 1, 1));
+        checkContainerSize(managementContainer, ManagementInventory.SIZE);
+        checkContainerSize(shelfContainer, ShelfBlockEntity.SIZE);
+
+        this.addSlot(new ConditionalSlot(shelfContainer, 0, (176 - 18) / 2 + 1, 1, stack -> {
+            return stack.getItem() instanceof BackpackItem;
+        }));
 
         int managementSize = managementContainer.getContainerSize();
         for(int i = 0; i < managementSize; i++)
