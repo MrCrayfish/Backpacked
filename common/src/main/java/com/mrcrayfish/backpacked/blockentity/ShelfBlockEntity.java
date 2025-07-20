@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
@@ -24,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
@@ -109,7 +109,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, soundPitch);
 
             // Update the shelf inventory
-            this.updateInventory(false);
+            //this.updateInventory(false);
 
             // Send changes to client and mark block entity as dirty
             BlockEntityUtil.sendUpdatePacket(this);
@@ -164,35 +164,47 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     private Optional<LockedContainer> getBackpackInventory()
     {
-        if(this.container.getItem(0).isEmpty())
-        {
-            this.inventory = null;
-        }
-        if(this.inventory != null && this.inventory.getContainerSize() != this.getBackpackSize())
-        {
-            this.updateInventory(true);
-        }
+        this.updateInventory();
         return Optional.ofNullable(this.inventory);
     }
 
-    private void updateInventory(boolean resized)
+    private void updateInventory()
     {
-        ItemStack stack = this.container.getItem(0);
-        if(!stack.isEmpty() && stack.getItem() instanceof BackpackItem)
+        if(this.level instanceof ServerLevel)
         {
-            Container oldInventory = this.inventory;
-            ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-            this.inventory = new BackpackShelfContainer(this, this.getBackpackSize());
-            this.inventory.copyFrom(contents);
-            stack.remove(DataComponents.CONTAINER);
-            if(resized && oldInventory != null)
+            ItemStack stack = this.container.getItem(0);
+            if(!stack.isEmpty() && stack.getItem() instanceof BackpackItem)
             {
-                InventoryHelper.mergeInventory(oldInventory, this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
+                if(this.inventory != null)
+                {
+                    this.resizeInventory();
+                }
+                else
+                {
+                    ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+                    this.inventory = new BackpackShelfContainer(this, this.getBackpackSize());
+                    this.inventory.copyFrom(contents);
+                    stack.remove(DataComponents.CONTAINER);
+                    this.setChanged();
+                }
+            }
+            else
+            {
+                this.inventory = null;
+                this.setChanged();
             }
         }
-        else
+    }
+
+    private void resizeInventory()
+    {
+        int backpackSize = this.getBackpackSize();
+        if(this.inventory != null && this.inventory.getContainerSize() != backpackSize)
         {
-            this.inventory = null;
+            Container oldInventory = this.inventory;
+            this.inventory = new BackpackShelfContainer(this, backpackSize);
+            InventoryHelper.mergeInventoryOrSpawnIntoLevel(oldInventory, this.inventory, this.level, Vec3.atCenterOf(this.worldPosition));
+            this.setChanged();
         }
     }
 
@@ -337,9 +349,9 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         public void setChanged()
         {
             Level level = this.shelf.level;
-            if(level != null)
+            if(level instanceof ServerLevel)
             {
-                this.shelf.updateInventory(false);
+                this.shelf.updateInventory();
                 this.shelf.setChanged();
                 BlockEntityUtil.sendUpdatePacket(this.shelf);
             }
@@ -364,7 +376,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             if(!stack.isEmpty())
             {
                 this.shelf.copyInventoryToStack(stack);
-                this.shelf.updateInventory(false);
+                this.shelf.updateInventory();
             }
             return stack;
         }

@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.util;
 
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,22 +14,25 @@ import java.util.stream.Stream;
  */
 public class InventoryHelper
 {
-    public static void mergeInventory(Container source, Container target, Level level, Vec3 pos)
+    public static void mergeInventoryOrSpawnIntoLevel(Container source, Container target, Level level, Vec3 pos)
     {
         for(int i = 0; i < source.getContainerSize(); i++)
         {
-            if(i < target.getContainerSize())
+            ItemStack stack = source.getItem(i);
+            if(i < target.getContainerSize() && target.canPlaceItem(i, stack))
             {
-                target.setItem(i, source.getItem(i).copy());
+                target.setItem(i, stack.copy());
+                continue;
             }
-            else if(!level.isClientSide())
-            {
-                ItemStack stack = source.getItem(i).copy();
-                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
-                entity.setDefaultPickUpDelay();
-                level.addFreshEntity(entity);
-            }
+            spawnStack(stack, level, pos);
         }
+    }
+
+    private static void spawnStack(ItemStack stack, Level level, Vec3 pos)
+    {
+        ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, stack.copyAndClear());
+        entity.setDefaultPickUpDelay();
+        level.addFreshEntity(entity);
     }
 
     public static Stream<ItemStack> streamFor(Container container)
