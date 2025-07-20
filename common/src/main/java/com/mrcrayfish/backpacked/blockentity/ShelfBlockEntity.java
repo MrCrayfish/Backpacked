@@ -91,40 +91,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return InteractionResult.SUCCESS;
     }
 
-    private boolean shelveBackpack(Player player)
-    {
-        ItemStack equippedBackpack = BackpackHelper.getBackpackStack(player);
-        if(equippedBackpack.getItem() instanceof BackpackItem || equippedBackpack.isEmpty() && !this.container.getItem(0).isEmpty())
-        {
-            ItemStack shelvedBackpack = this.container.getItem(0).copy();
-            this.copyInventoryToStack(shelvedBackpack);
-            this.container.setItem(0, equippedBackpack.copy());
-
-            // Update the stack in the backpack slot
-            BackpackHelper.setBackpackStack(player, shelvedBackpack);
-
-            // Play a sound
-            boolean removed = this.container.getItem(0).isEmpty();
-            float soundPitch = removed ? 0.75F : 1.0F;
-            this.level.playSound(null, this.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, soundPitch);
-
-            // Update the shelf inventory
-            //this.updateInventory(false);
-
-            // Send changes to client and mark block entity as dirty
-            BlockEntityUtil.sendUpdatePacket(this);
-            this.setChanged();
-
-            return true;
-        }
-        else if(!equippedBackpack.isEmpty())
-        {
-            player.displayClientMessage(Component.translatable("message.backpacked.occupied_back_slot"), true);
-            return false;
-        }
-        return true;
-    }
-
     private void openBackpackInventory(ServerPlayer player)
     {
         this.getBackpackInventory().ifPresent(inventory ->
