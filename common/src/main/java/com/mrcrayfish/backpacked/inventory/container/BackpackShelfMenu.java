@@ -54,7 +54,7 @@ public class BackpackShelfMenu extends CustomContainerMenu
             copy = slotStack.copy();
             if (index < ShelfBlockEntity.SIZE)
             {
-                if(!this.moveItemStackTo(slotStack, ShelfBlockEntity.SIZE, this.slots.size(), true))
+                if(!this.moveItemStackTo(slotStack, ShelfBlockEntity.SIZE, this.slots.size(), false))
                 {
                     return ItemStack.EMPTY;
                 }
