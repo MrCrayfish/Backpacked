@@ -80,7 +80,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     {
         if(player instanceof ServerPlayer serverPlayer)
         {
-            if(!this.container.getItem(0).isEmpty())
+            if(!this.container.getItem(0).isEmpty() && !serverPlayer.isCrouching())
             {
                 this.openBackpackInventory(serverPlayer);
                 return InteractionResult.SUCCESS;
