@@ -15,13 +15,19 @@ public class MiniButton extends Button
         this.texture = texture;
     }
 
+    public MiniButton(int x, int y, int width, int height, ResourceLocation texture, OnPress onPress)
+    {
+        super(x, y, width, height, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
+        this.texture = texture;
+    }
+
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        graphics.blitSprite(this.texture, this.getX(), this.getY(), 10, 10);
+        graphics.blitSprite(this.texture, this.getX(), this.getY(), this.width, this.height);
         if(this.isHovered)
         {
-            graphics.fillGradient(this.getX(), this.getY(), this.getX() + 10, this.getY() + 10, -2130706433, -2130706433);
+            graphics.fillGradient(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, -2130706433, -2130706433);
         }
     }
 }

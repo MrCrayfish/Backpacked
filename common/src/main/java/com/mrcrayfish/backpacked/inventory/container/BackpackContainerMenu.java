@@ -50,7 +50,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         int backpackWidth = 11 + Math.max(9 * 18, this.cols * 18) + 11;
         int backpackSlotWidth = this.cols * 18;
         int backpackSlotsX = Math.max((backpackWidth - backpackSlotWidth) / 2, 0) + 1;
-        int backpackSlotsY = 22;
+        int backpackSlotsY = 28;
 
         for(int y = 0; y < rows; y++)
         {
@@ -62,7 +62,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
 
         int inventorySlotsWidth = 9 * 18;
         int inventorySlotsX = Math.max((backpackWidth - inventorySlotsWidth) / 2, 0) + 1;
-        int inventorySlotsY = 20 + this.rows * 18 + 15 + 3 + 19;
+        int inventorySlotsY = 26 + this.rows * 18 + 15 + 3 + 19;
         this.addPlayerInventorySlots(playerInventory, inventorySlotsX, inventorySlotsY);
     }
 
