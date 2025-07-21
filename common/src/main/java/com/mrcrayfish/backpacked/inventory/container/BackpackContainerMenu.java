@@ -21,8 +21,9 @@ import net.minecraft.world.item.ItemStack;
  */
 public class BackpackContainerMenu extends CustomContainerMenu implements LockedSlotController
 {
-    public static final int MAX_COLUMNS = 13;
-    public static final int MAX_ROWS = 7;
+    // There is a technical hard limit of 256, these values allow the widest and tallest inventory possible
+    public static final int MAX_COLUMNS = 23;
+    public static final int MAX_ROWS = 11;
 
     private final Container backpackInventory;
     private final int cols;

@@ -62,11 +62,15 @@ public class Config
             @ConfigProperty(name = "keepOnDeath", comment = "If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.")
             public final BoolProperty keepOnDeath = BoolProperty.create(false);
 
-            @ConfigProperty(name = "inventorySizeColumns", comment = "The amount of slot columns in the backpack inventory.")
+            @ConfigProperty(name = "inventorySizeColumns", comment = """
+                    The amount of slot columns in the backpack inventory.
+                    WARNING: Larger than 15 columns will start to cut off GUI elements when using auto GUI scale.""")
             public final IntProperty inventorySizeColumns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
 
-            @ConfigProperty(name = "inventorySizeRows", comment = "The amount of slot rows in the backpack inventory.")
-            public final IntProperty inventorySizeRows = IntProperty.create(6, 1, BackpackContainerMenu.MAX_ROWS);
+            @ConfigProperty(name = "inventorySizeRows", comment = """
+                    The amount of slot rows in the backpack inventory.
+                    WARNING: Larger than 6 rows will not fit on some resolutions when using auto GUI scale.""")
+            public final IntProperty inventorySizeRows = IntProperty.create(5, 1, BackpackContainerMenu.MAX_ROWS);
 
             @ConfigProperty(name = "disableCustomisation", comment = "If enabled, prevents backpacks from being customised. This will remove the customise button from the backpack inventory")
             public final BoolProperty disableCustomisation = BoolProperty.create(false);
