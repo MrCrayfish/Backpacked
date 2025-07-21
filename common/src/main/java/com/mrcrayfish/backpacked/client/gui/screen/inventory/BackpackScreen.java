@@ -75,9 +75,11 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.owner = menu.isOwner();
         this.openingPlayer = playerInventory.player;
         this.imageWidth = 11 + Math.max(this.cols, 9) * 18 + 11;
-        this.imageHeight = 20 + this.rows * 18 + 15 + 3 + 90;
-        this.titleLabelX = 12;
+        this.imageHeight = 20 + this.rows * 18 + 15 + 3 + 101;
+        this.titleLabelX = 11;
         this.titleLabelY = 10;
+        this.inventoryLabelX = this.imageWidth / 2 - 80;
+        this.inventoryLabelY = this.imageHeight - 94;
     }
 
     @Override
@@ -198,7 +200,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF3A2B1B, false);
+        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF61503D, false);
+        graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }
 
     @Override
@@ -223,7 +226,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
 
         // Player Inventory
         int inventoryWidth = 7 + 9 * 18 + 7;
-        int inventoryHeight = 90;
+        int inventoryHeight = 101;
         int inventoryX = (width - inventoryWidth) / 2;
         int inventoryY = backpackHeight + 3;
         graphics.blitSprite(INVENTORY_SPRITE, x + inventoryX, y + inventoryY, inventoryWidth, inventoryHeight);
@@ -232,7 +235,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         int inventorySlotsWidth = 9 * 18;
         int inventorySlotsHeight = 3 * 18;
         int inventorySlotsX = (width - inventorySlotsWidth) / 2;
-        int inventorySlotsY = backpackHeight + 3 + 7;
+        int inventorySlotsY = inventoryY + 18;
         graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
         graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
 
