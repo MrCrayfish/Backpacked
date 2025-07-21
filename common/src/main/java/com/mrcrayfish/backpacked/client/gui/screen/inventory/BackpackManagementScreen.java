@@ -17,6 +17,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
     private static final ResourceLocation INVENTORY_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
     private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
+    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private boolean opened;
 
@@ -62,6 +63,10 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         int backgroundHeight = 19 + 18 + 15; // Header height + Slot Height + Footer Height
         int backgroundX = (this.imageWidth - backgroundWidth) / 2;
         graphics.blitSprite(BACKPACK_BACKGROUND, this.leftPos + backgroundX, this.topPos, backgroundWidth, backgroundHeight);
+
+        int titleWidth = this.font.width(this.title);
+        int checkersWidth = backgroundWidth - (this.titleLabelX + titleWidth + this.titleLabelX + 2);
+        graphics.blitSprite(CHECKERS, this.leftPos + this.titleLabelX + titleWidth + 2, this.topPos + this.titleLabelY + 2, checkersWidth, 4);
 
         Slot backpackSlot = this.getMenu().slots.getFirst();
         graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, ManagementInventory.SIZE * 18, 18);
