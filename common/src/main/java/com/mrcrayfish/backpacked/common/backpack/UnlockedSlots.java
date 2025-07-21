@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public final class UnlockedSlots
@@ -120,5 +121,20 @@ public final class UnlockedSlots
             }
         }
         return count;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.slots, this.maxSlots);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if(o == null || getClass() != o.getClass())
+            return false;
+        UnlockedSlots other = (UnlockedSlots) o;
+        return this.maxSlots == other.maxSlots && this.slots.equals(other.slots);
     }
 }
