@@ -78,13 +78,6 @@ public class Config
             @ConfigProperty(name = "unlockAllCosmetics", comment = "Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.")
             public final BoolProperty unlockAllCosmetics = BoolProperty.create(false);
 
-            @ConfigProperty(name = "lockIntoSlot", comment = "Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.")
-            public final BoolProperty lockIntoSlot = BoolProperty.create(true);
-
-            // TODO remove
-            @ConfigProperty(name = "autoEquipOnPickup", comment = "When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.")
-            public final BoolProperty autoEquipOnPickup = BoolProperty.create(false);
-
             @ConfigProperty(name = "bannedItems", comment = "A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
             public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
         }
