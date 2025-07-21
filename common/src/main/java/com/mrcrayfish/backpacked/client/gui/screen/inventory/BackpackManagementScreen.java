@@ -23,7 +23,11 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     public BackpackManagementScreen(BackpackManagementMenu menu, Inventory inventory, Component title)
     {
         super(menu, inventory, title);
-        this.imageHeight = 43 + 3 + 90;
+        this.titleLabelX = 11;
+        this.titleLabelY = 10;
+        // Header height + Slot Height + Footer Height + Gap + Inventory Height
+        this.imageHeight = 19 + 18 + 15 + 3 + 101;
+        this.inventoryLabelY = this.imageHeight - 94;
     }
 
     @Override
@@ -41,19 +45,30 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
+    {
+        int slotsWidth = ManagementInventory.SIZE * 18;
+        int backgroundWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11);
+        int backgroundX = (this.imageWidth - backgroundWidth) / 2;
+        graphics.drawString(this.font, this.title, backgroundX + this.titleLabelX, this.titleLabelY, 0xFF61503D, false);
+        graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
+    }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
     {
-        graphics.blitSprite(BACKPACK_BACKGROUND, this.leftPos, this.topPos, this.imageWidth, 43);
+        int slotsWidth = ManagementInventory.SIZE * 18;
+        int backgroundWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11); // Padding + Width + Padding
+        int backgroundHeight = 19 + 18 + 15; // Header height + Slot Height + Footer Height
+        int backgroundX = (this.imageWidth - backgroundWidth) / 2;
+        graphics.blitSprite(BACKPACK_BACKGROUND, this.leftPos + backgroundX, this.topPos, backgroundWidth, backgroundHeight);
 
         Slot backpackSlot = this.getMenu().slots.getFirst();
         graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, ManagementInventory.SIZE * 18, 18);
 
-        graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 46, 176, 90);
-        graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 46 + 7, 162, 54);
-        graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 46 + 65, 162, 18);
+        graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 55, 176, 101);
+        graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 55 + 18, 162, 54);
+        graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 55 + 76, 162, 18);
     }
 
     @Override

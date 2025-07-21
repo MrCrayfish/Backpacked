@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BackpackItem extends Item
 {
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
+    public static final Component BACKPACK_MANAGEMENT_TRANSLATION = Component.translatable("container.backpack_management");
     private static final AtomicBoolean OPENING_MANAGEMENT = new AtomicBoolean(false);
 
     public BackpackItem(Properties properties)
@@ -106,7 +107,7 @@ public class BackpackItem extends Item
             BackpackManagementMenu menu = new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
             menu.addSlotListener(new OnPlacedBackpackListener());
             return menu;
-        }, Component.literal("Hello")));
+        }, BACKPACK_MANAGEMENT_TRANSLATION));
         OPENING_MANAGEMENT.set(false);
     }
 
