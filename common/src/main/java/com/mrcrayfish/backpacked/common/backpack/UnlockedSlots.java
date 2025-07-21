@@ -55,16 +55,36 @@ public final class UnlockedSlots
         this.nextCount = calculateUnlockedCount(slots, maxSlots);
     }
 
+    /**
+     * @return The maximum amount of slots that can be unlocked
+     */
     public int getMaxSlots()
     {
         return this.maxSlots;
     }
 
+    /**
+     * Determines if the slot at the given index has been unlocked. This method includes a special
+     * case where if the instance of UnlockedSlots is {@link #ALL}, then it will always return true.
+     * Otherwise, it will look at the set of currently unlocked slot indexes.
+     *
+     * @param slot the index of the slot
+     * @return true if the slot is unlocked
+     */
     public boolean isUnlocked(int slot)
     {
         return this.maxSlots == -1 || this.slots.contains(slot);
     }
 
+    /**
+     * Unlocks the slot at the given index. Keep in mind that this method returns a new immutable
+     * UnlockedSlots. If the slot cannot be unlocked, or is already unlocked, this method will
+     * simply return the instance of UnlockedSlots this method was invoked on. There is a special
+     * case where if this UnlockedSlots is {@link #ALL}, it will always return {@link #ALL}.
+     *
+     * @param slot the index of the slot
+     * @return a new UnlockedSlots instance, or the same UnlockedSlots if unable to unlock
+     */
     public UnlockedSlots unlockSlot(int slot)
     {
         if(this.maxSlots == -1)
@@ -76,21 +96,41 @@ public final class UnlockedSlots
         return new UnlockedSlots(newSlots, this.maxSlots);
     }
 
+    /**
+     * Sets the amount of max slots. Only used for resizing so it matches the size of the backpack
+     * slots. If the given maxSlots value is the same as the one currently on this object, it will
+     * simply return itself there is no difference. The given maxSlots must be positive!
+     *
+     * @param maxSlots the new max slots
+     * @return a new immutable UnlockedSlots object, or the same UnlockedSlots if the same value.
+     */
     public UnlockedSlots setMaxSlots(int maxSlots)
     {
+        if(this.maxSlots == maxSlots)
+            return this;
         return new UnlockedSlots(this.slots, maxSlots);
     }
 
-    public int count()
-    {
-        return this.slots.size();
-    }
-
+    /**
+     * Determines if the given slot index is able to be unlocked. If the index is out of bounds,
+     * or the slot is already unlocked, the method will simply return false.
+     *
+     * @param slot the index of the slot
+     * @return true if able to be unlocked, otherwise false
+     */
     public boolean isUnlockable(int slot)
     {
         return slot >= 0 && slot < this.maxSlots && !this.slots.contains(slot);
     }
 
+    /**
+     * Calculates the experience level cost to unlock a new slot in the backpack inventory. The cost
+     * is calculated based on how many slots are already unlocked, generally getting more expensive
+     * the more slots that are unlocked. Users can change the calculation options in the config of
+     * the mod, or even have all slots unlocked by default (TODO).
+     *
+     * @return the experience level cost to unlock the next slot
+     */
     public int nextUnlockCost()
     {
         int totalSlots = Math.max(1, this.maxSlots); // Prevents div by zero
