@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.google.common.collect.Iterators;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -7,6 +8,7 @@ import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -39,23 +41,26 @@ public class EnchantmentHandler
 
     public static boolean onBreakBlock(BlockState state, ServerLevel level, BlockPos pos, @Nullable BlockEntity blockEntity, ServerPlayer player, ItemStack stack)
     {
-        ItemStack backpack = BackpackHelper.getBackpackStack(player);
-        if(backpack.isEmpty())
-            return false;
+        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+        for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
+        {
+            BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
+            if(inventory == null)
+                continue;
 
-        HolderLookup<Enchantment> lookup = level.holderLookup(Registries.ENCHANTMENT);
-        if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.FUNNELLING), backpack) <= 0)
-            return false;
+            ItemStack backpack = inventory.getBackpackStack();
+            HolderLookup<Enchantment> lookup = level.holderLookup(Registries.ENCHANTMENT);
+            if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.FUNNELLING), backpack) <= 0)
+                continue;
 
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
-        if(inventory == null)
-            return false;
+            Block.getDrops(state, level, pos, blockEntity, player, stack).forEach((dropStack) -> {
+                Block.popResource(level, pos, inventory.addItem(dropStack));
+            });
+            state.spawnAfterBreak(level, pos, stack, true);
 
-        Block.getDrops(state, level, pos, blockEntity, player, stack).forEach((dropStack) -> {
-            Block.popResource(level, pos, inventory.addItem(dropStack));
-        });
-        state.spawnAfterBreak(level, pos, stack, true);
-        return true;
+            return true;
+        }
+        return false;
     }
 
     public static boolean onDropLoot(Collection<ItemEntity> drops, DamageSource source)
@@ -64,28 +69,31 @@ public class EnchantmentHandler
         if(!(entity instanceof ServerPlayer player))
             return false;
 
-        ItemStack backpack = BackpackHelper.getBackpackStack(player);
-        if(backpack.isEmpty())
-            return false;
-
-        HolderLookup<Enchantment> lookup = entity.level().holderLookup(Registries.ENCHANTMENT);
-        if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.LOOTED), backpack) <= 0)
-            return false;
-
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
-        if(inventory == null)
-            return false;
-
-        drops.forEach(itemEntity ->
+        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+        for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
         {
-            ItemStack stack = itemEntity.getItem();
-            ItemStack remaining = inventory.addItem(stack);
-            if(!remaining.isEmpty())
-            {
-                itemEntity.setItem(remaining);
-                player.level().addFreshEntity(itemEntity);
-            }
-        });
+            BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
+            if(inventory == null)
+                continue;
+
+            ItemStack backpack = inventory.getBackpackStack();
+            HolderLookup<Enchantment> lookup = entity.level().holderLookup(Registries.ENCHANTMENT);
+            if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.LOOTED), backpack) <= 0)
+                continue;
+
+            drops.removeIf(drop -> {
+                ItemStack stack = drop.getItem();
+                ItemStack remaining = inventory.addItem(stack);
+                if(remaining.isEmpty()) {
+                    return true;
+                }
+                drop.setItem(remaining);
+                return false;
+            });
+        }
+
+        drops.forEach(player.level()::addFreshEntity);
+
         return true;
     }
 
@@ -94,28 +102,32 @@ public class EnchantmentHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return false;
 
-        ItemStack backpack = BackpackHelper.getBackpackStack(player);
-        if(backpack.isEmpty())
-            return false;
-
-        HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
-        if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.REPAIRMAN), backpack) <= 0)
-            return false;
-
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
-        if(inventory == null)
-            return false;
-
         if(orb.isRemoved())
             return false;
 
-        InventoryHelper.streamFor(inventory).filter(stack -> {
-            return stack.isDamaged() && EnchantmentHelper.has(stack, EnchantmentEffectComponents.REPAIR_WITH_XP);
-        }).forEach(stack -> {
-            int repairableAmount = EnchantmentHelper.modifyDurabilityToRepairFromXp(serverPlayer.serverLevel(), stack, orb.getValue());
-            int maxRepairableDamage = Math.min(repairableAmount, stack.getDamageValue());
-            stack.setDamageValue(stack.getDamageValue() - maxRepairableDamage);
-        });
+        HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
+        Holder.Reference<Enchantment> enchantment = lookup.getOrThrow(ModEnchantments.REPAIRMAN);
+
+        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+        for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
+        {
+            BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
+            if(inventory == null)
+                continue;
+
+            ItemStack backpack = inventory.getBackpackStack();
+            if(EnchantmentHelper.getItemEnchantmentLevel(enchantment, backpack) <= 0)
+                continue;
+
+            // TODO reconsider repairing every item
+            InventoryHelper.streamFor(inventory).filter(stack -> {
+                return !stack.isEmpty() && stack.isDamaged();
+            }).forEach(stack -> {
+                int repairableAmount = EnchantmentHelper.modifyDurabilityToRepairFromXp(serverPlayer.serverLevel(), stack, orb.getValue());
+                int maxRepairableDamage = Math.min(repairableAmount, stack.getDamageValue());
+                stack.setDamageValue(stack.getDamageValue() - maxRepairableDamage);
+            });
+        }
 
         return false;
     }

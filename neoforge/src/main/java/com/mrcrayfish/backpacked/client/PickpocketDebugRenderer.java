@@ -42,8 +42,9 @@ public class PickpocketDebugRenderer
         MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();
         for(Player player : mc.level.players())
         {
-            if(BackpackHelper.getBackpackStack(player).isEmpty())
-                continue;
+            // TODO restore this
+            //if(BackpackHelper.getBackpackStack(player).isEmpty())
+                //continue;
 
             if(player.isLocalPlayer())
                 continue;

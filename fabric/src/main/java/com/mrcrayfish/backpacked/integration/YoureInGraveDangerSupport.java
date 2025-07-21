@@ -5,15 +5,20 @@ import com.b1n_ry.yigd.compat.InvModCompat;
 import com.b1n_ry.yigd.data.DeathContext;
 import com.b1n_ry.yigd.data.GraveItem;
 import com.b1n_ry.yigd.util.DropRule;
+import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class YoureInGraveDangerSupport
@@ -23,7 +28,7 @@ public class YoureInGraveDangerSupport
         InvModCompat.invCompatMods.add(new BackpackedCompat());
     }
 
-    private static class BackpackedCompat implements InvModCompat<ItemStack>
+    private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, ItemStack>>>
     {
         @Override
         public String getModName()
@@ -34,70 +39,83 @@ public class YoureInGraveDangerSupport
         @Override
         public void clear(ServerPlayer player)
         {
-            BackpackHelper.setBackpackStack(player, ItemStack.EMPTY);
+            BackpackHelper.removeAllBackpacks(player);
         }
 
         @Override
-        public CompatComponent<ItemStack> readNbt(CompoundTag tag, HolderLookup.Provider provider)
+        public CompatComponent<List<Pair<Integer, ItemStack>>> readNbt(CompoundTag tag, HolderLookup.Provider provider)
         {
-            return new BackpackedCompatComponent(ItemStack.parseOptional(provider, tag));
+            List<Pair<Integer, ItemStack>> backpacks = new ArrayList<>();
+            if(tag.contains("Backpacks", Tag.TAG_LIST))
+            {
+                ListTag list = tag.getList("Backpacks", Tag.TAG_COMPOUND);
+                list.forEach(nbt -> {
+                    if(nbt instanceof CompoundTag slotTag) {
+                        int slot = slotTag.getInt("Slot");
+                        ItemStack stack = ItemStack.parseOptional(provider, slotTag.getCompound("Item"));
+                        backpacks.add(Pair.of(slot, stack));
+                    }
+                });
+            }
+            return new BackpackedCompatComponent(backpacks);
         }
 
         @Override
-        public CompatComponent<ItemStack> getNewComponent(ServerPlayer player)
+        public CompatComponent<List<Pair<Integer, ItemStack>>> getNewComponent(ServerPlayer player)
         {
             return new BackpackedCompatComponent(player);
         }
     }
 
-    private static class BackpackedCompatComponent extends CompatComponent<ItemStack>
+    private static class BackpackedCompatComponent extends CompatComponent<List<Pair<Integer, ItemStack>>>
     {
         public BackpackedCompatComponent(ServerPlayer player)
         {
             super(player);
         }
 
-        public BackpackedCompatComponent(ItemStack stack)
+        public BackpackedCompatComponent(List<Pair<Integer, ItemStack>> backpacks)
         {
-            super(stack);
+            super(backpacks);
         }
 
         @Override
-        public ItemStack getInventory(ServerPlayer player)
+        public List<Pair<Integer, ItemStack>> getInventory(ServerPlayer player)
         {
-            return BackpackHelper.getBackpackStack(player);
+            List<Pair<Integer, ItemStack>> list = new ArrayList<>();
+            NonNullList<ItemStack> backpacks = BackpackHelper.getBackpacks(player);
+            for(int i = 0; i < backpacks.size(); i++)
+            {
+                ItemStack stack = backpacks.get(i);
+                if(stack.isEmpty())
+                {
+                    list.add(new Pair<>(i, stack.copy()));
+                }
+            }
+            return list;
         }
 
         @Override
         public NonNullList<GraveItem> merge(CompatComponent<?> otherComponent, ServerPlayer player)
         {
-            NonNullList<GraveItem> extra = NonNullList.create();
             BackpackedCompatComponent component = (BackpackedCompatComponent) otherComponent;
-            if(component.inventory.isEmpty())
-                return extra;
-            extra.add(new GraveItem(component.inventory, this.getDropRule()));
-            ItemStack stack = this.inventory;
-            if(stack.isEmpty())
-            {
-                extra.clear();
-                this.inventory = component.inventory;
-            }
-            return extra;
+            this.inventory.addAll(component.inventory);
+            return NonNullList.create();
         }
 
         @Override
         public NonNullList<ItemStack> storeToPlayer(ServerPlayer player)
         {
             NonNullList<ItemStack> extra = NonNullList.create();
-            if(this.inventory.isEmpty())
-                return extra;
-            extra.add(this.inventory);
-            ItemStack stack = BackpackHelper.getBackpackStack(player);
-            if(stack.isEmpty())
-            {
-                extra.clear();
-                BackpackHelper.setBackpackStack(player, this.inventory.copy());
-            }
+            this.inventory.forEach(pair -> {
+                int index = pair.getFirst();
+                ItemStack stack = pair.getSecond();
+                if(BackpackHelper.getBackpackStack(player, index).isEmpty()) {
+                    if(!BackpackHelper.setBackpackStack(player, stack, index)) {
+                        extra.add(stack);
+                    }
+                }
+            });
             return extra;
         }
 
@@ -114,30 +132,39 @@ public class YoureInGraveDangerSupport
             if(!this.inventory.isEmpty())
             {
                 DropRule rule = this.getDropRule();
-                drops.add(new GraveItem(this.inventory.copy(), rule));
+                this.inventory.forEach(pair -> {
+                    ItemStack stack = pair.getSecond();
+                    if(!stack.isEmpty()) {
+                        drops.add(new GraveItem(stack, rule));
+                    }
+                });
             }
             return drops;
         }
 
         @Override
-        public CompatComponent<ItemStack> filterInv(Predicate<DropRule> predicate)
+        public CompatComponent<List<Pair<Integer, ItemStack>>> filterInv(Predicate<DropRule> predicate)
         {
-            ItemStack result = ItemStack.EMPTY;
+            List<Pair<Integer, ItemStack>> list = new ArrayList<>();
             DropRule rule = this.getDropRule();
             if(predicate.test(rule))
             {
-                result = this.inventory;
+                list.addAll(this.inventory);
             }
-            return new BackpackedCompatComponent(result);
+            return new BackpackedCompatComponent(list);
         }
 
         @Override
         public boolean removeItem(Predicate<ItemStack> predicate, int count)
         {
-            if(predicate.test(this.inventory))
+            for(Pair<Integer, ItemStack> pair : this.inventory)
             {
-                this.inventory.shrink(count);
-                return true;
+                ItemStack stack = pair.getSecond();
+                if(predicate.test(stack))
+                {
+                    stack.shrink(Math.min(stack.getCount(), count));
+                    return true;
+                }
             }
             return false;
         }
@@ -145,13 +172,22 @@ public class YoureInGraveDangerSupport
         @Override
         public void clear()
         {
-            this.inventory = ItemStack.EMPTY;
+            this.inventory = new ArrayList<>();
         }
 
         @Override
         public CompoundTag writeNbt(HolderLookup.Provider provider)
         {
-            return (CompoundTag) this.inventory.saveOptional(provider);
+            CompoundTag tag = new CompoundTag();
+            ListTag list = new ListTag();
+            this.inventory.forEach(pair -> {
+                CompoundTag slotTag = new CompoundTag();
+                slotTag.putInt("Slot", pair.getFirst());
+                slotTag.put("Item", pair.getSecond().saveOptional(provider));
+                list.add(slotTag);
+            });
+            tag.put("Backpacks", list);
+            return tag;
         }
 
         private DropRule getDropRule()

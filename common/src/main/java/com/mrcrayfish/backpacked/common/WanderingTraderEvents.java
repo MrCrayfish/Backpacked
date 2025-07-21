@@ -173,7 +173,7 @@ public class WanderingTraderEvents
 
     private static boolean isPlayerInvisible(Player player)
     {
-        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && BackpackHelper.getBackpackStack(player).isEmpty();
+        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && BackpackHelper.getFirstBackpackStack(player).isEmpty();
     }
 
     private static BlockHitResult performRayTrace(Vec3 start, Vec3 end, Entity source)

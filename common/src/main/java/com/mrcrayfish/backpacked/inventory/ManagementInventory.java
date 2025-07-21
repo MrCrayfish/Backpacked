@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ManagementInventory implements Container
 {
-    public static final int SIZE = 1;
+    public static final int SIZE = 5;
 
     private final ServerPlayer player;
 
@@ -26,7 +26,7 @@ public class ManagementInventory implements Container
     @Override
     public boolean isEmpty()
     {
-        return BackpackHelper.getBackpackStack(this.player).isEmpty();
+        return BackpackHelper.getFirstBackpackStack(this.player).isEmpty();
     }
 
     @Override

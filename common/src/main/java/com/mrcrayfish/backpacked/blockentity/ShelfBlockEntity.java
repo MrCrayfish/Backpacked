@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.blockentity;
 
-import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
@@ -117,7 +116,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }, Component.translatable("container.backpack_shelf")));
     }
 
-    private void copyInventoryToStack(ItemStack stack)
+    public void copyInventoryToStack(ItemStack stack)
     {
         if(stack.isEmpty())
             return;
@@ -150,7 +149,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                     ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
                     this.inventory = new BackpackShelfContainer(this, this.getBackpackSize());
                     this.inventory.copyFrom(contents);
-                    stack.remove(DataComponents.CONTAINER);
                     this.setChanged();
                 }
             }
@@ -255,6 +253,21 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return this.getBackpackItem().map(item -> item.getRowCount() * item.getColumnCount()).orElse(0);
     }
 
+    @Override
+    public void setChanged()
+    {
+        super.setChanged();
+
+        /*if(this.level instanceof ServerLevel)
+        {
+            ItemStack backpack = this.container.getItem(0);
+            if(!backpack.isEmpty())
+            {
+                this.copyInventoryToStack(backpack);
+            }
+        }*/
+    }
+
     public static class BackpackShelfContainer extends LockedContainer
     {
         private final ShelfBlockEntity entity;
@@ -301,7 +314,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
     }
 
-    private static class ShelfContainer extends SimpleContainer
+    public static class ShelfContainer extends SimpleContainer
     {
         private final ShelfBlockEntity shelf;
 
@@ -353,8 +366,8 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             if(!stack.isEmpty())
             {
                 this.shelf.copyInventoryToStack(stack);
-                this.shelf.updateInventory();
             }
+            this.shelf.updateInventory();
             return stack;
         }
 
@@ -368,6 +381,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         public int getMaxStackSize()
         {
             return 1;
+        }
+
+        public ShelfBlockEntity getShelf()
+        {
+            return this.shelf;
         }
     }
 }

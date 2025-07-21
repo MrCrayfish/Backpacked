@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.slot.ConditionalSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.resources.ResourceLocation;
@@ -29,9 +30,9 @@ public class BackpackManagementMenu extends CustomContainerMenu
         super(ModContainers.MANAGEMENT.get(), windowId);
         this.inventory = inventory;
         this.container = container;
-        for(int i = 0; i < 1; i++)
+        for(int i = 0; i < ManagementInventory.SIZE; i++)
         {
-            this.addSlot(new ConditionalSlot(container, i, (176 - (1 * 18)) / 2 + 1, 12, stack -> {
+            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (ManagementInventory.SIZE * 18)) / 2 + 1, 12, stack -> {
                 return stack.getItem() instanceof BackpackItem;
             }).setIcon(EMPTY_SLOT));
         }
@@ -47,14 +48,14 @@ public class BackpackManagementMenu extends CustomContainerMenu
         {
             ItemStack stack = clickedSlot.getItem();
             copy = stack.copy();
-            if(clickedSlotIndex < 1)
+            if(clickedSlotIndex < ManagementInventory.SIZE)
             {
-                if(!this.moveItemStackTo(stack, 1, this.slots.size(), true))
+                if(!this.moveItemStackTo(stack, ManagementInventory.SIZE, this.slots.size(), false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(!this.moveItemStackTo(stack, 0, 1, false))
+            else if(!this.moveItemStackTo(stack, 0, ManagementInventory.SIZE, false))
             {
                 return ItemStack.EMPTY;
             }

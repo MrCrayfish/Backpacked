@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.util;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,20 @@ import java.util.stream.Stream;
  */
 public class InventoryHelper
 {
+    public static void mergeItemsOrSpawnIntoLevel(NonNullList<ItemStack> source, NonNullList<ItemStack> target, Level level, Vec3 pos)
+    {
+        for(int i = 0; i < source.size(); i++)
+        {
+            ItemStack stack = source.get(i);
+            if(i < target.size())
+            {
+                target.set(i, stack.copy());
+                continue;
+            }
+            spawnStack(stack, level, pos);
+        }
+    }
+
     public static void mergeInventoryOrSpawnIntoLevel(Container source, Container target, Level level, Vec3 pos)
     {
         for(int i = 0; i < source.getContainerSize(); i++)
@@ -30,9 +45,12 @@ public class InventoryHelper
 
     private static void spawnStack(ItemStack stack, Level level, Vec3 pos)
     {
-        ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, stack.copyAndClear());
-        entity.setDefaultPickUpDelay();
-        level.addFreshEntity(entity);
+        if(!level.isClientSide())
+        {
+            ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, stack.copyAndClear());
+            entity.setDefaultPickUpDelay();
+            level.addFreshEntity(entity);
+        }
     }
 
     public static Stream<ItemStack> streamFor(Container container)

@@ -29,6 +29,7 @@ public class Network
         .registerPlayMessage("request_management", MessageRequestManagement.class, MessageRequestManagement.STREAM_CODEC, MessageRequestManagement::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("unlock_slot", MessageUnlockSlot.class, MessageUnlockSlot.STREAM_CODEC, MessageUnlockSlot::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("sync_unlock_slot", MessageSyncUnlockSlot.class, MessageSyncUnlockSlot.STREAM_CODEC, MessageSyncUnlockSlot::handle, PacketFlow.CLIENTBOUND)
+        .registerPlayMessage("navigate_backpack_index", MessageNavigateBackpackIndex.class, MessageNavigateBackpackIndex.STREAM_CODEC, MessageNavigateBackpackIndex::handle, PacketFlow.SERVERBOUND)
         .build();
 
     public static void init() {}

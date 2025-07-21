@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
+import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -31,43 +32,60 @@ import java.util.List;
 public class PlayerMixin implements BackpackedInventoryAccess
 {
     @Unique
-    public BackpackInventory backpacked$Inventory = null;
+    public BackpackInventory[] backpacked$Inventory = new BackpackInventory[ManagementInventory.SIZE];
+
+    @Override
+    public int backpacked$GetBackpackInventoryCount()
+    {
+        return this.backpacked$Inventory.length;
+    }
 
     @Override
     @Nullable
-    public BackpackInventory backpacked$GetBackpackInventory()
+    public BackpackInventory backpacked$GetBackpackInventory(int index)
     {
+        if(index < 0 || index >= ManagementInventory.SIZE)
+            return null;
+
         Player player = (Player) (Object) this;
-        ItemStack stack = BackpackHelper.getBackpackStack(player);
+        ItemStack stack = BackpackHelper.getBackpackStack(player, index);
         if(stack.isEmpty())
         {
-            this.backpacked$Inventory = null;
+            this.backpacked$Inventory[index] = null;
             return null;
         }
 
-        BackpackItem backpackItem = (BackpackItem) stack.getItem();
-        if(this.backpacked$Inventory == null || !this.backpacked$Inventory.getBackpackStack().equals(stack) || this.backpacked$Inventory.getContainerSize() != backpackItem.getRowCount() * backpackItem.getColumnCount())
+        BackpackItem item = (BackpackItem) stack.getItem();
+        BackpackInventory inventory = this.backpacked$Inventory[index];
+        if(inventory == null || !inventory.getBackpackStack().equals(stack) || inventory.getContainerSize() != item.getRowCount() * item.getColumnCount())
         {
-            this.backpacked$Inventory = new BackpackInventory(backpackItem.getColumnCount(), backpackItem.getRowCount(), player, stack);
+            inventory = new BackpackInventory(index, item.getColumnCount(), item.getRowCount(), player, stack);
+            this.backpacked$Inventory[index] = inventory;
         }
-        return this.backpacked$Inventory;
+        return inventory;
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     public void backpacked$TickHead(CallbackInfo ci)
     {
-        if(this.backpacked$Inventory != null)
+        for(BackpackInventory inventory : this.backpacked$Inventory)
         {
-            this.backpacked$Inventory.tick();
+            if(inventory != null)
+            {
+                inventory.tick();
+            }
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
     public void backpacked$AddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
     {
-        if(this.backpacked$Inventory != null)
+        for(BackpackInventory inventory : this.backpacked$Inventory)
         {
-            this.backpacked$Inventory.saveItemsToStack();
+            if(inventory != null)
+            {
+                inventory.saveItemsToStack();
+            }
         }
     }
 

@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
@@ -22,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -42,23 +40,24 @@ public class ServerPlayHandler
         if(player == null)
             return;
 
-        ItemStack stack = BackpackHelper.getBackpackStack(player);
-        if(!stack.isEmpty())
-        {
-            BackpackProperties properties = message.properties();
-            Optional<ResourceLocation> cosmeticOptional = properties.cosmetic();
-            if(cosmeticOptional.isPresent())
-            {
-                ResourceLocation cosmetic = cosmeticOptional.get();
-                Backpack backpack = BackpackManager.instance().getBackpack(cosmetic);
-                if(backpack == null)
-                    return;
+        ItemStack stack = BackpackHelper.getSelectedBackpackStack(player);
+        if(stack.isEmpty())
+            return;
 
-                if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
-                    return;
-            }
-            stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);
+        BackpackProperties properties = message.properties();
+        Optional<ResourceLocation> cosmeticOptional = properties.cosmetic();
+        if(cosmeticOptional.isPresent())
+        {
+            ResourceLocation cosmetic = cosmeticOptional.get();
+            Backpack backpack = BackpackManager.instance().getBackpack(cosmetic);
+            if(backpack == null)
+                return;
+
+            if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
+                return;
         }
+
+        stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);
     }
 
     public static void handleOpenBackpack(MessageOpenBackpack message, MessageContext context)
@@ -110,7 +109,7 @@ public class ServerPlayHandler
         if(Config.SERVER.backpack.disableCustomisation.get())
             return;
 
-        if(BackpackHelper.getBackpackStack(player).isEmpty())
+        if(BackpackHelper.getSelectedBackpackStack(player).isEmpty())
             return;
 
         UnlockManager.getTracker(player).ifPresent(unlockTracker ->
@@ -150,7 +149,7 @@ public class ServerPlayHandler
         if(!(player.containerMenu instanceof BackpackContainerMenu menu))
             return;
 
-        ItemStack backpack = menu.getBackpackStack(player);
+        ItemStack backpack = menu.getBackpackStack();
         if(backpack.isEmpty())
             return;
 
@@ -184,5 +183,27 @@ public class ServerPlayHandler
         }).forEach(otherPlayer -> {
             Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(message.slot()));
         });
+    }
+
+    public static void handleNavigateBackpackIndex(MessageNavigateBackpackIndex message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container
+        if(!(player.containerMenu instanceof BackpackContainerMenu menu))
+            return;
+
+        // Only works if in an equipped backpack, not a shelf
+        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
+            return;
+
+        int selected = BackpackHelper.getSelectedBackpackIndex(player);
+        int newSelected = BackpackHelper.navigateSelectedBackpackIndex(player, message.forward() ? 1 : -1);
+        if(selected != newSelected)
+        {
+            BackpackItem.openBackpack(serverPlayer, serverPlayer);
+        }
     }
 }

@@ -11,7 +11,6 @@ import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.inventory.container.OnPlacedBackpackListener;
 import com.mrcrayfish.backpacked.platform.Services;
-import com.mrcrayfish.backpacked.util.ClientUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -24,11 +23,9 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -37,7 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BackpackItem extends Item
 {
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
-    public static final MutableComponent REMOVE_ITEMS_TOOLTIP = Component.translatable("backpacked.tooltip.remove_items").withStyle(ChatFormatting.RED);
     private static final AtomicBoolean OPENING_MANAGEMENT = new AtomicBoolean(false);
 
     public BackpackItem(Properties properties)
@@ -49,24 +45,13 @@ public class BackpackItem extends Item
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag flag)
-    {
-        if(context != TooltipContext.EMPTY)
-        {
-            ClientUtils.createBackpackTooltip(stack, list);
-        }
-    }
-
-    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
         ItemStack stack = player.getItemInHand(hand);
         if(!level.isClientSide())
         {
-            if(BackpackHelper.getBackpackStack(player).isEmpty())
+            if(BackpackHelper.equipBackpack(player, stack))
             {
-                ItemStack copy = player.isCreative() ? stack.copy() : stack.copyAndClear();
-                BackpackHelper.setBackpackStack(player, copy);
                 level.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
                 return InteractionResultHolder.success(stack);
             }
@@ -96,13 +81,11 @@ public class BackpackItem extends Item
         if(OPENING_MANAGEMENT.get())
             return false;
 
-        ItemStack backpack = BackpackHelper.getBackpackStack(ownerPlayer);
-        if(!backpack.isEmpty())
+        int selected = BackpackHelper.getSelectedBackpackIndex(ownerPlayer);
+        BackpackInventory inventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory(selected);
+        if(inventory != null)
         {
-            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory();
-            if(backpackInventory == null)
-                return false;
-
+            ItemStack backpack = inventory.getBackpackStack();
             if(!(backpack.getItem() instanceof BackpackItem item))
                 return false;
 
@@ -111,7 +94,7 @@ public class BackpackItem extends Item
             int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
             UnlockedSlots slots = item.getUnlockedSlots(backpack);
-            Services.BACKPACK.openBackpackScreen(openingPlayer, backpackInventory, cols, rows, owner, slots, title);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, title);
             return true;
         }
         openBackpackManagement(ownerPlayer);

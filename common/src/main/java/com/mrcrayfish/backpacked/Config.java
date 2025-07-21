@@ -77,6 +77,7 @@ public class Config
             @ConfigProperty(name = "lockIntoSlot", comment = "Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.")
             public final BoolProperty lockIntoSlot = BoolProperty.create(true);
 
+            // TODO remove
             @ConfigProperty(name = "autoEquipOnPickup", comment = "When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.")
             public final BoolProperty autoEquipOnPickup = BoolProperty.create(false);
 

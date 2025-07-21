@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
 import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
@@ -51,6 +52,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
     private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
+    private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
 
     private static final int UNLOCK_TIME = 20;
 
@@ -135,6 +138,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
             buttons.add(configButton);
         }
+
+        buttons.add(new MiniButton(0, 0, ICON_PREVIOUS, onPress -> {
+            Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
+        }));
+        buttons.add(new MiniButton(0, 0, ICON_NEXT, onPress -> {
+            Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
+        }));
 
         return buttons;
     }

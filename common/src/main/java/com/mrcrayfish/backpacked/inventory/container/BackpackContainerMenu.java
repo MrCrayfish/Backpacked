@@ -1,9 +1,9 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -150,13 +149,17 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         this.backpackInventory.stopOpen(playerIn);
     }
 
-    public ItemStack getBackpackStack(Player player)
+    public ItemStack getBackpackStack()
     {
         if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
         {
             return container.getBlockEntity().getBackpack();
         }
-        return BackpackHelper.getBackpackStack(player);
+        if(this.backpackInventory instanceof BackpackInventory inventory)
+        {
+            return inventory.getBackpackStack();
+        }
+        return ItemStack.EMPTY;
     }
 
     public void openManagement(ServerPlayer player)
@@ -164,8 +167,10 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
         {
             container.getBlockEntity().openShelfManagement(player);
-            return;
         }
-        BackpackItem.openBackpackManagement(player);
+        else if(this.backpackInventory instanceof BackpackInventory)
+        {
+            BackpackItem.openBackpackManagement(player);
+        }
     }
 }

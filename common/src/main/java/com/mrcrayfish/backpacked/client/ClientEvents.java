@@ -83,7 +83,8 @@ public class ClientEvents
         List<LivingEntity> entities = new ArrayList<>();
         if(Config.SERVER.pickpocketing.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-                return !BackpackHelper.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
+                // TODO add back test if player is wearing backpack
+                return !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {

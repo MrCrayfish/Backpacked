@@ -41,7 +41,7 @@ public class BackpackShelfMenu extends CustomContainerMenu
         int managementSize = managementContainer.getContainerSize();
         for(int i = 0; i < managementSize; i++)
         {
-            this.addSlot(new ConditionalSlot(managementContainer, i, (176 - (managementSize * 18)) / 2 + 1, 60, stack -> {
+            this.addSlot(new ConditionalSlot(managementContainer, i, i * 18 + (176 - (managementSize * 18)) / 2 + 1, 60, stack -> {
                 return stack.getItem() instanceof BackpackItem;
             }).setIcon(EMPTY_SLOT));
         }
@@ -59,6 +59,11 @@ public class BackpackShelfMenu extends CustomContainerMenu
             copy = slotStack.copy();
             if (index < ShelfBlockEntity.SIZE)
             {
+                // Before quick moving, copy the inventory to the stack
+                if(slot.container instanceof ShelfBlockEntity.ShelfContainer container)
+                {
+                    container.getShelf().copyInventoryToStack(slotStack);
+                }
                 if(!this.moveItemStackTo(slotStack, ShelfBlockEntity.SIZE, this.slots.size(), false))
                 {
                     return ItemStack.EMPTY;

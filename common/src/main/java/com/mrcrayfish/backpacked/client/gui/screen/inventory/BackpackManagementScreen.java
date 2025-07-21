@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
+import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -48,7 +49,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         graphics.blitSprite(BACKPACK_BACKGROUND, this.leftPos, this.topPos, this.imageWidth, 43);
 
         Slot backpackSlot = this.getMenu().slots.getFirst();
-        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, 18, 18);
+        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, ManagementInventory.SIZE * 18, 18);
 
         graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 46, 176, 90);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 46 + 7, 162, 54);
