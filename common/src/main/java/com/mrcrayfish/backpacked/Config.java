@@ -95,14 +95,20 @@ public class Config
                     large NBT data and potentially crash the server!""")
                 public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
 
-                @ConfigProperty(name = "unlockAllSlots", comment = """
-                    If set to true, all backpacks slots will be unlocked by default.
-                    WARNING: Reverting the option from true to false will cause items to be dropped
-                    into the world if the slot they are in is now locked. You have been warned.""")
-                public final BoolProperty unlockAllSlots = BoolProperty.create(false);
+                @ConfigProperty(name = "slots", comment = "Slots related properties")
+                public final Slots slots = new Slots();
 
                 @ConfigProperty(name = "size", comment = "Size related properties")
                 public final Size size = new Size();
+
+                public static class Slots
+                {
+                    @ConfigProperty(name = "unlockAll", comment = """
+                        If set to true, all backpacks slots will be unlocked by default.
+                        WARNING: Reverting the option from true to false will cause items to be dropped
+                        into the world if the slot they are in is now locked. You have been warned.""")
+                    public final BoolProperty unlockAll = BoolProperty.create(false);
+                }
 
                 public static class Size
                 {
