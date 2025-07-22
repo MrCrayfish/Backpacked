@@ -71,7 +71,7 @@ public final class BackpackManager
     {
         // Prevents unlocking backpacks when all backpacks are forcefully unlocked.
         // This helps in the case a server owner wants to revert the change.
-        if(Config.SERVER.backpack.unlockAllCosmetics.get())
+        if(Config.SERVER.backpack.cosmetics.unlockAllCosmetics.get())
             return;
 
         if(!this.loadedBackpacks.containsKey(id))
@@ -91,7 +91,7 @@ public final class BackpackManager
 
     private static void updateDefaultCosmetic()
     {
-        defaultCosmetic = ResourceLocation.tryParse(Config.SERVER.backpack.defaultCosmetic.get());
+        defaultCosmetic = ResourceLocation.tryParse(Config.SERVER.backpack.cosmetics.defaultCosmetic.get());
     }
 
     @Nullable

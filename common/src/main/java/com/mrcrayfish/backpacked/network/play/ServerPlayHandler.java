@@ -53,7 +53,7 @@ public class ServerPlayHandler
             if(backpack == null)
                 return;
 
-            if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.unlockAllCosmetics.get())
+            if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.cosmetics.unlockAllCosmetics.get())
                 return;
         }
 
@@ -106,7 +106,7 @@ public class ServerPlayHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        if(Config.SERVER.backpack.disableCustomisation.get())
+        if(Config.SERVER.backpack.cosmetics.disableCustomisation.get())
             return;
 
         if(BackpackHelper.getSelectedBackpackStack(player).isEmpty())

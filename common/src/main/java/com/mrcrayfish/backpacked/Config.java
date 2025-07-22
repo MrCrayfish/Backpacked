@@ -36,7 +36,8 @@ public class Config
 
     public static class Client
     {
-        @ConfigProperty(name = "hideConfigButton", comment = "If enabled, hides the config button from the backpack screen")
+        @ConfigProperty(name = "hideConfigButton", comment = """
+            If enabled, hides the config button from the backpack screen""")
         public final BoolProperty hideConfigButton = BoolProperty.create(false);
     }
 
@@ -53,45 +54,77 @@ public class Config
 
         public static class Backpack
         {
-            @ConfigProperty(name = "defaultCosmetic", comment = "The default cosmetic (model) of the backpack. This should generally be a backpack that is unlocked by default")
-            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:standard", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
-
-            @ConfigProperty(name = "keepOnDeath", comment = "If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.")
+            @ConfigProperty(name = "keepOnDeath", comment = """
+                If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.""")
             public final BoolProperty keepOnDeath = BoolProperty.create(false);
 
-            @ConfigProperty(name = "inventorySizeColumns", comment = """
-                    The amount of slot columns in the backpack inventory.
-                    WARNING: Larger than 15 columns will start to cut off GUI elements when using auto GUI scale.""")
-            public final IntProperty inventorySizeColumns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
+            @ConfigProperty(name = "cosmetics", comment = "Cosmetic related properties")
+            public final Cosmetics cosmetics = new Cosmetics();
 
-            @ConfigProperty(name = "inventorySizeRows", comment = """
-                    The amount of slot rows in the backpack inventory.
-                    WARNING: Larger than 6 rows will not fit on some resolutions when using auto GUI scale.""")
-            public final IntProperty inventorySizeRows = IntProperty.create(5, 1, BackpackContainerMenu.MAX_ROWS);
+            @ConfigProperty(name = "inventory", comment = "Inventory related properties")
+            public final Inventory inventory = new Inventory();
 
-            @ConfigProperty(name = "disableCustomisation", comment = "If enabled, prevents backpacks from being customised. This will remove the customise button from the backpack inventory")
-            public final BoolProperty disableCustomisation = BoolProperty.create(false);
+            public static class Cosmetics
+            {
+                @ConfigProperty(name = "defaultCosmetic", comment = """
+                    The default cosmetic (model) of the backpack. This should generally be a backpack
+                    that is unlocked by default""")
+                public final StringProperty defaultCosmetic = StringProperty.create("backpacked:standard", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
 
-            @ConfigProperty(name = "unlockAllCosmetics", comment = "Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.")
-            public final BoolProperty unlockAllCosmetics = BoolProperty.create(false);
+                @ConfigProperty(name = "disableCustomisation", comment = """
+                    If enabled, prevents backpacks from being customised. This will remove the
+                    customise button from the backpack inventory""")
+                public final BoolProperty disableCustomisation = BoolProperty.create(false);
 
-            @ConfigProperty(name = "bannedItems", comment = "A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
-            public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
+                @ConfigProperty(name = "unlockAllCosmetics", comment = """
+                    Allows every player to use any backpack cosmetic variant without needing to
+                    complete the challenges. Side note, any progress to a challenge will not be
+                    tracked while enabled.""")
+                public final BoolProperty unlockAllCosmetics = BoolProperty.create(false);
+            }
+
+            public static class Inventory
+            {
+                @ConfigProperty(name = "bannedItems", comment = """
+                    A list of items that are not allowed inside the inventory of a backpack.
+                    Note: It is recommended to ban items that have an inventory as this will create
+                    large NBT data and potentially crash the server!""")
+                public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
+
+                @ConfigProperty(name = "size", comment = "Size related properties")
+                public final Size size = new Size();
+
+                public static class Size
+                {
+                    @ConfigProperty(name = "columns", comment = """
+                        The amount of columns in the backpack inventory.
+                        WARNING: Larger than 15 columns will start to cut off GUI elements when using auto GUI scale.""")
+                    public final IntProperty columns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
+
+                    @ConfigProperty(name = "rows", comment = """
+                        The amount of rows in the backpack inventory.
+                        WARNING: Larger than 6 rows will not fit on some resolutions when using auto GUI scale.""")
+                    public final IntProperty rows = IntProperty.create(5, 1, BackpackContainerMenu.MAX_ROWS);
+                }
+            }
         }
 
         public static class Pickpocketing
         {
-            @ConfigProperty(name = "enabledPickpocketing", comment = "If enabled, allows players to access the backpack of another player by interacting with the visible backpack on their back.")
+            @ConfigProperty(name = "enabledPickpocketing", comment = """
+                If enabled, allows players to access the backpack of another player by interacting
+                with the visible backpack on their back.""")
             public final BoolProperty enabled = BoolProperty.create(true);
 
-            @ConfigProperty(name = "maxReachDistance", comment = "The maximum reach distance of a player to interact with another player's backpack.")
+            @ConfigProperty(name = "maxReachDistance", comment = """
+                The maximum reach distance of a player to interact with another player's backpack.""")
             public final DoubleProperty maxReachDistance = DoubleProperty.create(2.0, 0.0, 4.0);
 
             @ConfigProperty(name = "maxAngleRange", comment = """
-            The maximum angle at which another player's backpack can be accessed.
-            Think of this as how directly behind the backpack the player needs to be
-            in order to pickpocket. A smaller range prevents the player from accessing
-            the backpack from the side.""")
+                The maximum angle at which another player's backpack can be accessed.
+                Think of this as how directly behind the backpack the player needs to be
+                in order to pickpocket. A smaller range prevents the player from accessing
+                the backpack from the side.""")
             public final DoubleProperty maxRangeAngle = DoubleProperty.create(80.0, 0.0, 90.0);
         }
 
@@ -100,7 +133,9 @@ public class Config
             @ConfigProperty(name = "enableBackpack", comment = "If enabled, allows wandering traders to equip backpacks")
             public final BoolProperty enableBackpack = BoolProperty.create(true);
 
-            @ConfigProperty(name = "spawnWithBackpackChance", comment = "The chance a Wandering Trader will spawn with a backpack. The chance is interpreted as one out of x, with x being the number given from this config option.")
+            @ConfigProperty(name = "spawnWithBackpackChance", comment = """
+                The chance a Wandering Trader will spawn with a backpack. The chance is interpreted
+                as one out of x, with x being the number given from this config option.""")
             public final IntProperty spawnWithBackpackChance = IntProperty.create(2, 1, 100);
 
             @ConfigProperty(name = "pickpocketingChallenge")
@@ -108,25 +143,39 @@ public class Config
 
             public static class PickpocketingChallenge
             {
-                @ConfigProperty(name = "maxDetectionDistance", comment = "The maximum distance a Wandering Trader can detect a player. The longer the distance, the more difficult the challenge to pickpocket their backpack.")
+                @ConfigProperty(name = "maxDetectionDistance", comment = """
+                    The maximum distance a Wandering Trader can detect a player. The longer the
+                    distance, the more difficult the challenge to pickpocket their backpack.""")
                 public final DoubleProperty maxDetectionDistance = DoubleProperty.create(10.0, 1.0, 32.0);
 
-                @ConfigProperty(name = "timeToForgetPlayer", comment = "The time (in ticks) a Wandering Trader will wait before it decides to forget about a detected player. The Wandering Trader will wait indefinitely if the detected player is within the maximum detection distance.")
+                @ConfigProperty(name = "timeToForgetPlayer", comment = """
+                    The time (in ticks) a Wandering Trader will wait before it decides to forget
+                    about a detected player. The Wandering Trader will wait indefinitely if the
+                    detected player is within the maximum detection distance.""")
                 public final IntProperty timeToForgetPlayer = IntProperty.create(200, 1, 12000);
 
-                @ConfigProperty(name = "dislikedPlayersCanTrade", comment = "If true, allows players who are disliked by Wandering Traders to continue to trade normally with them. A player is considered disliked if they are caught when trying to pickpocket a Wandering Trader's backpack.")
+                @ConfigProperty(name = "dislikedPlayersCanTrade", comment = """
+                    If true, allows players who are disliked by Wandering Traders to continue to
+                    trade normally with them. A player is considered disliked if they are caught when
+                    trying to pickpocket a Wandering Trader's backpack.""")
                 public final BoolProperty dislikedPlayersCanTrade = BoolProperty.create(false);
 
-                @ConfigProperty(name = "dislikeCooldown", comment = "The amount of time (in ticks) a player has to wait before a Wandering Trader will like them again. If a player gets caught pickpocketing a Wandering Trader, the cooldown will be reset")
+                @ConfigProperty(name = "dislikeCooldown", comment = """
+                    The amount of time (in ticks) a player has to wait before a Wandering Trader will
+                    like them again. If a player gets caught pickpocketing a Wandering Trader, the
+                    cooldown will be reset""")
                 public final IntProperty dislikeCooldown = IntProperty.create(6000, 0, 24000);
 
-                @ConfigProperty(name = "generateEmeraldsOnly", comment = "Instead of generating trades as loot in the Wandering Traders backpacks, only generate emeralds.")
+                @ConfigProperty(name = "generateEmeraldsOnly", comment = """
+                    Instead of generating trades as loot in the Wandering Traders backpacks, only generate emeralds.""")
                 public final BoolProperty generateEmeraldsOnly = BoolProperty.create(false);
 
-                @ConfigProperty(name = "maxLootMultiplier", comment = "The maximum multiplier to apply when generating loot in the Wandering Trader backpack")
+                @ConfigProperty(name = "maxLootMultiplier", comment = """
+                    The maximum multiplier to apply when generating loot in the Wandering Trader backpack.""")
                 public final IntProperty maxLootMultiplier = IntProperty.create(12, 1, 64);
 
-                @ConfigProperty(name = "maxEmeraldStack", comment = "The maximum size of an emerald stack that can generate in the Wandering Trader backpack")
+                @ConfigProperty(name = "maxEmeraldStack", comment = """
+                    The maximum size of an emerald stack that can generate in the Wandering Trader backpack.""")
                 public final IntProperty maxEmeraldStack = IntProperty.create(32, 1, 64);
             }
         }
@@ -227,7 +276,7 @@ public class Config
 
     public static void updateBannedItemsList()
     {
-        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.backpack.bannedItems.get().stream().map(ResourceLocation::tryParse).collect(Collectors.toSet()));
+        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.backpack.inventory.bannedItems.get().stream().map(ResourceLocation::tryParse).collect(Collectors.toSet()));
     }
 
     public static Set<ResourceLocation> getBannedItemsList()
