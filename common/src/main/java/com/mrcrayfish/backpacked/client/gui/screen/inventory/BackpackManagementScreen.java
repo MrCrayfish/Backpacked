@@ -19,8 +19,6 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
-    private boolean opened;
-
     public BackpackManagementScreen(BackpackManagementMenu menu, Inventory inventory, Component title)
     {
         super(menu, inventory, title);
@@ -48,7 +46,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        int slotsWidth = ManagementInventory.SIZE * 18;
+        int slotsWidth = this.menu.getContainer().getContainerSize() * 18;
         int backgroundWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11);
         int backgroundX = (this.imageWidth - backgroundWidth) / 2;
         graphics.drawString(this.font, this.title, backgroundX + this.titleLabelX, this.titleLabelY, 0xFF61503D, false);
@@ -58,7 +56,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
     {
-        int slotsWidth = ManagementInventory.SIZE * 18;
+        int slotsWidth = this.menu.getContainer().getContainerSize() * 18;
         int backgroundWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11); // Padding + Width + Padding
         int backgroundHeight = 19 + 18 + 15; // Header height + Slot Height + Footer Height
         int backgroundX = (this.imageWidth - backgroundWidth) / 2;
@@ -69,7 +67,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         graphics.blitSprite(CHECKERS, this.leftPos + this.titleLabelX + titleWidth + 2, this.topPos + this.titleLabelY + 2, checkersWidth, 4);
 
         Slot backpackSlot = this.getMenu().slots.getFirst();
-        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, ManagementInventory.SIZE * 18, 18);
+        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, this.menu.getContainer().getContainerSize() * 18, 18);
 
         graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 55, 176, 101);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 55 + 18, 162, 54);

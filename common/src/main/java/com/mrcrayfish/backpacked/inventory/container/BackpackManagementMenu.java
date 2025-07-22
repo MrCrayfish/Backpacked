@@ -22,7 +22,7 @@ public class BackpackManagementMenu extends CustomContainerMenu
 
     public BackpackManagementMenu(int windowId, Inventory inventory)
     {
-        this(windowId, inventory, new SimpleContainer(5));
+        this(windowId, inventory, new SimpleContainer(ManagementInventory.getMaxEquipable()));
     }
 
     public BackpackManagementMenu(int windowId, Inventory inventory, Container container)
@@ -30,13 +30,18 @@ public class BackpackManagementMenu extends CustomContainerMenu
         super(ModContainers.MANAGEMENT.get(), windowId);
         this.inventory = inventory;
         this.container = container;
-        for(int i = 0; i < ManagementInventory.SIZE; i++)
+        for(int i = 0; i < container.getContainerSize(); i++)
         {
-            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (ManagementInventory.SIZE * 18)) / 2 + 1, 22, stack -> {
+            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 22, stack -> {
                 return stack.getItem() instanceof BackpackItem;
             }).setIcon(EMPTY_SLOT));
         }
         this.addPlayerInventorySlots(inventory, 8, 74);
+    }
+
+    public Container getContainer()
+    {
+        return this.container;
     }
 
     @Override
@@ -48,14 +53,14 @@ public class BackpackManagementMenu extends CustomContainerMenu
         {
             ItemStack stack = clickedSlot.getItem();
             copy = stack.copy();
-            if(clickedSlotIndex < ManagementInventory.SIZE)
+            if(clickedSlotIndex < this.inventory.getContainerSize())
             {
-                if(!this.moveItemStackTo(stack, ManagementInventory.SIZE, this.slots.size(), false))
+                if(!this.moveItemStackTo(stack, this.inventory.getContainerSize(), this.slots.size(), false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(!this.moveItemStackTo(stack, 0, ManagementInventory.SIZE, false))
+            else if(!this.moveItemStackTo(stack, 0, this.inventory.getContainerSize(), false))
             {
                 return ItemStack.EMPTY;
             }

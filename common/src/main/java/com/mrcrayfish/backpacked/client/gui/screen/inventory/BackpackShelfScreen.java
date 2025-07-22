@@ -59,7 +59,7 @@ public class BackpackShelfScreen extends AbstractContainerScreen<BackpackShelfMe
 
         // Draws a slots for the backpacks
         Slot backpacksFirstSlot = this.getMenu().slots.get(1);
-        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpacksFirstSlot.x - 1, this.topPos + backpacksFirstSlot.y - 1, ManagementInventory.SIZE * 18, 18);
+        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpacksFirstSlot.x - 1, this.topPos + backpacksFirstSlot.y - 1, this.menu.getManagementContainer().getContainerSize() * 18, 18);
 
         // Draws the background for the player inventory
         graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 94, 176, 90);

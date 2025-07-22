@@ -22,7 +22,7 @@ public class BackpackShelfMenu extends CustomContainerMenu
 
     public BackpackShelfMenu(int windowId, Inventory playerInventory)
     {
-        this(windowId, playerInventory, new SimpleContainer(ManagementInventory.SIZE), new SimpleContainer(ShelfBlockEntity.SIZE));
+        this(windowId, playerInventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainer(ShelfBlockEntity.SIZE));
     }
 
     public BackpackShelfMenu(int windowId, Inventory playerInventory, Container managementContainer, Container shelfContainer)
@@ -31,7 +31,7 @@ public class BackpackShelfMenu extends CustomContainerMenu
         this.managementContainer = managementContainer;
         this.shelfContainer = shelfContainer;
 
-        checkContainerSize(managementContainer, ManagementInventory.SIZE);
+        checkContainerSize(managementContainer, ManagementInventory.getMaxEquipable());
         checkContainerSize(shelfContainer, ShelfBlockEntity.SIZE);
 
         this.addSlot(new ConditionalSlot(shelfContainer, 0, (176 - 18) / 2 + 1, 1, stack -> {
@@ -46,6 +46,11 @@ public class BackpackShelfMenu extends CustomContainerMenu
             }).setIcon(EMPTY_SLOT));
         }
         this.addPlayerInventorySlots(playerInventory, 8, 102);
+    }
+
+    public Container getManagementContainer()
+    {
+        return this.managementContainer;
     }
 
     @Override

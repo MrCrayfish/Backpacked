@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.common.CustomDataSerializers;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
-import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.framework.api.sync.Serializers;
 import com.mrcrayfish.framework.api.sync.SyncedClassKey;
 import com.mrcrayfish.framework.api.sync.SyncedDataKey;
@@ -38,7 +37,7 @@ public class ModSyncedDataKeys
 
     public static final SyncedDataKey<Player, NonNullList<ItemStack>> BACKPACKS = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.BACKPACKS)
             .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpacks"))
-            .defaultValueSupplier(() -> NonNullList.withSize(ManagementInventory.SIZE, ItemStack.EMPTY))
+            .defaultValueSupplier(() -> NonNullList.withSize(1, ItemStack.EMPTY))
             .syncMode(SyncedDataKey.SyncMode.NONE)
             .saveToFile()
             .build();

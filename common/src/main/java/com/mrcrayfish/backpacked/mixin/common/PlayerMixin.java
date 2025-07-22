@@ -32,35 +32,52 @@ import java.util.List;
 public class PlayerMixin implements BackpackedInventoryAccess
 {
     @Unique
-    public BackpackInventory[] backpacked$Inventory = new BackpackInventory[ManagementInventory.SIZE];
+    public BackpackInventory[] backpacked$Inventory = null;
+
+    @Unique
+    private BackpackInventory[] backpacked$Inventory()
+    {
+        if(this.backpacked$Inventory == null)
+        {
+            this.backpacked$Inventory = new BackpackInventory[ManagementInventory.getMaxEquipable()];
+        }
+        if(this.backpacked$Inventory.length != ManagementInventory.getMaxEquipable())
+        {
+            BackpackInventory[] old = this.backpacked$Inventory;
+            this.backpacked$Inventory = new BackpackInventory[ManagementInventory.getMaxEquipable()];
+            System.arraycopy(old, 0, this.backpacked$Inventory, 0, Math.min(old.length, this.backpacked$Inventory.length));
+        }
+        return this.backpacked$Inventory;
+    }
 
     @Override
     public int backpacked$GetBackpackInventoryCount()
     {
-        return this.backpacked$Inventory.length;
+        return this.backpacked$Inventory().length;
     }
 
     @Override
     @Nullable
     public BackpackInventory backpacked$GetBackpackInventory(int index)
     {
-        if(index < 0 || index >= ManagementInventory.SIZE)
+        BackpackInventory[] inventories = this.backpacked$Inventory();
+        if(index < 0 || index >= inventories.length)
             return null;
 
         Player player = (Player) (Object) this;
         ItemStack stack = BackpackHelper.getBackpackStack(player, index);
         if(stack.isEmpty())
         {
-            this.backpacked$Inventory[index] = null;
+            inventories[index] = null;
             return null;
         }
 
         BackpackItem item = (BackpackItem) stack.getItem();
-        BackpackInventory inventory = this.backpacked$Inventory[index];
+        BackpackInventory inventory = inventories[index];
         if(inventory == null || !inventory.getBackpackStack().equals(stack) || inventory.getContainerSize() != item.getRowCount() * item.getColumnCount())
         {
             inventory = new BackpackInventory(index, item.getColumnCount(), item.getRowCount(), player, stack);
-            this.backpacked$Inventory[index] = inventory;
+            inventories[index] = inventory;
         }
         return inventory;
     }
@@ -68,7 +85,8 @@ public class PlayerMixin implements BackpackedInventoryAccess
     @Inject(method = "tick", at = @At(value = "HEAD"))
     public void backpacked$TickHead(CallbackInfo ci)
     {
-        for(BackpackInventory inventory : this.backpacked$Inventory)
+        BackpackInventory[] inventories = this.backpacked$Inventory();
+        for(BackpackInventory inventory : inventories)
         {
             if(inventory != null)
             {
@@ -80,7 +98,8 @@ public class PlayerMixin implements BackpackedInventoryAccess
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
     public void backpacked$AddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
     {
-        for(BackpackInventory inventory : this.backpacked$Inventory)
+        BackpackInventory[] inventories = this.backpacked$Inventory();
+        for(BackpackInventory inventory : inventories)
         {
             if(inventory != null)
             {

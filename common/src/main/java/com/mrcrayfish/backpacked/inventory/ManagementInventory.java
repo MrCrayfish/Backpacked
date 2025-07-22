@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -8,19 +9,19 @@ import net.minecraft.world.item.ItemStack;
 
 public class ManagementInventory implements Container
 {
-    public static final int SIZE = 5;
-
     private final ServerPlayer player;
+    private final int size;
 
     public ManagementInventory(ServerPlayer player)
     {
         this.player = player;
+        this.size = getMaxEquipable();
     }
 
     @Override
     public int getContainerSize()
     {
-        return SIZE;
+        return this.size;
     }
 
     @Override
@@ -63,15 +64,20 @@ public class ManagementInventory implements Container
     @Override
     public boolean stillValid(Player player)
     {
-        return this.player.isAlive();
+        return this.player.isAlive() && this.size == getMaxEquipable();
     }
 
     @Override
     public void clearContent()
     {
-        for(int i = 0; i < SIZE; i++)
+        for(int i = 0; i < this.size; i++)
         {
             BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, i);
         }
+    }
+
+    public static int getMaxEquipable()
+    {
+        return Config.SERVER.backpack.maxEquipable.get();
     }
 }

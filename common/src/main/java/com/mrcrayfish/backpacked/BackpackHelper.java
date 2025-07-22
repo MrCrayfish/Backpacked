@@ -31,7 +31,7 @@ public class BackpackHelper
         if(getBackpackStack(player, selected).isEmpty())
         {
             int radius = 1;
-            while(radius < ManagementInventory.SIZE)
+            while(radius < ManagementInventory.getMaxEquipable())
             {
                 ItemStack stack = getBackpackStack(player, selected + radius);
                 if(!stack.isEmpty())
@@ -56,7 +56,7 @@ public class BackpackHelper
         int selected = getSelectedBackpackIndex(player);
         direction = Mth.sign(direction);
         int newSelected = selected + direction;
-        while(newSelected >= 0 && newSelected < ManagementInventory.SIZE)
+        while(newSelected >= 0 && newSelected < ManagementInventory.getMaxEquipable())
         {
             ItemStack stack = getBackpackStack(player, newSelected);
             if(!stack.isEmpty())
@@ -71,7 +71,7 @@ public class BackpackHelper
 
     public static ItemStack getBackpackStack(Player player, int index)
     {
-        if(index < 0 || index >= ManagementInventory.SIZE)
+        if(index < 0 || index >= ManagementInventory.getMaxEquipable())
             return ItemStack.EMPTY;
 
         NonNullList<ItemStack> backpacks = getBackpacks(player);
@@ -89,20 +89,9 @@ public class BackpackHelper
         return stack;
     }
 
-    public static boolean setBackpackStack(Player player, ItemStack stack)
-    {
-        if(stack.is(ModItems.BACKPACK.get()))
-        {
-            // Keep in mind that this will not trigger a sync
-            getBackpacks(player).set(0, stack);
-            return true;
-        }
-        return false;
-    }
-
     public static boolean setBackpackStack(Player player, ItemStack stack, int index)
     {
-        if(index < 0 || index >= ManagementInventory.SIZE)
+        if(index < 0 || index >= ManagementInventory.getMaxEquipable())
             return false;
 
         if(stack.is(ModItems.BACKPACK.get()))
@@ -117,9 +106,9 @@ public class BackpackHelper
     public static NonNullList<ItemStack> getBackpacks(Player player)
     {
         NonNullList<ItemStack> backpacks = ModSyncedDataKeys.BACKPACKS.getValue(player);
-        if(backpacks.size() != ManagementInventory.SIZE)
+        if(backpacks.size() != ManagementInventory.getMaxEquipable())
         {
-            NonNullList<ItemStack> newBackpacks = NonNullList.withSize(ManagementInventory.SIZE, ItemStack.EMPTY);
+            NonNullList<ItemStack> newBackpacks = NonNullList.withSize(ManagementInventory.getMaxEquipable(), ItemStack.EMPTY);
             InventoryHelper.mergeItemsOrSpawnIntoLevel(backpacks, newBackpacks, player.level(), player.position());
             ModSyncedDataKeys.BACKPACKS.setValue(player, newBackpacks);
             backpacks = newBackpacks;
@@ -162,7 +151,7 @@ public class BackpackHelper
     public static NonNullList<ItemStack> removeAllBackpacks(Player player)
     {
         NonNullList<ItemStack> backpacks = getBackpacks(player);
-        ModSyncedDataKeys.BACKPACKS.setValue(player, NonNullList.withSize(ManagementInventory.SIZE, ItemStack.EMPTY));
+        ModSyncedDataKeys.BACKPACKS.setValue(player, NonNullList.withSize(ManagementInventory.getMaxEquipable(), ItemStack.EMPTY));
         return backpacks;
     }
 }

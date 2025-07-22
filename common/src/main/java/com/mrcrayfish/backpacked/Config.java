@@ -58,6 +58,10 @@ public class Config
                 If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.""")
             public final BoolProperty keepOnDeath = BoolProperty.create(false);
 
+            @ConfigProperty(name = "maxEquipable", comment = """
+                The maximum amount of backpacks that can be equipped by a player""")
+            public final IntProperty maxEquipable = IntProperty.create(5, 1, 9);
+
             @ConfigProperty(name = "cosmetics", comment = "Cosmetic related properties")
             public final Cosmetics cosmetics = new Cosmetics();
 
