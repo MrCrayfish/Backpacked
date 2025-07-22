@@ -53,14 +53,14 @@ public class BackpackManagementMenu extends CustomContainerMenu
         {
             ItemStack stack = clickedSlot.getItem();
             copy = stack.copy();
-            if(clickedSlotIndex < this.inventory.getContainerSize())
+            if(clickedSlotIndex < this.container.getContainerSize())
             {
-                if(!this.moveItemStackTo(stack, this.inventory.getContainerSize(), this.slots.size(), false))
+                if(!this.moveItemStackTo(stack, this.container.getContainerSize(), this.slots.size(), false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(!this.moveItemStackTo(stack, 0, this.inventory.getContainerSize(), false))
+            else if(!this.moveItemStackTo(stack, 0, this.container.getContainerSize(), false))
             {
                 return ItemStack.EMPTY;
             }
