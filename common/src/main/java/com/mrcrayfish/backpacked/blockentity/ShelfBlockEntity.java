@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.blockentity;
 
 import com.mrcrayfish.backpacked.block.ShelfBlock;
+import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -46,7 +47,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public static final int SIZE = 1;
 
     private final SimpleContainer container = new ShelfContainer(this);
-    private LockedContainer inventory = null;
+    private BackpackShelfContainer inventory = null;
 
     public ShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
     {
@@ -163,7 +164,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     private void resizeInventory()
     {
         int backpackSize = this.getBackpackSize();
-        if(this.inventory != null && this.inventory.getContainerSize() != backpackSize)
+        if(this.inventory != null && this.inventory.getState().isChanged())
         {
             Container oldInventory = this.inventory;
             this.inventory = new BackpackShelfContainer(this, backpackSize);
@@ -276,11 +277,13 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public static class BackpackShelfContainer extends LockedContainer
     {
         private final ShelfBlockEntity entity;
+        private final BackpackState state;
 
         public BackpackShelfContainer(ShelfBlockEntity entity, int size)
         {
             super(size);
             this.entity = entity;
+            this.state = BackpackState.create(this.entity.getBackpack());
         }
 
         @Override
@@ -316,6 +319,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         public ShelfBlockEntity getBlockEntity()
         {
             return this.entity;
+        }
+
+        public BackpackState getState()
+        {
+            return this.state;
         }
     }
 

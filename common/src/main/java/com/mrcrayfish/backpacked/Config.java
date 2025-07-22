@@ -114,12 +114,18 @@ public class Config
                 {
                     @ConfigProperty(name = "columns", comment = """
                         The amount of columns in the backpack inventory.
-                        WARNING: Larger than 15 columns will start to cut off GUI elements when using auto GUI scale.""")
+                        WARNING: Larger than 15 columns will start to cut off GUI elements when using auto GUI
+                        scale. If you make the size of the backpack smaller, items in the backpack that no
+                        longer fit will spawn into the world. Take care when changing this property on a
+                        running game/server since the changes will be automatically reloaded upon saving this file.""")
                     public final IntProperty columns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
 
                     @ConfigProperty(name = "rows", comment = """
                         The amount of rows in the backpack inventory.
-                        WARNING: Larger than 6 rows will not fit on some resolutions when using auto GUI scale.""")
+                        WARNING: Larger than 6 rows will not fit on some resolutions when using auto GUI scale.
+                        If you make the size of the backpack smaller, items in the backpack that no
+                        longer fit will spawn into the world. Take care when changing this property on a
+                        running game/server since the changes will be automatically reloaded upon saving this file.""")
                     public final IntProperty rows = IntProperty.create(5, 1, BackpackContainerMenu.MAX_ROWS);
                 }
             }

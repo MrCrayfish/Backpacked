@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
@@ -18,22 +19,18 @@ import net.minecraft.world.item.component.ItemContainerContents;
 public class BackpackInventory extends SimpleContainer
 {
     private final int index;
-    private final int columns;
-    private final int rows;
     private final Player player;
     private final ItemStack stack;
-    private final boolean slotsUnlocked;
+    private final BackpackState state;
     private boolean save;
 
     public BackpackInventory(int index, int columns, int rows, Player player, ItemStack stack)
     {
         super(rows * columns);
         this.index = index;
-        this.columns = columns;
-        this.rows = rows;
         this.player = player;
         this.stack = stack;
-        this.slotsUnlocked = Config.SERVER.backpack.inventory.slots.unlockAll.get();
+        this.state = BackpackState.create(stack);
         this.loadBackpackContents(player);
     }
 
@@ -69,16 +66,17 @@ public class BackpackInventory extends SimpleContainer
         return this.stack;
     }
 
+    public BackpackState getState()
+    {
+        return this.state;
+    }
+
     @Override
     public boolean stillValid(Player player)
     {
         if(!this.player.isAlive())
             return false;
-        if(this.columns != Config.SERVER.backpack.inventory.size.columns.get())
-            return false;
-        if(this.rows != Config.SERVER.backpack.inventory.size.rows.get())
-            return false;
-        if(this.slotsUnlocked != Config.SERVER.backpack.inventory.slots.unlockAll.get())
+        if(this.getState().isChanged())
             return false;
         if(!BackpackHelper.getBackpackStack(this.player, this.index).equals(this.stack))
             return false;

@@ -74,7 +74,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
 
         BackpackItem item = (BackpackItem) stack.getItem();
         BackpackInventory inventory = inventories[index];
-        if(inventory == null || !inventory.getBackpackStack().equals(stack) || inventory.getContainerSize() != item.getRowCount() * item.getColumnCount())
+        if(inventory == null || !inventory.getBackpackStack().equals(stack) || inventory.getState().isChanged())
         {
             inventory = new BackpackInventory(index, item.getColumnCount(), item.getRowCount(), player, stack);
             inventories[index] = inventory;

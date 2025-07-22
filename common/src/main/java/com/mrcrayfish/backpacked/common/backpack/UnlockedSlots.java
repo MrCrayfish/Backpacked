@@ -73,7 +73,7 @@ public final class UnlockedSlots
      */
     public boolean isUnlocked(int slot)
     {
-        return this.maxSlots == -1 || this.slots.contains(slot);
+        return this.maxSlots == -1 || slot >= 0 && slot < this.maxSlots && this.slots.contains(slot);
     }
 
     /**
