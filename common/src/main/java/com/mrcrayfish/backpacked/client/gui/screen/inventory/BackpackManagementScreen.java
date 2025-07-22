@@ -63,11 +63,19 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         graphics.blitSprite(BACKPACK_BACKGROUND, this.leftPos + backgroundX, this.topPos, backgroundWidth, backgroundHeight);
 
         int titleWidth = this.font.width(this.title);
-        int checkersWidth = backgroundWidth - (this.titleLabelX + titleWidth + this.titleLabelX + 2);
-        graphics.blitSprite(CHECKERS, this.leftPos + this.titleLabelX + titleWidth + 2, this.topPos + this.titleLabelY + 2, checkersWidth, 4);
+        int titleCheckersWidth = backgroundWidth - (this.titleLabelX + titleWidth + this.titleLabelX + 2);
+        graphics.blitSprite(CHECKERS, this.leftPos + this.titleLabelX + titleWidth + 2, this.topPos + this.titleLabelY + 2, titleCheckersWidth, 4);
 
         Slot backpackSlot = this.getMenu().slots.getFirst();
-        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, this.menu.getContainer().getContainerSize() * 18, 18);
+        graphics.blitSprite(BACKPACK_SLOT, this.leftPos + backpackSlot.x - 1, this.topPos + backpackSlot.y - 1, slotsWidth, 18);
+
+        int checkersX = this.leftPos + 10;
+        int checkersWidth = (backgroundWidth - 11 - 11 - slotsWidth) / 2 - 1;
+        if(checkersWidth > 0)
+        {
+            graphics.blitSprite(CHECKERS, checkersX, this.topPos + backpackSlot.y - 1, checkersWidth, 18);
+            graphics.blitSprite(CHECKERS, checkersX + checkersWidth + slotsWidth + 4, this.topPos + backpackSlot.y - 1, checkersWidth, 18);
+        }
 
         graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, this.topPos + 55, 176, 101);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 55 + 18, 162, 54);
