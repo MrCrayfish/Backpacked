@@ -32,10 +32,7 @@ public class BackpackInventory extends SimpleContainer
     {
         ItemContainerContents contents = this.stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         contents.copyInto(this.getItems()); // TODO reimplement dropping items if inventory is resized
-        /*if(compound.contains("Items", Tag.TAG_LIST))
-        {
-            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this, player.level(), player.position());
-        }*/
+        // TODO drop items in locked slots
     }
 
     public ItemStack getBackpackStack()

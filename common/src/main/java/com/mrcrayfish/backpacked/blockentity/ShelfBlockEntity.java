@@ -229,7 +229,12 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     @Nullable
     private UnlockedSlots getUnlockedSlots()
     {
-        return this.container.getItem(0).get(ModDataComponents.UNLOCKED_SLOTS.get());
+        ItemStack stack = this.container.getItem(0);
+        if(stack.getItem() instanceof BackpackItem item)
+        {
+            return item.getUnlockedSlots(stack);
+        }
+        return null;
     }
 
     //TODO fabric version?

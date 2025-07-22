@@ -106,7 +106,7 @@ public final class UnlockedSlots
      */
     public UnlockedSlots setMaxSlots(int maxSlots)
     {
-        if(this.maxSlots == maxSlots)
+        if(this.maxSlots == -1 || this.maxSlots == maxSlots)
             return this;
         return new UnlockedSlots(this.slots, maxSlots);
     }

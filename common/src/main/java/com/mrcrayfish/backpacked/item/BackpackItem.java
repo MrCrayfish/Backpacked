@@ -117,6 +117,9 @@ public class BackpackItem extends Item
         if(!stack.is(this))
             return null;
 
+        if(Config.SERVER.backpack.inventory.unlockAllSlots.get())
+            return UnlockedSlots.ALL;
+
         // If missing, create the component
         UnlockedSlots slots = stack.get(ModDataComponents.UNLOCKED_SLOTS.get());
         if(slots == null)
