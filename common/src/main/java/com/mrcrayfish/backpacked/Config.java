@@ -38,9 +38,6 @@ public class Config
     {
         @ConfigProperty(name = "hideConfigButton", comment = "If enabled, hides the config button from the backpack screen")
         public final BoolProperty hideConfigButton = BoolProperty.create(false);
-
-        @ConfigProperty(name = "buttonAlignment", comment = "The alignment of the buttons in the backpack inventory screen")
-        public final EnumProperty<ButtonAlignment> buttonAlignment = EnumProperty.create(ButtonAlignment.LEFT);
     }
 
     public static class Server
