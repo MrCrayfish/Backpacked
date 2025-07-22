@@ -43,7 +43,7 @@ public class InventoryHelper
         }
     }
 
-    private static void spawnStack(ItemStack stack, Level level, Vec3 pos)
+    public static void spawnStack(ItemStack stack, Level level, Vec3 pos)
     {
         if(!level.isClientSide())
         {

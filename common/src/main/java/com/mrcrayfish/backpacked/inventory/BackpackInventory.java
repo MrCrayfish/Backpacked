@@ -2,6 +2,9 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.SimpleContainer;
@@ -38,7 +41,27 @@ public class BackpackInventory extends SimpleContainer
     {
         ItemContainerContents contents = this.stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         contents.copyInto(this.getItems()); // TODO reimplement dropping items if inventory is resized
-        // TODO drop items in locked slots
+        this.spawnItemsFromLockedSlots();
+    }
+
+    private void spawnItemsFromLockedSlots()
+    {
+        if(!(this.stack.getItem() instanceof BackpackItem item))
+            return;
+
+        UnlockedSlots slots = item.getUnlockedSlots(this.stack);
+        if(slots == null)
+            return;
+
+        for(int i = 0; i < this.getContainerSize(); i++)
+        {
+            ItemStack stack = this.getItem(i);
+            if(!stack.isEmpty() && !slots.isUnlocked(i))
+            {
+                InventoryHelper.spawnStack(stack, player.level(), player.position());
+                this.setChanged();
+            }
+        }
     }
 
     public ItemStack getBackpackStack()
