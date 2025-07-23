@@ -25,7 +25,7 @@ public class MiniButton extends Button
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         graphics.blitSprite(this.texture, this.getX(), this.getY(), this.width, this.height);
-        if(this.isHovered)
+        if(this.isHovered && this.active)
         {
             graphics.fillGradient(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, -2130706433, -2130706433);
         }
