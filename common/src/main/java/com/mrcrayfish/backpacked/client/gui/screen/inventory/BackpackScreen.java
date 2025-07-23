@@ -119,17 +119,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
 
         if(this.owner)
         {
-            boolean leftVisible = this.navigateLeftBtn != null && this.navigateLeftBtn.visible;
-            this.navigateLeftBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 3, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+            boolean leftVisible = this.navigateLeftBtn != null && this.navigateLeftBtn.active;
+            this.navigateLeftBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 2, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
             }));
-            this.navigateLeftBtn.visible = leftVisible;
+            this.navigateLeftBtn.active = leftVisible;
 
-            boolean rightVisible = this.navigateRightBtn != null && this.navigateRightBtn.visible;
+            boolean rightVisible = this.navigateRightBtn != null && this.navigateRightBtn.active;
             this.navigateRightBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
             }));
-            this.navigateRightBtn.visible = rightVisible;
+            this.navigateRightBtn.active = rightVisible;
 
             if(this.navigateTooltip != null)
             {
@@ -230,8 +230,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             );
             this.navigateLeftBtn.setTooltip(this.navigateTooltip);
             this.navigateRightBtn.setTooltip(this.navigateTooltip);
-            this.navigateLeftBtn.visible = backpackIndex > 1;
-            this.navigateRightBtn.visible = backpackIndex < totalBackpacks;
+            this.navigateLeftBtn.active = backpackIndex > 1;
+            this.navigateRightBtn.active = backpackIndex < totalBackpacks;
         }
     }
 
