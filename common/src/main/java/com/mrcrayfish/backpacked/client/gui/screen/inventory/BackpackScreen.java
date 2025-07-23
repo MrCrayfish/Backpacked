@@ -113,13 +113,15 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         }
         this.buttonCount = buttons.size();
 
-        this.addRenderableWidget(new MiniButton(this.leftPos + 3, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
-            Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
-        }));
-        this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
-            Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
-        }));
-
+        if(this.owner)
+        {
+            this.addRenderableWidget(new MiniButton(this.leftPos + 3, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+                Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
+            }));
+            this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
+                Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
+            }));
+        }
     }
 
     private List<MiniButton> gatherButtons()

@@ -192,7 +192,7 @@ public class ServerPlayHandler
             return;
 
         // Player must be in a backpack container
-        if(!(player.containerMenu instanceof BackpackContainerMenu menu))
+        if(!(player.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
             return;
 
         // Only works if in an equipped backpack, not a shelf
