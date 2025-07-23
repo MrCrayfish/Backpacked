@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui;
 
 import com.mojang.blaze3d.platform.Window;
+import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -38,8 +39,7 @@ public class MouseRestorer
     {
         if(captured && Util.getMillis() - captureTime < 100)
         {
-            Window window = Minecraft.getInstance().getWindow();
-            GLFW.glfwSetCursorPos(window.getWindow(), capturedX, capturedY);
+            ClientServices.CLIENT.setMousePos(capturedX, capturedY);
         }
         captured = false;
     }

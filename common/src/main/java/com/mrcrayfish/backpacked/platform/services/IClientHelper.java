@@ -20,4 +20,6 @@ public interface IClientHelper
     void invokeRotationSetup(PlayerRenderer renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick);
 
     void drawTooltip(GuiGraphics graphics, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner);
+
+    void setMousePos(double x, double y);
 }
