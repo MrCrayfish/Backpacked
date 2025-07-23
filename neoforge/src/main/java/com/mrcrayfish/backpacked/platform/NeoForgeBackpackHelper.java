@@ -35,11 +35,11 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, ContainerData data, int cols, int rows, boolean owner, UnlockedSlots slots, Component title)
+    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockedSlots slots, int index, int total, Component title)
     {
         FrameworkAPI.openMenuWithData(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
-            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, data, cols, rows, owner, slots);
-        }, title), new BackpackContainerData(cols, rows, owner, slots));
+            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner, slots, index, total);
+        }, title), new BackpackContainerData(cols, rows, owner, slots, index, total));
     }
 
     @Override

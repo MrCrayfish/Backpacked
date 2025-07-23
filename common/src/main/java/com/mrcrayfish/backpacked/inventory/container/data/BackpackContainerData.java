@@ -9,13 +9,15 @@ import net.minecraft.network.codec.StreamCodec;
 /**
  * Author: MrCrayfish
  */
-public record BackpackContainerData(int columns, int rows, boolean owner, UnlockedSlots slots) implements IMenuData<BackpackContainerData>
+public record BackpackContainerData(int columns, int rows, boolean owner, UnlockedSlots slots, int index, int total) implements IMenuData<BackpackContainerData>
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, BackpackContainerData> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.INT, BackpackContainerData::columns,
         ByteBufCodecs.INT, BackpackContainerData::rows,
         ByteBufCodecs.BOOL, BackpackContainerData::owner,
         UnlockedSlots.STREAM_CODEC, BackpackContainerData::slots,
+        ByteBufCodecs.INT, BackpackContainerData::index,
+        ByteBufCodecs.INT, BackpackContainerData::total,
         BackpackContainerData::new
     );
 

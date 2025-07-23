@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked;
 
+import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -159,21 +162,18 @@ public class BackpackHelper
         return backpacks;
     }
 
-    public static ContainerData createContainerData(Player player)
+    public static Pair<Integer, Integer> createIndexData(Player player)
     {
-        List<Integer> indexes = new ArrayList<>();
+        IntList list = new IntArrayList();
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         for(int i = 0; i < backpacks.size(); i++)
         {
             if(!backpacks.get(i).isEmpty())
             {
-                indexes.add(i);
+                list.add(i);
             }
         }
         int selected = getSelectedBackpackIndex(player);
-        SimpleContainerData data = new SimpleContainerData(2);
-        data.set(0, indexes.indexOf(selected) + 1);
-        data.set(1, indexes.size());
-        return data;
+        return Pair.of(list.indexOf(selected), list.size());
     }
 }

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.item;
 
+import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
@@ -94,8 +95,8 @@ public class BackpackItem extends Item
             int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
             UnlockedSlots slots = item.getUnlockedSlots(backpack);
-            ContainerData data = BackpackHelper.createContainerData(ownerPlayer);
-            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, data, cols, rows, owner, slots, title);
+            Pair<Integer, Integer> data = BackpackHelper.createIndexData(ownerPlayer);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), title);
             return true;
         }
         openBackpackManagement(ownerPlayer);

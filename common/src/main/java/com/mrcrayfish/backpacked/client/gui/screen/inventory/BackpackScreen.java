@@ -74,10 +74,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private LockedSlot clickedLockedSlot;
     private int heldUnlockTime;
 
-    private MiniButton navigateLeftBtn;
-    private MiniButton navigateRightBtn;
-    private @Nullable Tooltip navigateTooltip;
-
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
         super(menu, playerInventory, titleIn);
@@ -119,23 +115,25 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
 
         if(this.owner)
         {
-            boolean leftVisible = this.navigateLeftBtn != null && this.navigateLeftBtn.active;
-            this.navigateLeftBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 2, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+            int backpackIndex = this.menu.getBackpackIndex();
+            int totalBackpacks = this.menu.getTotalBackpacks();
+            Tooltip navigateTooltip = Tooltip.create(
+                    Component.literal(Integer.toString(backpackIndex + 1))
+                            .append(Component.literal(" / ").withStyle(ChatFormatting.BOLD, ChatFormatting.GRAY))
+                            .append(Integer.toString(totalBackpacks))
+            );
+
+            MiniButton navPrevious = this.addRenderableWidget(new MiniButton(this.leftPos + 2, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
             }));
-            this.navigateLeftBtn.active = leftVisible;
+            navPrevious.setTooltip(navigateTooltip);
+            navPrevious.active = backpackIndex > 0;
 
-            boolean rightVisible = this.navigateRightBtn != null && this.navigateRightBtn.active;
-            this.navigateRightBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
+            MiniButton navNext = this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
             }));
-            this.navigateRightBtn.active = rightVisible;
-
-            if(this.navigateTooltip != null)
-            {
-                this.navigateLeftBtn.setTooltip(this.navigateTooltip);
-                this.navigateRightBtn.setTooltip(this.navigateTooltip);
-            }
+            navNext.setTooltip(navigateTooltip);
+            navNext.active = backpackIndex < totalBackpacks - 1;
         }
     }
 
@@ -197,8 +195,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        this.setupNavigation();
-
         this.hoveredLockedSlot = null;
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
@@ -214,24 +210,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
                     : Component.translatable("backpacked.gui.not_enough_exp").withStyle(ChatFormatting.RED);
             components.add(new ClientTextTooltip(unlockHint.getVisualOrderText()));
             ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
-        }
-    }
-
-    private void setupNavigation()
-    {
-        if(this.navigateTooltip == null)
-        {
-            int backpackIndex = this.menu.getBackpackIndex(); // Starts at 1, not 0
-            int totalBackpacks = this.menu.getTotalBackpacks();
-            this.navigateTooltip = Tooltip.create(
-                    Component.literal(Integer.toString(backpackIndex))
-                            .append(Component.literal(" / ").withStyle(ChatFormatting.BOLD, ChatFormatting.GRAY))
-                            .append(Integer.toString(totalBackpacks))
-            );
-            this.navigateLeftBtn.setTooltip(this.navigateTooltip);
-            this.navigateRightBtn.setTooltip(this.navigateTooltip);
-            this.navigateLeftBtn.active = backpackIndex > 1;
-            this.navigateRightBtn.active = backpackIndex < totalBackpacks;
         }
     }
 

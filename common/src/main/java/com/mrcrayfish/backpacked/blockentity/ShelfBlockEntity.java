@@ -106,7 +106,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 UnlockedSlots slots = backpackItem.getUnlockedSlots(backpack);
                 if(slots != null)
                 {
-                    Services.BACKPACK.openBackpackScreen(player, inventory, new SimpleContainerData(2), cols, rows, false, slots, title);
+                    Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, 0, 1, title);
                 }
             });
         });

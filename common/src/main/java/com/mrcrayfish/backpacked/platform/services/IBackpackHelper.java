@@ -21,7 +21,7 @@ public interface IBackpackHelper
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);
 
-    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, ContainerData data, int cols, int rows, boolean owner, UnlockedSlots slots, Component title);
+    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockedSlots slots, int index, int total, Component title);
 
     BackpackItem createBackpackItem(Item.Properties properties);
 }
