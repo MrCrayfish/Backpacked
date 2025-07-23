@@ -53,7 +53,7 @@ public class ServerPlayHandler
             if(backpack == null)
                 return;
 
-            if(!backpack.isUnlocked(player) && !Config.SERVER.backpack.cosmetics.unlockAllCosmetics.get())
+            if(!backpack.isUnlocked(player) && !Config.BACKPACK.cosmetics.unlockAllCosmetics.get())
                 return;
         }
 
@@ -79,7 +79,7 @@ public class ServerPlayHandler
         if(!(entity instanceof LivingEntity otherEntity))
             return;
 
-        if(otherEntity instanceof ServerPlayer && !Config.SERVER.pickpocketing.enabled.get())
+        if(otherEntity instanceof ServerPlayer && !Config.PICKPOCKETING.enabled.get())
             return;
 
         if(!PickpocketUtil.canSeeBackpack(otherEntity, player))
@@ -106,7 +106,7 @@ public class ServerPlayHandler
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        if(Config.SERVER.backpack.cosmetics.disableCustomisation.get())
+        if(Config.BACKPACK.cosmetics.disableCustomisation.get())
             return;
 
         if(BackpackHelper.getSelectedBackpackStack(player).isEmpty())

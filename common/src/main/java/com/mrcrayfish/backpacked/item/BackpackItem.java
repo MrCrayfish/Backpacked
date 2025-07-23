@@ -60,12 +60,12 @@ public class BackpackItem extends Item
 
     public int getColumnCount()
     {
-        return Config.SERVER.backpack.inventory.size.columns.get();
+        return Config.BACKPACK.inventory.size.columns.get();
     }
 
     public int getRowCount()
     {
-        return Config.SERVER.backpack.inventory.size.rows.get();
+        return Config.BACKPACK.inventory.size.rows.get();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class BackpackItem extends Item
         if(!stack.is(this))
             return null;
 
-        if(Config.SERVER.backpack.inventory.slots.unlockAll.get())
+        if(Config.BACKPACK.inventory.slots.unlockAllSlots.get())
             return UnlockedSlots.ALL;
 
         // If missing, create the component

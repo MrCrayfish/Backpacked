@@ -65,7 +65,7 @@ public class FabricPlayerMixin
         if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
             return;
 
-        if(Config.SERVER.backpack.keepOnDeath.get())
+        if(Config.BACKPACK.keepOnDeath.get())
             return;
 
         BackpackHelper.removeAllBackpacks(player).forEach(stack -> {

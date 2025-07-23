@@ -40,12 +40,12 @@ public final class BackpackManager
     {
         // Update the default backpack on load/reload of config
         FrameworkConfigEvents.LOAD.register(object -> {
-            if(object == Config.SERVER) {
+            if(object == Config.BACKPACK) {
                 updateDefaultCosmetic();
             }
         });
         FrameworkConfigEvents.RELOAD.register(object -> {
-            if(object == Config.SERVER) {
+            if(object == Config.BACKPACK) {
                 updateDefaultCosmetic();
             }
         });
@@ -71,7 +71,7 @@ public final class BackpackManager
     {
         // Prevents unlocking backpacks when all backpacks are forcefully unlocked.
         // This helps in the case a server owner wants to revert the change.
-        if(Config.SERVER.backpack.cosmetics.unlockAllCosmetics.get())
+        if(Config.BACKPACK.cosmetics.unlockAllCosmetics.get())
             return;
 
         if(!this.loadedBackpacks.containsKey(id))
@@ -91,7 +91,7 @@ public final class BackpackManager
 
     private static void updateDefaultCosmetic()
     {
-        defaultCosmetic = ResourceLocation.tryParse(Config.SERVER.backpack.cosmetics.defaultCosmetic.get());
+        defaultCosmetic = ResourceLocation.tryParse(Config.BACKPACK.cosmetics.defaultCosmetic.get());
     }
 
     @Nullable

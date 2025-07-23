@@ -80,7 +80,7 @@ public class BackpackInventory extends SimpleContainer
             return false;
         if(!BackpackHelper.getBackpackStack(this.player, this.index).equals(this.stack))
             return false;
-        return this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5);
+        return this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.PICKPOCKETING.maxReachDistance.get() + 0.5);
     }
 
     @Override

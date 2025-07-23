@@ -202,7 +202,7 @@ public class YoureInGraveDangerSupport
 
         private DropRule getDropRule()
         {
-            boolean keepOnDeath = Config.SERVER.backpack.keepOnDeath.get();
+            boolean keepOnDeath = Config.BACKPACK.keepOnDeath.get();
             return keepOnDeath ? DropRule.KEEP : DropRule.PUT_IN_GRAVE;
         }
     }

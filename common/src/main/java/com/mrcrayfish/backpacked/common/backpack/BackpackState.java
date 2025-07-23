@@ -12,7 +12,7 @@ public record BackpackState(int cols, int rows, boolean slotsUnlocked)
         {
             int cols = item.getColumnCount();
             int rows = item.getRowCount();
-            boolean slotsUnlocked = Config.SERVER.backpack.inventory.slots.unlockAll.get();
+            boolean slotsUnlocked = Config.BACKPACK.inventory.slots.unlockAllSlots.get();
             return new BackpackState(cols, rows, slotsUnlocked);
         }
         return new BackpackState(0, 0, true);
@@ -20,11 +20,11 @@ public record BackpackState(int cols, int rows, boolean slotsUnlocked)
 
     public boolean isChanged()
     {
-        if(this.cols != Config.SERVER.backpack.inventory.size.columns.get())
+        if(this.cols != Config.BACKPACK.inventory.size.columns.get())
             return true;
-        if(this.rows != Config.SERVER.backpack.inventory.size.rows.get())
+        if(this.rows != Config.BACKPACK.inventory.size.rows.get())
             return true;
-        if(this.slotsUnlocked != Config.SERVER.backpack.inventory.slots.unlockAll.get())
+        if(this.slotsUnlocked != Config.BACKPACK.inventory.slots.unlockAllSlots.get())
             return true;
         return false;
     }

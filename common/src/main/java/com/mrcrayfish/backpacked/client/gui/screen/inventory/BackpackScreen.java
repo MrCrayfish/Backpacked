@@ -132,7 +132,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
         buttons.add(manageButton);
 
-        boolean canCustomise = this.owner && !Config.SERVER.backpack.cosmetics.disableCustomisation.get();
+        boolean canCustomise = this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get();
         if(canCustomise)
         {
             MiniButton customiseButton = new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
