@@ -13,6 +13,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,6 +28,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
     public static final int MAX_ROWS = 11;
 
     private final Container backpackInventory;
+    private final ContainerData data;
     private final int cols;
     private final int rows;
     private final boolean owner;
@@ -33,19 +36,22 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner(), data.slots());
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), new SimpleContainerData(2), data.columns(), data.rows(), data.owner(), data.slots());
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockedSlots slots)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, ContainerData data, int cols, int rows, boolean owner, UnlockedSlots slots)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackContainer;
+        this.data = data;
         this.cols = Mth.clamp(cols, 1, MAX_COLUMNS);
         this.rows = Mth.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
         this.unlockedSlots = slots;
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
+        checkContainerDataCount(data, 2);
+
         backpackContainer.startOpen(playerInventory.player);
 
         int backpackWidth = 11 + Math.max(9 * 18, this.cols * 18) + 11;
@@ -65,6 +71,8 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         int inventorySlotsX = Math.max((backpackWidth - inventorySlotsWidth) / 2, 0) + 1;
         int inventorySlotsY = 26 + this.rows * 18 + 15 + 3 + 19;
         this.addPlayerInventorySlots(playerInventory, inventorySlotsX, inventorySlotsY);
+
+        this.addDataSlots(data);
     }
 
     public Container getBackpackInventory()
@@ -90,6 +98,16 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
     public UnlockedSlots getUnlockedSlots()
     {
         return this.unlockedSlots;
+    }
+
+    public int getBackpackIndex()
+    {
+        return this.data.get(0);
+    }
+
+    public int getTotalBackpacks()
+    {
+        return this.data.get(1);
     }
 
     @Override

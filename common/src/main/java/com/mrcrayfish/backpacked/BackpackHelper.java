@@ -7,8 +7,12 @@ import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class BackpackHelper
@@ -153,5 +157,23 @@ public class BackpackHelper
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         ModSyncedDataKeys.BACKPACKS.setValue(player, NonNullList.withSize(ManagementInventory.getMaxEquipable(), ItemStack.EMPTY));
         return backpacks;
+    }
+
+    public static ContainerData createContainerData(Player player)
+    {
+        List<Integer> indexes = new ArrayList<>();
+        NonNullList<ItemStack> backpacks = getBackpacks(player);
+        for(int i = 0; i < backpacks.size(); i++)
+        {
+            if(!backpacks.get(i).isEmpty())
+            {
+                indexes.add(i);
+            }
+        }
+        int selected = getSelectedBackpackIndex(player);
+        SimpleContainerData data = new SimpleContainerData(2);
+        data.set(0, indexes.indexOf(selected) + 1);
+        data.set(1, indexes.size());
+        return data;
     }
 }

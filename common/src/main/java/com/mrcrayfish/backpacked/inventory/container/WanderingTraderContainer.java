@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleContainerData;
 
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public class WanderingTraderContainer extends BackpackContainerMenu
 
     public WanderingTraderContainer(int id, Inventory playerInventory, WanderingTrader trader)
     {
-        super(id, playerInventory, trader.getInventory(), 8, 1, false, UnlockedSlots.ALL);
+        super(id, playerInventory, trader.getInventory(), new SimpleContainerData(2), 8, 1, false, UnlockedSlots.ALL);
         this.trader = trader;
     }
 

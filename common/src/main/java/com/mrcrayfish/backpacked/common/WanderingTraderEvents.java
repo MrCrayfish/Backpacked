@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -210,7 +211,7 @@ public class WanderingTraderEvents
                     ((WanderingBagBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
                 });*/
             }
-            Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), 8, 1, false, UnlockedSlots.ALL, WANDERING_BAG_TRANSLATION);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), new SimpleContainerData(2), 8, 1, false, UnlockedSlots.ALL, WANDERING_BAG_TRANSLATION);
             openingPlayer.level().playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.15F, 1.0F);
         });
     }

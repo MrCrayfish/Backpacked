@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -34,10 +35,10 @@ public class FabricBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockedSlots slots, Component title)
+    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, ContainerData data, int cols, int rows, boolean owner, UnlockedSlots slots, Component title)
     {
         FrameworkAPI.openMenuWithData(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
-            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner, slots);
+            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, data, cols, rows, owner, slots);
         }, title), new BackpackContainerData(cols, rows, owner, slots));
     }
 

@@ -1,10 +1,10 @@
 package com.mrcrayfish.backpacked.blockentity;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
@@ -28,6 +28,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
@@ -104,7 +106,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 UnlockedSlots slots = backpackItem.getUnlockedSlots(backpack);
                 if(slots != null)
                 {
-                    Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, title);
+                    Services.BACKPACK.openBackpackScreen(player, inventory, new SimpleContainerData(2), cols, rows, false, slots, title);
                 }
             });
         });

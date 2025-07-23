@@ -74,6 +74,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private LockedSlot clickedLockedSlot;
     private int heldUnlockTime;
 
+    private MiniButton navigateLeftBtn;
+    private MiniButton navigateRightBtn;
+    private @Nullable Tooltip navigateTooltip;
+
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
         super(menu, playerInventory, titleIn);
@@ -115,12 +119,23 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
 
         if(this.owner)
         {
-            this.addRenderableWidget(new MiniButton(this.leftPos + 3, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+            boolean leftVisible = this.navigateLeftBtn != null && this.navigateLeftBtn.visible;
+            this.navigateLeftBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 3, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
             }));
-            this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
+            this.navigateLeftBtn.visible = leftVisible;
+
+            boolean rightVisible = this.navigateRightBtn != null && this.navigateRightBtn.visible;
+            this.navigateRightBtn = this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
             }));
+            this.navigateRightBtn.visible = rightVisible;
+
+            if(this.navigateTooltip != null)
+            {
+                this.navigateLeftBtn.setTooltip(this.navigateTooltip);
+                this.navigateRightBtn.setTooltip(this.navigateTooltip);
+            }
         }
     }
 
@@ -182,6 +197,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
+        this.setupNavigation();
+
         this.hoveredLockedSlot = null;
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
@@ -197,6 +214,24 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
                     : Component.translatable("backpacked.gui.not_enough_exp").withStyle(ChatFormatting.RED);
             components.add(new ClientTextTooltip(unlockHint.getVisualOrderText()));
             ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
+        }
+    }
+
+    private void setupNavigation()
+    {
+        if(this.navigateTooltip == null)
+        {
+            int backpackIndex = this.menu.getBackpackIndex(); // Starts at 1, not 0
+            int totalBackpacks = this.menu.getTotalBackpacks();
+            this.navigateTooltip = Tooltip.create(
+                    Component.literal(Integer.toString(backpackIndex))
+                            .append(Component.literal(" / ").withStyle(ChatFormatting.BOLD, ChatFormatting.GRAY))
+                            .append(Integer.toString(totalBackpacks))
+            );
+            this.navigateLeftBtn.setTooltip(this.navigateTooltip);
+            this.navigateRightBtn.setTooltip(this.navigateTooltip);
+            this.navigateLeftBtn.visible = backpackIndex > 1;
+            this.navigateRightBtn.visible = backpackIndex < totalBackpacks;
         }
     }
 
