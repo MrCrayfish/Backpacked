@@ -62,6 +62,7 @@
     "backpacked.gui.not_enough_exp": "Not Enough Exp",
     "backpacked.gui.experience_cost": "%s Exp Level",
     "backpacked.gui.experience_cost.plural": "%s Exp Levels",
+    "backpacked.gui.manage_backpacks": "Manage Backpacks",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",

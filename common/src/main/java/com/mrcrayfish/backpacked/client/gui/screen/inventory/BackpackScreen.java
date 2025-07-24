@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
 {
-    private static final Component MANAGEMENT_TOOLTIP = Component.translatable("backpacked.button.management.tooltip");
+    private static final Component MANAGEMENT_TOOLTIP = Component.translatable("backpacked.gui.manage_backpacks");
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
 
