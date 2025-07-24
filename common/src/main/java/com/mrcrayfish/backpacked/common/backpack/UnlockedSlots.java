@@ -2,9 +2,11 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.Config;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Mth;
 
 import java.util.HashSet;
 import java.util.List;
@@ -133,12 +135,47 @@ public final class UnlockedSlots
      */
     public int nextUnlockCost()
     {
-        int totalSlots = Math.max(1, this.maxSlots); // Prevents div by zero
-        int maxLevelCost = 50; // TODO config
-        float levelCost = maxLevelCost / (float) (totalSlots * totalSlots * totalSlots);
-        levelCost = levelCost * (this.nextCount * this.nextCount * this.nextCount);
-        levelCost = Math.clamp(levelCost + 0.5F, 1, maxLevelCost);
-        return (int) levelCost;
+        if(Config.BACKPACK.inventory.slots.unlockCost.useCustomCosts.get())
+            return this.getNextCustomCost();
+        int minLevelCost = Config.BACKPACK.inventory.slots.unlockCost.minCost.get();
+        int maxLevelCost = Config.BACKPACK.inventory.slots.unlockCost.maxCost.get();
+        float costNormal = this.nextCostNormal();
+        return (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
+    }
+
+    private int getNextCustomCost()
+    {
+        List<Integer> list = Config.BACKPACK.inventory.slots.unlockCost.customCosts.get();
+        if(!list.isEmpty())
+        {
+            float normal = Math.clamp(this.nextCount / (float) Math.max(1, this.maxSlots), 0, 1);
+            int index = (int) (list.size() * (normal - 0.001F));
+            index = Mth.clamp(index, 0, list.size() - 1);
+            return Math.max(1, list.get(index));
+        }
+        return 1;
+    }
+
+    private float nextCostNormal()
+    {
+        int totalSlots = Math.max(1, this.maxSlots);
+        int maxLevelCost = Config.BACKPACK.inventory.slots.unlockCost.maxCost.get();
+        return switch(Config.BACKPACK.inventory.slots.unlockCost.costInterpolateFunction.get())
+        {
+            case LINEAR -> (float) this.nextCount / totalSlots;
+            case SQUARED ->
+            {
+                float levelCost = maxLevelCost / (float) (totalSlots * totalSlots);
+                levelCost = levelCost * (this.nextCount * this.nextCount);
+                yield Math.clamp(levelCost + 0.5F, 1, maxLevelCost) / maxLevelCost;
+            }
+            case CUBIC ->
+            {
+                float levelCost = maxLevelCost / (float) (totalSlots * totalSlots * totalSlots);
+                levelCost = levelCost * (this.nextCount * this.nextCount * this.nextCount);
+                yield Math.clamp(levelCost + 0.5F, 1, maxLevelCost) / maxLevelCost;
+            }
+        };
     }
 
     /**
