@@ -36,10 +36,10 @@ public class CommonRecipeGen
                 .pattern("HHH")
                 .pattern("SIS")
                 .pattern("HHH")
-                .define('H', Items.RABBIT_HIDE)
+                .define('L', Items.LEATHER)
                 .define('S', Items.STRING)
                 .define('I', Items.IRON_INGOT)
-                .unlockedBy("has_leather", has.apply(Items.RABBIT_HIDE))
+                .unlockedBy("has_leather", has.apply(Items.LEATHER))
                 .unlockedBy("has_string", has.apply(Items.STRING))
                 .unlockedBy("has_iron_ingot", has.apply(Items.IRON_INGOT))
                 .save(output);
