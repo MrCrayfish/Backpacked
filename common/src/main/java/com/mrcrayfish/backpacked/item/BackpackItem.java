@@ -10,7 +10,6 @@ import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
-import com.mrcrayfish.backpacked.inventory.container.OnPlacedBackpackListener;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -20,13 +19,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Author: MrCrayfish
@@ -35,7 +31,6 @@ public class BackpackItem extends Item
 {
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
     public static final Component BACKPACK_MANAGEMENT_TRANSLATION = Component.translatable("container.backpack_management");
-    private static final AtomicBoolean OPENING_MANAGEMENT = new AtomicBoolean(false);
 
     public BackpackItem(Properties properties)
     {
@@ -78,10 +73,6 @@ public class BackpackItem extends Item
 
     public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
     {
-        // Fixes an issue when opening management, the slot listener tries to reopen the backpack
-        if(OPENING_MANAGEMENT.get())
-            return false;
-
         int selected = BackpackHelper.getSelectedBackpackIndex(ownerPlayer);
         BackpackInventory inventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory(selected);
         if(inventory != null)
@@ -105,13 +96,9 @@ public class BackpackItem extends Item
 
     public static void openBackpackManagement(ServerPlayer player)
     {
-        OPENING_MANAGEMENT.set(true);
         player.openMenu(new SimpleMenuProvider((windowId, inventory, player1) -> {
-            BackpackManagementMenu menu = new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
-            menu.addSlotListener(new OnPlacedBackpackListener());
-            return menu;
+            return new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
         }, BACKPACK_MANAGEMENT_TRANSLATION));
-        OPENING_MANAGEMENT.set(false);
     }
 
     @Nullable
