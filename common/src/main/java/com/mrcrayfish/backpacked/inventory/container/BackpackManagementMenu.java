@@ -32,11 +32,11 @@ public class BackpackManagementMenu extends CustomContainerMenu
         this.container = container;
         for(int i = 0; i < container.getContainerSize(); i++)
         {
-            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 22, stack -> {
+            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 11, stack -> {
                 return stack.getItem() instanceof BackpackItem;
             }).setIcon(EMPTY_SLOT));
         }
-        this.addPlayerInventorySlots(inventory, 8, 74);
+        this.addPlayerInventorySlots(inventory, 8, 63);
     }
 
     public Container getContainer()
