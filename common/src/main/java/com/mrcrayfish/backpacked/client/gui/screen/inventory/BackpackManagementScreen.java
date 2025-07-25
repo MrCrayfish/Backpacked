@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
@@ -85,6 +86,17 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         graphics.blitSprite(INVENTORY_BACKGROUND, this.leftPos, inventoryY, 176, 101);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, inventoryY + 18, 162, 54);
         graphics.blitSprite(INVENTORY_SLOT, this.leftPos + 1 + 6, inventoryY + 76, 162, 18);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scanCode, int action)
+    {
+        if(Keys.KEY_BACKPACK.matches(key, scanCode))
+        {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(key, scanCode, action);
     }
 
     @Override
