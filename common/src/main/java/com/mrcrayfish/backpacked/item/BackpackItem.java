@@ -19,6 +19,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -97,7 +98,9 @@ public class BackpackItem extends Item
     public static void openBackpackManagement(ServerPlayer player)
     {
         player.openMenu(new SimpleMenuProvider((windowId, inventory, player1) -> {
-            return new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
+            SimpleContainerData data = new SimpleContainerData(1);
+            data.set(0, BackpackHelper.getFirstBackpackStack(player).isEmpty() ? 0 : 1);
+            return new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player), data);
         }, BACKPACK_MANAGEMENT_TRANSLATION));
     }
 

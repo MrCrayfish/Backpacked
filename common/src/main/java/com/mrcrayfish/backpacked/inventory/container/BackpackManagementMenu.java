@@ -10,6 +10,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -19,29 +21,38 @@ public class BackpackManagementMenu extends CustomContainerMenu
 
     private final Inventory inventory;
     private final Container container;
+    private final ContainerData data;
 
     public BackpackManagementMenu(int windowId, Inventory inventory)
     {
-        this(windowId, inventory, new SimpleContainer(ManagementInventory.getMaxEquipable()));
+        this(windowId, inventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainerData(1));
     }
 
-    public BackpackManagementMenu(int windowId, Inventory inventory, Container container)
+    public BackpackManagementMenu(int windowId, Inventory inventory, Container container, ContainerData data)
     {
         super(ModContainers.MANAGEMENT.get(), windowId);
         this.inventory = inventory;
         this.container = container;
+        this.data = data;
+        checkContainerDataCount(data, 1);
         for(int i = 0; i < container.getContainerSize(); i++)
         {
-            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 11, stack -> {
+            this.addSlot(new ConditionalSlot(container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 27, stack -> {
                 return stack.getItem() instanceof BackpackItem;
             }).setIcon(EMPTY_SLOT));
         }
-        this.addPlayerInventorySlots(inventory, 8, 63);
+        this.addPlayerInventorySlots(inventory, 8, 79);
+        this.addDataSlots(data);
     }
 
     public Container getContainer()
     {
         return this.container;
+    }
+
+    public boolean hasNothingEquipped()
+    {
+        return this.data.get(0) == 0;
     }
 
     @Override
