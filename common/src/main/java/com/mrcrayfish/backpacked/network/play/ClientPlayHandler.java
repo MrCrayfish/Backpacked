@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.backpacked.inventory.container.LockedSlotController;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.network.message.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -73,7 +73,7 @@ public class ClientPlayHandler
     public static void handleUnlockSlot(MessageSyncUnlockSlot message)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.player != null && minecraft.player.containerMenu instanceof LockedSlotController controller)
+        if(minecraft.player != null && minecraft.player.containerMenu instanceof UnlockableController controller)
         {
             controller.unlockSlot(message.slot());
         }

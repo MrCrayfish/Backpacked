@@ -6,11 +6,11 @@ import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
@@ -141,47 +141,10 @@ public class ServerPlayHandler
 
     public static void handleUnlockSlot(MessageUnlockSlot message, MessageContext context)
     {
-        Player player = context.getPlayer().orElse(null);
-        if(!(player instanceof ServerPlayer serverPlayer))
-            return;
-
-        // Don't allow unlocking slots unless the wearer
-        if(!(player.containerMenu instanceof BackpackContainerMenu menu))
-            return;
-
-        ItemStack backpack = menu.getBackpackStack();
-        if(backpack.isEmpty())
-            return;
-
-        UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
-        if(slots == null || !slots.isUnlockable(message.slot()))
-            return;
-
-        // Ensure the player has the experience levels
-        int experienceLevelCost = slots.nextUnlockCost();
-        if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
-            return;
-
-        // Take the experience levels from the player
-        player.giveExperienceLevels(-experienceLevelCost);
-        menu.unlockSlot(message.slot());
-
-        // Finally unlock the slot and sync the changes to the client
-        slots = slots.unlockSlot(message.slot());
-        backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
-
-        // Ensure shelf saves the changes
-        menu.getBackpackInventory().setChanged();
-
-        // Sync to players that are currently in the same menu
-        List<ServerPlayer> players = serverPlayer.server.getPlayerList().getPlayers();
-        players.stream().filter(otherPlayer -> {
-            if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
-                return menu.getBackpackInventory() == otherMenu.getBackpackInventory();
+        context.getPlayer().ifPresent(player -> {
+            if(player.containerMenu instanceof UnlockableController controller) {
+                controller.handleUnlockSlot((ServerPlayer) player, message.slot());
             }
-            return false;
-        }).forEach(otherPlayer -> {
-            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(message.slot()));
         });
     }
 

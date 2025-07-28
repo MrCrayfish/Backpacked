@@ -3,25 +3,28 @@ package com.mrcrayfish.backpacked.inventory.container;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
-import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
+import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockSlot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainerMenu extends CustomContainerMenu implements LockedSlotController
+public class BackpackContainerMenu extends CustomContainerMenu implements UnlockableController
 {
     // There is a technical hard limit of 256, these values allow the widest and tallest inventory possible
     public static final int MAX_COLUMNS = 23;
@@ -64,7 +67,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         {
             for(int x = 0; x < cols; x++)
             {
-                this.addSlot(new LockedSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
+                this.addSlot(new UnlockableSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
             }
         }
 
@@ -122,6 +125,45 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
     }
 
     @Override
+    public void handleUnlockSlot(ServerPlayer player, int slot)
+    {
+        ItemStack backpack = this.getBackpackStack();
+        if(backpack.isEmpty())
+            return;
+
+        UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        if(slots == null || !slots.isUnlockable(slot))
+            return;
+
+        // Ensure the player has the experience levels
+        int experienceLevelCost = slots.nextInventorySlotUnlockCost();
+        if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
+            return;
+
+        // Take the experience levels from the player
+        player.giveExperienceLevels(-experienceLevelCost);
+
+        // Finally unlock the slot and sync the changes to the client
+        slots = slots.unlockSlot(slot);
+        backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+        this.unlockedSlots = slots;
+
+        // Ensure shelf saves the changes
+        this.getBackpackInventory().setChanged();
+
+        // Sync to players that are currently in the same menu
+        List<ServerPlayer> players = player.server.getPlayerList().getPlayers();
+        players.stream().filter(otherPlayer -> {
+            if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
+                return this.getBackpackInventory() == otherMenu.getBackpackInventory();
+            }
+            return false;
+        }).forEach(otherPlayer -> {
+            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slot));
+        });
+    }
+
+    @Override
     public boolean stillValid(Player playerIn)
     {
         return this.backpackInventory.stillValid(playerIn);
@@ -167,7 +209,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Locked
         this.backpackInventory.stopOpen(playerIn);
     }
 
-    public ItemStack getBackpackStack()
+    private ItemStack getBackpackStack()
     {
         if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
         {

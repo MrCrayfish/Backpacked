@@ -78,6 +78,6 @@ public class ManagementInventory implements Container
 
     public static int getMaxEquipable()
     {
-        return Config.BACKPACK.maxEquipable.get();
+        return Config.BACKPACK.equipable.maxEquipable.get();
     }
 }

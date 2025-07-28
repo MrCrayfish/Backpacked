@@ -1,7 +1,8 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
-import com.mrcrayfish.backpacked.common.CostScaling;
+import com.mrcrayfish.backpacked.common.InterpolateFunction;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.framework.api.config.*;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
@@ -34,19 +35,37 @@ public class Config
 
     public static class Backpack
     {
-        @ConfigProperty(name = "keepOnDeath", comment = """
-                If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.""")
-        public final BoolProperty keepOnDeath = BoolProperty.create(false);
-
-        @ConfigProperty(name = "maxEquipable", comment = """
-                The maximum amount of backpacks that can be equipped by a player""")
-        public final IntProperty maxEquipable = IntProperty.create(5, 1, 9);
+        @ConfigProperty(name = "cosmetics", comment = "Loadout related properties")
+        public final Equipable equipable = new Equipable();
 
         @ConfigProperty(name = "cosmetics", comment = "Cosmetic related properties")
         public final Cosmetics cosmetics = new Cosmetics();
 
         @ConfigProperty(name = "inventory", comment = "Inventory related properties")
         public final Inventory inventory = new Inventory();
+
+        public static class Equipable
+        {
+            @ConfigProperty(name = "maxEquipable", comment = """
+                    The maximum amount of backpacks that can be equipped by a player. This will determine
+                    how many slots will appear when opening the "Equipped Backpacks" menu.""")
+            public final IntProperty maxEquipable = IntProperty.create(5, 1, 9);
+
+            @ConfigProperty(name = "keepOnDeath", comment = """
+                    If enabled, backpacks will stay equipped on the player after death (same as the
+                    keepInventory game rule), otherwise backpacks will simply drop on the ground like
+                    regular items.""")
+            public final BoolProperty keepOnDeath = BoolProperty.create(false);
+
+            @ConfigProperty(name = "unlockAllEquipableSlots", comment = """
+                    If set to true, all equipable slots will be unlocked by default.
+                    WARNING: Reverting the option from true to false will cause backpacks to be dropped
+                    into the world if the slot they are in is now locked. You have been warned.""")
+            public final BoolProperty unlockAllEquipableSlots = BoolProperty.create(false);
+
+            @ConfigProperty(name = "unlockCost", comment = "Cost related properties for equipable slots")
+            public final UnlockCost unlockCost = new UnlockCost();
+        }
 
         public static class Cosmetics
         {
@@ -89,66 +108,8 @@ public class Config
                         into the world if the slot they are in is now locked. You have been warned.""")
                 public final BoolProperty unlockAllSlots = BoolProperty.create(false);
 
-                @ConfigProperty(name = "unlockCost", comment = "Cost related properties")
+                @ConfigProperty(name = "unlockCost", comment = "Cost related properties for inventory slots")
                 public final UnlockCost unlockCost = new UnlockCost();
-
-                public static class UnlockCost
-                {
-                    @ConfigProperty(name = "costInterpolateFunction", comment = """
-                            The interpolate method to use when calculating the cost of unlocking a slot. The cost
-                            of slots increases the more slots that are unlocked. This function determines how steep
-                            the price will increase after each slot is unlocked. The interpolated value is calculated
-                            using the minCost and maxCost.
-                            
-                            Function Descriptions:
-                            LINEAR - A constant grow in the cost. Cost will jump by the same value after every slot unlocked.
-                            SQUARED - Slowly scales the cost for about half, then cost will increase noticeably for the final half.
-                            CUBIC - Very slowly scales the cost for about two thirds, then cost increases sharply for the final third.
-                            
-                            Note: This property has no effect if useCustomCosts is set to true
-                            """)
-                    public final EnumProperty<CostScaling> costInterpolateFunction = EnumProperty.create(CostScaling.CUBIC);
-
-                    @ConfigProperty(name = "minCost", comment = """
-                            The minimum cost to unlock a backpack slot. This value would be the cost
-                            when unlocking the first slot in a backpack inventory. The cost to unlock
-                            subsequent slots are interpolated from the this value to the maxCost, and
-                            scaled by the scaleFunction.
-                            
-                            Note: This property has no effect if useCustomCosts is set to true""")
-                    public final IntProperty minCost = IntProperty.create(1, 1, 100);
-
-                    @ConfigProperty(name = "maxCost", comment = """
-                            The maximum cost to unlock a backpack slot. This value would be the cost
-                            when unlocking the final slot in a backpack inventory. The cost to unlock
-                            prior slots are interpolated from the minCost to this value, and scaled
-                            by the scaleFunction.
-                            
-                            Note: This property has no effect if useCustomCosts is set to true""")
-                    public final IntProperty maxCost = IntProperty.create(50, 1, 100);
-
-                    @ConfigProperty(name = "useCustomCosts", comment = """
-                            If enabled, instead of using a cost that is calculated based on a minCost
-                            and maxCost, custom costs allow the cost to be specified manually using
-                            a list of values (see customCosts).""")
-                    public final BoolProperty useCustomCosts = BoolProperty.create(false);
-
-                    @ConfigProperty(name = "customCosts", comment = """
-                            A list of values that represent the cost to unlock each slot. For example,
-                            if the backpack has 27 inventory slots in total, this list can hold 27 values to
-                            specify the cost. Unlocking the first slot, the cost will be the first value
-                            in the list. Unlocking the next slot, the cost will be the next value in the
-                            list, and so on. This gives full control over the cost to unlock each slot.
-                            
-                            If the list does not contain enough values to cover every slot, a value is instead
-                            selected from first to last value based on how many slots are unlocked. For example,
-                            if the list only contains the values [1, 5] but there are 30 inventory slots in the
-                            backpack, then this will be interpreted as the first 15 slots costing 1, and the last
-                            15 slots costing 5. If the values were [1, 3, 10] and again there are 30 inventory slots,
-                            then this will be interpreted as the first 10 slots costing 1, the next 10 slots costing 3,
-                            and the final 10 slots costing 10.""")
-                    public final ListProperty<Integer> customCosts = ListProperty.create(ListProperty.INT);
-                }
             }
 
             public static class Size
@@ -223,6 +184,94 @@ public class Config
                 bannedItems.add("mekanism:personal_chest");
                 bannedItems.add("supplementaries:sack");
                 return bannedItems;
+            }
+        }
+
+        public static class UnlockCost implements UnlockedSlots.Cost
+        {
+            @ConfigProperty(name = "costInterpolateFunction", comment = """
+                    The interpolate method to use when calculating the cost of unlocking a slot. The cost
+                    of slots increases the more slots that are unlocked. This function determines how steep
+                    the price will increase after each slot is unlocked. The interpolated value is calculated
+                    using the minCost and maxCost.
+                    
+                    Function Descriptions:
+                    LINEAR - A constant grow in the cost. Cost will jump by the same value after every slot unlocked.
+                    SQUARED - Slowly scales the cost for about half, then cost will increase noticeably for the final half.
+                    CUBIC - Very slowly scales the cost for about two thirds, then cost increases sharply for the final third.
+                    
+                    Note: This property has no effect if useCustomCosts is set to true
+                    """)
+            public final EnumProperty<InterpolateFunction> costInterpolateFunction = EnumProperty.create(InterpolateFunction.CUBIC);
+
+            @ConfigProperty(name = "minCost", comment = """
+                    The minimum cost to unlock a backpack slot. This value would be the cost
+                    when unlocking the first slot in a backpack inventory. The cost to unlock
+                    subsequent slots are interpolated from the this value to the maxCost, and
+                    scaled by the scaleFunction.
+                    
+                    Note: This property has no effect if useCustomCosts is set to true""")
+            public final IntProperty minCost = IntProperty.create(1, 1, 100);
+
+            @ConfigProperty(name = "maxCost", comment = """
+                    The maximum cost to unlock a backpack slot. This value would be the cost
+                    when unlocking the final slot in a backpack inventory. The cost to unlock
+                    prior slots are interpolated from the minCost to this value, and scaled
+                    by the scaleFunction.
+                    
+                    Note: This property has no effect if useCustomCosts is set to true""")
+            public final IntProperty maxCost = IntProperty.create(50, 1, 100);
+
+            @ConfigProperty(name = "useCustomCosts", comment = """
+                    If enabled, instead of using a cost that is calculated based on a minCost
+                    and maxCost, custom costs allow the cost to be specified manually using
+                    a list of values (see customCosts).""")
+            public final BoolProperty useCustomCosts = BoolProperty.create(false);
+
+            @ConfigProperty(name = "customCosts", comment = """
+                    A list of values that represent the cost to unlock each slot. For example,
+                    if the backpack has 27 inventory slots in total, this list can hold 27 values to
+                    specify the cost. Unlocking the first slot, the cost will be the first value
+                    in the list. Unlocking the next slot, the cost will be the next value in the
+                    list, and so on. This gives full control over the cost to unlock each slot.
+                    
+                    If the list does not contain enough values to cover every slot, a value is instead
+                    selected from first to last value based on how many slots are unlocked. For example,
+                    if the list only contains the values [1, 5] but there are 30 inventory slots in the
+                    backpack, then this will be interpreted as the first 15 slots costing 1, and the last
+                    15 slots costing 5. If the values were [1, 3, 10] and again there are 30 inventory slots,
+                    then this will be interpreted as the first 10 slots costing 1, the next 10 slots costing 3,
+                    and the final 10 slots costing 10.""")
+            public final ListProperty<Integer> customCosts = ListProperty.create(ListProperty.INT);
+
+            @Override
+            public InterpolateFunction getInterpolateFunction()
+            {
+                return this.costInterpolateFunction.get();
+            }
+
+            @Override
+            public int getMinCost()
+            {
+                return this.minCost.get();
+            }
+
+            @Override
+            public int getMaxCost()
+            {
+                return this.maxCost.get();
+            }
+
+            @Override
+            public boolean useCustomCosts()
+            {
+                return this.useCustomCosts.get();
+            }
+
+            @Override
+            public List<Integer> getCustomCosts()
+            {
+                return this.customCosts.get();
             }
         }
     }

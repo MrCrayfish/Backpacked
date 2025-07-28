@@ -3,6 +3,10 @@ package com.mrcrayfish.backpacked.common.backpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.InterpolateFunction;
+import com.mrcrayfish.framework.api.sync.DataSerializer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -27,6 +31,15 @@ public final class UnlockedSlots
         ByteBufCodecs.INT, slots -> slots.maxSlots,
         UnlockedSlots::new
     );
+
+    public static final DataSerializer<UnlockedSlots> SERIALIZER = new DataSerializer<>(STREAM_CODEC, (obj, provider) -> {
+        return CODEC.encodeStart(NbtOps.INSTANCE, obj).result().orElse(new CompoundTag());
+    }, (tag, provider) -> {
+        if(tag instanceof CompoundTag) {
+            return CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(null);
+        }
+        return null;
+    });
 
     private final Set<Integer> slots;
     private final int maxSlots;
@@ -126,41 +139,57 @@ public final class UnlockedSlots
     }
 
     /**
-     * Calculates the experience level cost to unlock a new slot in the backpack inventory. The cost
-     * is calculated based on how many slots are already unlocked, generally getting more expensive
-     * the more slots that are unlocked. Users can change the calculation options in the config of
-     * the mod, or even have all slots unlocked by default (TODO).
+     * @return The experience level cost to unlock a new equipable slot
+     */
+    public int nextBackpackSlotUnlockCost()
+    {
+        return this.nextUnlockCost(Config.BACKPACK.equipable.unlockCost);
+    }
+
+    /**
+     * @return The experience level cost to unlock a new slot in the backpack inventory.
+     */
+    public int nextInventorySlotUnlockCost()
+    {
+        return this.nextUnlockCost(Config.BACKPACK.inventory.slots.unlockCost);
+    }
+
+    /**
+     * Calculates the experience level cost to unlock a new slot. The cost is calculated based on
+     * how many slots are already unlocked, generally getting more expensive the more slots that are
+     * unlocked. Users can change the calculation options in the config of the mod, or even have all
+     * slots unlocked by default.
      *
      * @return the experience level cost to unlock the next slot
      */
-    public int nextUnlockCost()
+    private int nextUnlockCost(Cost cost)
     {
-        if(Config.BACKPACK.inventory.slots.unlockCost.useCustomCosts.get())
-            return this.getNextCustomCost();
-        int minLevelCost = Config.BACKPACK.inventory.slots.unlockCost.minCost.get();
-        int maxLevelCost = Config.BACKPACK.inventory.slots.unlockCost.maxCost.get();
-        float costNormal = this.nextCostNormal();
-        return (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
+        if(!cost.useCustomCosts())
+        {
+            int minLevelCost = cost.getMinCost();
+            int maxLevelCost = cost.getMaxCost();
+            float costNormal = this.nextCostNormal(maxLevelCost, cost.getInterpolateFunction());
+            return (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
+        }
+        return this.getNextCustomCost(cost.getCustomCosts());
     }
 
-    private int getNextCustomCost()
+    private int getNextCustomCost(List<Integer> costs)
     {
-        List<Integer> list = Config.BACKPACK.inventory.slots.unlockCost.customCosts.get();
-        if(!list.isEmpty())
+        if(!costs.isEmpty())
         {
             float normal = Math.clamp(this.nextCount / (float) Math.max(1, this.maxSlots), 0, 1);
-            int index = (int) (list.size() * (normal - 0.001F));
-            index = Mth.clamp(index, 0, list.size() - 1);
-            return Math.max(1, list.get(index));
+            int index = (int) (costs.size() * (normal - 0.001F));
+            index = Mth.clamp(index, 0, costs.size() - 1);
+            return Math.max(1, costs.get(index));
         }
         return 1;
     }
 
-    private float nextCostNormal()
+    private float nextCostNormal(int maxLevelCost, InterpolateFunction scaling)
     {
         int totalSlots = Math.max(1, this.maxSlots);
-        int maxLevelCost = Config.BACKPACK.inventory.slots.unlockCost.maxCost.get();
-        return switch(Config.BACKPACK.inventory.slots.unlockCost.costInterpolateFunction.get())
+        return switch(scaling)
         {
             case LINEAR -> (float) this.nextCount / totalSlots;
             case SQUARED ->
@@ -213,5 +242,18 @@ public final class UnlockedSlots
             return false;
         UnlockedSlots other = (UnlockedSlots) o;
         return this.maxSlots == other.maxSlots && this.slots.equals(other.slots);
+    }
+
+    public interface Cost
+    {
+        InterpolateFunction getInterpolateFunction();
+
+        int getMinCost();
+
+        int getMaxCost();
+
+        boolean useCustomCosts();
+
+        List<Integer> getCustomCosts();
     }
 }

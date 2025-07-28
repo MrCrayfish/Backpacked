@@ -3,26 +3,18 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
-import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
-import com.mrcrayfish.backpacked.inventory.container.slot.LockedSlot;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
-import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -31,9 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +30,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
+public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerMenu>
 {
     private static final Component MANAGEMENT_TOOLTIP = Component.translatable("backpacked.gui.manage_backpacks");
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
@@ -55,24 +44,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     private static final ResourceLocation ICON_MANAGEMENT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/management");
     private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
     private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
-    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
     private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
     private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
-    private static final int UNLOCK_TIME = 20;
     private static final int TITLE_LABEL_WIDTH = 94;
 
     private final int cols;
     private final int rows;
     private final boolean owner;
-    private final Player openingPlayer;
     private boolean opened;
     private int buttonCount;
-
-    private @Nullable LockedSlot hoveredLockedSlot;
-    private LockedSlot clickedLockedSlot;
-    private int heldUnlockTime;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -80,7 +62,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         this.cols = menu.getCols();
         this.rows = menu.getRows();
         this.owner = menu.isOwner();
-        this.openingPlayer = playerInventory.player;
         this.imageWidth = 11 + Math.max(this.cols, 9) * 18 + 11;
         this.imageHeight = 26 + this.rows * 18 + 15 + 3 + 101;
         this.titleLabelX = 6;
@@ -168,49 +149,10 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
     }
 
     @Override
-    protected void containerTick()
-    {
-        if(this.clickedLockedSlot != null)
-        {
-            // Cancel if the user moves the mouse off the locked slot
-            if(this.hoveredLockedSlot != this.clickedLockedSlot)
-            {
-                this.clickedLockedSlot = null;
-                return;
-            }
-            if(this.heldUnlockTime-- <= 0)
-            {
-                Network.PLAY.sendToServer(new MessageUnlockSlot(this.clickedLockedSlot.getContainerSlot()));
-                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.5F));
-                this.clickedLockedSlot = null;
-            }
-            else if(this.heldUnlockTime % 2 == 0)
-            {
-                float pitch = 0.9F + 0.4F * (UNLOCK_TIME - this.heldUnlockTime) / (float) UNLOCK_TIME;
-                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.EXPERIENCE_ORB_PICKUP, pitch, 0.25F));
-            }
-        }
-    }
-
-    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        this.hoveredLockedSlot = null;
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
-
-        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
-        {
-            UnlockedSlots slots = this.getMenu().getUnlockedSlots();
-            int experienceLevelCost = slots.nextUnlockCost();
-            List<ClientTooltipComponent> components = new ArrayList<>();
-            components.add(new ExperienceCostTooltip(experienceLevelCost));
-            Component unlockHint = this.openingPlayer.experienceLevel >= experienceLevelCost || this.openingPlayer.isCreative()
-                    ? Component.translatable("backpacked.gui.hold_to_unlock")
-                    : Component.translatable("backpacked.gui.not_enough_exp").withStyle(ChatFormatting.RED);
-            components.add(new ClientTextTooltip(unlockHint.getVisualOrderText()));
-            ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
-        }
     }
 
     @Override
@@ -290,29 +232,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         int inventorySlotsY = inventoryY + 18;
         graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
         graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
-
-        if(this.clickedLockedSlot != null)
-        {
-            int progressX = this.leftPos + this.clickedLockedSlot.x;
-            int progressY = this.topPos + this.clickedLockedSlot.y;
-            int progressWidth = (int) (16 * (UNLOCK_TIME - this.heldUnlockTime) / (float) UNLOCK_TIME);
-            graphics.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
-        }
-
-        for(Slot slot : this.getMenu().slots)
-        {
-            if(slot instanceof LockedSlot lockedSlot)
-            {
-                if(this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
-                {
-                    this.hoveredLockedSlot = lockedSlot;
-                }
-                if(!lockedSlot.isUnlocked())
-                {
-                    graphics.blitSprite(ICON_LOCK, x + slot.x + 2, y + slot.y + 2, 12, 12);
-                }
-            }
-        }
     }
 
     private void openConfigScreen()
@@ -329,37 +248,6 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             return true;
         }
         return super.keyPressed(key, scanCode, action);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
-    {
-        if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
-        {
-            UnlockedSlots slots = this.getMenu().getUnlockedSlots();
-            if(slots.isUnlockable(this.hoveredLockedSlot.getContainerSlot()))
-            {
-                int experienceLevelCost = slots.nextUnlockCost();
-                if(this.openingPlayer.experienceLevel >= experienceLevelCost || this.openingPlayer.isCreative())
-                {
-                    this.heldUnlockTime = UNLOCK_TIME;
-                    this.clickedLockedSlot = this.hoveredLockedSlot;
-                    return true;
-                }
-            }
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
-    {
-        if(button == 0 && this.clickedLockedSlot != null)
-        {
-            this.clickedLockedSlot = null;
-            return true;
-        }
-        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
