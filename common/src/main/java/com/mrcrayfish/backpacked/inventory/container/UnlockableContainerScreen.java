@@ -109,8 +109,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
         {
-            UnlockedSlots slots = this.getMenu().getUnlockedSlots();
-            int experienceLevelCost = slots.nextInventorySlotUnlockCost();
+            int experienceLevelCost = this.getMenu().getNextUnlockCost();
             List<ClientTooltipComponent> components = new ArrayList<>();
             components.add(new ExperienceCostTooltip(experienceLevelCost));
             Component unlockHint = this.player.experienceLevel >= experienceLevelCost || this.player.isCreative()
@@ -128,10 +127,9 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
         {
-            UnlockedSlots slots = this.getMenu().getUnlockedSlots();
-            if(slots.isUnlockable(this.hoveredLockedSlot.getContainerSlot()))
+            if(this.getMenu().canUnlockSlot(this.hoveredLockedSlot.getContainerSlot()))
             {
-                int experienceLevelCost = slots.nextInventorySlotUnlockCost();
+                int experienceLevelCost = this.getMenu().getNextUnlockCost();
                 if(this.player.experienceLevel >= experienceLevelCost || this.player.isCreative())
                 {
                     this.heldUnlockTime = UNLOCK_TIME;

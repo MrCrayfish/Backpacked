@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.mojang.datafixers.util.Pair;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
@@ -10,12 +11,8 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class BackpackHelper
@@ -81,6 +78,10 @@ public class BackpackHelper
         if(index < 0 || index >= ManagementInventory.getMaxEquipable())
             return ItemStack.EMPTY;
 
+        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        if(!slots.isUnlocked(index))
+            return ItemStack.EMPTY;
+
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         ItemStack stack = backpacks.get(index);
         if(stack.isEmpty())
@@ -99,6 +100,10 @@ public class BackpackHelper
     public static boolean setBackpackStack(Player player, ItemStack stack, int index)
     {
         if(index < 0 || index >= ManagementInventory.getMaxEquipable())
+            return false;
+
+        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        if(!slots.isUnlocked(index))
             return false;
 
         if(stack.is(ModItems.BACKPACK.get()))
@@ -123,6 +128,34 @@ public class BackpackHelper
         return backpacks;
     }
 
+    public static UnlockedSlots getBackpackUnlockedSlots(Player player)
+    {
+        UnlockedSlots slots = ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.getValue(player);
+        if(slots.getMaxSlots() != ManagementInventory.getMaxEquipable())
+        {
+            slots = slots.setMaxSlots(ManagementInventory.getMaxEquipable());
+            ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
+        }
+        if(Config.BACKPACK.equipable.unlockFirstEquipableSlot.get())
+        {
+            if(!slots.isUnlocked(0))
+            {
+                slots = slots.unlockSlot(0);
+                ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
+            }
+        }
+        return slots;
+    }
+
+    public static void setBackpackUnlockedSlots(Player player, UnlockedSlots slots)
+    {
+        if(slots.getMaxSlots() != ManagementInventory.getMaxEquipable())
+        {
+            slots = slots.setMaxSlots(ManagementInventory.getMaxEquipable());
+        }
+        ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
+    }
+
     public static ItemStack getFirstBackpackStack(Player player)
     {
         return getFirstBackpackStack(player, stack -> true);
@@ -130,8 +163,14 @@ public class BackpackHelper
 
     public static ItemStack getFirstBackpackStack(Player player, Predicate<ItemStack> filter)
     {
-        for(ItemStack stack : getBackpacks(player))
+        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        NonNullList<ItemStack> backpacks = getBackpacks(player);
+        for(int i = 0; i < backpacks.size(); i++)
         {
+            if(!slots.isUnlocked(i))
+                continue;
+
+            ItemStack stack = backpacks.get(i);
             if(!stack.isEmpty() && filter.test(stack))
             {
                 return stack;
@@ -142,10 +181,11 @@ public class BackpackHelper
 
     public static boolean equipBackpack(Player player, ItemStack stack)
     {
+        UnlockedSlots slots = getBackpackUnlockedSlots(player);
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         for(int i = 0; i < backpacks.size(); i++)
         {
-            if(backpacks.get(i).isEmpty())
+            if(slots.isUnlocked(i) && backpacks.get(i).isEmpty())
             {
                 ItemStack copy = player.isCreative() ? stack.copy() : stack.copyAndClear();
                 backpacks.set(i, copy);
@@ -165,10 +205,11 @@ public class BackpackHelper
     public static Pair<Integer, Integer> createIndexData(Player player)
     {
         IntList list = new IntArrayList();
+        UnlockedSlots slots = getBackpackUnlockedSlots(player);
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         for(int i = 0; i < backpacks.size(); i++)
         {
-            if(!backpacks.get(i).isEmpty())
+            if(slots.isUnlocked(i) && !backpacks.get(i).isEmpty())
             {
                 list.add(i);
             }

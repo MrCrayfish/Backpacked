@@ -97,11 +97,6 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         return this.owner;
     }
 
-    public UnlockedSlots getUnlockedSlots()
-    {
-        return this.unlockedSlots;
-    }
-
     public int getBackpackIndex()
     {
         return this.backpackIndex;
@@ -122,6 +117,12 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
     public boolean isSlotUnlocked(int slot)
     {
         return this.unlockedSlots.isUnlocked(slot);
+    }
+
+    @Override
+    public boolean canUnlockSlot(int slot)
+    {
+        return this.unlockedSlots.isUnlockable(slot);
     }
 
     @Override
@@ -161,6 +162,12 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         }).forEach(otherPlayer -> {
             Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slot));
         });
+    }
+
+    @Override
+    public int getNextUnlockCost()
+    {
+        return this.unlockedSlots.nextInventorySlotUnlockCost();
     }
 
     @Override

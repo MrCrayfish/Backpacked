@@ -9,8 +9,12 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
+import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
+import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.framework.api.FrameworkAPI;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -97,11 +101,12 @@ public class BackpackItem extends Item
 
     public static void openBackpackManagement(ServerPlayer player)
     {
-        player.openMenu(new SimpleMenuProvider((windowId, inventory, player1) -> {
+        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(player);
+        FrameworkAPI.openMenuWithData(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
             SimpleContainerData data = new SimpleContainerData(1);
             data.set(0, BackpackHelper.getFirstBackpackStack(player).isEmpty() ? 0 : 1);
-            return new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player), data);
-        }, BACKPACK_MANAGEMENT_TRANSLATION));
+            return new BackpackManagementMenu(id, player.getInventory(), new ManagementInventory(player), data, slots);
+        }, BACKPACK_MANAGEMENT_TRANSLATION), new ManagementContainerData(slots));
     }
 
     @Nullable

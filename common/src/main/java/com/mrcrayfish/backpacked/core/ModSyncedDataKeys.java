@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.core;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.CustomDataSerializers;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
 import com.mrcrayfish.framework.api.sync.Serializers;
@@ -29,11 +30,11 @@ public class ModSyncedDataKeys
             .build();
 
     public static final SyncedDataKey<Player, ItemStack> BACKPACK = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.ITEM_STACK)
-        .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"))
-        .defaultValueSupplier(() -> ItemStack.EMPTY)
-        .syncMode(SyncedDataKey.SyncMode.NONE)
-        .saveToFile()
-        .build();
+            .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"))
+            .defaultValueSupplier(() -> ItemStack.EMPTY)
+            .syncMode(SyncedDataKey.SyncMode.NONE)
+            .saveToFile()
+            .build();
 
     public static final SyncedDataKey<Player, NonNullList<ItemStack>> BACKPACKS = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.BACKPACKS)
             .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpacks"))
@@ -43,22 +44,29 @@ public class ModSyncedDataKeys
             .build();
 
     public static final SyncedDataKey<Player, Optional<BackpackProperties>> COSMETIC_PROPERTIES = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.OPTIONAL_BACKPACK_PROPERTIES)
-        .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_backpack"))
-        .defaultValueSupplier(Optional::empty)
-        .syncMode(SyncedDataKey.SyncMode.ALL)
-        .build();
+            .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_backpack"))
+            .defaultValueSupplier(Optional::empty)
+            .syncMode(SyncedDataKey.SyncMode.ALL)
+            .build();
 
     public static final SyncedDataKey<Player, UnlockTracker> UNLOCK_TRACKER = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockTracker.SERIALIZER)
-        .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlock_tracker"))
-        .defaultValueSupplier(UnlockTracker::new)
-        .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
-        .saveToFile()
-        .build();
+            .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlock_tracker"))
+            .defaultValueSupplier(UnlockTracker::new)
+            .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
+            .saveToFile()
+            .build();
+
+    public static final SyncedDataKey<Player, UnlockedSlots> UNLOCKABLE_BACKPACK_SLOTS = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockedSlots.SERIALIZER)
+            .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_backpack_slots"))
+            .defaultValueSupplier(() -> new UnlockedSlots(1))
+            .syncMode(SyncedDataKey.SyncMode.NONE)
+            .saveToFile()
+            .build();
 
     public static final SyncedDataKey<WanderingTrader, TraderPickpocketing> TRADER_PICKPOCKETING = SyncedDataKey.builder(SyncedClassKey.WANDERING_TRADER, TraderPickpocketing.SERIALIZER)
-        .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "trader_pickpocketing"))
-        .defaultValueSupplier(TraderPickpocketing::new)
-        .syncMode(SyncedDataKey.SyncMode.TRACKING_ONLY)
-        .saveToFile()
-        .build();
+            .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "trader_pickpocketing"))
+            .defaultValueSupplier(TraderPickpocketing::new)
+            .syncMode(SyncedDataKey.SyncMode.TRACKING_ONLY)
+            .saveToFile()
+            .build();
 }

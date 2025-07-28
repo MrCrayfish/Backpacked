@@ -35,7 +35,7 @@ public class Config
 
     public static class Backpack
     {
-        @ConfigProperty(name = "cosmetics", comment = "Loadout related properties")
+        @ConfigProperty(name = "equipable", comment = "Equipable related properties")
         public final Equipable equipable = new Equipable();
 
         @ConfigProperty(name = "cosmetics", comment = "Cosmetic related properties")
@@ -57,14 +57,18 @@ public class Config
                     regular items.""")
             public final BoolProperty keepOnDeath = BoolProperty.create(false);
 
+            @ConfigProperty(name = "unlockFirstEquipableSlot", comment = """
+                    If true, the first slot will automatically be unlocked by default and for free.""")
+            public final BoolProperty unlockFirstEquipableSlot = BoolProperty.create(true);
+
             @ConfigProperty(name = "unlockAllEquipableSlots", comment = """
                     If set to true, all equipable slots will be unlocked by default.
                     WARNING: Reverting the option from true to false will cause backpacks to be dropped
                     into the world if the slot they are in is now locked. You have been warned.""")
-            public final BoolProperty unlockAllEquipableSlots = BoolProperty.create(false);
+            public final BoolProperty unlockAllEquipableSlots = BoolProperty.create(false); // TODO
 
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for equipable slots")
-            public final UnlockCost unlockCost = new UnlockCost();
+            public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.LINEAR, 30, 30);
         }
 
         public static class Cosmetics
@@ -109,7 +113,7 @@ public class Config
                 public final BoolProperty unlockAllSlots = BoolProperty.create(false);
 
                 @ConfigProperty(name = "unlockCost", comment = "Cost related properties for inventory slots")
-                public final UnlockCost unlockCost = new UnlockCost();
+                public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.CUBIC, 1, 50);
             }
 
             public static class Size
@@ -202,7 +206,7 @@ public class Config
                     
                     Note: This property has no effect if useCustomCosts is set to true
                     """)
-            public final EnumProperty<InterpolateFunction> costInterpolateFunction = EnumProperty.create(InterpolateFunction.CUBIC);
+            public final EnumProperty<InterpolateFunction> costInterpolateFunction;
 
             @ConfigProperty(name = "minCost", comment = """
                     The minimum cost to unlock a backpack slot. This value would be the cost
@@ -211,7 +215,7 @@ public class Config
                     scaled by the scaleFunction.
                     
                     Note: This property has no effect if useCustomCosts is set to true""")
-            public final IntProperty minCost = IntProperty.create(1, 1, 100);
+            public final IntProperty minCost;
 
             @ConfigProperty(name = "maxCost", comment = """
                     The maximum cost to unlock a backpack slot. This value would be the cost
@@ -220,7 +224,7 @@ public class Config
                     by the scaleFunction.
                     
                     Note: This property has no effect if useCustomCosts is set to true""")
-            public final IntProperty maxCost = IntProperty.create(50, 1, 100);
+            public final IntProperty maxCost;
 
             @ConfigProperty(name = "useCustomCosts", comment = """
                     If enabled, instead of using a cost that is calculated based on a minCost
@@ -243,6 +247,13 @@ public class Config
                     then this will be interpreted as the first 10 slots costing 1, the next 10 slots costing 3,
                     and the final 10 slots costing 10.""")
             public final ListProperty<Integer> customCosts = ListProperty.create(ListProperty.INT);
+
+            public UnlockCost(InterpolateFunction defaultFunction, int defaultMinCost, int defaultMaxCost)
+            {
+                this.costInterpolateFunction =  EnumProperty.create(defaultFunction);
+                this.minCost = IntProperty.create(defaultMinCost, 1, 100);
+                this.maxCost = IntProperty.create(defaultMaxCost, 1, 100);
+            }
 
             @Override
             public InterpolateFunction getInterpolateFunction()

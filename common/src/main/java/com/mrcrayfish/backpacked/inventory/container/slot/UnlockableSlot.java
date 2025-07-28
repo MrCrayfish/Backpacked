@@ -72,6 +72,6 @@ public class UnlockableSlot extends Slot
     @Override
     public @Nullable Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
     {
-        return this.icon;
+        return this.isActive() ? this.icon : null;
     }
 }

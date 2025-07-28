@@ -2,10 +2,17 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Predicate;
 
 public class ManagementInventory implements Container
 {
@@ -46,9 +53,10 @@ public class ManagementInventory implements Container
     public ItemStack removeItemNoUpdate(int index)
     {
         ItemStack stack = BackpackHelper.getBackpackStack(this.player, index);
-        if(stack.isEmpty())
-            return ItemStack.EMPTY;
-        BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, index);
+        if(!stack.isEmpty())
+        {
+            BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, index);
+        }
         return stack;
     }
 
@@ -56,6 +64,20 @@ public class ManagementInventory implements Container
     public void setItem(int index, ItemStack stack)
     {
         BackpackHelper.setBackpackStack(this.player, stack, index);
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack)
+    {
+        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(this.player);
+        return slots.isUnlocked(index) && stack.getItem() instanceof BackpackItem;
+    }
+
+    @Override
+    public boolean canTakeItem(Container container, int index, ItemStack stack)
+    {
+        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(this.player);
+        return slots.isUnlocked(index);
     }
 
     @Override

@@ -3,20 +3,15 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
-import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
-import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableContainerScreen;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-public class BackpackManagementScreen extends AbstractContainerScreen<BackpackManagementMenu>
+public class BackpackManagementScreen extends UnlockableContainerScreen<BackpackManagementMenu>
 {
     private static final Component LABEL_NO_BACKPACK = Component.translatable("backpacked.gui.no_backpack_equipped");
     private static final Component LABEL_NO_BACKPACK_PLURAL = Component.translatable("backpacked.gui.no_backpack_equipped.plural");
@@ -34,8 +29,7 @@ public class BackpackManagementScreen extends AbstractContainerScreen<BackpackMa
         super(menu, inventory, title);
         this.titleLabelX = 17;
         this.titleLabelY = 6;
-        // Label + Header height + Slot Height + Footer Height + Gap + Inventory Height
-        this.imageHeight = 16 + 8 + 18 + 15 + 3 + 101;
+        this.imageHeight = 16 + 8 + 18 + 15 + 3 + 101; // Label + Header height + Slot Height + Footer Height + Gap + Inventory Height
         int slotsWidth = menu.getContainer().getContainerSize() * 18;
         this.imageWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11);
         this.inventoryLabelY = this.imageHeight - 94;
