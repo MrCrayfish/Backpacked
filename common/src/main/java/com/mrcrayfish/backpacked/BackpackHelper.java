@@ -130,6 +130,9 @@ public class BackpackHelper
 
     public static UnlockedSlots getBackpackUnlockedSlots(Player player)
     {
+        if(Config.BACKPACK.equipable.unlockAllEquipableSlots.get())
+            return UnlockedSlots.ALL;
+
         UnlockedSlots slots = ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.getValue(player);
         if(slots.getMaxSlots() != ManagementInventory.getMaxEquipable())
         {
@@ -149,6 +152,9 @@ public class BackpackHelper
 
     public static void setBackpackUnlockedSlots(Player player, UnlockedSlots slots)
     {
+        if(Config.BACKPACK.equipable.unlockAllEquipableSlots.get())
+            return;
+
         if(slots.getMaxSlots() != ManagementInventory.getMaxEquipable())
         {
             slots = slots.setMaxSlots(ManagementInventory.getMaxEquipable());
