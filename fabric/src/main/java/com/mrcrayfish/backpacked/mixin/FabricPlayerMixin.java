@@ -1,11 +1,11 @@
 package com.mrcrayfish.backpacked.mixin;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -31,31 +30,31 @@ import java.util.stream.IntStream;
 public class FabricPlayerMixin
 {
     @Inject(method = "getProjectile", at = @At(value = "RETURN", ordinal = 3), cancellable = true)
-    public void backpackedLocateAmmo(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir)
+    public void backpackedLocateAmmo(ItemStack weapon, CallbackInfoReturnable<ItemStack> cir)
     {
-        Player player = (Player) (Object) this;
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
-        if(backpack.isEmpty())
-            return;
-
-        HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
-        if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN), backpack) <= 0)
-            return;
-
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
-        if(inventory == null)
-            return;
-
-        Predicate<ItemStack> predicate = ((ProjectileWeaponItem)itemStack.getItem()).getAllSupportedProjectiles();
-        ItemStack projectile = IntStream.range(0, inventory.getContainerSize())
-            .mapToObj(inventory::getItem)
-            .filter(predicate)
-            .findFirst()
-            .orElse(ItemStack.EMPTY);
-
-        if(!projectile.isEmpty())
+        if(weapon.getItem() instanceof ProjectileWeaponItem item)
         {
-            cir.setReturnValue(projectile);
+            Player player = (Player) (Object) this;
+            BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+            for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
+            {
+                BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
+                if(inventory == null)
+                    continue;
+
+                ItemStack backpack = inventory.getBackpackStack();
+                HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
+                if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN), backpack) <= 0)
+                    continue;
+
+                Predicate<ItemStack> predicate = item.getSupportedHeldProjectiles();
+                ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
+                if(projectile.isEmpty())
+                    continue;
+
+                cir.setReturnValue(projectile);
+                break;
+            }
         }
     }
 
@@ -66,14 +65,13 @@ public class FabricPlayerMixin
         if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
             return;
 
-        if(Config.SERVER.backpack.keepOnDeath.get())
+        if(Config.BACKPACK.equipable.keepOnDeath.get())
             return;
 
-        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
-        if(stack.isEmpty())
-            return;
-
-        player.drop(stack, true, false);
-        ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
+        BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
+            if(!stack.isEmpty()) {
+                player.drop(stack, true, false);
+            }
+        });
     }
 }

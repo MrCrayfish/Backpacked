@@ -14,18 +14,18 @@ import java.util.Optional;
 public interface IOptionalStorage extends Container
 {
     @Nullable
-    SimpleContainer getInventory();
+    Container getInventory();
 
     @Override
     default int getContainerSize()
     {
-        return Optional.ofNullable(this.getInventory()).map(SimpleContainer::getContainerSize).orElse(0);
+        return Optional.ofNullable(this.getInventory()).map(Container::getContainerSize).orElse(0);
     }
 
     @Override
     default boolean isEmpty()
     {
-        return Optional.ofNullable(this.getInventory()).map(SimpleContainer::isEmpty).orElse(true);
+        return Optional.ofNullable(this.getInventory()).map(Container::isEmpty).orElse(true);
     }
 
     @Override
@@ -61,12 +61,18 @@ public interface IOptionalStorage extends Container
     @Override
     default void clearContent()
     {
-        Optional.ofNullable(this.getInventory()).ifPresent(SimpleContainer::clearContent);
+        Optional.ofNullable(this.getInventory()).ifPresent(Container::clearContent);
     }
 
     @Override
     default boolean canPlaceItem(int index, ItemStack stack)
     {
-        return this.getInventory() != null;
+        return Optional.ofNullable(this.getInventory()).map(inv -> inv.canPlaceItem(index, stack)).orElse(false);
+    }
+
+    @Override
+    default boolean canTakeItem(Container container, int index, ItemStack stack)
+    {
+        return Optional.ofNullable(this.getInventory()).map(inv -> inv.canTakeItem(container, index, stack)).orElse(false);
     }
 }

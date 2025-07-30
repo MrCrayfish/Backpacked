@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.platform;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.platform.services.IClientHelper;
@@ -9,15 +10,22 @@ import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -77,5 +85,21 @@ public class FabricClientHelper implements IClientHelper
         {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void drawTooltip(GuiGraphics graphics, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner)
+    {
+        graphics.renderTooltipInternal(font, list, mouseX, mouseY, positioner);
+    }
+
+    @Override
+    public void setMousePos(double x, double y)
+    {
+        Window window = Minecraft.getInstance().getWindow();
+        GLFW.glfwSetCursorPos(window.getWindow(), x, y);
+        MouseHandler handler = Minecraft.getInstance().mouseHandler;
+        handler.xpos = x;
+        handler.ypos = y;
     }
 }

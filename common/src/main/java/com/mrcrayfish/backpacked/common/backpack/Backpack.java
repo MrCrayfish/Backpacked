@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.challenge.UnlockChallenge;
 import com.mrcrayfish.backpacked.common.challenge.impl.DummyChallenge;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,6 +14,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -76,7 +78,7 @@ public class Backpack
 
     public boolean isUnlocked(Player player)
     {
-        return UnlockManager.getTracker(player).map(tracker -> tracker.isUnlocked(this.id)).orElse(false) || this.unlockChallenge.isEmpty() || Config.SERVER.backpack.unlockAllCosmetics.get();
+        return UnlockManager.getTracker(player).map(tracker -> tracker.isUnlocked(this.id)).orElse(false) || this.unlockChallenge.isEmpty() || Config.BACKPACK.cosmetics.unlockAllCosmetics.get();
     }
 
     @Nullable

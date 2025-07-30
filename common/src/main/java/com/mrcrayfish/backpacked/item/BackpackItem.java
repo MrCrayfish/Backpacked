@@ -1,27 +1,33 @@
 package com.mrcrayfish.backpacked.item;
 
+import com.mojang.datafixers.util.Pair;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
-import com.mrcrayfish.backpacked.inventory.container.OnPlacedBackpackListener;
+import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
+import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.platform.Services;
-import com.mrcrayfish.backpacked.util.ClientUtils;
-import net.minecraft.ChatFormatting;
+import com.mrcrayfish.framework.api.FrameworkAPI;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: MrCrayfish
@@ -29,41 +35,64 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BackpackItem extends Item
 {
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
-    public static final MutableComponent REMOVE_ITEMS_TOOLTIP = Component.translatable("backpacked.tooltip.remove_items").withStyle(ChatFormatting.RED);
-    private static final AtomicBoolean OPENING_MANAGEMENT = new AtomicBoolean(false);
+    public static final Component BACKPACK_MANAGEMENT_TRANSLATION = Component.translatable("container.backpack_management");
 
     public BackpackItem(Properties properties)
     {
-        super(properties.component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT));
+        super(properties
+            .component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT)
+            .component(ModDataComponents.UNLOCKED_SLOTS.get(), new UnlockedSlots(0))
+        );
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag flag)
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
-        if(context != TooltipContext.EMPTY)
+        ItemStack stack = player.getItemInHand(hand);
+        if(!level.isClientSide())
         {
-            ClientUtils.createBackpackTooltip(stack, list);
+            if(BackpackHelper.equipBackpack(player, stack))
+            {
+                level.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
+                return InteractionResultHolder.success(stack);
+            }
         }
+        return InteractionResultHolder.pass(stack);
+    }
+
+    public int getColumnCount()
+    {
+        return Config.BACKPACK.inventory.size.columns.get();
+    }
+
+    public int getRowCount()
+    {
+        return Config.BACKPACK.inventory.size.rows.get();
+    }
+
+    @Override
+    public boolean canFitInsideContainerItems()
+    {
+        return false;
     }
 
     public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
     {
-        // Fixes an issue when opening management, the slot listener tries to reopen the backpack
-        if(OPENING_MANAGEMENT.get())
-            return false;
-
-        ItemStack backpack = Services.BACKPACK.getBackpackStack(ownerPlayer);
-        if(!backpack.isEmpty())
+        int selected = BackpackHelper.getSelectedBackpackIndex(ownerPlayer);
+        BackpackInventory inventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory(selected);
+        if(inventory != null)
         {
-            BackpackInventory backpackInventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory();
-            if(backpackInventory == null)
+            ItemStack backpack = inventory.getBackpackStack();
+            if(!(backpack.getItem() instanceof BackpackItem item))
                 return false;
-            BackpackItem backpackItem = (BackpackItem) backpack.getItem();
+
             Component title = backpack.has(DataComponents.CUSTOM_NAME) ? backpack.getHoverName() : BACKPACK_TRANSLATION;
-            int cols = backpackItem.getColumnCount();
-            int rows = backpackItem.getRowCount();
+            int cols = item.getColumnCount();
+            int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
-            Services.BACKPACK.openBackpackScreen(openingPlayer, backpackInventory, cols, rows, owner, title);
+            UnlockedSlots slots = item.getUnlockedSlots(backpack);
+            Pair<Integer, Integer> data = BackpackHelper.createIndexData(ownerPlayer);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), title);
             return true;
         }
         openBackpackManagement(ownerPlayer);
@@ -72,28 +101,40 @@ public class BackpackItem extends Item
 
     public static void openBackpackManagement(ServerPlayer player)
     {
-        OPENING_MANAGEMENT.set(true);
-        player.openMenu(new SimpleMenuProvider((windowId, inventory, player1) -> {
-            BackpackManagementMenu menu = new BackpackManagementMenu(windowId, inventory, new ManagementInventory(player));
-            menu.addSlotListener(new OnPlacedBackpackListener());
-            return menu;
-        }, Component.literal("Hello")));
-        OPENING_MANAGEMENT.set(false);
+        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(player);
+        FrameworkAPI.openMenuWithData(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
+            SimpleContainerData data = new SimpleContainerData(1);
+            data.set(0, BackpackHelper.getFirstBackpackStack(player).isEmpty() ? 0 : 1);
+            return new BackpackManagementMenu(id, player.getInventory(), new ManagementInventory(player), data, slots);
+        }, BACKPACK_MANAGEMENT_TRANSLATION), new ManagementContainerData(slots));
     }
 
-    public int getColumnCount()
+    @Nullable
+    public UnlockedSlots getUnlockedSlots(ItemStack stack)
     {
-        return Config.SERVER.backpack.inventorySizeColumns.get();
-    }
+        if(!stack.is(this))
+            return null;
 
-    public int getRowCount()
-    {
-        return Config.SERVER.backpack.inventorySizeRows.get();
-    }
+        if(Config.BACKPACK.inventory.slots.unlockAllSlots.get())
+            return UnlockedSlots.ALL;
 
-    @Override
-    public boolean canFitInsideContainerItems()
-    {
-        return false;
+        // If missing, create the component
+        UnlockedSlots slots = stack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        if(slots == null)
+        {
+            slots = new UnlockedSlots(this.getColumnCount() * this.getRowCount());
+            stack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+            return slots;
+        }
+
+        // Update the max slots if the size is different
+        int maxSlots = this.getColumnCount() * this.getRowCount();
+        if(slots.getMaxSlots() != maxSlots)
+        {
+            slots = slots.setMaxSlots(maxSlots);
+            stack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+        }
+
+        return slots;
     }
 }

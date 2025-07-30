@@ -67,7 +67,7 @@ public class UnlockTracker extends SyncedObject
 
     public Optional<IProgressTracker> getProgressTracker(ResourceLocation backpackId)
     {
-        if(!Config.SERVER.backpack.unlockAllCosmetics.get() && !this.unlockedBackpacks.contains(backpackId))
+        if(!Config.BACKPACK.cosmetics.unlockAllCosmetics.get() && !this.unlockedBackpacks.contains(backpackId))
         {
             return Optional.ofNullable(this.backpackToProgressTracker.get(backpackId));
         }

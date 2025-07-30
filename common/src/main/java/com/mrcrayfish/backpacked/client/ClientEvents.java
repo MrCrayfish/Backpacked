@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
@@ -8,7 +9,6 @@ import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.event.ClientConnectionEvents;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -79,11 +79,12 @@ public class ClientEvents
         if(mc.level == null || mc.player == null || mc.gameMode == null)
             return false;
 
-        double range = Config.SERVER.pickpocketing.maxReachDistance.get();
+        double range = Config.PICKPOCKETING.maxReachDistance.get();
         List<LivingEntity> entities = new ArrayList<>();
-        if(Config.SERVER.pickpocketing.enabled.get()) {
+        if(Config.PICKPOCKETING.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-                return !Services.BACKPACK.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
+                // TODO add back test if player is wearing backpack
+                return !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {

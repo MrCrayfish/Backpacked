@@ -51,23 +51,40 @@ jobs:
           echo "KEYSTORE_PASS=${{ secrets.MRCRAYFISH_JKS_PASSPHRASE }}" >> $GITHUB_ENV
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+      - name: Data Generation (NeoForge)
+        env:
+          GPR_USER: "MrCrayfish"
+          GPR_KEY: ${{ secrets.GPR_TOKEN }}
+          PACKAGES_REPO: ${{ vars.PACKAGES_REPOSITORY }}
+          TARGET_LOADER: "neoforge"
+        run: ./gradlew :neoforge:runData
+      - name: Data Generation (Fabric)
+        env:
+          GPR_USER: "MrCrayfish"
+          GPR_KEY: ${{ secrets.GPR_TOKEN }}
+          PACKAGES_REPO: ${{ vars.PACKAGES_REPOSITORY }}
+          TARGET_LOADER: "fabric"
+        run: ./gradlew :fabric:runDatagen
       - name: Build (Common)
         env:
           GPR_USER: "MrCrayfish"
           GPR_KEY: ${{ secrets.GPR_TOKEN }}
           PACKAGES_REPO: ${{ vars.PACKAGES_REPOSITORY }}
+          TARGET_LOADER: "common"
         run: ./gradlew :common:build
       - name: Build (Fabric)
         env:
           GPR_USER: "MrCrayfish"
           GPR_KEY: ${{ secrets.GPR_TOKEN }}
           PACKAGES_REPO: ${{ vars.PACKAGES_REPOSITORY }}
+          TARGET_LOADER: "fabric"
         run: ./gradlew :fabric:build
       - name: Build (NeoForge)
         env:
           GPR_USER: "MrCrayfish"
           GPR_KEY: ${{ secrets.GPR_TOKEN }}
           PACKAGES_REPO: ${{ vars.PACKAGES_REPOSITORY }}
+          TARGET_LOADER: "neoforge"
         run: ./gradlew :neoforge:build
       - name: Construct artifact files
         id: artifacts
@@ -122,12 +139,20 @@ jobs:
           name: '${{ steps.mod_data.outputs.minecraft_version }}-${{ steps.mod_data.outputs.mod_version }}'
           artifacts: "${{ steps.artifacts.outputs.fabric }},${{ steps.artifacts.outputs.fabric }}.asc,${{ steps.artifacts.outputs.neoforge }},${{ steps.artifacts.outputs.neoforge }}.asc,CHANGELOG.txt"
           bodyFile: "RELEASE_BODY.md"
+      - name: Prepare Artifacts
+        run: |
+          mkdir artifacts
+          mv ${{ steps.artifacts.outputs.neoforge }} artifacts
+          mv ${{ steps.artifacts.outputs.neoforge }}.asc artifacts
+          mv ${{ steps.artifacts.outputs.fabric }} artifacts
+          mv ${{ steps.artifacts.outputs.fabric }}.asc artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: '${{ steps.mod_data.outputs.mod_id }}-${{ steps.mod_data.outputs.minecraft_version }}-${{ steps.mod_data.outputs.mod_version }}'
-          path: |
-            ${{ steps.artifacts.outputs.fabric }}
-            ${{ steps.artifacts.outputs.fabric }}.asc
-            ${{ steps.artifacts.outputs.neoforge }}
-            ${{ steps.artifacts.outputs.neoforge }}.asc
+          path: artifacts
+      - name: Delete tag on fail
+        if: failure()
+        run: |
+          echo "Cleaning up tag..."
+          git push origin :refs/tags/${{ github.ref_name }}

@@ -1,12 +1,12 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.event.TickEvents;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
@@ -23,29 +23,7 @@ public class BackpackEvents
 {
     public static void init()
     {
-        PlayerEvents.PICKUP_ITEM.register(BackpackEvents::onPickupItem);
         TickEvents.START_PLAYER.register(BackpackEvents::updateBackpackProperties);
-    }
-
-    private static boolean onPickupItem(Player player, ItemEntity entity)
-    {
-        if(Config.SERVER.backpack.autoEquipOnPickup.get() && player instanceof ServerPlayer serverPlayer)
-        {
-            ItemStack stack = entity.getItem();
-            if(!(stack.getItem() instanceof BackpackItem))
-                return false;
-
-            if(Services.BACKPACK.getBackpackStack(serverPlayer).isEmpty())
-            {
-                if(Services.BACKPACK.setBackpackStack(serverPlayer, stack))
-                {
-                    ((ServerLevel) entity.level()).getChunkSource().broadcast(entity, new ClientboundTakeItemEntityPacket(entity.getId(), serverPlayer.getId(), stack.getCount()));
-                    entity.discard();
-                }
-                return true;
-            }
-        }
-        return false;
     }
 
     private static void updateBackpackProperties(Player player)
@@ -54,7 +32,7 @@ public class BackpackEvents
             return;
 
         Optional<BackpackProperties> cosmeticProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
-        ItemStack realStack = ModSyncedDataKeys.BACKPACK.getValue(player);
+        ItemStack realStack = BackpackHelper.getFirstBackpackStack(player);
         if(realStack.is(ModItems.BACKPACK.get()))
         {
             BackpackProperties realProperties = realStack.get(ModDataComponents.BACKPACK_PROPERTIES.get());

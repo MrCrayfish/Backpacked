@@ -1,23 +1,27 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
-import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 
 import java.util.ArrayList;
@@ -26,33 +30,53 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMenu>
+public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerMenu>
 {
-    private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/backpack.png");
+    private static final Component MANAGEMENT_TOOLTIP = Component.translatable("backpacked.gui.manage_backpacks");
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
+
+    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
+    private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
+    private static final ResourceLocation INVENTORY_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
+    private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
+    private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
+    private static final ResourceLocation ICON_MANAGEMENT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/management");
+    private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
+    private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
+    private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
+    private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
+    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+
+    private static final int TITLE_LABEL_WIDTH = 94;
 
     private final int cols;
     private final int rows;
     private final boolean owner;
     private boolean opened;
+    private int buttonCount;
 
-    public BackpackScreen(BackpackContainerMenu backpackContainerMenu, Inventory playerInventory, Component titleIn)
+    public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
-        super(backpackContainerMenu, playerInventory, titleIn);
-        this.cols = backpackContainerMenu.getCols();
-        this.rows = backpackContainerMenu.getRows();
-        this.owner = backpackContainerMenu.isOwner();
-        this.imageWidth = 14 + Math.max(this.cols, 9) * 18;
-        this.imageHeight = 114 + this.rows * 18;
-        this.inventoryLabelX = Math.max(((this.cols * 18) - (9 * 18)) / 2, 0) + 7;
-        this.inventoryLabelY = this.rows * 18 + 17 + 4;
+        super(menu, playerInventory, titleIn);
+        this.cols = menu.getCols();
+        this.rows = menu.getRows();
+        this.owner = menu.isOwner();
+        this.imageWidth = 11 + Math.max(this.cols, 9) * 18 + 11;
+        this.imageHeight = 26 + this.rows * 18 + 15 + 3 + 101;
+        this.titleLabelX = 6;
+        this.titleLabelY = 0;
+        this.inventoryLabelX = this.imageWidth / 2 - 80;
+        this.inventoryLabelY = this.imageHeight - 94;
     }
 
     @Override
     public void init()
     {
+        MouseRestorer.loadCapturedPosition();
+
         super.init();
+
         if(!this.opened)
         {
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 0.75F, 1.0F));
@@ -60,86 +84,154 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
         }
 
         List<MiniButton> buttons = this.gatherButtons();
+        int buttonStart = this.leftPos + this.imageWidth - 11 - (5 + (buttons.size() * 13 - 3) + 5) + 5;
         for(int i = 0; i < buttons.size(); i++)
         {
             MiniButton button = buttons.get(i);
-            switch(Config.CLIENT.buttonAlignment.get())
-            {
-                case LEFT -> {
-                    int titleWidth = this.minecraft.font.width(this.title);
-                    button.setX(this.leftPos + titleWidth + 8 + 3 + i * 13);
-                }
-                case RIGHT -> {
-                    button.setX(this.leftPos + this.imageWidth - 7 - 10 - (buttons.size() - 1 - i) * 13);
-                }
-            }
-            button.setY(this.topPos + 5);
+            button.setX(buttonStart + i * 13);
+            button.setY(this.topPos + 4);
             this.addRenderableWidget(button);
+        }
+        this.buttonCount = buttons.size();
+
+        if(this.owner)
+        {
+            int backpackIndex = this.menu.getBackpackIndex();
+            int totalBackpacks = this.menu.getTotalBackpacks();
+            Tooltip navigateTooltip = Tooltip.create(
+                    Component.literal(Integer.toString(backpackIndex + 1))
+                            .append(Component.literal(" / ").withStyle(ChatFormatting.BOLD, ChatFormatting.GRAY))
+                            .append(Integer.toString(totalBackpacks))
+            );
+
+            MiniButton navPrevious = this.addRenderableWidget(new MiniButton(this.leftPos + 2, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+                Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
+            }));
+            navPrevious.setTooltip(navigateTooltip);
+            navPrevious.active = backpackIndex > 0;
+
+            MiniButton navNext = this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
+                Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
+            }));
+            navNext.setTooltip(navigateTooltip);
+            navNext.active = backpackIndex < totalBackpacks - 1;
         }
     }
 
     private List<MiniButton> gatherButtons()
     {
         List<MiniButton> buttons = new ArrayList<>();
-        buttons.add(new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, button -> {
+
+        MiniButton manageButton = new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
             Network.getPlay().sendToServer(new MessageRequestManagement());
-        }));
-        boolean canCustomise = this.owner && !Config.SERVER.backpack.disableCustomisation.get();
+        });
+        manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
+        buttons.add(manageButton);
+
+        boolean canCustomise = this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get();
         if(canCustomise)
         {
-            MiniButton customiseButton = new MiniButton(0, 0, 225, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> {
+            MiniButton customiseButton = new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
                 Network.getPlay().sendToServer(new MessageRequestCustomisation());
             });
             customiseButton.setTooltip(Tooltip.create(CUSTOMISE_TOOLTIP));
             buttons.add(customiseButton);
         }
+
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            MiniButton configButton = new MiniButton(0, 0, 235, 0, CustomiseBackpackScreen.GUI_TEXTURE, onPress -> this.openConfigScreen());
+            MiniButton configButton = new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen());
             configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
             buttons.add(configButton);
         }
+
         return buttons;
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        super.render(graphics, mouseX, mouseY, partialTicks); //Super
-        this.renderTooltip(graphics, mouseX, mouseY); //Render hovered tooltips
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
+    {
+        FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
+        int titleWidth = this.font.width(trimmedTitle);
+        graphics.drawString(this.font, trimmedTitle, 16 + (TITLE_LABEL_WIDTH - titleWidth) / 2, 5, 0xFF61503D, false);
+        graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
-        this.drawBackgroundWindow(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
+        this.drawBackgroundWindow(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight, mouseX, mouseY);
     }
 
-    private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height)
+    private FormattedCharSequence getTrimmedTitle()
     {
+        int maxWidth = TITLE_LABEL_WIDTH - 10;
+        if(this.font.width(this.title) > maxWidth)
+        {
+            return Language.getInstance().getVisualOrder(FormattedText.composite(this.font.substrByWidth(this.title, maxWidth - this.font.width("...")), FormattedText.of("...")));
+        }
+        return this.title.getVisualOrderText();
+    }
+
+    private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
+    {
+        //graphics.fill(this.leftPos, this.topPos, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xFFFFFFFF);
+        graphics.blitSprite(LABEL_BACKGROUND, x + 16, y - 1, TITLE_LABEL_WIDTH, 21);
+
+        FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
+        int titleWidth = this.font.width(trimmedTitle);
+        int titleX = x + 16 + (TITLE_LABEL_WIDTH - titleWidth) / 2;
+        int checkersX = x + 21;
+        int checkersWidth = titleX - checkersX - 1;
+        if(checkersWidth > 0)
+        {
+            graphics.blitSprite(CHECKERS, checkersX, y + 7, checkersWidth, 5);
+            graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
+        }
+
+        int buttonsWidth = 5 + (this.buttonCount * 13 - 3) + 5;
+        graphics.blitSprite(LABEL_BACKGROUND, x + width - buttonsWidth - 11, y - 1, buttonsWidth, 21);
+
         // Backpack Inventory
-        int backpackHeight = 17 + this.rows * 18;
-        graphics.blit(GUI_TEXTURE, x,             y,          7, backpackHeight, 0, 0, 7, backpackHeight, 256, 256); /* Top left corner */
-        graphics.blit(GUI_TEXTURE, x + width - 7, y,          7, backpackHeight, 8, 0, 7, backpackHeight, 256, 256); /* Top right corner */
-        graphics.blit(GUI_TEXTURE, x + 7,         y, width - 14, backpackHeight, 7, 0, 1, backpackHeight, 256, 256); /* Top border */
+        int backpackHeight = 20 + this.rows * 18 + 15;
+        //graphics.blitSprite(BACKPACK_BACKGROUND, x - 60, y + 8, 70, backpackHeight - 16);
+        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 16, width, backpackHeight - 10);
 
         // Draw Backpack Slots
-        int slotWidth = this.cols * 18;
-        int slotHeight = this.rows * 18;
-        int minSlotWidth = 9 * 18; //Player inventory will always have 9 columns
-        int backpackStartX = Math.max((minSlotWidth - slotWidth) / 2, 0);
-        graphics.blit(GUI_TEXTURE, backpackStartX + x + 7, y + 17, slotWidth, slotHeight, 15, 0, slotWidth, slotHeight, 256, 256);
+        int backpackSlotsWidth = this.cols * 18;
+        int backpackSlotsHeight = this.rows * 18;
+        int backpackSlotsX = (width - backpackSlotsWidth) / 2;
+        int backpackSlotsY = 27;
+        graphics.blitSprite(BACKPACK_SLOT, x + backpackSlotsX, y + backpackSlotsY, backpackSlotsWidth, backpackSlotsHeight);
+
+        int backpackCheckersWidth = (width - 11 - 11 - backpackSlotsWidth) / 2 - 3;
+        if(backpackCheckersWidth > 0)
+        {
+            graphics.blitSprite(CHECKERS, x + 11, y + 27, backpackCheckersWidth, backpackSlotsHeight);
+            graphics.blitSprite(CHECKERS, x + backpackSlotsX + backpackSlotsWidth + 3, y + 27, backpackCheckersWidth, backpackSlotsHeight);
+        }
 
         // Player Inventory
-        graphics.blit(GUI_TEXTURE, x,             y + backpackHeight,          7, 97, 0, 143,  7, 97, 256, 256); /* Bottom left corner */
-        graphics.blit(GUI_TEXTURE, x + width - 7, y + backpackHeight,          7, 97, 8, 143,  7, 97, 256, 256); /* Bottom right corner */
-        graphics.blit(GUI_TEXTURE, x + 7,         y + backpackHeight, width - 14, 97, 7, 143,  1, 97, 256, 256); /* Bottom border */
+        int inventoryWidth = 7 + 9 * 18 + 7;
+        int inventoryHeight = 101;
+        int inventoryX = (width - inventoryWidth) / 2;
+        int inventoryY = backpackHeight + 9;
+        graphics.blitSprite(INVENTORY_SPRITE, x + inventoryX, y + inventoryY, inventoryWidth, inventoryHeight);
 
         // Draw Player Inventory Slots
-        int inventoryStartX = Math.max((slotWidth - minSlotWidth) / 2, 0);
-        graphics.blit(GUI_TEXTURE, x + inventoryStartX + 7, y + backpackHeight + 14, 163, 76, 15, 157, 163, 76, 256, 256);
+        int inventorySlotsWidth = 9 * 18;
+        int inventorySlotsHeight = 3 * 18;
+        int inventorySlotsX = (width - inventorySlotsWidth) / 2;
+        int inventorySlotsY = inventoryY + 18;
+        graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
+        graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
     }
 
     private void openConfigScreen()
@@ -156,5 +248,12 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackContainerMen
             return true;
         }
         return super.keyPressed(key, scanCode, action);
+    }
+
+    @Override
+    public void removed()
+    {
+        super.removed();
+        MouseRestorer.capturePosition();
     }
 }

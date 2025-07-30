@@ -1,11 +1,13 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleContainerData;
 
 import java.util.Optional;
 
@@ -18,13 +20,13 @@ public class WanderingTraderContainer extends BackpackContainerMenu
 
     public WanderingTraderContainer(int id, Inventory playerInventory, WanderingTrader trader)
     {
-        super(id, playerInventory, trader.getInventory(), 8, 1, false);
+        super(id, playerInventory, trader.getInventory(), 8, 1, false, UnlockedSlots.ALL, 0, 1);
         this.trader = trader;
     }
 
     @Override
     public boolean stillValid(Player playerIn)
     {
-        return this.trader.isAlive() && Optional.ofNullable(ModSyncedDataKeys.TRADER_PICKPOCKETING.getValue(this.trader)).map(data -> !data.getDetectedPlayers().containsKey(playerIn)).orElse(false) && PickpocketUtil.canPickpocketEntity(this.trader, playerIn, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5);
+        return this.trader.isAlive() && Optional.ofNullable(ModSyncedDataKeys.TRADER_PICKPOCKETING.getValue(this.trader)).map(data -> !data.getDetectedPlayers().containsKey(playerIn)).orElse(false) && PickpocketUtil.canPickpocketEntity(this.trader, playerIn, Config.PICKPOCKETING.maxReachDistance.get() + 0.5);
     }
 }

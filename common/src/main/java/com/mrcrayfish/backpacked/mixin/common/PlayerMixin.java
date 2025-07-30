@@ -1,13 +1,12 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
+import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +15,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,43 +32,79 @@ import java.util.List;
 public class PlayerMixin implements BackpackedInventoryAccess
 {
     @Unique
-    public BackpackInventory backpacked$Inventory = null;
+    public BackpackInventory[] backpacked$Inventory = null;
+
+    @Unique
+    private BackpackInventory[] backpacked$Inventory()
+    {
+        if(this.backpacked$Inventory == null)
+        {
+            this.backpacked$Inventory = new BackpackInventory[ManagementInventory.getMaxEquipable()];
+        }
+        if(this.backpacked$Inventory.length != ManagementInventory.getMaxEquipable())
+        {
+            BackpackInventory[] old = this.backpacked$Inventory;
+            this.backpacked$Inventory = new BackpackInventory[ManagementInventory.getMaxEquipable()];
+            System.arraycopy(old, 0, this.backpacked$Inventory, 0, Math.min(old.length, this.backpacked$Inventory.length));
+        }
+        return this.backpacked$Inventory;
+    }
+
+    @Override
+    public int backpacked$GetBackpackInventoryCount()
+    {
+        return this.backpacked$Inventory().length;
+    }
 
     @Override
     @Nullable
-    public BackpackInventory backpacked$GetBackpackInventory()
+    public BackpackInventory backpacked$GetBackpackInventory(int index)
     {
+        BackpackInventory[] inventories = this.backpacked$Inventory();
+        if(index < 0 || index >= inventories.length)
+            return null;
+
         Player player = (Player) (Object) this;
-        ItemStack stack = Services.BACKPACK.getBackpackStack(player);
+        ItemStack stack = BackpackHelper.getBackpackStack(player, index);
         if(stack.isEmpty())
         {
-            this.backpacked$Inventory = null;
+            inventories[index] = null;
             return null;
         }
 
-        BackpackItem backpackItem = (BackpackItem) stack.getItem();
-        if(this.backpacked$Inventory == null || !this.backpacked$Inventory.getBackpackStack().equals(stack) || this.backpacked$Inventory.getContainerSize() != backpackItem.getRowCount() * backpackItem.getColumnCount())
+        BackpackItem item = (BackpackItem) stack.getItem();
+        BackpackInventory inventory = inventories[index];
+        if(inventory == null || !inventory.getBackpackStack().equals(stack) || inventory.getState().isChanged())
         {
-            this.backpacked$Inventory = new BackpackInventory(backpackItem.getColumnCount(), backpackItem.getRowCount(), player, stack);
+            inventory = new BackpackInventory(index, item.getColumnCount(), item.getRowCount(), player, stack);
+            inventories[index] = inventory;
         }
-        return this.backpacked$Inventory;
+        return inventory;
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     public void backpacked$TickHead(CallbackInfo ci)
     {
-        if(this.backpacked$Inventory != null)
+        BackpackInventory[] inventories = this.backpacked$Inventory();
+        for(BackpackInventory inventory : inventories)
         {
-            this.backpacked$Inventory.tick();
+            if(inventory != null)
+            {
+                inventory.tick();
+            }
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
     public void backpacked$AddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
     {
-        if(this.backpacked$Inventory != null)
+        BackpackInventory[] inventories = this.backpacked$Inventory();
+        for(BackpackInventory inventory : inventories)
         {
-            this.backpacked$Inventory.saveItemsToStack();
+            if(inventory != null)
+            {
+                inventory.saveItemsToStack();
+            }
         }
     }
 

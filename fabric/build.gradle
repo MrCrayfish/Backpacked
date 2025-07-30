@@ -43,7 +43,9 @@ dependencies {
 sourceSets.main.resources.srcDirs += "src/generated/resources"
 
 fabricApi {
-    configureDataGeneration()
+    configureDataGeneration {
+        outputDirectory.set(file("src/generated/resources"))
+    }
 }
 
 loom {

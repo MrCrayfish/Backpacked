@@ -1,62 +1,83 @@
 package com.mrcrayfish.backpacked.inventory;
 
-import com.google.common.base.Preconditions;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
+import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Predicate;
 
 public class ManagementInventory implements Container
 {
     private final ServerPlayer player;
+    private final int size;
 
     public ManagementInventory(ServerPlayer player)
     {
         this.player = player;
+        this.size = getMaxEquipable();
     }
 
     @Override
     public int getContainerSize()
     {
-        return 1;
+        return this.size;
     }
 
     @Override
     public boolean isEmpty()
     {
-        return ModSyncedDataKeys.BACKPACK.getValue(this.player).isEmpty();
+        return BackpackHelper.getFirstBackpackStack(this.player).isEmpty();
     }
 
     @Override
     public ItemStack getItem(int index)
     {
-        Preconditions.checkArgument(index == 0);
-        return ModSyncedDataKeys.BACKPACK.getValue(this.player);
+        return BackpackHelper.getBackpackStack(this.player, index);
     }
 
     @Override
     public ItemStack removeItem(int index, int count)
     {
-        Preconditions.checkArgument(index == 0);
-        return count > 0 ? ModSyncedDataKeys.BACKPACK.getValue(this.player).split(count) : ItemStack.EMPTY;
+        return count > 0 ? BackpackHelper.getBackpackStack(this.player, index).split(count) : ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int index)
     {
-        Preconditions.checkArgument(index == 0);
-        ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(this.player);
-        if(stack.isEmpty())
-            return ItemStack.EMPTY;
-        ModSyncedDataKeys.BACKPACK.setValue(this.player, ItemStack.EMPTY);
+        ItemStack stack = BackpackHelper.getBackpackStack(this.player, index);
+        if(!stack.isEmpty())
+        {
+            BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, index);
+        }
         return stack;
     }
 
     @Override
     public void setItem(int index, ItemStack stack)
     {
-        ModSyncedDataKeys.BACKPACK.setValue(this.player, stack);
+        BackpackHelper.setBackpackStack(this.player, stack, index);
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack)
+    {
+        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(this.player);
+        return slots.isUnlocked(index) && stack.getItem() instanceof BackpackItem;
+    }
+
+    @Override
+    public boolean canTakeItem(Container container, int index, ItemStack stack)
+    {
+        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(this.player);
+        return slots.isUnlocked(index);
     }
 
     @Override
@@ -65,12 +86,20 @@ public class ManagementInventory implements Container
     @Override
     public boolean stillValid(Player player)
     {
-        return this.player.isAlive();
+        return this.player.isAlive() && this.size == getMaxEquipable();
     }
 
     @Override
     public void clearContent()
     {
-        ModSyncedDataKeys.BACKPACK.setValue(this.player, ItemStack.EMPTY);
+        for(int i = 0; i < this.size; i++)
+        {
+            BackpackHelper.setBackpackStack(this.player, ItemStack.EMPTY, i);
+        }
+    }
+
+    public static int getMaxEquipable()
+    {
+        return Config.BACKPACK.equipable.maxEquipable.get();
     }
 }

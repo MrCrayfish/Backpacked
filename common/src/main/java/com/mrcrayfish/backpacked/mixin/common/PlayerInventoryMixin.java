@@ -20,17 +20,20 @@ public class PlayerInventoryMixin
     public void backpacked$RemoveItemTail(ItemStack stack, CallbackInfo ci)
     {
         Inventory playerInventory = (Inventory) (Object) this;
-        Player player = playerInventory.player;
-        BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
-        if(inventory == null)
-            return;
-
-        for(int i = 0; i < inventory.getContainerSize(); i++)
+        BackpackedInventoryAccess access = (BackpackedInventoryAccess) playerInventory.player;
+        for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
         {
-            if(inventory.getItem(i) == stack)
+            BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
+            if(inventory != null)
             {
-                inventory.setItem(i, ItemStack.EMPTY);
-                break;
+                for(int j = 0; j < inventory.getContainerSize(); j++)
+                {
+                    if(inventory.getItem(j) == stack)
+                    {
+                        inventory.setItem(j, ItemStack.EMPTY);
+                        break;
+                    }
+                }
             }
         }
     }

@@ -58,6 +58,7 @@ public record WaveformValue(Waveform waveform, double wavelength, double amplitu
             return ((2 * amplitude) / Mth.PI) * Math.atan(Math.tan((float) (((2 * Mth.PI * time) - phase) / (2 * wavelength))));
         });
 
+        @SuppressWarnings("deprecation")
         public static final StringRepresentable.EnumCodec<Waveform> CODEC = StringRepresentable.fromEnum(Waveform::values);
 
         private final String name;

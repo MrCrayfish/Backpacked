@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
@@ -14,7 +13,7 @@ import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
@@ -125,30 +124,28 @@ public class Backpacked
 
     private void onGetProjectile(LivingGetProjectileEvent event)
     {
-        if(event.getProjectileItemStack().isEmpty() && event.getEntity() instanceof Player player)
+        ItemStack weapon = event.getProjectileWeaponItemStack();
+        if(weapon.getItem() instanceof ProjectileWeaponItem item && event.getEntity() instanceof Player player)
         {
-            ItemStack backpack = Services.BACKPACK.getBackpackStack(player);
-            if(backpack.isEmpty())
-                return;
-
-            HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
-            if(backpack.getEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN)) <= 0)
-                return;
-
-            BackpackInventory inventory = ((BackpackedInventoryAccess) player).backpacked$GetBackpackInventory();
-            if(inventory == null)
-                return;
-
-            Predicate<ItemStack> predicate = ((ProjectileWeaponItem) event.getProjectileWeaponItemStack().getItem()).getSupportedHeldProjectiles();
-            ItemStack projectile = IntStream.range(0, inventory.getContainerSize())
-                .mapToObj(inventory::getItem)
-                .filter(predicate)
-                .findFirst()
-                .orElse(ItemStack.EMPTY);
-
-            if(!projectile.isEmpty())
+            BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+            for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
             {
+                BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
+                if(inventory == null)
+                    continue;
+
+                ItemStack backpack = inventory.getBackpackStack();
+                HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
+                if(backpack.getEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN)) <= 0)
+                    continue;
+
+                Predicate<ItemStack> predicate = item.getSupportedHeldProjectiles();
+                ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
+                if(projectile.isEmpty())
+                    continue;
+
                 event.setProjectileItemStack(projectile);
+                break;
             }
         }
     }
@@ -177,16 +174,14 @@ public class Backpacked
             if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
                 return;
 
-            if(Config.SERVER.backpack.keepOnDeath.get())
+            if(Config.BACKPACK.equipable.keepOnDeath.get())
                 return;
 
-            ItemStack stack = ModSyncedDataKeys.BACKPACK.getValue(player);
-            if(stack.isEmpty())
-                return;
-
-            event.getDrops().add(this.createDrop(player, stack));
-
-            ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
+            BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
+                if(!stack.isEmpty()) {
+                    event.getDrops().add(this.createDrop(player, stack));
+                }
+            });
         }
     }
 

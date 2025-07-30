@@ -1,10 +1,7 @@
 package com.mrcrayfish.backpacked.util;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -18,60 +15,41 @@ import java.util.stream.Stream;
  */
 public class InventoryHelper
 {
-    public static ListTag saveAllItems(HolderLookup.Provider provider, ListTag list, SimpleContainer container)
+    public static void mergeItemsOrSpawnIntoLevel(NonNullList<ItemStack> source, NonNullList<ItemStack> target, Level level, Vec3 pos)
     {
-        for(int i = 0; i < container.getContainerSize(); ++i)
+        for(int i = 0; i < source.size(); i++)
         {
-            ItemStack itemstack = container.getItem(i);
-            if(!itemstack.isEmpty())
+            ItemStack stack = source.get(i);
+            if(i < target.size())
             {
-                CompoundTag compound = new CompoundTag();
-                compound.putByte("Slot", (byte) i);
-                itemstack.save(provider, compound);
-                list.add(compound);
+                target.set(i, stack.copy());
+                continue;
             }
-        }
-        return list;
-    }
-
-    public static void loadAllItems(HolderLookup.Provider provider, ListTag list, SimpleContainer container, Level level, Vec3 pos)
-    {
-        for(int i = 0; i < list.size(); i++)
-        {
-            CompoundTag compound = list.getCompound(i);
-            int slot = compound.getByte("Slot") & 255;
-            if(slot < container.getContainerSize())
-            {
-                container.setItem(slot, ItemStack.parse(provider, compound).orElse(ItemStack.EMPTY));
-            }
-            else if(!level.isClientSide())
-            {
-                ItemStack stack = ItemStack.parse(provider, compound).orElse(ItemStack.EMPTY);
-                if(!stack.isEmpty())
-                {
-                    ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, container.addItem(stack));
-                    entity.setDefaultPickUpDelay();
-                    level.addFreshEntity(entity);
-                }
-            }
+            spawnStack(stack, level, pos);
         }
     }
 
-    public static void mergeInventory(SimpleContainer source, SimpleContainer target, Level level, Vec3 pos)
+    public static void mergeInventoryOrSpawnIntoLevel(Container source, Container target, Level level, Vec3 pos)
     {
         for(int i = 0; i < source.getContainerSize(); i++)
         {
-            if(i < target.getContainerSize())
+            ItemStack stack = source.getItem(i);
+            if(i < target.getContainerSize() && target.canPlaceItem(i, stack))
             {
-                target.setItem(i, source.getItem(i).copy());
+                target.setItem(i, stack.copy());
+                continue;
             }
-            else if(!level.isClientSide())
-            {
-                ItemStack stack = source.getItem(i).copy();
-                ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, target.addItem(stack));
-                entity.setDefaultPickUpDelay();
-                level.addFreshEntity(entity);
-            }
+            spawnStack(stack, level, pos);
+        }
+    }
+
+    public static void spawnStack(ItemStack stack, Level level, Vec3 pos)
+    {
+        if(!level.isClientSide())
+        {
+            ItemEntity entity = new ItemEntity(level, pos.x, pos.y, pos.z, stack.copyAndClear());
+            entity.setDefaultPickUpDelay();
+            level.addFreshEntity(entity);
         }
     }
 

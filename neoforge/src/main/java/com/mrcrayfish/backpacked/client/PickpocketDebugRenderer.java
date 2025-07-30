@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
@@ -31,7 +32,7 @@ public class PickpocketDebugRenderer
         if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
             return;
 
-        if(!Config.SERVER.pickpocketing.enabled.get())
+        if(!Config.PICKPOCKETING.enabled.get())
             return;
 
         PoseStack stack = event.getPoseStack();
@@ -41,15 +42,16 @@ public class PickpocketDebugRenderer
         MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();
         for(Player player : mc.level.players())
         {
-            if(Services.BACKPACK.getBackpackStack(player).isEmpty())
-                continue;
+            // TODO restore this
+            //if(BackpackHelper.getBackpackStack(player).isEmpty())
+                //continue;
 
             if(player.isLocalPlayer())
                 continue;
 
             stack.pushPose();
 
-            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player, Config.SERVER.pickpocketing.maxReachDistance.get()) && PickpocketUtil.canSeeBackpack(player, mc.player);
+            boolean inReach = PickpocketUtil.inReachOfBackpack(player, mc.player, Config.PICKPOCKETING.maxReachDistance.get()) && PickpocketUtil.canSeeBackpack(player, mc.player);
             float boxRed = inReach ? 0.0F : 1.0F;
             float boxGreen = inReach ? 1.0F : 1.0F;
             float boxBlue = inReach ? 0.0F : 1.0F;
@@ -64,8 +66,8 @@ public class PickpocketDebugRenderer
             float lineBlue = inRange ? 0.0F : 1.0F;
             Matrix4f matrix4f = stack.last().pose();
             Vec3 pos = player.getPosition(partialTick);
-            Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.SERVER.pickpocketing.maxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketing.maxReachDistance.get());
-            Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.SERVER.pickpocketing.maxRangeAngle.get().floatValue()).scale(Config.SERVER.pickpocketing.maxReachDistance.get());
+            Vec3 start = Vec3.directionFromRotation(0, bodyRotation + 180 - Config.PICKPOCKETING.maxRangeAngle.get().floatValue()).scale(Config.PICKPOCKETING.maxReachDistance.get());
+            Vec3 end = Vec3.directionFromRotation(0, bodyRotation - 180 + Config.PICKPOCKETING.maxRangeAngle.get().floatValue()).scale(Config.PICKPOCKETING.maxReachDistance.get());
             builder.addVertex(matrix4f, (float) (pos.x + start.x),(float) (pos.y + start.y), (float) (pos.z + start.z)).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);
             builder.addVertex(matrix4f, (float) pos.x,(float) pos.y, (float) pos.z).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);
             builder.addVertex(matrix4f, (float) (pos.x + end.x),(float) (pos.y + end.y), (float) (pos.z + end.z)).setColor(lineRed, lineGreen, lineBlue, 1.0F).setNormal(0.0F, 1.0F, 0.0F);

@@ -1,70 +1,173 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
-import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
+import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockSlot;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainerMenu extends AbstractContainerMenu
+public class BackpackContainerMenu extends CustomContainerMenu implements UnlockableController
 {
-    public static final int MAX_COLUMNS = 13;
-    public static final int MAX_ROWS = 7;
+    // There is a technical hard limit of 256, these values allow the widest and tallest inventory possible
+    public static final int MAX_COLUMNS = 23;
+    public static final int MAX_ROWS = 11;
 
     private final Container backpackInventory;
     private final int cols;
     private final int rows;
     private final boolean owner;
+    private final int backpackIndex;
+    private final int totalBackpacks;
+    private UnlockedSlots unlockedSlots;
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner());
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner(), data.slots(), data.index(), data.total());
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockedSlots slots, int backpackIndex, int totalBackpacks)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackContainer;
         this.cols = Mth.clamp(cols, 1, MAX_COLUMNS);
         this.rows = Mth.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
+        this.backpackIndex = backpackIndex;
+        this.totalBackpacks = totalBackpacks;
+        this.unlockedSlots = slots;
+
         checkContainerSize(backpackContainer, this.cols * this.rows);
+
         backpackContainer.startOpen(playerInventory.player);
-        int playerInventoryOffset = this.rows * 18 + 17 + 14 + 1;
+
+        int backpackWidth = 11 + Math.max(9 * 18, this.cols * 18) + 11;
         int backpackSlotWidth = this.cols * 18;
-        int minSlotWidth = 9 * 18;
-        int backpackStartX = Math.max((minSlotWidth - backpackSlotWidth) / 2, 0);
-        int inventoryStartX = Math.max((backpackSlotWidth - minSlotWidth) / 2, 0);
+        int backpackSlotsX = Math.max((backpackWidth - backpackSlotWidth) / 2, 0) + 1;
+        int backpackSlotsY = 28;
 
-        for(int j = 0; j < rows; j++)
+        for(int y = 0; y < rows; y++)
         {
-            for(int i = 0; i < cols; ++i)
+            for(int x = 0; x < cols; x++)
             {
-                this.addSlot(new BackpackSlot(backpackContainer, i + j * cols, 8 + backpackStartX + i * 18, 18 + j * 18));
+                this.addSlot(new UnlockableSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
             }
         }
 
-        for(int i = 0; i < 3; i++)
-        {
-            for(int j = 0; j < 9; j++)
-            {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + inventoryStartX + j * 18, i * 18 + playerInventoryOffset));
-            }
-        }
+        int inventorySlotsWidth = 9 * 18;
+        int inventorySlotsX = Math.max((backpackWidth - inventorySlotsWidth) / 2, 0) + 1;
+        int inventorySlotsY = 26 + this.rows * 18 + 15 + 3 + 19;
+        this.addPlayerInventorySlots(playerInventory, inventorySlotsX, inventorySlotsY);
+    }
 
-        for(int i = 0; i < 9; i++)
-        {
-            this.addSlot(new Slot(playerInventory, i, 8 + inventoryStartX + i * 18, playerInventoryOffset + 58));
-        }
+    public Container getBackpackInventory()
+    {
+        return this.backpackInventory;
+    }
+
+    public int getCols()
+    {
+        return this.cols;
+    }
+
+    public int getRows()
+    {
+        return this.rows;
+    }
+
+    public boolean isOwner()
+    {
+        return this.owner;
+    }
+
+    public int getBackpackIndex()
+    {
+        return this.backpackIndex;
+    }
+
+    public int getTotalBackpacks()
+    {
+        return this.totalBackpacks;
+    }
+
+    @Override
+    public void unlockSlot(int slot)
+    {
+        this.unlockedSlots = this.unlockedSlots.unlockSlot(slot);
+    }
+
+    @Override
+    public boolean isSlotUnlocked(int slot)
+    {
+        return this.unlockedSlots.isUnlocked(slot);
+    }
+
+    @Override
+    public boolean canUnlockSlot(int slot)
+    {
+        return this.unlockedSlots.isUnlockable(slot);
+    }
+
+    @Override
+    public void handleUnlockSlot(ServerPlayer player, int slot)
+    {
+        ItemStack backpack = this.getBackpackStack();
+        if(backpack.isEmpty())
+            return;
+
+        UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        if(slots == null || !slots.isUnlockable(slot))
+            return;
+
+        // Ensure the player has the experience levels
+        int experienceLevelCost = slots.nextInventorySlotUnlockCost();
+        if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
+            return;
+
+        // Take the experience levels from the player
+        player.giveExperienceLevels(-experienceLevelCost);
+
+        // Finally unlock the slot and sync the changes to the client
+        slots = slots.unlockSlot(slot);
+        backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+        this.unlockedSlots = slots;
+
+        // Ensure shelf saves the changes
+        this.getBackpackInventory().setChanged();
+
+        // Sync to players that are currently in the same menu
+        List<ServerPlayer> players = player.server.getPlayerList().getPlayers();
+        players.stream().filter(otherPlayer -> {
+            if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
+                return this.getBackpackInventory() == otherMenu.getBackpackInventory();
+            }
+            return false;
+        }).forEach(otherPlayer -> {
+            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slot));
+        });
+    }
+
+    @Override
+    public int getNextUnlockCost()
+    {
+        return this.unlockedSlots.nextInventorySlotUnlockCost();
     }
 
     @Override
@@ -78,7 +181,7 @@ public class BackpackContainerMenu extends AbstractContainerMenu
     {
         ItemStack copy = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if(slot != null && slot.hasItem())
+        if(slot.hasItem())
         {
             ItemStack slotStack = slot.getItem();
             copy = slotStack.copy();
@@ -113,18 +216,28 @@ public class BackpackContainerMenu extends AbstractContainerMenu
         this.backpackInventory.stopOpen(playerIn);
     }
 
-    public int getCols()
+    private ItemStack getBackpackStack()
     {
-        return this.cols;
+        if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
+        {
+            return container.getBlockEntity().getBackpack();
+        }
+        if(this.backpackInventory instanceof BackpackInventory inventory)
+        {
+            return inventory.getBackpackStack();
+        }
+        return ItemStack.EMPTY;
     }
 
-    public int getRows()
+    public void openManagement(ServerPlayer player)
     {
-        return this.rows;
-    }
-
-    public boolean isOwner()
-    {
-        return this.owner;
+        if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
+        {
+            container.getBlockEntity().openShelfManagement(player);
+        }
+        else if(this.backpackInventory instanceof BackpackInventory)
+        {
+            BackpackItem.openBackpackManagement(player);
+        }
     }
 }

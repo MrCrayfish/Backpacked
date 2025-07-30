@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
+import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
@@ -14,7 +15,6 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -37,7 +37,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -52,10 +51,13 @@ import java.util.stream.Collectors;
 public class CustomiseBackpackScreen extends Screen
 {
     public static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/customise_backpack.png");
+    private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
+
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
     private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
     private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+    private static final Component COSMETIC_WARNING = Component.translatable("backpacked.gui.cosmetic_warning");
 
     private static final int ITEM_WIDTH = 97;
     private static final int ITEM_HEIGHT = 20;
@@ -75,6 +77,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private final int windowWidth;
     private final int windowHeight;
+    private final boolean showCosmeticWarning;
     private int windowLeft;
     private int windowTop;
     private float windowRotationX = 35F;
@@ -87,11 +90,13 @@ public class CustomiseBackpackScreen extends Screen
     private CheckBox showEnchantmentGlintButton;
     private CheckBox showWithElytraButton;
     private CheckBox showEffectsButton;
+    private BackpackProperties realProperties;
+    private BackpackProperties currentProperties;
     private BackpackProperties displayBackpack = null;
     private final List<BackpackModelEntry> models;
     private int scroll;
 
-    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap)
+    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
         this.windowWidth = 201;
@@ -104,15 +109,20 @@ public class CustomiseBackpackScreen extends Screen
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toList());
         this.models = ImmutableList.copyOf(models);
+        this.showCosmeticWarning = showCosmeticWarning;
+        this.currentProperties = properties;
     }
 
     @Override
     protected void init()
     {
+        MouseRestorer.loadCapturedPosition();
+
         super.init();
         if(this.displayBackpack == null)
         {
-            this.displayBackpack = this.getCurrentBackpackProperties();
+            this.realProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.minecraft.player).orElse(BackpackProperties.DEFAULT);
+            this.displayBackpack = this.currentProperties;
         }
 
         this.windowLeft = (this.width - this.windowWidth) / 2;
@@ -124,6 +134,7 @@ public class CustomiseBackpackScreen extends Screen
 
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.displayBackpack));
+            this.currentProperties = this.displayBackpack;
         }).pos(this.windowLeft + 7, this.windowTop + 137).size(71, 20).build());
 
         this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
@@ -149,14 +160,14 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.displayBackpack.cosmetic().equals(BackpackManager.getDefaultCosmetic());
+        ResourceLocation displayCosmetic = this.displayBackpack.cosmetic().orElse(null);
+        this.resetButton.active = !Objects.equals(displayCosmetic, BackpackManager.getDefaultCosmetic());
         this.saveButton.active = this.needsToSave();
     }
 
     private boolean needsToSave()
     {
-        BackpackProperties properties = this.getCurrentBackpackProperties();
-        return !this.displayBackpack.equals(properties);
+        return !this.displayBackpack.equals(this.currentProperties);
     }
 
     @Override
@@ -177,13 +188,23 @@ public class CustomiseBackpackScreen extends Screen
     {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
         graphics.blit(GUI_TEXTURE, this.windowLeft, this.windowTop, 0, 0, this.windowWidth, this.windowHeight);
+
+        if(this.showCosmeticWarning)
+        {
+            int messageWidth = this.font.width(COSMETIC_WARNING);
+            int messageBgWidth = 7 + messageWidth + 7;
+            int messageY = 8;
+            graphics.fillGradient(0, 0, this.width, 50, 0xAA000000, 0x00000000);
+            graphics.blitSprite(LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
+            graphics.drawString(this.font, COSMETIC_WARNING, (this.width - messageWidth) / 2, messageY + 6, 0xFFFFFFFF);
+        }
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         super.render(graphics, mouseX, mouseY, partialTick);
-        
+
         // Draw title
         graphics.drawString(this.font, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752, false);
 
@@ -376,14 +397,9 @@ public class CustomiseBackpackScreen extends Screen
         this.scroll = Mth.clamp(this.scroll, 0, (SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT));
     }
 
-    private BackpackProperties getCurrentBackpackProperties()
-    {
-        return ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.minecraft.player).orElse(BackpackProperties.DEFAULT);
-    }
-
     private void setLocalBackpackProperties(BackpackProperties properties)
     {
-        ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(this.minecraft.player, Optional.of(properties));
+        ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(this.minecraft.player, Optional.ofNullable(properties));
     }
 
     private void renderPlayer(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, Player player)
@@ -410,13 +426,12 @@ public class CustomiseBackpackScreen extends Screen
         player.xRotO = 15F;
         player.yHeadRot = player.getYRot();
         player.yHeadRotO = player.getYRot();
-        BackpackProperties originalProperties = this.getCurrentBackpackProperties();
         this.setLocalBackpackProperties(this.displayBackpack);
         float entityScale = player.getScale();
         float renderScale = 70F / entityScale;
         Vector3f box = new Vector3f(0.0F, player.getBbHeight() / 2.0F + entityScale * 0.0625F, 0.0F);
         InventoryScreen.renderEntityInInventory(graphics, x, y, renderScale, box, playerRotation, cameraRotation, player);
-        this.setLocalBackpackProperties(originalProperties);
+        this.setLocalBackpackProperties(this.realProperties);
         player.yBodyRot = origBodyRot;
         player.yBodyRotO = origBodyRotOld;
         player.setYRot(origYaw);
@@ -425,7 +440,13 @@ public class CustomiseBackpackScreen extends Screen
         player.xRotO = origPitchOld;
         player.yHeadRot = origHeadYaw;
         player.yHeadRotO = origHeadYawOld;
-        this.setLocalBackpackProperties(originalProperties);
+    }
+
+    @Override
+    public void removed()
+    {
+        super.removed();
+        MouseRestorer.capturePosition();
     }
 
     private static class BackpackModelEntry

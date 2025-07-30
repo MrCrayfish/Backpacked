@@ -1,7 +1,11 @@
 package com.mrcrayfish.backpacked.inventory;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.common.backpack.BackpackState;
+import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.SimpleContainer;
@@ -14,15 +18,19 @@ import net.minecraft.world.item.component.ItemContainerContents;
  */
 public class BackpackInventory extends SimpleContainer
 {
+    private final int index;
     private final Player player;
     private final ItemStack stack;
+    private final BackpackState state;
     private boolean save;
 
-    public BackpackInventory(int columns, int rows, Player player, ItemStack stack)
+    public BackpackInventory(int index, int columns, int rows, Player player, ItemStack stack)
     {
         super(rows * columns);
+        this.index = index;
         this.player = player;
         this.stack = stack;
+        this.state = BackpackState.create(stack);
         this.loadBackpackContents(player);
     }
 
@@ -30,10 +38,27 @@ public class BackpackInventory extends SimpleContainer
     {
         ItemContainerContents contents = this.stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         contents.copyInto(this.getItems()); // TODO reimplement dropping items if inventory is resized
-        /*if(compound.contains("Items", Tag.TAG_LIST))
+        this.spawnItemsFromLockedSlots();
+    }
+
+    private void spawnItemsFromLockedSlots()
+    {
+        if(!(this.stack.getItem() instanceof BackpackItem item))
+            return;
+
+        UnlockedSlots slots = item.getUnlockedSlots(this.stack);
+        if(slots == null)
+            return;
+
+        for(int i = 0; i < this.getContainerSize(); i++)
         {
-            InventoryHelper.loadAllItems(compound.getList("Items", Tag.TAG_COMPOUND), this, player.level(), player.position());
-        }*/
+            ItemStack stack = this.getItem(i);
+            if(!stack.isEmpty() && !slots.isUnlocked(i))
+            {
+                InventoryHelper.spawnStack(stack, player.level(), player.position());
+                this.setChanged();
+            }
+        }
     }
 
     public ItemStack getBackpackStack()
@@ -41,10 +66,21 @@ public class BackpackInventory extends SimpleContainer
         return this.stack;
     }
 
+    public BackpackState getState()
+    {
+        return this.state;
+    }
+
     @Override
     public boolean stillValid(Player player)
     {
-        return this.player.isAlive() && (Services.BACKPACK.getBackpackStack(this.player).equals(this.stack) && (this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5)));
+        if(!this.player.isAlive())
+            return false;
+        if(this.getState().isChanged())
+            return false;
+        if(!BackpackHelper.getBackpackStack(this.player, this.index).equals(this.stack))
+            return false;
+        return this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.PICKPOCKETING.maxReachDistance.get() + 0.5);
     }
 
     @Override
