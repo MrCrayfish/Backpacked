@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,19 +17,22 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public record MessageOpenCustomisation(Map<ResourceLocation, Component> progressMap, BackpackProperties properties)
+public record MessageOpenCustomisation(Map<ResourceLocation, Component> progressMap, BackpackProperties properties,
+                                       boolean showCosmeticWarning)
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageOpenCustomisation> STREAM_CODEC = StreamCodec.of((buf, message) -> {
         buf.writeMap(message.progressMap, FriendlyByteBuf::writeResourceLocation, (buf2, label) -> {
             ComponentSerialization.STREAM_CODEC.encode(buf, label);
         });
         BackpackProperties.STREAM_CODEC.encode(buf, message.properties);
+        buf.writeBoolean(message.showCosmeticWarning);
     }, buf -> {
         Map<ResourceLocation, Component> map = buf.readMap(HashMap::new, FriendlyByteBuf::readResourceLocation, buf1 -> {
             return ComponentSerialization.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf1);
         });
         BackpackProperties properties = BackpackProperties.STREAM_CODEC.decode(buf);
-        return new MessageOpenCustomisation(map, properties);
+        boolean showCosmeticWarning = buf.readBoolean();
+        return new MessageOpenCustomisation(map, properties, showCosmeticWarning);
     });
 
     public static void handle(MessageOpenCustomisation message, MessageContext context)

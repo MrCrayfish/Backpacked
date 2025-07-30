@@ -51,10 +51,13 @@ import java.util.stream.Collectors;
 public class CustomiseBackpackScreen extends Screen
 {
     public static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/customise_backpack.png");
+    private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
+
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
     private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
     private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+    private static final Component COSMETIC_WARNING = Component.translatable("backpacked.gui.cosmetic_warning");
 
     private static final int ITEM_WIDTH = 97;
     private static final int ITEM_HEIGHT = 20;
@@ -74,6 +77,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private final int windowWidth;
     private final int windowHeight;
+    private final boolean showCosmeticWarning;
     private int windowLeft;
     private int windowTop;
     private float windowRotationX = 35F;
@@ -91,7 +95,7 @@ public class CustomiseBackpackScreen extends Screen
     private final List<BackpackModelEntry> models;
     private int scroll;
 
-    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap, BackpackProperties properties)
+    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
         this.windowWidth = 201;
@@ -104,6 +108,7 @@ public class CustomiseBackpackScreen extends Screen
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toList());
         this.models = ImmutableList.copyOf(models);
+        this.showCosmeticWarning = showCosmeticWarning;
         this.currentProperties = properties;
     }
 
@@ -181,13 +186,23 @@ public class CustomiseBackpackScreen extends Screen
     {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
         graphics.blit(GUI_TEXTURE, this.windowLeft, this.windowTop, 0, 0, this.windowWidth, this.windowHeight);
+
+        if(this.showCosmeticWarning)
+        {
+            int messageWidth = this.font.width(COSMETIC_WARNING);
+            int messageBgWidth = 7 + messageWidth + 7;
+            int messageY = 8;
+            graphics.fillGradient(0, 0, this.width, 50, 0xAA000000, 0x00000000);
+            graphics.blitSprite(LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
+            graphics.drawString(this.font, COSMETIC_WARNING, (this.width - messageWidth) / 2, messageY + 6, 0xFFFFFFFF);
+        }
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         super.render(graphics, mouseX, mouseY, partialTick);
-        
+
         // Draw title
         graphics.drawString(this.font, this.title, this.windowLeft + 8, this.windowTop + 6, 4210752, false);
 

@@ -113,6 +113,7 @@ public class ServerPlayHandler
         if(stack.isEmpty())
             return;
 
+        boolean showCosmeticWarning = BackpackHelper.getFirstBackpackStack(serverPlayer) != stack;
         Map<ResourceLocation, Component> map = new HashMap<>();
         UnlockManager.getTracker(player).ifPresent(unlockTracker -> {
             for(Backpack backpack : BackpackManager.instance().getBackpacks()) {
@@ -125,7 +126,7 @@ public class ServerPlayHandler
         });
         BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
         serverPlayer.closeContainer();
-        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map, properties));
+        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map, properties, showCosmeticWarning));
     }
 
     public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)
