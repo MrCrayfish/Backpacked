@@ -33,9 +33,9 @@ public class CommonRecipeGen
     private static void backpack(RecipeOutput output, Function<ItemLike, Criterion<?>> has)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BACKPACK.get())
-                .pattern("HHH")
+                .pattern("LLL")
                 .pattern("SIS")
-                .pattern("HHH")
+                .pattern("LLL")
                 .define('L', Items.LEATHER)
                 .define('S', Items.STRING)
                 .define('I', Items.IRON_INGOT)
