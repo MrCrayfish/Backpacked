@@ -54,7 +54,7 @@ public class ClientPlayHandler
         if(minecraft.player == null)
             return;
 
-        minecraft.setScreen(new CustomiseBackpackScreen(message.progressMap()));
+        minecraft.setScreen(new CustomiseBackpackScreen(message.progressMap(), message.properties()));
     }
 
     public static void handleSyncVillagerBackpack(MessageSyncVillagerBackpack message)

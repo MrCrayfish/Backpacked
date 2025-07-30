@@ -109,25 +109,23 @@ public class ServerPlayHandler
         if(Config.BACKPACK.cosmetics.disableCustomisation.get())
             return;
 
-        if(BackpackHelper.getSelectedBackpackStack(player).isEmpty())
+        ItemStack stack = BackpackHelper.getSelectedBackpackStack(serverPlayer);
+        if(stack.isEmpty())
             return;
 
-        UnlockManager.getTracker(player).ifPresent(unlockTracker ->
-        {
-            Map<ResourceLocation, Component> map = new HashMap<>();
-            for(Backpack backpack : BackpackManager.instance().getBackpacks())
-            {
-                if(!unlockTracker.isUnlocked(backpack.getId()))
-                {
-                    unlockTracker.getProgressTracker(backpack.getId()).ifPresent(progressTracker ->
-                    {
+        Map<ResourceLocation, Component> map = new HashMap<>();
+        UnlockManager.getTracker(player).ifPresent(unlockTracker -> {
+            for(Backpack backpack : BackpackManager.instance().getBackpacks()) {
+                if(!unlockTracker.isUnlocked(backpack.getId())) {
+                    unlockTracker.getProgressTracker(backpack.getId()).ifPresent(progressTracker -> {
                         map.put(backpack.getId(), progressTracker.getDisplayComponent());
                     });
                 }
             }
-            serverPlayer.closeContainer();
-            Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map));
         });
+        BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        serverPlayer.closeContainer();
+        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map, properties));
     }
 
     public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)

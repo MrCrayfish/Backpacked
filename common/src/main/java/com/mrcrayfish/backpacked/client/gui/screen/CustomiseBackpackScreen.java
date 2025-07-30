@@ -86,11 +86,12 @@ public class CustomiseBackpackScreen extends Screen
     private CheckBox showEnchantmentGlintButton;
     private CheckBox showWithElytraButton;
     private CheckBox showEffectsButton;
+    private BackpackProperties currentProperties;
     private BackpackProperties displayBackpack = null;
     private final List<BackpackModelEntry> models;
     private int scroll;
 
-    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap)
+    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap, BackpackProperties properties)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
         this.windowWidth = 201;
@@ -103,6 +104,7 @@ public class CustomiseBackpackScreen extends Screen
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toList());
         this.models = ImmutableList.copyOf(models);
+        this.currentProperties = properties;
     }
 
     @Override
@@ -113,7 +115,7 @@ public class CustomiseBackpackScreen extends Screen
         super.init();
         if(this.displayBackpack == null)
         {
-            this.displayBackpack = this.getCurrentBackpackProperties();
+            this.displayBackpack = this.currentProperties;
         }
 
         this.windowLeft = (this.width - this.windowWidth) / 2;
@@ -125,6 +127,7 @@ public class CustomiseBackpackScreen extends Screen
 
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
             Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.displayBackpack));
+            this.currentProperties = this.displayBackpack;
         }).pos(this.windowLeft + 7, this.windowTop + 137).size(71, 20).build());
 
         this.showEnchantmentGlintButton = this.addRenderableWidget(new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
@@ -150,14 +153,14 @@ public class CustomiseBackpackScreen extends Screen
 
     private void updateButtons()
     {
-        this.resetButton.active = !this.displayBackpack.cosmetic().equals(BackpackManager.getDefaultCosmetic());
+        ResourceLocation displayCosmetic = this.displayBackpack.cosmetic().orElse(null);
+        this.resetButton.active = !Objects.equals(displayCosmetic, BackpackManager.getDefaultCosmetic());
         this.saveButton.active = this.needsToSave();
     }
 
     private boolean needsToSave()
     {
-        BackpackProperties properties = this.getCurrentBackpackProperties();
-        return !this.displayBackpack.equals(properties);
+        return !this.displayBackpack.equals(this.currentProperties);
     }
 
     @Override
@@ -377,11 +380,6 @@ public class CustomiseBackpackScreen extends Screen
         this.scroll = Mth.clamp(this.scroll, 0, (SCROLLABLE_HEIGHT - SCROLL_BAR_HEIGHT));
     }
 
-    private BackpackProperties getCurrentBackpackProperties()
-    {
-        return ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.minecraft.player).orElse(BackpackProperties.DEFAULT);
-    }
-
     private void setLocalBackpackProperties(BackpackProperties properties)
     {
         ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(this.minecraft.player, Optional.of(properties));
@@ -411,13 +409,12 @@ public class CustomiseBackpackScreen extends Screen
         player.xRotO = 15F;
         player.yHeadRot = player.getYRot();
         player.yHeadRotO = player.getYRot();
-        BackpackProperties originalProperties = this.getCurrentBackpackProperties();
         this.setLocalBackpackProperties(this.displayBackpack);
         float entityScale = player.getScale();
         float renderScale = 70F / entityScale;
         Vector3f box = new Vector3f(0.0F, player.getBbHeight() / 2.0F + entityScale * 0.0625F, 0.0F);
         InventoryScreen.renderEntityInInventory(graphics, x, y, renderScale, box, playerRotation, cameraRotation, player);
-        this.setLocalBackpackProperties(originalProperties);
+        this.setLocalBackpackProperties(this.currentProperties);
         player.yBodyRot = origBodyRot;
         player.yBodyRotO = origBodyRotOld;
         player.setYRot(origYaw);
@@ -426,7 +423,6 @@ public class CustomiseBackpackScreen extends Screen
         player.xRotO = origPitchOld;
         player.yHeadRot = origHeadYaw;
         player.yHeadRotO = origHeadYawOld;
-        this.setLocalBackpackProperties(originalProperties);
     }
 
     @Override
