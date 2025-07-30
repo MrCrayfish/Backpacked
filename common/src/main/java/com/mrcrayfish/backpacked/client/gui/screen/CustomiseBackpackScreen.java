@@ -90,6 +90,7 @@ public class CustomiseBackpackScreen extends Screen
     private CheckBox showEnchantmentGlintButton;
     private CheckBox showWithElytraButton;
     private CheckBox showEffectsButton;
+    private BackpackProperties realProperties;
     private BackpackProperties currentProperties;
     private BackpackProperties displayBackpack = null;
     private final List<BackpackModelEntry> models;
@@ -120,6 +121,7 @@ public class CustomiseBackpackScreen extends Screen
         super.init();
         if(this.displayBackpack == null)
         {
+            this.realProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.minecraft.player).orElse(BackpackProperties.DEFAULT);
             this.displayBackpack = this.currentProperties;
         }
 
@@ -397,7 +399,7 @@ public class CustomiseBackpackScreen extends Screen
 
     private void setLocalBackpackProperties(BackpackProperties properties)
     {
-        ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(this.minecraft.player, Optional.of(properties));
+        ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(this.minecraft.player, Optional.ofNullable(properties));
     }
 
     private void renderPlayer(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, Player player)
@@ -429,7 +431,7 @@ public class CustomiseBackpackScreen extends Screen
         float renderScale = 70F / entityScale;
         Vector3f box = new Vector3f(0.0F, player.getBbHeight() / 2.0F + entityScale * 0.0625F, 0.0F);
         InventoryScreen.renderEntityInInventory(graphics, x, y, renderScale, box, playerRotation, cameraRotation, player);
-        this.setLocalBackpackProperties(this.currentProperties);
+        this.setLocalBackpackProperties(this.realProperties);
         player.yBodyRot = origBodyRot;
         player.yBodyRotO = origBodyRotOld;
         player.setYRot(origYaw);
