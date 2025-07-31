@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
@@ -99,6 +98,11 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
                 if(!lockedSlot.isUnlocked())
                 {
                     graphics.blitSprite(ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
+
+                    if(lockedSlot != this.hoveredLockedSlot)
+                    {
+                        graphics.fill(this.leftPos + slot.x - 1, this.topPos + slot.y - 1, this.leftPos + slot.x + 17, this.topPos + slot.y + 17, 0xBBEFDBC4);
+                    }
                 }
             }
         }
