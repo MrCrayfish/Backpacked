@@ -22,6 +22,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
@@ -170,7 +171,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private Tooltip createLockTooltip(UnlockableSlotMode mode)
     {
-        return Tooltip.create(Component.translatable("backpacked.button.unlockable_slot_mode.tooltip", Component.translatable(mode.getKey()).withStyle(mode.getFormat())));
+        MutableComponent tooltip = Component.literal("");
+        tooltip.append(Component.translatable("backpacked.button.unlockable_slot_mode.tooltip").withStyle(ChatFormatting.UNDERLINE));
+        tooltip.append("\n");
+        tooltip = tooltip.append(Component.translatable(mode.getKey()).withStyle(mode.getFormat()));
+        return Tooltip.create(tooltip);
     }
 
     private void updateUnlockableSlots()
