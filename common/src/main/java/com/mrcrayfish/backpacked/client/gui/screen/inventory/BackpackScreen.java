@@ -88,7 +88,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
 
         List<AbstractButton> buttons = this.gatherButtons();
-        int buttonStart = this.leftPos + this.imageWidth - 58 + 5;
+        int buttonsWidth = 5 + (buttons.size() * 11 - 1) + 5;
+        int buttonStart = this.leftPos + this.imageWidth - 5 - buttonsWidth + 5;
         for(int i = 0; i < buttons.size(); i++)
         {
             AbstractButton button = buttons.get(i);
@@ -243,7 +244,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
 
         int buttonsWidth = 5 + (this.buttonCount * 11 - 1) + 5;
-        graphics.blitSprite(LABEL_BACKGROUND, x + width - 58, y - 1, buttonsWidth, 21);
+        int buttonsX = x + width - 5 - buttonsWidth;
+        graphics.blitSprite(LABEL_BACKGROUND, buttonsX, y - 1, buttonsWidth, 21);
 
         // Backpack Inventory
         int backpackHeight = 20 + this.rows * 18 + 15;
