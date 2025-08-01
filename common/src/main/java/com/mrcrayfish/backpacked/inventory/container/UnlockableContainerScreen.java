@@ -7,12 +7,14 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -35,11 +37,17 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     private @Nullable UnlockableSlot hoveredLockedSlot;
     private UnlockableSlot clickedLockedSlot;
     private int heldUnlockTime;
+    protected boolean hideLockedSlots;
 
     public UnlockableContainerScreen(T menu, Inventory inventory, Component title)
     {
         super(menu, inventory, title);
         this.player = inventory.player;
+    }
+
+    public void setHideLockedSlots(boolean hideLockedSlots)
+    {
+        this.hideLockedSlots = hideLockedSlots;
     }
 
     @Override
@@ -79,7 +87,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         super.renderBackground(graphics, mouseX, mouseY, partialTicks);
 
-        if(this.clickedLockedSlot != null)
+        if(this.clickedLockedSlot != null && !this.hideLockedSlots)
         {
             int progressX = this.leftPos + this.clickedLockedSlot.x;
             int progressY = this.topPos + this.clickedLockedSlot.y;
@@ -99,9 +107,14 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
                 {
                     graphics.blitSprite(ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
 
-                    if(lockedSlot != this.hoveredLockedSlot)
+                    if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
                     {
-                        graphics.fill(this.leftPos + slot.x - 1, this.topPos + slot.y - 1, this.leftPos + slot.x + 17, this.topPos + slot.y + 17, 0xBBEFDBC4);
+                        graphics.fill(this.leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, this.topPos + slot.y + 16, 0x88A89A8A);
+                    }
+
+                    if(this.hideLockedSlots)
+                    {
+                        graphics.fill(this.leftPos + slot.x - 1, this.topPos + slot.y - 1, this.leftPos + slot.x + 17, this.topPos + slot.y + 17, 0xAAEFDBC4);
                     }
                 }
             }
@@ -111,7 +124,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     @Override
     protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty())
+        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
             int experienceLevelCost = this.getMenu().getNextUnlockCost();
             List<ClientTooltipComponent> components = new ArrayList<>();
@@ -129,7 +142,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked())
+        if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
             if(this.getMenu().canUnlockSlot(this.hoveredLockedSlot.getContainerSlot()))
             {
@@ -154,5 +167,11 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    protected boolean canUnlockNextSlot()
+    {
+        int experienceLevelCost = this.getMenu().getNextUnlockCost();
+        return this.player.experienceLevel >= experienceLevelCost || this.player.isCreative();
     }
 }

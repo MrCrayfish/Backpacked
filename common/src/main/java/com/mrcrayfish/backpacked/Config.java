@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.common.InterpolateFunction;
+import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.framework.api.config.*;
@@ -363,6 +364,19 @@ public class Config
         @ConfigProperty(name = "hideConfigButton", comment = """
                 If enabled, hides the config button from the backpack screen""")
         public final BoolProperty hideConfigButton = BoolProperty.create(false);
+
+        @ConfigProperty(name = "unlockableSlotMode", comment = """
+                Determines how unlockable slots are displayed and interactions are handled. This
+                option can be changed directly in the backpack inventory GUI.
+                
+                Mode descriptions:
+                ENABLED     - Unlockable slots will always be enabled (visible and interactable).
+                PURCHASABLE - Unlockable slots will only be enabled if the player has has exp levels
+                              to purchase/unlock the slot, otherwise they will be disabled (faded out
+                              and not interactable).
+                DISABLED    - Unlockable slots will always be disabled. (faded out and not interactable).
+                """)
+        public final EnumProperty<UnlockableSlotMode> unlockableSlotMode = EnumProperty.create(UnlockableSlotMode.ENABLED);
     }
 
     public static class ResourceLocationValidator implements Validator<String>

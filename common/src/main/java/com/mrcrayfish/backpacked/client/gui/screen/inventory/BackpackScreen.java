@@ -5,6 +5,8 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
+import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.network.Network;
@@ -14,6 +16,7 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
@@ -55,6 +58,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private final boolean owner;
     private boolean opened;
     private int buttonCount;
+    private int timer;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -83,12 +87,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             this.opened = true;
         }
 
-        List<MiniButton> buttons = this.gatherButtons();
-        int buttonStart = this.leftPos + this.imageWidth - 11 - (5 + (buttons.size() * 13 - 3) + 5) + 5;
+        List<AbstractButton> buttons = this.gatherButtons();
+        int buttonStart = this.leftPos + this.imageWidth - 58 + 5;
         for(int i = 0; i < buttons.size(); i++)
         {
-            MiniButton button = buttons.get(i);
-            button.setX(buttonStart + i * 13);
+            AbstractButton button = buttons.get(i);
+            button.setX(buttonStart + i * 11);
             button.setY(this.topPos + 4);
             this.addRenderableWidget(button);
         }
@@ -116,11 +120,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             navNext.setTooltip(navigateTooltip);
             navNext.active = backpackIndex < totalBackpacks - 1;
         }
+
+        this.updateUnlockableSlots();
     }
 
-    private List<MiniButton> gatherButtons()
+    private List<AbstractButton> gatherButtons()
     {
-        List<MiniButton> buttons = new ArrayList<>();
+        List<AbstractButton> buttons = new ArrayList<>();
 
         MiniButton manageButton = new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
             Network.getPlay().sendToServer(new MessageRequestManagement());
@@ -145,7 +151,47 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             buttons.add(configButton);
         }
 
+        EnumButton<UnlockableSlotMode> lockButton = new EnumButton<>(0, 0, 10, 10, Config.CLIENT.unlockableSlotMode.get(), (btn, value) -> {
+            if(Config.CLIENT.unlockableSlotMode.get() != value) {
+                Config.CLIENT.unlockableSlotMode.set(value);
+                btn.setTooltip(this.createLockTooltip(value));
+            }
+            this.updateUnlockableSlots();
+        });
+        lockButton.setTooltip(this.createLockTooltip(Config.CLIENT.unlockableSlotMode.get()));
+        buttons.add(lockButton);
+
         return buttons;
+    }
+
+    private Tooltip createLockTooltip(UnlockableSlotMode mode)
+    {
+        return Tooltip.create(Component.translatable("backpacked.button.unlockable_slot_mode.tooltip", Component.translatable(mode.getKey()).withStyle(mode.getFormat())));
+    }
+
+    private void updateUnlockableSlots()
+    {
+        switch(Config.CLIENT.unlockableSlotMode.get())
+        {
+            case ENABLED -> this.setHideLockedSlots(false);
+            case DISABLED -> this.setHideLockedSlots(true);
+            case PURCHASABLE -> this.setHideLockedSlots(!this.canUnlockNextSlot());
+        }
+    }
+
+    @Override
+    protected void containerTick()
+    {
+        super.containerTick();
+
+        if(Config.CLIENT.unlockableSlotMode.get() == UnlockableSlotMode.PURCHASABLE)
+        {
+            if(this.timer-- <= 0)
+            {
+                this.updateUnlockableSlots();
+                this.timer = 5;
+            }
+        }
     }
 
     @Override
@@ -196,8 +242,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
-        int buttonsWidth = 5 + (this.buttonCount * 13 - 3) + 5;
-        graphics.blitSprite(LABEL_BACKGROUND, x + width - buttonsWidth - 11, y - 1, buttonsWidth, 21);
+        int buttonsWidth = 5 + (this.buttonCount * 11 - 1) + 5;
+        graphics.blitSprite(LABEL_BACKGROUND, x + width - 58, y - 1, buttonsWidth, 21);
 
         // Backpack Inventory
         int backpackHeight = 20 + this.rows * 18 + 15;
