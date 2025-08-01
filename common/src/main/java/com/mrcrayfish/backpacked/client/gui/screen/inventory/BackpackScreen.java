@@ -152,15 +152,18 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             buttons.add(configButton);
         }
 
-        EnumButton<UnlockableSlotMode> lockButton = new EnumButton<>(0, 0, 10, 10, Config.CLIENT.unlockableSlotMode.get(), (btn, value) -> {
-            if(Config.CLIENT.unlockableSlotMode.get() != value) {
-                Config.CLIENT.unlockableSlotMode.set(value);
-                btn.setTooltip(this.createLockTooltip(value));
-            }
-            this.updateUnlockableSlots();
-        });
-        lockButton.setTooltip(this.createLockTooltip(Config.CLIENT.unlockableSlotMode.get()));
-        buttons.add(lockButton);
+        if(!Config.BACKPACK.inventory.slots.unlockAllSlots.get())
+        {
+            EnumButton<UnlockableSlotMode> lockButton = new EnumButton<>(0, 0, 10, 10, Config.CLIENT.unlockableSlotMode.get(), (btn, value) -> {
+                if(Config.CLIENT.unlockableSlotMode.get() != value) {
+                    Config.CLIENT.unlockableSlotMode.set(value);
+                    btn.setTooltip(this.createLockTooltip(value));
+                }
+                this.updateUnlockableSlots();
+            });
+            lockButton.setTooltip(this.createLockTooltip(Config.CLIENT.unlockableSlotMode.get()));
+            buttons.add(lockButton);
+        }
 
         return buttons;
     }
@@ -172,6 +175,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private void updateUnlockableSlots()
     {
+        if(Config.BACKPACK.inventory.slots.unlockAllSlots.get())
+        {
+            this.setHideLockedSlots(false);
+            return;
+        }
+
         switch(Config.CLIENT.unlockableSlotMode.get())
         {
             case ENABLED -> this.setHideLockedSlots(false);
