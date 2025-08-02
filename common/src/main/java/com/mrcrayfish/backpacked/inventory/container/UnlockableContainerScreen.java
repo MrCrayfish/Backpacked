@@ -189,7 +189,8 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         if(this.lastUnlockedSlot != null)
         {
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.5F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.25F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_BREAK, 1.3F, 0.7F));
 
             int slotX = this.leftPos + this.lastUnlockedSlot.x;
             int slotY = this.topPos + this.lastUnlockedSlot.y;
