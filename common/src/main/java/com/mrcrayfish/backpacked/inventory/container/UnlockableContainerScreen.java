@@ -2,28 +2,30 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
+import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
+import com.mrcrayfish.backpacked.client.gui.particle.ScreenParticles;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +35,14 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
     private static final int UNLOCK_TIME = 20;
 
+    private final ScreenParticles screenParticles = new ScreenParticles();
+    private final RandomSource random = RandomSource.create();
+
     private final Player player;
     private @Nullable UnlockableSlot hoveredLockedSlot;
     private UnlockableSlot clickedLockedSlot;
     private int heldUnlockTime;
+    private UnlockableSlot lastUnlockedSlot;
     protected boolean hideLockedSlots;
 
     public UnlockableContainerScreen(T menu, Inventory inventory, Component title)
@@ -53,6 +59,8 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     @Override
     protected void containerTick()
     {
+        this.screenParticles.tickParticles();
+
         if(this.clickedLockedSlot != null)
         {
             // Cancel if the user moves the mouse off the locked slot
@@ -64,7 +72,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
             if(this.heldUnlockTime-- <= 0)
             {
                 Network.PLAY.sendToServer(new MessageUnlockSlot(this.clickedLockedSlot.getContainerSlot()));
-                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.5F));
+                this.lastUnlockedSlot = this.clickedLockedSlot;
                 this.clickedLockedSlot = null;
             }
             else if(this.heldUnlockTime % 2 == 0)
@@ -80,6 +88,8 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         this.hoveredLockedSlot = null;
         super.render(graphics, mouseX, mouseY, partialTicks);
+        this.screenParticles.renderParticles(graphics, partialTicks);
+        this.renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
@@ -173,5 +183,36 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         int experienceLevelCost = this.getMenu().getNextUnlockCost();
         return this.player.experienceLevel >= experienceLevelCost || this.player.isCreative();
+    }
+
+    public void onSlotUnlocked()
+    {
+        if(this.lastUnlockedSlot != null)
+        {
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.5F));
+
+            int slotX = this.leftPos + this.lastUnlockedSlot.x;
+            int slotY = this.topPos + this.lastUnlockedSlot.y;
+
+            Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6);
+            top.setLife(50);
+            top.setTexture(0F, 0F, 1F, 0.5F, ICON_LOCK);
+            top.setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), -100));
+            top.setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180));
+            top.setGravity(new Vector2d(0, 12));
+            top.setFriction(0.025);
+            this.screenParticles.addParticle(top);
+
+            Particle2D bottom = new Particle2D(slotX + 2, slotY + 8, 12, 6);
+            bottom.setLife(50);
+            bottom.setTexture(0F, 0.5F, 1F, 1F, ICON_LOCK);
+            bottom.setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), 50));
+            bottom.setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180));
+            bottom.setGravity(new Vector2d(0, 12));
+            bottom.setFriction(0.025);
+            this.screenParticles.addParticle(bottom);
+
+            this.lastUnlockedSlot = null;
+        }
     }
 }

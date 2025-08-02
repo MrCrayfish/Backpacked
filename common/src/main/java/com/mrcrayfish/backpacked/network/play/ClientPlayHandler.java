@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.network.message.*;
 import net.minecraft.client.Minecraft;
@@ -76,6 +77,10 @@ public class ClientPlayHandler
         if(minecraft.player != null && minecraft.player.containerMenu instanceof UnlockableController controller)
         {
             controller.unlockSlot(message.slot());
+            if(minecraft.screen instanceof UnlockableContainerScreen<?> screen)
+            {
+                screen.onSlotUnlocked();
+            }
         }
     }
 }

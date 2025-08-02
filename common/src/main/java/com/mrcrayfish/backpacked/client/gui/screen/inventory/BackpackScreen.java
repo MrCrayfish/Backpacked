@@ -210,13 +210,6 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
-    {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
-    }
-
-    @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
         FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
