@@ -194,22 +194,26 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
             int slotX = this.leftPos + this.lastUnlockedSlot.x;
             int slotY = this.topPos + this.lastUnlockedSlot.y;
 
-            Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6);
-            top.setLife(50);
-            top.setTexture(0F, 0F, 1F, 0.5F, ICON_LOCK);
-            top.setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), -100));
-            top.setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180));
-            top.setGravity(new Vector2d(0, 12));
-            top.setFriction(0.025);
+            Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6)
+                .setLife(50)
+                .setTexture(0F, 0F, 1F, 0.5F, ICON_LOCK)
+                .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), -100))
+                .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
+                .setGravity(new Vector2d(0, 12))
+                .setFriction(0.025)
+                .setStartScale(1F, 40)
+                .setEndScale(0F);
             this.screenParticles.addParticle(top);
 
-            Particle2D bottom = new Particle2D(slotX + 2, slotY + 8, 12, 6);
-            bottom.setLife(50);
-            bottom.setTexture(0F, 0.5F, 1F, 1F, ICON_LOCK);
-            bottom.setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), 50));
-            bottom.setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180));
-            bottom.setGravity(new Vector2d(0, 12));
-            bottom.setFriction(0.025);
+            Particle2D bottom = new Particle2D(slotX + 2, slotY + 8, 12, 6)
+                .setLife(50)
+                .setTexture(0F, 0.5F, 1F, 1F, ICON_LOCK)
+                .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), 50))
+                .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
+                .setGravity(new Vector2d(0, 12))
+                .setFriction(0.025)
+                .setStartScale(1F, 40)
+                .setEndScale(0F);
             this.screenParticles.addParticle(bottom);
 
             this.lastUnlockedSlot = null;

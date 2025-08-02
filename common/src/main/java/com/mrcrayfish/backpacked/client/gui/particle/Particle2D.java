@@ -15,6 +15,7 @@ import org.joml.Vector2d;
 public class Particle2D
 {
     private int life = 10;
+    private int totalLife = 10;
     private double prevX;
     private double prevY;
     private double x;
@@ -32,6 +33,12 @@ public class Particle2D
     private double prevRotation;
     private double rotation;
     private double rotationSpeed;
+    private float startScale = 1F;
+    private float endScale = 1F;
+    private float prevScale = this.startScale;
+    private float scale = this.startScale;
+    private int startScaleAtLife = 0;
+    private int endScaleAtLife = this.totalLife;
 
     public Particle2D(double x, double y, double width, double height)
     {
@@ -45,6 +52,7 @@ public class Particle2D
 
     public Particle2D setLife(int life)
     {
+        this.totalLife = life;
         this.life = life;
         return this;
     }
@@ -90,6 +98,32 @@ public class Particle2D
         return this;
     }
 
+    public Particle2D setStartScale(float scale)
+    {
+        return this.setStartScale(scale, 0);
+    }
+
+    public Particle2D setStartScale(float scale, int startAt)
+    {
+        this.startScale = scale;
+        this.startScaleAtLife = startAt;
+        this.scale = scale;
+        this.prevScale = scale;
+        return this;
+    }
+
+    public Particle2D setEndScale(float scale)
+    {
+        return this.setEndScale(scale, this.totalLife);
+    }
+
+    public Particle2D setEndScale(float scale, int endAt)
+    {
+        this.endScale = scale;
+        this.endScaleAtLife = endAt;
+        return this;
+    }
+
     public boolean tick()
     {
         if (this.life <= 0)
@@ -97,6 +131,7 @@ public class Particle2D
         this.prevX = this.x;
         this.prevY = this.y;
         this.prevRotation = this.rotation;
+        this.prevScale = this.scale;
         // Divide by 20 because it's easier to conceptualise per second instead of per tick
         this.motion.add(this.gravity);
         this.x += this.motion.x / 20.0;
@@ -106,6 +141,9 @@ public class Particle2D
         this.motion.sub(this.motion.x * this.friction, this.motion.y * this.friction);
         this.rotation += this.rotationSpeed / 20.0;
         this.rotationSpeed -= this.rotationSpeed * this.friction;
+        int maxScaleLife = Math.max(this.endScaleAtLife - this.startScaleAtLife, 1);
+        this.scale = Mth.clamp((this.totalLife - this.life) - this.startScaleAtLife, 0, maxScaleLife) / (float) maxScaleLife;
+        this.scale = Mth.lerp(this.scale, this.startScale, this.endScale);
         this.life--;
         return false;
     }
@@ -119,6 +157,8 @@ public class Particle2D
         pose.translate(Mth.lerp(partialTick, this.prevX, this.x), Mth.lerp(partialTick, this.prevY, this.y), 300);
         pose.translate(this.width / 2, this.height / 2, 0);
         pose.mulPose(Axis.ZP.rotationDegrees((float) Mth.lerp(partialTick, this.prevRotation, this.rotation)));
+        float scale = Mth.lerp(partialTick, this.prevScale, this.scale);
+        pose.scale(scale, scale, scale);
         pose.translate(-this.width / 2, -this.height / 2, 0);
         TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(this.texture);
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
