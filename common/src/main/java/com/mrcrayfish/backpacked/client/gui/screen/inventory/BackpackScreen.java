@@ -8,7 +8,6 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
-import com.mrcrayfish.backpacked.inventory.container.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;

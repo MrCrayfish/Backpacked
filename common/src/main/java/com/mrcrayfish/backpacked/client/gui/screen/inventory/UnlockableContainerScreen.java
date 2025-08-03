@@ -1,9 +1,10 @@
-package com.mrcrayfish.backpacked.inventory.container;
+package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
 import com.mrcrayfish.backpacked.client.gui.particle.ScreenParticles;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
