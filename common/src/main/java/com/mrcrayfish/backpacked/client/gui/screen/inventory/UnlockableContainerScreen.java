@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
@@ -20,6 +21,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +36,7 @@ import java.util.List;
 public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu & UnlockableController> extends AbstractContainerScreen<T>
 {
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final ResourceLocation EXP_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
     private static final int UNLOCK_TIME = 20;
 
     private final ScreenParticles screenParticles = new ScreenParticles();
@@ -217,6 +220,37 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
                 .setStartScale(1F, 40)
                 .setEndScale(0F);
             this.screenParticles.addParticle(bottom);
+
+            for(int i = 0; i < 10; i++)
+            {
+                Particle2D damageParticle = new Particle2D(slotX + 7, slotY + 7, 2, 2)
+                        .setLife(20)
+                        .setTexture(0.45F, 0.5F, 0.55F, 0.6F, ICON_LOCK)
+                        .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(50, 100)))
+                        .setRotationSpeed(180)
+                        .setGravity(new Vector2d(0, 12))
+                        .setFriction(0.05)
+                        .setStartScale(1F)
+                        .setEndScale(0F);
+                this.screenParticles.addParticle(damageParticle);
+            }
+
+            if(Config.CLIENT.glitterBomb.get())
+            {
+                for(int i = 0; i < 200; i++)
+                {
+                    Particle2D expOrbParticle = new Particle2D(slotX + 6, slotY + 6, 4, 4)
+                            .setLife(50)
+                            .setTexture(0F, 0F, 1F, 1F, EXP_ORB)
+                            .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(1, 500)))
+                            .setRotationSpeed(180)
+                            .setGravity(new Vector2d(0, 20))
+                            .setFriction(0.05)
+                            .setStartScale(1F)
+                            .setEndScale(0F);
+                    this.screenParticles.addParticle(expOrbParticle);
+                }
+            }
 
             this.lastUnlockedSlot = null;
         }

@@ -377,6 +377,9 @@ public class Config
                 DISABLED    - Unlockable slots will always be disabled. (faded out and not interactable).
                 """)
         public final EnumProperty<UnlockableSlotMode> unlockableSlotMode = EnumProperty.create(UnlockableSlotMode.ENABLED);
+
+        @ConfigProperty(name = "glitterBomb", comment = "Very secret feature, do not enable if you don't want your screen filled with particle effects")
+        public final BoolProperty glitterBomb = BoolProperty.create(false);
     }
 
     public static class ResourceLocationValidator implements Validator<String>
