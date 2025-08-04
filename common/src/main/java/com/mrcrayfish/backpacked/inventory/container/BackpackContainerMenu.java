@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
+import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
@@ -67,7 +68,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         {
             for(int x = 0; x < cols; x++)
             {
-                this.addSlot(new UnlockableSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
+                this.addSlot(new BackpackSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
             }
         }
 

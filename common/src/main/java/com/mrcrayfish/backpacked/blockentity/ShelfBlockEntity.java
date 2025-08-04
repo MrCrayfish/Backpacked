@@ -301,7 +301,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         @Override
         public boolean canPlaceItem(int slot, ItemStack stack)
         {
-            return !BackpackSlot.isBannedItem(stack) && super.canPlaceItem(slot, stack);
+            return BackpackSlot.isAllowedItem(stack) && super.canPlaceItem(slot, stack);
         }
 
         @Override
