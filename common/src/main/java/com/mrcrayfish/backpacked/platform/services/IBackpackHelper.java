@@ -1,14 +1,13 @@
 package com.mrcrayfish.backpacked.platform.services;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -21,7 +20,7 @@ public interface IBackpackHelper
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);
 
-    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockedSlots slots, int index, int total, Component title);
+    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockableSlots slots, int index, int total, Component title);
 
     BackpackItem createBackpackItem(Item.Properties properties);
 }

@@ -1,13 +1,12 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.SimpleContainerData;
 
 import java.util.Optional;
 
@@ -20,7 +19,7 @@ public class WanderingTraderContainer extends BackpackContainerMenu
 
     public WanderingTraderContainer(int id, Inventory playerInventory, WanderingTrader trader)
     {
-        super(id, playerInventory, trader.getInventory(), 8, 1, false, UnlockedSlots.ALL, 0, 1);
+        super(id, playerInventory, trader.getInventory(), 8, 1, false, UnlockableSlots.ALL, 0, 1);
         this.trader = trader;
     }
 

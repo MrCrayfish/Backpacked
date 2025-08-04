@@ -1,14 +1,13 @@
 package com.mrcrayfish.backpacked.blockentity;
 
-import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
-import com.mrcrayfish.backpacked.inventory.container.LockedContainer;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -28,8 +27,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
@@ -103,7 +100,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 Component title = backpack.has(DataComponents.CUSTOM_NAME) ? backpack.getHoverName() : BackpackItem.BACKPACK_TRANSLATION;
                 int cols = backpackItem.getColumnCount();
                 int rows = backpackItem.getRowCount();
-                UnlockedSlots slots = backpackItem.getUnlockedSlots(backpack);
+                UnlockableSlots slots = backpackItem.getUnlockableSlots(backpack);
                 if(slots != null)
                 {
                     Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, 0, 1, title);
@@ -130,7 +127,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
     }
 
-    private Optional<LockedContainer> getBackpackInventory()
+    private Optional<UnlockableContainer> getBackpackInventory()
     {
         this.updateInventory();
         return Optional.ofNullable(this.inventory);
@@ -230,12 +227,12 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     }
 
     @Nullable
-    private UnlockedSlots getUnlockedSlots()
+    private UnlockableSlots getUnlockableSlots()
     {
         ItemStack stack = this.container.getItem(0);
         if(stack.getItem() instanceof BackpackItem item)
         {
-            return item.getUnlockedSlots(stack);
+            return item.getUnlockableSlots(stack);
         }
         return null;
     }
@@ -276,7 +273,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }*/
     }
 
-    public static class BackpackShelfContainer extends LockedContainer
+    public static class BackpackShelfContainer extends UnlockableContainer
     {
         private final ShelfBlockEntity entity;
         private final BackpackState state;
@@ -289,10 +286,10 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
 
         @Override
-        protected UnlockedSlots getUnlockedSlots()
+        protected UnlockableSlots getUnlockableSlots()
         {
-            UnlockedSlots slots = this.entity.getUnlockedSlots();
-            return slots != null ? slots : UnlockedSlots.ALL;
+            UnlockableSlots slots = this.entity.getUnlockableSlots();
+            return slots != null ? slots : UnlockableSlots.ALL;
         }
 
         @Override

@@ -3,14 +3,12 @@ package com.mrcrayfish.backpacked.inventory;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
-import com.mrcrayfish.backpacked.inventory.container.LockedContainer;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -18,7 +16,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 /**
  * Author: MrCrayfish
  */
-public class BackpackInventory extends LockedContainer
+public class BackpackInventory extends UnlockableContainer
 {
     private final int index;
     private final Player player;
@@ -48,7 +46,7 @@ public class BackpackInventory extends LockedContainer
         if(!(this.stack.getItem() instanceof BackpackItem item))
             return;
 
-        UnlockedSlots slots = item.getUnlockedSlots(this.stack);
+        UnlockableSlots slots = item.getUnlockableSlots(this.stack);
         if(slots == null)
             return;
 
@@ -74,13 +72,13 @@ public class BackpackInventory extends LockedContainer
     }
 
     @Override
-    protected UnlockedSlots getUnlockedSlots()
+    protected UnlockableSlots getUnlockableSlots()
     {
         if(this.stack.getItem() instanceof BackpackItem item)
         {
-            return item.getUnlockedSlots(this.stack);
+            return item.getUnlockableSlots(this.stack);
         }
-        return UnlockedSlots.ALL;
+        return UnlockableSlots.ALL;
     }
 
     @Override

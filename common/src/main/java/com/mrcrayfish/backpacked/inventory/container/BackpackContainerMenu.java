@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -36,14 +36,14 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
     private final boolean owner;
     private final int backpackIndex;
     private final int totalBackpacks;
-    private UnlockedSlots unlockedSlots;
+    private UnlockableSlots unlockableSlots;
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
         this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner(), data.slots(), data.index(), data.total());
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockedSlots slots, int backpackIndex, int totalBackpacks)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockableSlots slots, int backpackIndex, int totalBackpacks)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackContainer;
@@ -52,7 +52,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         this.owner = owner;
         this.backpackIndex = backpackIndex;
         this.totalBackpacks = totalBackpacks;
-        this.unlockedSlots = slots;
+        this.unlockableSlots = slots;
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
 
@@ -110,19 +110,19 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
     @Override
     public void unlockSlot(int slot)
     {
-        this.unlockedSlots = this.unlockedSlots.unlockSlot(slot);
+        this.unlockableSlots = this.unlockableSlots.unlockSlot(slot);
     }
 
     @Override
     public boolean isSlotUnlocked(int slot)
     {
-        return this.unlockedSlots.isUnlocked(slot);
+        return this.unlockableSlots.isUnlocked(slot);
     }
 
     @Override
     public boolean canUnlockSlot(int slot)
     {
-        return this.unlockedSlots.isUnlockable(slot);
+        return this.unlockableSlots.isUnlockable(slot);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         if(backpack.isEmpty())
             return;
 
-        UnlockedSlots slots = backpack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        UnlockableSlots slots = backpack.get(ModDataComponents.UNLOCKABLE_SLOTS.get());
         if(slots == null || !slots.isUnlockable(slot))
             return;
 
@@ -146,8 +146,8 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
 
         // Finally unlock the slot and sync the changes to the client
         slots = slots.unlockSlot(slot);
-        backpack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
-        this.unlockedSlots = slots;
+        backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
+        this.unlockableSlots = slots;
 
         // Ensure shelf saves the changes
         this.getBackpackInventory().setChanged();
@@ -167,7 +167,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
     @Override
     public int getNextUnlockCost()
     {
-        return this.unlockedSlots.nextInventorySlotUnlockCost();
+        return this.unlockableSlots.nextInventorySlotUnlockCost();
     }
 
     @Override

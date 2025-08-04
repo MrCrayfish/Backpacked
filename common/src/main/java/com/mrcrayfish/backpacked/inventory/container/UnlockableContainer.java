@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -13,18 +13,18 @@ import net.minecraft.world.item.component.ItemContainerContents;
 
 import java.util.function.Predicate;
 
-public abstract class LockedContainer implements Container
+public abstract class UnlockableContainer implements Container
 {
     protected final int size;
     protected final NonNullList<ItemStack> items;
 
-    public LockedContainer(int size)
+    public UnlockableContainer(int size)
     {
         this.size = size;
         this.items = NonNullList.withSize(size, ItemStack.EMPTY);
     }
 
-    protected abstract UnlockedSlots getUnlockedSlots();
+    protected abstract UnlockableSlots getUnlockableSlots();
 
     @Override
     public int getContainerSize()
@@ -35,7 +35,7 @@ public abstract class LockedContainer implements Container
     @Override
     public boolean isEmpty()
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         for(int slot = 0; slot < this.size; slot++)
         {
             if(slots.isUnlocked(slot) && !this.items.get(slot).isEmpty())
@@ -49,14 +49,14 @@ public abstract class LockedContainer implements Container
     @Override
     public ItemStack getItem(int slot)
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         return slot >= 0 && slot < this.size && slots.isUnlocked(slot) ? this.items.get(slot) : ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeItem(int slot, int count)
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         if(slots.isUnlocked(slot))
         {
             ItemStack stack = ContainerHelper.removeItem(this.items, slot, count);
@@ -72,7 +72,7 @@ public abstract class LockedContainer implements Container
     @Override
     public ItemStack removeItemNoUpdate(int slot)
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         if(slots.isUnlocked(slot))
         {
             ItemStack stack = this.items.get(slot);
@@ -88,7 +88,7 @@ public abstract class LockedContainer implements Container
     @Override
     public void setItem(int slot, ItemStack stack)
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         if(slots.isUnlocked(slot))
         {
             this.items.set(slot, stack);
@@ -100,20 +100,20 @@ public abstract class LockedContainer implements Container
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack)
     {
-        return this.getUnlockedSlots().isUnlocked(slot);
+        return this.getUnlockableSlots().isUnlocked(slot);
     }
 
     @Override
     public boolean canTakeItem(Container container, int slot, ItemStack stack)
     {
-        return this.getUnlockedSlots().isUnlocked(slot);
+        return this.getUnlockableSlots().isUnlocked(slot);
     }
 
     @Override
     public int countItem(Item item)
     {
         int count = 0;
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         for(int slot = 0; slot < this.getContainerSize(); slot++)
         {
             if(slots.isUnlocked(slot))
@@ -131,7 +131,7 @@ public abstract class LockedContainer implements Container
     @Override
     public boolean hasAnyMatching(Predicate<ItemStack> predicate)
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         for(int slot = 0; slot < this.getContainerSize(); slot++)
         {
             if(slots.isUnlocked(slot))
@@ -215,7 +215,7 @@ public abstract class LockedContainer implements Container
 
     protected void moveStackIntoFirstEmptyUnlockedSlot(ItemStack stack)
     {
-        UnlockedSlots slots = this.getUnlockedSlots();
+        UnlockableSlots slots = this.getUnlockableSlots();
         for(int i = 0; i < this.size; i++)
         {
             ItemStack slotStack = this.getItem(i);

@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
@@ -28,20 +28,20 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
     private final Inventory inventory;
     private final Container container;
     private final ContainerData data;
-    private UnlockedSlots unlockedSlots;
+    private UnlockableSlots unlockableSlots;
 
     public BackpackManagementMenu(int windowId, Inventory inventory, ManagementContainerData customData)
     {
         this(windowId, inventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainerData(1), customData.slots());
     }
 
-    public BackpackManagementMenu(int windowId, Inventory inventory, Container container, ContainerData data, UnlockedSlots slots)
+    public BackpackManagementMenu(int windowId, Inventory inventory, Container container, ContainerData data, UnlockableSlots slots)
     {
         super(ModContainers.MANAGEMENT.get(), windowId);
         this.inventory = inventory;
         this.container = container;
         this.data = data;
-        this.unlockedSlots = slots;
+        this.unlockableSlots = slots;
         checkContainerDataCount(data, 1);
         for(int i = 0; i < container.getContainerSize(); i++)
         {
@@ -64,33 +64,33 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
         return this.data.get(0) == 0;
     }
 
-    public UnlockedSlots getUnlockedSlots()
+    public UnlockableSlots getUnlockableSlots()
     {
-        return this.unlockedSlots;
+        return this.unlockableSlots;
     }
 
     @Override
     public void unlockSlot(int slot)
     {
-        this.unlockedSlots = this.unlockedSlots.unlockSlot(slot);
+        this.unlockableSlots = this.unlockableSlots.unlockSlot(slot);
     }
 
     @Override
     public boolean isSlotUnlocked(int slot)
     {
-        return this.unlockedSlots.isUnlocked(slot);
+        return this.unlockableSlots.isUnlocked(slot);
     }
 
     @Override
     public boolean canUnlockSlot(int slot)
     {
-        return this.unlockedSlots.isUnlockable(slot);
+        return this.unlockableSlots.isUnlockable(slot);
     }
 
     @Override
     public void handleUnlockSlot(ServerPlayer player, int slot)
     {
-        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
         if(!slots.isUnlockable(slot))
             return;
 
@@ -104,8 +104,8 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
 
         // Finally unlock the slot and sync the changes to the client
         slots = slots.unlockSlot(slot);
-        BackpackHelper.setBackpackUnlockedSlots(player, slots);
-        this.unlockedSlots = slots;
+        BackpackHelper.setBackpackUnlockableSlots(player, slots);
+        this.unlockableSlots = slots;
 
         // Sync to players that are currently in the same menu
         Network.PLAY.sendToPlayer(() -> player, new MessageSyncUnlockSlot(slot));
@@ -114,7 +114,7 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
     @Override
     public int getNextUnlockCost()
     {
-        return this.unlockedSlots.nextBackpackSlotUnlockCost();
+        return this.unlockableSlots.nextBackpackSlotUnlockCost();
     }
 
     @Override

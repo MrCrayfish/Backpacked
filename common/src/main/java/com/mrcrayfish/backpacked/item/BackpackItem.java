@@ -4,14 +4,12 @@ import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
-import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
-import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.FrameworkAPI;
@@ -41,7 +39,7 @@ public class BackpackItem extends Item
     {
         super(properties
             .component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT)
-            .component(ModDataComponents.UNLOCKED_SLOTS.get(), new UnlockedSlots(0))
+            .component(ModDataComponents.UNLOCKABLE_SLOTS.get(), new UnlockableSlots(0))
         );
     }
 
@@ -90,7 +88,7 @@ public class BackpackItem extends Item
             int cols = item.getColumnCount();
             int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
-            UnlockedSlots slots = item.getUnlockedSlots(backpack);
+            UnlockableSlots slots = item.getUnlockableSlots(backpack);
             Pair<Integer, Integer> data = BackpackHelper.createIndexData(ownerPlayer);
             Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), title);
             return true;
@@ -101,7 +99,7 @@ public class BackpackItem extends Item
 
     public static void openBackpackManagement(ServerPlayer player)
     {
-        UnlockedSlots slots = BackpackHelper.getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
         FrameworkAPI.openMenuWithData(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
             SimpleContainerData data = new SimpleContainerData(1);
             data.set(0, BackpackHelper.getFirstBackpackStack(player).isEmpty() ? 0 : 1);
@@ -110,20 +108,20 @@ public class BackpackItem extends Item
     }
 
     @Nullable
-    public UnlockedSlots getUnlockedSlots(ItemStack stack)
+    public UnlockableSlots getUnlockableSlots(ItemStack stack)
     {
         if(!stack.is(this))
             return null;
 
         if(Config.BACKPACK.inventory.slots.unlockAllSlots.get())
-            return UnlockedSlots.ALL;
+            return UnlockableSlots.ALL;
 
         // If missing, create the component
-        UnlockedSlots slots = stack.get(ModDataComponents.UNLOCKED_SLOTS.get());
+        UnlockableSlots slots = stack.get(ModDataComponents.UNLOCKABLE_SLOTS.get());
         if(slots == null)
         {
-            slots = new UnlockedSlots(this.getColumnCount() * this.getRowCount());
-            stack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+            slots = new UnlockableSlots(this.getColumnCount() * this.getRowCount());
+            stack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
             return slots;
         }
 
@@ -132,7 +130,7 @@ public class BackpackItem extends Item
         if(slots.getMaxSlots() != maxSlots)
         {
             slots = slots.setMaxSlots(maxSlots);
-            stack.set(ModDataComponents.UNLOCKED_SLOTS.get(), slots);
+            stack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
         }
 
         return slots;

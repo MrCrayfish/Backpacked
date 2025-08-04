@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface UnlockableController

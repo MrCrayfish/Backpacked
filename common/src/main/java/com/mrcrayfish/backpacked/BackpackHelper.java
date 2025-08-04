@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked;
 
 import com.mojang.datafixers.util.Pair;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
@@ -78,7 +78,7 @@ public class BackpackHelper
         if(index < 0 || index >= ManagementInventory.getMaxEquipable())
             return ItemStack.EMPTY;
 
-        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = getBackpackUnlockableSlots(player);
         if(!slots.isUnlocked(index))
             return ItemStack.EMPTY;
 
@@ -102,7 +102,7 @@ public class BackpackHelper
         if(index < 0 || index >= ManagementInventory.getMaxEquipable())
             return false;
 
-        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = getBackpackUnlockableSlots(player);
         if(!slots.isUnlocked(index))
             return false;
 
@@ -128,12 +128,12 @@ public class BackpackHelper
         return backpacks;
     }
 
-    public static UnlockedSlots getBackpackUnlockedSlots(Player player)
+    public static UnlockableSlots getBackpackUnlockableSlots(Player player)
     {
         if(Config.BACKPACK.equipable.unlockAllEquipableSlots.get())
-            return UnlockedSlots.ALL;
+            return UnlockableSlots.ALL;
 
-        UnlockedSlots slots = ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.getValue(player);
+        UnlockableSlots slots = ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.getValue(player);
         if(slots.getMaxSlots() != ManagementInventory.getMaxEquipable())
         {
             slots = slots.setMaxSlots(ManagementInventory.getMaxEquipable());
@@ -150,7 +150,7 @@ public class BackpackHelper
         return slots;
     }
 
-    public static void setBackpackUnlockedSlots(Player player, UnlockedSlots slots)
+    public static void setBackpackUnlockableSlots(Player player, UnlockableSlots slots)
     {
         if(Config.BACKPACK.equipable.unlockAllEquipableSlots.get())
             return;
@@ -169,7 +169,7 @@ public class BackpackHelper
 
     public static ItemStack getFirstBackpackStack(Player player, Predicate<ItemStack> filter)
     {
-        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = getBackpackUnlockableSlots(player);
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         for(int i = 0; i < backpacks.size(); i++)
         {
@@ -187,7 +187,7 @@ public class BackpackHelper
 
     public static boolean equipBackpack(Player player, ItemStack stack)
     {
-        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = getBackpackUnlockableSlots(player);
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         for(int i = 0; i < backpacks.size(); i++)
         {
@@ -211,7 +211,7 @@ public class BackpackHelper
     public static Pair<Integer, Integer> createIndexData(Player player)
     {
         IntList list = new IntArrayList();
-        UnlockedSlots slots = getBackpackUnlockedSlots(player);
+        UnlockableSlots slots = getBackpackUnlockableSlots(player);
         NonNullList<ItemStack> backpacks = getBackpacks(player);
         for(int i = 0; i < backpacks.size(); i++)
         {

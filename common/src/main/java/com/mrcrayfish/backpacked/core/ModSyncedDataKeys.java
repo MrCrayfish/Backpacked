@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.core;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.CustomDataSerializers;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
 import com.mrcrayfish.framework.api.sync.Serializers;
@@ -56,9 +56,9 @@ public class ModSyncedDataKeys
             .saveToFile()
             .build();
 
-    public static final SyncedDataKey<Player, UnlockedSlots> UNLOCKABLE_BACKPACK_SLOTS = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockedSlots.SERIALIZER)
+    public static final SyncedDataKey<Player, UnlockableSlots> UNLOCKABLE_BACKPACK_SLOTS = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockableSlots.SERIALIZER)
             .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_backpack_slots"))
-            .defaultValueSupplier(() -> new UnlockedSlots(1))
+            .defaultValueSupplier(() -> new UnlockableSlots(1))
             .syncMode(SyncedDataKey.SyncMode.NONE)
             .saveToFile()
             .build();

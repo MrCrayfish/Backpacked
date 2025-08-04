@@ -17,22 +17,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public final class UnlockedSlots
+public final class UnlockableSlots
 {
-    public static final UnlockedSlots ALL = new UnlockedSlots();
+    public static final UnlockableSlots ALL = new UnlockableSlots();
 
-    public static final Codec<UnlockedSlots> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+    public static final Codec<UnlockableSlots> CODEC = RecordCodecBuilder.create(builder -> builder.group(
         Codec.list(Codec.INT).fieldOf("slots").forGetter(slots -> List.copyOf(slots.slots)),
         Codec.INT.fieldOf("maxSlots").forGetter(slots -> slots.maxSlots)
-    ).apply(builder, UnlockedSlots::new));
+    ).apply(builder, UnlockableSlots::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, UnlockedSlots> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, UnlockableSlots> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.INT.apply(ByteBufCodecs.collection(HashSet::new)), slots -> slots.slots,
         ByteBufCodecs.INT, slots -> slots.maxSlots,
-        UnlockedSlots::new
+        UnlockableSlots::new
     );
 
-    public static final DataSerializer<UnlockedSlots> SERIALIZER = new DataSerializer<>(STREAM_CODEC, (obj, provider) -> {
+    public static final DataSerializer<UnlockableSlots> SERIALIZER = new DataSerializer<>(STREAM_CODEC, (obj, provider) -> {
         return CODEC.encodeStart(NbtOps.INSTANCE, obj).result().orElse(new CompoundTag());
     }, (tag, provider) -> {
         if(tag instanceof CompoundTag) {
@@ -45,24 +45,24 @@ public final class UnlockedSlots
     private final int maxSlots;
     private final int nextCount;
 
-    private UnlockedSlots()
+    private UnlockableSlots()
     {
         this.slots = new HashSet<>();
         this.maxSlots = -1;
         this.nextCount = 0;
     }
 
-    public UnlockedSlots(int maxSlots)
+    public UnlockableSlots(int maxSlots)
     {
         this(new HashSet<>(), maxSlots);
     }
 
-    private UnlockedSlots(List<Integer> slots, int maxSlots)
+    private UnlockableSlots(List<Integer> slots, int maxSlots)
     {
         this(new HashSet<>(slots), maxSlots);
     }
 
-    private UnlockedSlots(Set<Integer> slots, int maxSlots)
+    private UnlockableSlots(Set<Integer> slots, int maxSlots)
     {
         assert maxSlots > 0;
         this.slots = slots;
@@ -80,7 +80,7 @@ public final class UnlockedSlots
 
     /**
      * Determines if the slot at the given index has been unlocked. This method includes a special
-     * case where if the instance of UnlockedSlots is {@link #ALL}, then it will always return true.
+     * case where if the instance of UnlockableSlots is {@link #ALL}, then it will always return true.
      * Otherwise, it will look at the set of currently unlocked slot indexes.
      *
      * @param slot the index of the slot
@@ -93,14 +93,14 @@ public final class UnlockedSlots
 
     /**
      * Unlocks the slot at the given index. Keep in mind that this method returns a new immutable
-     * UnlockedSlots. If the slot cannot be unlocked, or is already unlocked, this method will
-     * simply return the instance of UnlockedSlots this method was invoked on. There is a special
-     * case where if this UnlockedSlots is {@link #ALL}, it will always return {@link #ALL}.
+     * UnlockableSlots. If the slot cannot be unlocked, or is already unlocked, this method will
+     * simply return the instance of UnlockableSlots this method was invoked on. There is a special
+     * case where if this UnlockableSlots is {@link #ALL}, it will always return {@link #ALL}.
      *
      * @param slot the index of the slot
-     * @return a new UnlockedSlots instance, or the same UnlockedSlots if unable to unlock
+     * @return a new UnlockableSlots instance, or the same UnlockableSlots if unable to unlock
      */
-    public UnlockedSlots unlockSlot(int slot)
+    public UnlockableSlots unlockSlot(int slot)
     {
         if(this.maxSlots == -1)
             return this;
@@ -108,7 +108,7 @@ public final class UnlockedSlots
             return this;
         Set<Integer> newSlots = new HashSet<>(this.slots);
         newSlots.add(slot);
-        return new UnlockedSlots(newSlots, this.maxSlots);
+        return new UnlockableSlots(newSlots, this.maxSlots);
     }
 
     /**
@@ -117,13 +117,13 @@ public final class UnlockedSlots
      * simply return itself there is no difference. The given maxSlots must be positive!
      *
      * @param maxSlots the new max slots
-     * @return a new immutable UnlockedSlots object, or the same UnlockedSlots if the same value.
+     * @return a new immutable UnlockableSlots object, or the same UnlockableSlots if the same value.
      */
-    public UnlockedSlots setMaxSlots(int maxSlots)
+    public UnlockableSlots setMaxSlots(int maxSlots)
     {
         if(this.maxSlots == -1 || this.maxSlots == maxSlots)
             return this;
-        return new UnlockedSlots(this.slots, maxSlots);
+        return new UnlockableSlots(this.slots, maxSlots);
     }
 
     /**
@@ -240,7 +240,7 @@ public final class UnlockedSlots
     {
         if(o == null || getClass() != o.getClass())
             return false;
-        UnlockedSlots other = (UnlockedSlots) o;
+        UnlockableSlots other = (UnlockableSlots) o;
         return this.maxSlots == other.maxSlots && this.slots.equals(other.slots);
     }
 
