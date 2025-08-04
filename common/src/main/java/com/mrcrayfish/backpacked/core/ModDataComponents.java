@@ -18,7 +18,7 @@ public class ModDataComponents
         return builder.persistent(BackpackProperties.CODEC).networkSynchronized(BackpackProperties.STREAM_CODEC);
     });
 
-    public static final RegistryEntry<DataComponentType<UnlockableSlots>> UNLOCKABLE_SLOTS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_slots"), builder -> {
+    public static final RegistryEntry<DataComponentType<UnlockableSlots>> UNLOCKABLE_SLOTS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_slots"), builder -> {
         return builder.persistent(UnlockableSlots.CODEC).networkSynchronized(UnlockableSlots.STREAM_CODEC);
     });
 }
