@@ -96,7 +96,7 @@ public class YoureInGraveDangerSupport
             for(int i = 0; i < backpacks.size(); i++)
             {
                 ItemStack stack = backpacks.get(i);
-                if(stack.isEmpty())
+                if(!stack.isEmpty())
                 {
                     list.add(new Pair<>(i, stack.copy()));
                 }
