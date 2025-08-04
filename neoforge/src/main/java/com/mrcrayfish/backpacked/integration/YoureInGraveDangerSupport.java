@@ -4,6 +4,7 @@ import com.b1n_ry.yigd.compat.CompatComponent;
 import com.b1n_ry.yigd.compat.InvModCompat;
 import com.b1n_ry.yigd.data.DeathContext;
 import com.b1n_ry.yigd.data.GraveItem;
+import com.b1n_ry.yigd.events.YigdEvents;
 import com.b1n_ry.yigd.util.DropRule;
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
@@ -18,11 +19,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class YoureInGraveDangerSupport
@@ -30,12 +29,12 @@ public class YoureInGraveDangerSupport
     public static void init()
     {
         // Use the lowest priority so event is triggered after YIGD reload
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, YoureInGraveDangerSupport::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(YoureInGraveDangerSupport::onRegisterCompat);
     }
 
-    private static void onServerStarted(ServerStartedEvent event)
+    private static void onRegisterCompat(YigdEvents.LoadModCompatEvent event)
     {
-        InvModCompat.invCompatMods.add(new BackpackedCompat());
+        event.addModCompat(new BackpackedCompat());
     }
 
     private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, ItemStack>>>
