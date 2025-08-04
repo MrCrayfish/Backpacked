@@ -378,7 +378,8 @@ public class Config
                 """)
         public final EnumProperty<UnlockableSlotMode> unlockableSlotMode = EnumProperty.create(UnlockableSlotMode.ENABLED);
 
-        @ConfigProperty(name = "glitterBomb", comment = "Very secret feature, do not enable if you don't want your screen filled with particle effects")
+        @ConfigProperty(name = "glitterBomb", comment = """
+                Very secret feature, do not enable if you don't want your screen filled with particle effects""")
         public final BoolProperty glitterBomb = BoolProperty.create(false);
     }
 

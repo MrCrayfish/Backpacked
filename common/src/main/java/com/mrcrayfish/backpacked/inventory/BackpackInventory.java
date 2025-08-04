@@ -4,6 +4,8 @@ import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockedSlots;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.inventory.container.LockedContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
@@ -16,7 +18,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 /**
  * Author: MrCrayfish
  */
-public class BackpackInventory extends SimpleContainer
+public class BackpackInventory extends LockedContainer
 {
     private final int index;
     private final Player player;
@@ -37,7 +39,7 @@ public class BackpackInventory extends SimpleContainer
     private void loadBackpackContents(Player player)
     {
         ItemContainerContents contents = this.stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        contents.copyInto(this.getItems()); // TODO reimplement dropping items if inventory is resized
+        contents.copyInto(this.items); // TODO reimplement dropping items if inventory is resized
         this.spawnItemsFromLockedSlots();
     }
 
@@ -72,6 +74,16 @@ public class BackpackInventory extends SimpleContainer
     }
 
     @Override
+    protected UnlockedSlots getUnlockedSlots()
+    {
+        if(this.stack.getItem() instanceof BackpackItem item)
+        {
+            return item.getUnlockedSlots(this.stack);
+        }
+        return UnlockedSlots.ALL;
+    }
+
+    @Override
     public boolean stillValid(Player player)
     {
         if(!this.player.isAlive())
@@ -86,7 +98,6 @@ public class BackpackInventory extends SimpleContainer
     @Override
     public void setChanged()
     {
-        super.setChanged();
         this.save = true;
     }
 
@@ -101,6 +112,6 @@ public class BackpackInventory extends SimpleContainer
 
     public void saveItemsToStack()
     {
-        this.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.getItems()));
+        this.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.items));
     }
 }

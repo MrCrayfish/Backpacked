@@ -178,4 +178,52 @@ public abstract class LockedContainer implements Container
     {
         ContainerHelper.saveAllItems(tag, this.items, provider);
     }
+
+    public ItemStack addItem(ItemStack stack)
+    {
+        if(!stack.isEmpty())
+        {
+            ItemStack copy = stack.copy();
+            this.mergeIntoExistingStacks(copy);
+            if(!copy.isEmpty())
+            {
+                this.moveStackIntoFirstEmptyUnlockedSlot(copy);
+            }
+            return copy.isEmpty() ? ItemStack.EMPTY : copy;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    protected void mergeIntoExistingStacks(ItemStack stack)
+    {
+        for(int i = 0; i < this.size; i++)
+        {
+            ItemStack slotStack = this.getItem(i);
+            if(!ItemStack.isSameItemSameComponents(slotStack, stack))
+                continue;
+
+            int maxStackSize = this.getMaxStackSize(slotStack);
+            int growSize = Math.min(stack.getCount(), maxStackSize - slotStack.getCount());
+            if(growSize <= 0)
+                continue;
+
+            slotStack.grow(growSize);
+            stack.shrink(growSize);
+            this.setChanged();
+        }
+    }
+
+    protected void moveStackIntoFirstEmptyUnlockedSlot(ItemStack stack)
+    {
+        UnlockedSlots slots = this.getUnlockedSlots();
+        for(int i = 0; i < this.size; i++)
+        {
+            ItemStack slotStack = this.getItem(i);
+            if(slots.isUnlocked(i) && slotStack.isEmpty())
+            {
+                this.setItem(i, stack.copyAndClear());
+                break;
+            }
+        }
+    }
 }
