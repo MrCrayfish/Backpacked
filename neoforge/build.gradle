@@ -46,7 +46,7 @@ dependencies {
 
     // Integrations
     //runtimeOnly "curse.maven:gravestone-mod-238551:5794085"
-    compileOnly "curse.maven:youre-in-grave-danger-544912:6371028"
+    compileOnly "curse.maven:youre-in-grave-danger-544912:6684166"
     compileOnly "curse.maven:cloth-config-348521:5729127"
 }
 

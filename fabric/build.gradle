@@ -37,7 +37,7 @@ dependencies {
     modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
 
     // Integrations
-    modCompileOnly "curse.maven:youre-in-grave-danger-544912:6371026"
+    modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684160"
 }
 
 sourceSets.main.resources.srcDirs += "src/generated/resources"
