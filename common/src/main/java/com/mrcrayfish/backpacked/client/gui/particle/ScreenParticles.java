@@ -1,5 +1,8 @@
 package com.mrcrayfish.backpacked.client.gui.particle;
 
+import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
+import com.mrcrayfish.framework.platform.Services;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
@@ -21,6 +24,12 @@ public final class ScreenParticles
 
     public void renderParticles(GuiGraphics graphics, float partialTick)
     {
-        this.particles.forEach(p -> p.render(graphics, partialTick));
+        // Fixes particles not being smooth on Fabric
+        if(Services.PLATFORM.getPlatform().isFabric())
+        {
+            partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        }
+        float finalPartialTick = partialTick;
+        this.particles.forEach(p -> p.render(graphics, finalPartialTick));
     }
 }
