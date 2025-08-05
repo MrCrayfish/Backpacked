@@ -10,8 +10,7 @@
     "FabricPlayerMixin",
     "LivingEntityMixin",
     "PackRepositoryMixin",
-    "ServerPacksSourceMixin",
-    "integration.InvModCompatMixin"
+    "ServerPacksSourceMixin"
   ],
   "client": [
     "client.CreateWorldScreenMixin"

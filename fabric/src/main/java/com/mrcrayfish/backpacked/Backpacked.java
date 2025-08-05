@@ -2,10 +2,12 @@ package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.FabricBackpackLoader;
+import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.framework.FrameworkSetup;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 
@@ -29,5 +31,10 @@ public class Backpacked implements ModInitializer
             return InteractionResult.PASS;
         });
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(FabricBackpackLoader.ID, FabricBackpackLoader::new);
+
+        if(FabricLoader.getInstance().isModLoaded("yigd"))
+        {
+            YoureInGraveDangerSupport.init();
+        }
     }
 }

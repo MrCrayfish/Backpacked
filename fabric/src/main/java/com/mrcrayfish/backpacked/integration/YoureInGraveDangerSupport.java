@@ -4,6 +4,7 @@ import com.b1n_ry.yigd.compat.CompatComponent;
 import com.b1n_ry.yigd.compat.InvModCompat;
 import com.b1n_ry.yigd.data.DeathContext;
 import com.b1n_ry.yigd.data.GraveItem;
+import com.b1n_ry.yigd.events.LoadModCompatEvent;
 import com.b1n_ry.yigd.util.DropRule;
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
@@ -23,9 +24,11 @@ import java.util.function.Predicate;
 
 public class YoureInGraveDangerSupport
 {
-    public static void reload()
+    public static void init()
     {
-        InvModCompat.invCompatMods.add(new BackpackedCompat());
+        LoadModCompatEvent.EVENT.register(list -> {
+            list.add(new BackpackedCompat());
+        });
     }
 
     private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, ItemStack>>>
@@ -87,7 +90,7 @@ public class YoureInGraveDangerSupport
             for(int i = 0; i < backpacks.size(); i++)
             {
                 ItemStack stack = backpacks.get(i);
-                if(stack.isEmpty())
+                if(!stack.isEmpty())
                 {
                     list.add(new Pair<>(i, stack.copy()));
                 }
