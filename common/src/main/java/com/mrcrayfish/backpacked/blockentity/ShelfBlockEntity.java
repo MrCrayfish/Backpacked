@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.blockentity;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
@@ -8,11 +9,13 @@ import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
+import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
+import com.mrcrayfish.framework.api.FrameworkAPI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -111,9 +114,10 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     public void openShelfManagement(ServerPlayer player)
     {
-        player.openMenu(new SimpleMenuProvider((windowId, playerInventory, player1) -> {
-            return new BackpackShelfMenu(windowId, playerInventory, new ManagementInventory(player), this.container);
-        }, Component.translatable("container.backpack_shelf")));
+        UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
+        FrameworkAPI.openMenuWithData(player, new SimpleMenuProvider((windowId, playerInventory, player1) -> {
+            return new BackpackShelfMenu(windowId, playerInventory, new ManagementInventory(player), this.container, slots);
+        }, Component.translatable("container.backpack_shelf")), new ManagementContainerData(slots));
     }
 
     public void copyInventoryToStack(ItemStack stack)

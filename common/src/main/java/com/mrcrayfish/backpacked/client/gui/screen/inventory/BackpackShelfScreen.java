@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-public class BackpackShelfScreen extends AbstractContainerScreen<BackpackShelfMenu>
+public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelfMenu>
 {
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -30,13 +30,6 @@ public class BackpackShelfScreen extends AbstractContainerScreen<BackpackShelfMe
     {
         MouseRestorer.loadCapturedPosition();
         super.init();
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
-    {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override

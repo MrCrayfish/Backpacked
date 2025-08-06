@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.inventory.container.slot;
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -73,5 +74,27 @@ public class UnlockableSlot extends Slot
     public @Nullable Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
     {
         return this.isActive() ? this.icon : null;
+    }
+
+    public int getNextUnlockCost()
+    {
+        return this.controller.getNextUnlockCost();
+    }
+
+    public boolean canUnlock()
+    {
+        return this.controller.canUnlockSlot(this.getContainerSlot());
+    }
+
+    public void unlock(Player player)
+    {
+        if(player instanceof ServerPlayer)
+        {
+            this.controller.handleUnlockSlot((ServerPlayer) player, this.index, this.getContainerSlot());
+        }
+        else if(player.isLocalPlayer())
+        {
+            this.controller.unlockSlot(this.getContainerSlot());
+        }
     }
 }

@@ -9,10 +9,10 @@ import net.minecraft.network.codec.StreamCodec;
 /**
  * Author: MrCrayfish
  */
-public record MessageSyncUnlockSlot(int slot)
+public record MessageSyncUnlockSlot(int slotIndex)
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageSyncUnlockSlot> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.INT, MessageSyncUnlockSlot::slot,
+        ByteBufCodecs.INT, MessageSyncUnlockSlot::slotIndex,
         MessageSyncUnlockSlot::new
     );
 

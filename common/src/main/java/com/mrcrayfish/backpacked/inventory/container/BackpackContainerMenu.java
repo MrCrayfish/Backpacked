@@ -127,14 +127,14 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
     }
 
     @Override
-    public void handleUnlockSlot(ServerPlayer player, int slot)
+    public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
     {
         ItemStack backpack = this.getBackpackStack();
         if(backpack.isEmpty())
             return;
 
         UnlockableSlots slots = backpack.get(ModDataComponents.UNLOCKABLE_SLOTS.get());
-        if(slots == null || !slots.isUnlockable(slot))
+        if(slots == null || !slots.isUnlockable(containerIndex))
             return;
 
         // Ensure the player has the experience levels
@@ -146,7 +146,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         player.giveExperienceLevels(-experienceLevelCost);
 
         // Finally unlock the slot and sync the changes to the client
-        slots = slots.unlockSlot(slot);
+        slots = slots.unlockSlot(containerIndex);
         backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
         this.unlockableSlots = slots;
 
@@ -161,7 +161,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
             }
             return false;
         }).forEach(otherPlayer -> {
-            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slot));
+            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndex));
         });
     }
 

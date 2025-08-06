@@ -10,7 +10,7 @@ public interface UnlockableController
 
     void unlockSlot(int slot);
 
-    void handleUnlockSlot(ServerPlayer player, int slot);
+    void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex);
 
     int getNextUnlockCost();
 }

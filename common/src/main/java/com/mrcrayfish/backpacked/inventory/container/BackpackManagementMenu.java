@@ -21,14 +21,13 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class BackpackManagementMenu extends CustomContainerMenu implements UnlockableController
+public class BackpackManagementMenu extends CustomContainerMenu
 {
     private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
 
     private final Inventory inventory;
     private final Container container;
     private final ContainerData data;
-    private UnlockableSlots unlockableSlots;
 
     public BackpackManagementMenu(int windowId, Inventory inventory, ManagementContainerData customData)
     {
@@ -41,11 +40,12 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
         this.inventory = inventory;
         this.container = container;
         this.data = data;
-        this.unlockableSlots = slots;
         checkContainerDataCount(data, 1);
+
+        UnlockableController controller = new ManagementUnlockableController(slots);
         for(int i = 0; i < container.getContainerSize(); i++)
         {
-            this.addSlot(new UnlockableSlot(this, container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 27)
+            this.addSlot(new UnlockableSlot(controller, container, i, i * 18 + (176 - (container.getContainerSize() * 18)) / 2 + 1, 27)
                     .setIcon(EMPTY_SLOT)
                     .setPredicate(stack -> stack.getItem() instanceof BackpackItem)
             );
@@ -62,59 +62,6 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
     public boolean hasNothingEquipped()
     {
         return this.data.get(0) == 0;
-    }
-
-    public UnlockableSlots getUnlockableSlots()
-    {
-        return this.unlockableSlots;
-    }
-
-    @Override
-    public void unlockSlot(int slot)
-    {
-        this.unlockableSlots = this.unlockableSlots.unlockSlot(slot);
-    }
-
-    @Override
-    public boolean isSlotUnlocked(int slot)
-    {
-        return this.unlockableSlots.isUnlocked(slot);
-    }
-
-    @Override
-    public boolean canUnlockSlot(int slot)
-    {
-        return this.unlockableSlots.isUnlockable(slot);
-    }
-
-    @Override
-    public void handleUnlockSlot(ServerPlayer player, int slot)
-    {
-        UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
-        if(!slots.isUnlockable(slot))
-            return;
-
-        // Ensure the player has the experience levels
-        int experienceLevelCost = slots.nextBackpackSlotUnlockCost();
-        if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
-            return;
-
-        // Take the experience levels from the player
-        player.giveExperienceLevels(-experienceLevelCost);
-
-        // Finally unlock the slot and sync the changes to the client
-        slots = slots.unlockSlot(slot);
-        BackpackHelper.setBackpackUnlockableSlots(player, slots);
-        this.unlockableSlots = slots;
-
-        // Sync to players that are currently in the same menu
-        Network.PLAY.sendToPlayer(() -> player, new MessageSyncUnlockSlot(slot));
-    }
-
-    @Override
-    public int getNextUnlockCost()
-    {
-        return this.unlockableSlots.nextBackpackSlotUnlockCost();
     }
 
     @Override
@@ -159,5 +106,63 @@ public class BackpackManagementMenu extends CustomContainerMenu implements Unloc
     public Player getPlayer()
     {
         return this.inventory.player;
+    }
+
+    public static class ManagementUnlockableController implements UnlockableController
+    {
+        private UnlockableSlots slots;
+
+        public ManagementUnlockableController(UnlockableSlots slots)
+        {
+            this.slots = slots;
+        }
+
+        @Override
+        public void unlockSlot(int slot)
+        {
+            this.slots = this.slots.unlockSlot(slot);
+        }
+
+        @Override
+        public boolean isSlotUnlocked(int slot)
+        {
+            return this.slots.isUnlocked(slot);
+        }
+
+        @Override
+        public boolean canUnlockSlot(int slot)
+        {
+            return this.slots.isUnlockable(slot);
+        }
+
+        @Override
+        public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
+        {
+            UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
+            if(!slots.isUnlockable(containerIndex))
+                return;
+
+            // Ensure the player has the experience levels
+            int experienceLevelCost = slots.nextBackpackSlotUnlockCost();
+            if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
+                return;
+
+            // Take the experience levels from the player
+            player.giveExperienceLevels(-experienceLevelCost);
+
+            // Finally unlock the slot and sync the changes to the client
+            slots = slots.unlockSlot(containerIndex);
+            BackpackHelper.setBackpackUnlockableSlots(player, slots);
+            this.slots = slots;
+
+            // Sync to players that are currently in the same menu
+            Network.PLAY.sendToPlayer(() -> player, new MessageSyncUnlockSlot(slotIndex));
+        }
+
+        @Override
+        public int getNextUnlockCost()
+        {
+            return this.slots.nextBackpackSlotUnlockCost();
+        }
     }
 }

@@ -8,11 +8,15 @@ import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
+import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.message.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 
 /**
  * Author: MrCrayfish
@@ -71,16 +75,33 @@ public class ClientPlayHandler
         }
     }
 
+    @SuppressWarnings("ConstantValue")
     public static void handleUnlockSlot(MessageSyncUnlockSlot message)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.player != null && minecraft.player.containerMenu instanceof UnlockableController controller)
+        if(minecraft.player == null)
+            return;
+
+        AbstractContainerMenu menu = minecraft.player.containerMenu;
+        if(menu == null)
+            return;
+
+        int slotIndex = message.slotIndex();
+        if(slotIndex < 0 || slotIndex >= menu.slots.size())
+            return;
+
+        Slot slot = menu.getSlot(slotIndex);
+        if(!(slot instanceof UnlockableSlot unlockableSlot))
+            return;
+
+        if(!unlockableSlot.canUnlock())
+            return;
+
+        unlockableSlot.unlock(minecraft.player);
+
+        if(minecraft.screen instanceof UnlockableContainerScreen<?> screen)
         {
-            controller.unlockSlot(message.slot());
-            if(minecraft.screen instanceof UnlockableContainerScreen<?> screen)
-            {
-                screen.onSlotUnlocked();
-            }
+            screen.onSlotUnlocked();
         }
     }
 }

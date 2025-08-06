@@ -29,8 +29,9 @@ public class ModContainers
             BackpackManagementMenu::new
     );
 
-    public static final RegistryEntry<MenuType<BackpackShelfMenu>> BACKPACK_SHELF = RegistryEntry.menuType(
+    public static final RegistryEntry<MenuType<BackpackShelfMenu>> BACKPACK_SHELF = RegistryEntry.menuTypeWithData(
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_shelf"),
+            ManagementContainerData.STREAM_CODEC,
             BackpackShelfMenu::new
     );
 }

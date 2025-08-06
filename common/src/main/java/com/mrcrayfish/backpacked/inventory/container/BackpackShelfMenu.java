@@ -2,9 +2,12 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
+import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.ConditionalSlot;
+import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -20,12 +23,12 @@ public class BackpackShelfMenu extends CustomContainerMenu
     private final Container managementContainer;
     private final Container shelfContainer;
 
-    public BackpackShelfMenu(int windowId, Inventory playerInventory)
+    public BackpackShelfMenu(int windowId, Inventory playerInventory, ManagementContainerData customData)
     {
-        this(windowId, playerInventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainer(ShelfBlockEntity.SIZE));
+        this(windowId, playerInventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainer(ShelfBlockEntity.SIZE), customData.slots());
     }
 
-    public BackpackShelfMenu(int windowId, Inventory playerInventory, Container managementContainer, Container shelfContainer)
+    public BackpackShelfMenu(int windowId, Inventory playerInventory, Container managementContainer, Container shelfContainer, UnlockableSlots managementSlots)
     {
         super(ModContainers.BACKPACK_SHELF.get(), windowId);
         this.managementContainer = managementContainer;
@@ -38,12 +41,14 @@ public class BackpackShelfMenu extends CustomContainerMenu
             return stack.getItem() instanceof BackpackItem;
         }));
 
+        UnlockableController controller = new BackpackManagementMenu.ManagementUnlockableController(managementSlots);
         int managementSize = managementContainer.getContainerSize();
         for(int i = 0; i < managementSize; i++)
         {
-            this.addSlot(new ConditionalSlot(managementContainer, i, i * 18 + (176 - (managementSize * 18)) / 2 + 1, 60, stack -> {
-                return stack.getItem() instanceof BackpackItem;
-            }).setIcon(EMPTY_SLOT));
+            this.addSlot(new UnlockableSlot(controller, managementContainer, i, i * 18 + (176 - (managementSize * 18)) / 2 + 1, 60)
+                .setIcon(EMPTY_SLOT)
+                .setPredicate(stack -> stack.getItem() instanceof BackpackItem)
+            );
         }
         this.addPlayerInventorySlots(playerInventory, 8, 102);
     }

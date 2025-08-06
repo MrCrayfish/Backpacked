@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private static final int TITLE_LABEL_WIDTH = 94;
 
+    private final Player player;
     private final int cols;
     private final int rows;
     private final boolean owner;
@@ -63,6 +65,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
         super(menu, playerInventory, titleIn);
+        this.player = playerInventory.player;
         this.cols = menu.getCols();
         this.rows = menu.getRows();
         this.owner = menu.isOwner();
@@ -191,6 +194,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             case DISABLED -> this.setHideLockedSlots(true);
             case PURCHASABLE -> this.setHideLockedSlots(!this.canUnlockNextSlot());
         }
+    }
+
+    private boolean canUnlockNextSlot()
+    {
+        int experienceLevelCost = this.getMenu().getNextUnlockCost();
+        return this.player.experienceLevel >= experienceLevelCost || this.player.isCreative();
     }
 
     @Override

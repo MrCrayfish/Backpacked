@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
+import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
@@ -25,6 +26,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
@@ -138,11 +141,19 @@ public class ServerPlayHandler
         });
     }
 
+    @SuppressWarnings("ConstantValue")
     public static void handleUnlockSlot(MessageUnlockSlot message, MessageContext context)
     {
         context.getPlayer().ifPresent(player -> {
-            if(player.containerMenu instanceof UnlockableController controller) {
-                controller.handleUnlockSlot((ServerPlayer) player, message.slot());
+            AbstractContainerMenu menu = player.containerMenu;
+            if(menu == null)
+                return;
+            int slotIndex = message.slotIndex();
+            if(slotIndex >= 0 && slotIndex < menu.slots.size()) {
+                Slot slot = menu.getSlot(slotIndex);
+                if(slot instanceof UnlockableSlot unlockableSlot) {
+                    unlockableSlot.unlock((ServerPlayer) player);
+                }
             }
         });
     }

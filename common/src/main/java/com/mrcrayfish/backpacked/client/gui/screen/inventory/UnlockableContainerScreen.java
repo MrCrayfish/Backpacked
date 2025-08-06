@@ -33,7 +33,7 @@ import org.joml.Vector2d;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu & UnlockableController> extends AbstractContainerScreen<T>
+public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T>
 {
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
     private static final ResourceLocation EXP_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
@@ -75,7 +75,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
             }
             if(this.heldUnlockTime-- <= 0)
             {
-                Network.PLAY.sendToServer(new MessageUnlockSlot(this.clickedLockedSlot.getContainerSlot()));
+                Network.PLAY.sendToServer(new MessageUnlockSlot(this.clickedLockedSlot.index));
                 this.lastUnlockedSlot = this.clickedLockedSlot;
                 this.clickedLockedSlot = null;
             }
@@ -140,7 +140,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
-            int experienceLevelCost = this.getMenu().getNextUnlockCost();
+            int experienceLevelCost = this.hoveredLockedSlot.getNextUnlockCost();
             List<ClientTooltipComponent> components = new ArrayList<>();
             components.add(new ExperienceCostTooltip(experienceLevelCost));
             Component unlockHint = this.player.experienceLevel >= experienceLevelCost || this.player.isCreative()
@@ -158,9 +158,9 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
     {
         if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
-            if(this.getMenu().canUnlockSlot(this.hoveredLockedSlot.getContainerSlot()))
+            if(this.hoveredLockedSlot.canUnlock())
             {
-                int experienceLevelCost = this.getMenu().getNextUnlockCost();
+                int experienceLevelCost = this.hoveredLockedSlot.getNextUnlockCost();
                 if(this.player.experienceLevel >= experienceLevelCost || this.player.isCreative())
                 {
                     this.heldUnlockTime = UNLOCK_TIME;
@@ -181,12 +181,6 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu 
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
-    }
-
-    protected boolean canUnlockNextSlot()
-    {
-        int experienceLevelCost = this.getMenu().getNextUnlockCost();
-        return this.player.experienceLevel >= experienceLevelCost || this.player.isCreative();
     }
 
     public void onSlotUnlocked()
