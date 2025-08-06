@@ -1,13 +1,14 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
-import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockSlot;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainerMenu extends CustomContainerMenu implements UnlockableController
+public class BackpackContainerMenu extends CustomContainerMenu
 {
     // There is a technical hard limit of 256, these values allow the widest and tallest inventory possible
     public static final int MAX_COLUMNS = 23;
@@ -37,7 +38,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
     private final boolean owner;
     private final int backpackIndex;
     private final int totalBackpacks;
-    private UnlockableSlots unlockableSlots;
+    private final UnlockableController controller;
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
@@ -53,22 +54,20 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         this.owner = owner;
         this.backpackIndex = backpackIndex;
         this.totalBackpacks = totalBackpacks;
-        this.unlockableSlots = slots;
+        this.controller = new BackpackUnlockableController(this, slots);
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
-
         backpackContainer.startOpen(playerInventory.player);
 
         int backpackWidth = 11 + Math.max(9 * 18, this.cols * 18) + 11;
         int backpackSlotWidth = this.cols * 18;
         int backpackSlotsX = Math.max((backpackWidth - backpackSlotWidth) / 2, 0) + 1;
         int backpackSlotsY = 28;
-
         for(int y = 0; y < rows; y++)
         {
             for(int x = 0; x < cols; x++)
             {
-                this.addSlot(new BackpackSlot(this, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
+                this.addSlot(new BackpackSlot(this.controller, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
             }
         }
 
@@ -108,67 +107,9 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         return this.totalBackpacks;
     }
 
-    @Override
-    public void unlockSlot(int slot)
+    public UnlockableController getController()
     {
-        this.unlockableSlots = this.unlockableSlots.unlockSlot(slot);
-    }
-
-    @Override
-    public boolean isSlotUnlocked(int slot)
-    {
-        return this.unlockableSlots.isUnlocked(slot);
-    }
-
-    @Override
-    public boolean canUnlockSlot(int slot)
-    {
-        return this.unlockableSlots.isUnlockable(slot);
-    }
-
-    @Override
-    public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
-    {
-        ItemStack backpack = this.getBackpackStack();
-        if(backpack.isEmpty())
-            return;
-
-        UnlockableSlots slots = backpack.get(ModDataComponents.UNLOCKABLE_SLOTS.get());
-        if(slots == null || !slots.isUnlockable(containerIndex))
-            return;
-
-        // Ensure the player has the experience levels
-        int experienceLevelCost = slots.nextInventorySlotUnlockCost();
-        if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
-            return;
-
-        // Take the experience levels from the player
-        player.giveExperienceLevels(-experienceLevelCost);
-
-        // Finally unlock the slot and sync the changes to the client
-        slots = slots.unlockSlot(containerIndex);
-        backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
-        this.unlockableSlots = slots;
-
-        // Ensure shelf saves the changes
-        this.getBackpackInventory().setChanged();
-
-        // Sync to players that are currently in the same menu
-        List<ServerPlayer> players = player.server.getPlayerList().getPlayers();
-        players.stream().filter(otherPlayer -> {
-            if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
-                return this.getBackpackInventory() == otherMenu.getBackpackInventory();
-            }
-            return false;
-        }).forEach(otherPlayer -> {
-            Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndex));
-        });
-    }
-
-    @Override
-    public int getNextUnlockCost()
-    {
-        return this.unlockableSlots.nextInventorySlotUnlockCost();
+        return this.controller;
     }
 
     @Override
@@ -239,6 +180,68 @@ public class BackpackContainerMenu extends CustomContainerMenu implements Unlock
         else if(this.backpackInventory instanceof BackpackInventory)
         {
             BackpackItem.openBackpackManagement(player);
+        }
+    }
+
+    private static class BackpackUnlockableController extends UnlockableController
+    {
+        private final BackpackContainerMenu menu;
+
+        private BackpackUnlockableController(BackpackContainerMenu menu, UnlockableSlots slots)
+        {
+            super(slots);
+            this.menu = menu;
+        }
+
+        @Override
+        public CostModel costModel()
+        {
+            return Config.BACKPACK.inventory.slots.unlockCost;
+        }
+
+        @Override
+        public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
+        {
+            if(!this.menu.stillValid(player))
+                return;
+
+            ItemStack backpack = this.menu.getBackpackStack();
+            if(backpack.isEmpty())
+                return;
+
+            UnlockableSlots slots = backpack.get(ModDataComponents.UNLOCKABLE_SLOTS.get());
+            if(slots == null || !slots.isUnlockable(containerIndex))
+                return;
+
+            // Ensure the player has the experience levels
+            int experienceLevelCost = this.getNextUnlockCost();
+            if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
+                return;
+
+            // Take the experience levels from the player
+            player.giveExperienceLevels(-experienceLevelCost);
+
+            // Finally unlock the slot and sync the changes to the client
+            slots = slots.unlockSlot(containerIndex);
+            backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
+            this.slots = slots;
+
+            // Ensure shelf saves the changes
+            this.menu.getBackpackInventory().setChanged();
+
+            // Sync to players that are currently in the same menu
+            UnlockableSlots finalSlots = slots;
+            List<ServerPlayer> players = player.server.getPlayerList().getPlayers();
+            players.forEach(otherPlayer -> {
+                if(!(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu))
+                    return;
+                if(this.menu.getBackpackInventory() != otherMenu.getBackpackInventory())
+                    return;
+                if(otherPlayer != player) {
+                    otherMenu.controller.slots = finalSlots;
+                }
+                Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndex));
+            });
         }
     }
 }

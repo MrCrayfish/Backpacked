@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.backpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.InterpolateFunction;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
 import net.minecraft.nbt.CompoundTag;
@@ -139,22 +140,6 @@ public final class UnlockableSlots
     }
 
     /**
-     * @return The experience level cost to unlock a new equipable slot
-     */
-    public int nextBackpackSlotUnlockCost()
-    {
-        return this.nextUnlockCost(Config.BACKPACK.equipable.unlockCost);
-    }
-
-    /**
-     * @return The experience level cost to unlock a new slot in the backpack inventory.
-     */
-    public int nextInventorySlotUnlockCost()
-    {
-        return this.nextUnlockCost(Config.BACKPACK.inventory.slots.unlockCost);
-    }
-
-    /**
      * Calculates the experience level cost to unlock a new slot. The cost is calculated based on
      * how many slots are already unlocked, generally getting more expensive the more slots that are
      * unlocked. Users can change the calculation options in the config of the mod, or even have all
@@ -162,16 +147,16 @@ public final class UnlockableSlots
      *
      * @return the experience level cost to unlock the next slot
      */
-    private int nextUnlockCost(Cost cost)
+    public int nextUnlockCost(CostModel model)
     {
-        if(!cost.useCustomCosts())
+        if(!model.useCustomCosts())
         {
-            int minLevelCost = cost.getMinCost();
-            int maxLevelCost = cost.getMaxCost();
-            float costNormal = this.nextCostNormal(maxLevelCost, cost.getInterpolateFunction());
+            int minLevelCost = model.getMinCost();
+            int maxLevelCost = model.getMaxCost();
+            float costNormal = this.nextCostNormal(maxLevelCost, model.getInterpolateFunction());
             return (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
         }
-        return this.getNextCustomCost(cost.getCustomCosts());
+        return this.getNextCustomCost(model.getCustomCosts());
     }
 
     private int getNextCustomCost(List<Integer> costs)
@@ -242,18 +227,5 @@ public final class UnlockableSlots
             return false;
         UnlockableSlots other = (UnlockableSlots) o;
         return this.maxSlots == other.maxSlots && this.slots.equals(other.slots);
-    }
-
-    public interface Cost
-    {
-        InterpolateFunction getInterpolateFunction();
-
-        int getMinCost();
-
-        int getMaxCost();
-
-        boolean useCustomCosts();
-
-        List<Integer> getCustomCosts();
     }
 }

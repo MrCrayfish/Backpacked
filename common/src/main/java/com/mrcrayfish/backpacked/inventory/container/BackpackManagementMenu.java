@@ -1,7 +1,9 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
@@ -108,61 +110,43 @@ public class BackpackManagementMenu extends CustomContainerMenu
         return this.inventory.player;
     }
 
-    public static class ManagementUnlockableController implements UnlockableController
+    public static class ManagementUnlockableController extends UnlockableController
     {
-        private UnlockableSlots slots;
-
         public ManagementUnlockableController(UnlockableSlots slots)
         {
-            this.slots = slots;
+            super(slots);
         }
 
         @Override
-        public void unlockSlot(int slot)
+        public CostModel costModel()
         {
-            this.slots = this.slots.unlockSlot(slot);
-        }
-
-        @Override
-        public boolean isSlotUnlocked(int slot)
-        {
-            return this.slots.isUnlocked(slot);
-        }
-
-        @Override
-        public boolean canUnlockSlot(int slot)
-        {
-            return this.slots.isUnlockable(slot);
+            return Config.BACKPACK.equipable.unlockCost;
         }
 
         @Override
         public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
         {
+
+
             UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
             if(!slots.isUnlockable(containerIndex))
                 return;
 
             // Ensure the player has the experience levels
-            int experienceLevelCost = slots.nextBackpackSlotUnlockCost();
+            int experienceLevelCost = this.getNextUnlockCost();
             if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
                 return;
 
             // Take the experience levels from the player
             player.giveExperienceLevels(-experienceLevelCost);
 
-            // Finally unlock the slot and sync the changes to the client
+            // Finally unlock the slot and update unlocked slots player data
             slots = slots.unlockSlot(containerIndex);
             BackpackHelper.setBackpackUnlockableSlots(player, slots);
             this.slots = slots;
 
-            // Sync to players that are currently in the same menu
+            // Sync the unlock change to the player
             Network.PLAY.sendToPlayer(() -> player, new MessageSyncUnlockSlot(slotIndex));
-        }
-
-        @Override
-        public int getNextUnlockCost()
-        {
-            return this.slots.nextBackpackSlotUnlockCost();
         }
     }
 }

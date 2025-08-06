@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked;
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.common.InterpolateFunction;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
-import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
+import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.framework.api.config.*;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
@@ -192,7 +192,7 @@ public class Config
             }
         }
 
-        public static class UnlockCost implements UnlockableSlots.Cost
+        public static class UnlockCost implements CostModel
         {
             @ConfigProperty(name = "costInterpolateFunction", comment = """
                     The interpolate method to use when calculating the cost of unlocking a slot. The cost

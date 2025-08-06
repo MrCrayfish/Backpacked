@@ -198,7 +198,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private boolean canUnlockNextSlot()
     {
-        int experienceLevelCost = this.getMenu().getNextUnlockCost();
+        int experienceLevelCost = this.getMenu().getController().getNextUnlockCost();
         return this.player.experienceLevel >= experienceLevelCost || this.player.isCreative();
     }
 
