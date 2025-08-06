@@ -141,10 +141,10 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     {
         if(this.level instanceof ServerLevel)
         {
-            ItemStack stack = this.container.getItem(0);
+            ItemStack stack = this.getBackpack();
             if(!stack.isEmpty() && stack.getItem() instanceof BackpackItem)
             {
-                if(this.inventory != null)
+                if(this.inventory != null && stack == this.inventory.stack)
                 {
                     this.resizeInventory();
                 }
@@ -280,12 +280,14 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public static class BackpackShelfContainer extends UnlockableContainer
     {
         private final ShelfBlockEntity entity;
+        private final ItemStack stack;
         private final BackpackState state;
 
         public BackpackShelfContainer(ShelfBlockEntity entity, int size)
         {
             super(size);
             this.entity = entity;
+            this.stack = this.entity.getBackpack();
             this.state = BackpackState.create(this.entity.getBackpack());
         }
 
@@ -311,7 +313,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         @Override
         public boolean stillValid(Player player)
         {
-            return this.entity.inventory == this && !this.entity.getBackpack().isEmpty() && !this.entity.remove;
+            return this.entity.inventory == this && this.stack == this.entity.getBackpack() && !this.entity.remove;
         }
 
         public ItemStack getBackpack()
