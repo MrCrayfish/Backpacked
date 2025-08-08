@@ -10,7 +10,6 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
-import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
@@ -43,7 +42,7 @@ public class ServerPlayHandler
         if(player == null)
             return;
 
-        ItemStack stack = BackpackHelper.getSelectedBackpackStack(player);
+        ItemStack stack = BackpackHelper.getBackpackStack(player, message.backpackIndex());
         if(stack.isEmpty())
             return;
 
@@ -112,7 +111,7 @@ public class ServerPlayHandler
         if(Config.BACKPACK.cosmetics.disableCustomisation.get())
             return;
 
-        ItemStack stack = BackpackHelper.getSelectedBackpackStack(serverPlayer);
+        ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, message.backpackIndex());
         if(stack.isEmpty())
             return;
 
@@ -129,7 +128,7 @@ public class ServerPlayHandler
         });
         BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
         serverPlayer.closeContainer();
-        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(map, properties, showCosmeticWarning));
+        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(message.backpackIndex(), map, properties, showCosmeticWarning));
     }
 
     public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)

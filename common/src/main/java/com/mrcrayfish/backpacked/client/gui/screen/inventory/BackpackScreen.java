@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
@@ -14,6 +15,7 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
@@ -142,7 +144,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         if(canCustomise)
         {
             MiniButton customiseButton = new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
-                Network.getPlay().sendToServer(new MessageRequestCustomisation());
+                Player player = Minecraft.getInstance().player;
+                if(player != null) {
+                    int backpackIndex = ModSyncedDataKeys.SELECTED_BACKPACK.getValue(player);
+                    Network.getPlay().sendToServer(new MessageRequestCustomisation(backpackIndex));
+                }
             });
             customiseButton.setTooltip(Tooltip.create(CUSTOMISE_TOOLTIP));
             buttons.add(customiseButton);

@@ -17,12 +17,6 @@ import java.util.function.Predicate;
 
 public class BackpackHelper
 {
-    public static ItemStack getSelectedBackpackStack(Player player)
-    {
-        int selected = ModSyncedDataKeys.SELECTED_BACKPACK.getValue(player);
-        return getBackpackStack(player, selected);
-    }
-
     public static int getSelectedBackpackIndex(Player player)
     {
         updateSelectedBackpackIndex(player);

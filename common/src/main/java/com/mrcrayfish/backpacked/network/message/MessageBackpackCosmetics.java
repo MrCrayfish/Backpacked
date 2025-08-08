@@ -4,14 +4,16 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
  * Author: MrCrayfish
  */
-public record MessageBackpackCosmetics(BackpackProperties properties)
+public record MessageBackpackCosmetics(int backpackIndex, BackpackProperties properties)
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageBackpackCosmetics> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.INT, MessageBackpackCosmetics::backpackIndex,
         BackpackProperties.STREAM_CODEC, MessageBackpackCosmetics::properties,
         MessageBackpackCosmetics::new
     );

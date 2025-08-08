@@ -7,11 +7,9 @@ import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
-import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.message.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +57,7 @@ public class ClientPlayHandler
         if(minecraft.player == null)
             return;
 
-        minecraft.setScreen(new CustomiseBackpackScreen(message.progressMap(), message.properties(), message.showCosmeticWarning()));
+        minecraft.setScreen(new CustomiseBackpackScreen(message.backpackIndex(), message.progressMap(), message.properties(), message.showCosmeticWarning()));
     }
 
     public static void handleSyncVillagerBackpack(MessageSyncVillagerBackpack message)

@@ -75,6 +75,7 @@ public class CustomiseBackpackScreen extends Screen
     private static final int UNLOCKED_ITEM_TEXT_COLOUR = 0x685E4A;
     private static final int MODEL_LIGHTING = 0xF000F0;
 
+    private final int backpackIndex;
     private final int windowWidth;
     private final int windowHeight;
     private final boolean showCosmeticWarning;
@@ -96,9 +97,10 @@ public class CustomiseBackpackScreen extends Screen
     private final List<BackpackModelEntry> models;
     private int scroll;
 
-    public CustomiseBackpackScreen(Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning)
+    public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
+        this.backpackIndex = backpackIndex;
         this.windowWidth = 201;
         this.windowHeight = 166;
         Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
@@ -133,7 +135,7 @@ public class CustomiseBackpackScreen extends Screen
         }).pos(this.windowLeft + 7, this.windowTop + 114).size(71, 20).build());
 
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("backpacked.button.save"), onPress -> {
-            Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.displayBackpack));
+            Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.backpackIndex, this.displayBackpack));
             this.currentProperties = this.displayBackpack;
         }).pos(this.windowLeft + 7, this.windowTop + 137).size(71, 20).build());
 
