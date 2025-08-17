@@ -214,6 +214,10 @@ public class BackpackHelper
                 list.add(i);
             }
         }
+        if(list.isEmpty())
+        {
+            return Pair.of(0, 0);
+        }
         int selected = getSelectedBackpackIndex(player);
         return Pair.of(list.indexOf(selected), list.size());
     }
