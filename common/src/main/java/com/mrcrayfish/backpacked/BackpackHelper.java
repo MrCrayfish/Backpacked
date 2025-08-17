@@ -156,11 +156,29 @@ public class BackpackHelper
         ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
     }
 
+    /**
+     * Gets the first backpack the given player has equipped. If the player has no backpacks equipped,
+     * this method will return an empty ItemStack. Keep in mind that this is not a copy, so changes
+     * made to the ItemStack, like DataComponents, will be applied.
+     *
+     * @param player the player to get the backpack from
+     * @return The ItemStack of the first equipped backpack, otherwise an empty ItemStack
+     */
     public static ItemStack getFirstBackpackStack(Player player)
     {
         return getFirstBackpackStack(player, stack -> true);
     }
 
+    /**
+     * Gets the first backpack the given player has equipped and also matches the given filter. If
+     * the player has no backpacks equipped, this method will return an empty ItemStack. Keep in
+     * mind that this is not a copy, so changes made to the ItemStack, like DataComponents, will be
+     * applied.
+     *
+     * @param player the player to get the backpack from
+     * @param filter a predicate to test on the equipped backpack ItemStack
+     * @return The ItemStack of the first equipped backpack, otherwise an empty ItemStack
+     */
     public static ItemStack getFirstBackpackStack(Player player, Predicate<ItemStack> filter)
     {
         UnlockableSlots slots = getBackpackUnlockableSlots(player);
@@ -179,6 +197,16 @@ public class BackpackHelper
         return ItemStack.EMPTY;
     }
 
+    /**
+     * Equips the given stack into the first empty and unlocked equippable backpack slot of the
+     * given player. If the stack is not able to be equipped, either due to no empty slots or the
+     * slots are locked, this method will do nothing and simply return false. If the backpack was
+     * equipped successfully, this method will return true.
+     *
+     * @param player the player that is attempting to equip the stack
+     * @param stack  the stack to equip to the player (must be a backpack item)
+     * @return True if the backpack was successfully equipped
+     */
     public static boolean equipBackpack(Player player, ItemStack stack)
     {
         UnlockableSlots slots = getBackpackUnlockableSlots(player);
@@ -195,6 +223,13 @@ public class BackpackHelper
         return false;
     }
 
+    /**
+     * Removes all equipped backpacks from the player and returns a NonNullList containing the
+     * removed backpacks.
+     *
+     * @param player the player to remove the backpacks from
+     * @return a NonNullList of ItemStacks (which should be backpack items)
+     */
     public static NonNullList<ItemStack> removeAllBackpacks(Player player)
     {
         NonNullList<ItemStack> backpacks = getBackpacks(player);
@@ -202,6 +237,18 @@ public class BackpackHelper
         return backpacks;
     }
 
+    /**
+     * Creates pagination information used for displaying in the backpack inventory GUI. Due to the
+     * underlying structure of how backpacks are stored in memory, extra logic is needed to determine
+     * the "current page" and "total pages". The "total pages" is the count of equipped backpacks.
+     * To get the "current page", the backpackIndex of each equipped backpack needs to be stored in an ordered
+     * list, then it is simply the backpackIndex of the backpackIndex in the list. This method will return a pair, the
+     * first being the "current page", the second being the "total pages". If no backpacks are
+     * equipped, this method will always return pair of 0 and 0.
+     *
+     * @param player the player with the equipped backpacks
+     * @return A pair with the current page (first) and total pages (second)
+     */
     public static Pair<Integer, Integer> createPaginationInfo(Player player)
     {
         IntList list = new IntArrayList();
