@@ -18,7 +18,10 @@ public record BackpackState(int cols, int rows, boolean slotsUnlocked)
         return new BackpackState(0, 0, true);
     }
 
-    public boolean isChanged()
+    /**
+     * @return True if this BackpackState is invalid
+     */
+    public boolean isInvalid()
     {
         if(this.cols != Config.BACKPACK.inventory.size.columns.get())
             return true;

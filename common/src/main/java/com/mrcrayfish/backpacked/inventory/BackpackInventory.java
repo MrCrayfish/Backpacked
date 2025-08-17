@@ -86,7 +86,7 @@ public class BackpackInventory extends UnlockableContainer
     {
         if(!this.player.isAlive())
             return false;
-        if(this.getState().isChanged())
+        if(this.getState().isInvalid())
             return false;
         if(!BackpackHelper.getBackpackStack(this.player, this.index).equals(this.stack))
             return false;

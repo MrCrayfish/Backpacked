@@ -167,7 +167,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     private void resizeInventory()
     {
         int backpackSize = this.getBackpackSize();
-        if(this.inventory != null && this.inventory.getState().isChanged())
+        if(this.inventory != null && this.inventory.getState().isInvalid())
         {
             Container oldInventory = this.inventory;
             this.inventory = new BackpackShelfContainer(this, backpackSize);
