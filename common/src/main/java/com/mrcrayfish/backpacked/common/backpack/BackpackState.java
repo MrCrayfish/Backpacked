@@ -6,6 +6,8 @@ import net.minecraft.world.item.ItemStack;
 
 public record BackpackState(int cols, int rows, boolean slotsUnlocked)
 {
+    public static final BackpackState UNKNOWN = new BackpackState(0, 0, true);
+
     public static BackpackState create(ItemStack stack)
     {
         if(stack.getItem() instanceof BackpackItem item)
@@ -15,7 +17,7 @@ public record BackpackState(int cols, int rows, boolean slotsUnlocked)
             boolean slotsUnlocked = Config.BACKPACK.inventory.slots.unlockAllSlots.get();
             return new BackpackState(cols, rows, slotsUnlocked);
         }
-        return new BackpackState(0, 0, true);
+        return UNKNOWN;
     }
 
     /**
