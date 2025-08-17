@@ -89,7 +89,7 @@ public class BackpackItem extends Item
             int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
             UnlockableSlots slots = item.getUnlockableSlots(backpack);
-            Pair<Integer, Integer> data = BackpackHelper.createIndexData(ownerPlayer);
+            Pair<Integer, Integer> data = BackpackHelper.createPaginationInfo(ownerPlayer);
             Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), title);
             return true;
         }

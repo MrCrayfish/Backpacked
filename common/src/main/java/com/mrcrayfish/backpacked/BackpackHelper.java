@@ -202,7 +202,7 @@ public class BackpackHelper
         return backpacks;
     }
 
-    public static Pair<Integer, Integer> createIndexData(Player player)
+    public static Pair<Integer, Integer> createPaginationInfo(Player player)
     {
         IntList list = new IntArrayList();
         UnlockableSlots slots = getBackpackUnlockableSlots(player);
