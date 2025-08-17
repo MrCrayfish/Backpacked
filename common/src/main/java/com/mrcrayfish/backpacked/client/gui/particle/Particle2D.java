@@ -26,7 +26,7 @@ public class Particle2D
     private float v1;
     private float u2;
     private float v2;
-    private ResourceLocation texture;
+    private ResourceLocation sprite;
     private Vector2d motion = new Vector2d();
     private Vector2d gravity = new Vector2d();
     private double friction;
@@ -57,13 +57,13 @@ public class Particle2D
         return this;
     }
 
-    public Particle2D setTexture(float u1, float v1, float u2, float v2, ResourceLocation texture)
+    public Particle2D setSprite(float u1, float v1, float u2, float v2, ResourceLocation sprite)
     {
         this.u1 = u1;
         this.v1 = v1;
         this.u2 = u2;
         this.v2 = v2;
-        this.texture = texture;
+        this.sprite = sprite;
         return this;
     }
 
@@ -160,7 +160,7 @@ public class Particle2D
         float scale = Mth.lerp(partialTick, this.prevScale, this.scale);
         pose.scale(scale, scale, scale);
         pose.translate(-this.width / 2, -this.height / 2, 0);
-        TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(this.texture);
+        TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(this.sprite);
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         Matrix4f matrix = pose.last().pose();

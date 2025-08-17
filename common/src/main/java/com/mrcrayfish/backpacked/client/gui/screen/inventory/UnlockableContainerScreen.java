@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
 import com.mrcrayfish.backpacked.client.gui.particle.ScreenParticles;
-import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
@@ -195,7 +194,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
 
             Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6)
                 .setLife(50)
-                .setTexture(0F, 0F, 1F, 0.5F, ICON_LOCK)
+                .setSprite(0F, 0F, 1F, 0.5F, ICON_LOCK)
                 .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), -100))
                 .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
                 .setGravity(new Vector2d(0, 12))
@@ -206,7 +205,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
 
             Particle2D bottom = new Particle2D(slotX + 2, slotY + 8, 12, 6)
                 .setLife(50)
-                .setTexture(0F, 0.5F, 1F, 1F, ICON_LOCK)
+                .setSprite(0F, 0.5F, 1F, 1F, ICON_LOCK)
                 .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), 50))
                 .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
                 .setGravity(new Vector2d(0, 12))
@@ -219,7 +218,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
             {
                 Particle2D damageParticle = new Particle2D(slotX + 7, slotY + 7, 2, 2)
                         .setLife(20)
-                        .setTexture(0.45F, 0.5F, 0.55F, 0.6F, ICON_LOCK)
+                        .setSprite(0.45F, 0.5F, 0.55F, 0.6F, ICON_LOCK)
                         .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(50, 100)))
                         .setRotationSpeed(180)
                         .setGravity(new Vector2d(0, 12))
@@ -235,7 +234,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 {
                     Particle2D expOrbParticle = new Particle2D(slotX + 6, slotY + 6, 4, 4)
                             .setLife(50)
-                            .setTexture(0F, 0F, 1F, 1F, EXP_ORB)
+                            .setSprite(0F, 0F, 1F, 1F, EXP_ORB)
                             .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(1, 500)))
                             .setRotationSpeed(180)
                             .setGravity(new Vector2d(0, 20))
