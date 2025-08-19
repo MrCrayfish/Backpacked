@@ -1,18 +1,14 @@
 package com.mrcrayfish.backpacked.client.gui;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.PaymentItem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemCostTooltip implements ClientTooltipComponent
 {
-    private static final ResourceLocation ICON_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
-
     private final Component label;
     private final ItemStack item;
 
@@ -31,8 +27,8 @@ public class ItemCostTooltip implements ClientTooltipComponent
     @Override
     public int getWidth(Font font)
     {
-        // Icon Width + Spacing + Label Width
-        return 9 + 3 + font.width(this.label);
+        // Item Width + Spacing + Label Width
+        return 15 + 3 + font.width(this.label);
     }
 
     @Override
