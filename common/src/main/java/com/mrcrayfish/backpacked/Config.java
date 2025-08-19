@@ -1,15 +1,15 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
-import com.mrcrayfish.backpacked.common.InterpolateFunction;
-import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
-import com.mrcrayfish.backpacked.common.CostModel;
+import com.mrcrayfish.backpacked.common.*;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.framework.api.config.*;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import com.mrcrayfish.framework.api.config.validate.Validator;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -194,6 +194,18 @@ public class Config
 
         public static class UnlockCost implements CostModel
         {
+            @ConfigProperty(name = "paymentType", comment = """
+                    The type of payment to use to unlock backpack slots. By default this value is set to EXPERIENCE,
+                    which will use the players experience levels are used to unlock new slots. If value is set to
+                    ITEM, this will instead consume a specified item from the player's inventory (including anything
+                    placed in the backpack) to unlock new slots.""")
+            public final EnumProperty<PaymentType> paymentType = EnumProperty.create(PaymentType.EXPERIENCE);
+
+            @ConfigProperty(name = "paymentItem", comment = """
+                    Only applicable if paymentType is set to ITEM. This option will control the item used when paying
+                    to unlock new slots.""")
+            public final StringProperty paymentItem = StringProperty.create("minecraft:emerald", new ResourceLocationValidator("Must be a valid resource location that matches the id of an item"));
+
             @ConfigProperty(name = "costInterpolateFunction", comment = """
                     The interpolate method to use when calculating the cost of unlocking a slot. The cost
                     of slots increases the more slots that are unlocked. This function determines how steep
@@ -254,6 +266,18 @@ public class Config
                 this.costInterpolateFunction =  EnumProperty.create(defaultFunction);
                 this.minCost = IntProperty.create(defaultMinCost, 1, 100);
                 this.maxCost = IntProperty.create(defaultMaxCost, 1, 100);
+            }
+
+            @Override
+            public PaymentType getPaymentType()
+            {
+                return this.paymentType.get();
+            }
+
+            @Override
+            public String getPaymentItemId()
+            {
+                return this.paymentItem.get();
             }
 
             @Override
@@ -405,6 +429,8 @@ public class Config
         }
     }
 
+    private static final PaymentItem INVENTORY_PAYMENT_ITEM = new PaymentItem(BACKPACK.inventory.slots.unlockCost.paymentItem::get);
+    private static final PaymentItem BACKPACK_PAYMENT_ITEM = new PaymentItem(BACKPACK.equipable.unlockCost.paymentItem::get);
     private static Set<ResourceLocation> bannedItemsList;
 
     public static void init()
@@ -412,11 +438,15 @@ public class Config
         FrameworkConfigEvents.LOAD.register(object -> {
             if(object == BACKPACK) {
                 updateBannedItemsList();
+                INVENTORY_PAYMENT_ITEM.clearItem();
+                BACKPACK_PAYMENT_ITEM.clearItem();
             }
         });
         FrameworkConfigEvents.RELOAD.register(object -> {
             if(object == BACKPACK) {
                 updateBannedItemsList();
+                INVENTORY_PAYMENT_ITEM.clearItem();
+                BACKPACK_PAYMENT_ITEM.clearItem();
             }
         });
     }
@@ -429,5 +459,15 @@ public class Config
     public static Set<ResourceLocation> getBannedItemsList()
     {
         return bannedItemsList != null ? bannedItemsList : Collections.emptySet();
+    }
+
+    public static PaymentItem getInventoryPaymentItem()
+    {
+        return INVENTORY_PAYMENT_ITEM;
+    }
+
+    public static PaymentItem getBackpackPaymentItem()
+    {
+        return BACKPACK_PAYMENT_ITEM;
     }
 }

@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
+import com.mrcrayfish.backpacked.client.gui.ItemCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
 import com.mrcrayfish.backpacked.client.gui.particle.ScreenParticles;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
@@ -34,6 +35,7 @@ import java.util.List;
 
 public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T>
 {
+    private static final Component HOLD_TO_UNLOCK = Component.translatable("backpacked.gui.hold_to_unlock");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
     private static final ResourceLocation EXP_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
     private static final int UNLOCK_TIME = 20;
@@ -139,17 +141,41 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     {
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
-            int experienceLevelCost = this.hoveredLockedSlot.getNextUnlockCost();
-            List<ClientTooltipComponent> components = new ArrayList<>();
-            components.add(new ExperienceCostTooltip(experienceLevelCost));
-            Component unlockHint = this.player.experienceLevel >= experienceLevelCost || this.player.isCreative()
-                    ? Component.translatable("backpacked.gui.hold_to_unlock")
-                    : Component.translatable("backpacked.gui.not_enough_exp").withStyle(ChatFormatting.RED);
-            components.add(new ClientTextTooltip(unlockHint.getVisualOrderText()));
+            List<ClientTooltipComponent> components = this.createUnlockTooltip(this.hoveredLockedSlot);
             ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
             return;
         }
         super.renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    private List<ClientTooltipComponent> createUnlockTooltip(UnlockableSlot slot)
+    {
+        Component hintText = HOLD_TO_UNLOCK;
+        int nextCost = slot.getNextUnlockCost();
+        boolean canAfford = slot.canAffordToUnlock(this.player); // TODO this call is somewhat expensive if looking for items
+        List<ClientTooltipComponent> components = new ArrayList<>();
+        switch(slot.getController().getCostModel().getPaymentType())
+        {
+            case EXPERIENCE ->
+            {
+                if(!canAfford)
+                {
+                    hintText = Component.translatable("backpacked.gui.not_enough_exp").withStyle(ChatFormatting.RED);
+                }
+                components.add(new ExperienceCostTooltip(nextCost));
+                components.add(new ClientTextTooltip(hintText.getVisualOrderText()));
+            }
+            case ITEM ->
+            {
+                if(!canAfford)
+                {
+                    hintText = Component.translatable("backpacked.gui.missing_items").withStyle(ChatFormatting.RED);
+                }
+                components.add(new ItemCostTooltip(slot.getController().getPaymentItem(), nextCost));
+                components.add(new ClientTextTooltip(hintText.getVisualOrderText()));
+            }
+        }
+        return components;
     }
 
     @Override
@@ -157,15 +183,11 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     {
         if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
-            if(this.hoveredLockedSlot.canUnlock())
+            if(this.hoveredLockedSlot.canAffordToUnlock(this.player))
             {
-                int experienceLevelCost = this.hoveredLockedSlot.getNextUnlockCost();
-                if(this.player.experienceLevel >= experienceLevelCost || this.player.isCreative())
-                {
-                    this.heldUnlockTime = UNLOCK_TIME;
-                    this.clickedLockedSlot = this.hoveredLockedSlot;
-                    return true;
-                }
+                this.heldUnlockTime = UNLOCK_TIME;
+                this.clickedLockedSlot = this.hoveredLockedSlot;
+                return true;
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);

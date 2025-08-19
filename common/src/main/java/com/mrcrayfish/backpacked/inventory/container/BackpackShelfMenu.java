@@ -17,6 +17,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+
 public class BackpackShelfMenu extends CustomContainerMenu
 {
     private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
@@ -41,7 +43,7 @@ public class BackpackShelfMenu extends CustomContainerMenu
             return stack.getItem() instanceof BackpackItem;
         }));
 
-        UnlockableController controller = new BackpackManagementMenu.ManagementUnlockableController(managementSlots);
+        UnlockableController controller = new BackpackManagementMenu.ManagementUnlockableController(managementSlots, List.of(playerInventory));
         int managementSize = managementContainer.getContainerSize();
         for(int i = 0; i < managementSize; i++)
         {

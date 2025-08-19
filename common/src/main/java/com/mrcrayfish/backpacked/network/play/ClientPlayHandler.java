@@ -92,9 +92,6 @@ public class ClientPlayHandler
         if(!(slot instanceof UnlockableSlot unlockableSlot))
             return;
 
-        if(!unlockableSlot.canUnlock())
-            return;
-
         unlockableSlot.unlock(minecraft.player);
 
         if(minecraft.screen instanceof UnlockableContainerScreen<?> screen)

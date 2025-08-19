@@ -145,13 +145,13 @@ public class ServerPlayHandler
     {
         context.getPlayer().ifPresent(player -> {
             AbstractContainerMenu menu = player.containerMenu;
-            if(menu == null)
+            if(menu == null || !menu.stillValid(player))
                 return;
             int slotIndex = message.slotIndex();
             if(slotIndex >= 0 && slotIndex < menu.slots.size()) {
                 Slot slot = menu.getSlot(slotIndex);
                 if(slot instanceof UnlockableSlot unlockableSlot) {
-                    unlockableSlot.unlock((ServerPlayer) player);
+                    unlockableSlot.unlock(player);
                 }
             }
         });

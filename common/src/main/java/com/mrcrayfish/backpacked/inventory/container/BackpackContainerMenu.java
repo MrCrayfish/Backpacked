@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.inventory.container;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.CostModel;
+import com.mrcrayfish.backpacked.common.PaymentItem;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -19,9 +20,11 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -54,7 +57,7 @@ public class BackpackContainerMenu extends CustomContainerMenu
         this.owner = owner;
         this.backpackIndex = backpackIndex;
         this.totalBackpacks = totalBackpacks;
-        this.controller = new BackpackUnlockableController(this, slots);
+        this.controller = new BackpackUnlockableController(this, slots, List.of(playerInventory, backpackContainer));
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
         backpackContainer.startOpen(playerInventory.player);
@@ -186,51 +189,61 @@ public class BackpackContainerMenu extends CustomContainerMenu
     private static class BackpackUnlockableController extends UnlockableController
     {
         private final BackpackContainerMenu menu;
+        private final List<Container> paymentContainers;
 
-        private BackpackUnlockableController(BackpackContainerMenu menu, UnlockableSlots slots)
+        private BackpackUnlockableController(BackpackContainerMenu menu, UnlockableSlots slots, List<Container> paymentContainers)
         {
             super(slots);
             this.menu = menu;
+            this.paymentContainers = paymentContainers;
         }
 
         @Override
-        public CostModel costModel()
+        public Optional<UnlockableSlots> getSlots(Player player)
+        {
+            ItemStack backpack = this.menu.getBackpackStack();
+            if(!backpack.isEmpty())
+            {
+                return Optional.ofNullable(backpack.get(ModDataComponents.UNLOCKABLE_SLOTS.get()));
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public void setSlots(Player player, UnlockableSlots slots)
+        {
+            ItemStack backpack = this.menu.getBackpackStack();
+            if(!backpack.isEmpty())
+            {
+                backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
+            }
+        }
+
+        @Override
+        public CostModel getCostModel()
         {
             return Config.BACKPACK.inventory.slots.unlockCost;
         }
 
         @Override
-        public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
+        public PaymentItem getPaymentItem()
         {
-            if(!this.menu.stillValid(player))
-                return;
+            return Config.getInventoryPaymentItem();
+        }
 
-            ItemStack backpack = this.menu.getBackpackStack();
-            if(backpack.isEmpty())
-                return;
+        @Override
+        public List<Container> getPaymentContainers()
+        {
+            return this.paymentContainers;
+        }
 
-            UnlockableSlots slots = backpack.get(ModDataComponents.UNLOCKABLE_SLOTS.get());
-            if(slots == null || !slots.isUnlockable(containerIndex))
-                return;
-
-            // Ensure the player has the experience levels
-            int experienceLevelCost = this.getNextUnlockCost();
-            if(!player.isCreative() && player.experienceLevel < experienceLevelCost)
-                return;
-
-            // Take the experience levels from the player
-            player.giveExperienceLevels(-experienceLevelCost);
-
-            // Finally unlock the slot and sync the changes to the client
-            slots = slots.unlockSlot(containerIndex);
-            backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
-            this.slots = slots;
-
+        @Override
+        protected void onSlotUnlocked(ServerPlayer player, int slotIndex)
+        {
             // Ensure shelf saves the changes
             this.menu.getBackpackInventory().setChanged();
 
             // Sync to players that are currently in the same menu
-            UnlockableSlots finalSlots = slots;
             List<ServerPlayer> players = player.server.getPlayerList().getPlayers();
             players.forEach(otherPlayer -> {
                 if(!(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu))
@@ -238,7 +251,7 @@ public class BackpackContainerMenu extends CustomContainerMenu
                 if(this.menu.getBackpackInventory() != otherMenu.getBackpackInventory())
                     return;
                 if(otherPlayer != player) {
-                    otherMenu.controller.slots = finalSlots;
+                    otherMenu.getController().cachedSlots = this.cachedSlots;
                 }
                 Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndex));
             });

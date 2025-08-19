@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mojang.datafixers.util.Pair;
+import com.mrcrayfish.backpacked.common.PaymentType;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -76,14 +77,24 @@ public class UnlockableSlot extends Slot
         return this.isActive() ? this.icon : null;
     }
 
+    public UnlockableController getController()
+    {
+        return this.controller;
+    }
+
     public int getNextUnlockCost()
     {
         return this.controller.getNextUnlockCost();
     }
 
-    public boolean canUnlock()
+    public boolean canAffordToUnlock(Player player)
     {
-        return this.controller.canUnlockSlot(this.getContainerSlot());
+        return this.controller.canAffordNextSlot(player);
+    }
+
+    public PaymentType getPaymentType()
+    {
+        return this.controller.getCostModel().getPaymentType();
     }
 
     public void unlock(Player player)

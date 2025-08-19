@@ -5,6 +5,16 @@ import java.util.List;
 public interface CostModel
 {
     /**
+     * @return The cost type to use
+     */
+    PaymentType getPaymentType();
+
+    /**
+     * @return The id of the item to use for payments
+     */
+    String getPaymentItemId();
+
+    /**
      * @return The InterpolateFunction type to use to calculate between min and max cost.
      */
     InterpolateFunction getInterpolateFunction();

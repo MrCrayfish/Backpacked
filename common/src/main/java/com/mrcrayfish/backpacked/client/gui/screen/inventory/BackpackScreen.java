@@ -198,14 +198,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         {
             case ENABLED -> this.setHideLockedSlots(false);
             case DISABLED -> this.setHideLockedSlots(true);
-            case PURCHASABLE -> this.setHideLockedSlots(!this.canUnlockNextSlot());
+            case PURCHASABLE -> this.setHideLockedSlots(!this.getMenu().getController().canAffordNextSlot(this.player));
         }
-    }
-
-    private boolean canUnlockNextSlot()
-    {
-        int experienceLevelCost = this.getMenu().getController().getNextUnlockCost();
-        return this.player.experienceLevel >= experienceLevelCost || this.player.isCreative();
     }
 
     @Override

@@ -63,6 +63,7 @@
     "backpacked.gui.not_enough_exp": "Not Enough Exp",
     "backpacked.gui.experience_cost": "%s Exp Level",
     "backpacked.gui.experience_cost.plural": "%s Exp Levels",
+    "backpacked.gui.missing_items": "Missing Items",
     "backpacked.gui.manage_backpacks": "Manage Backpacks",
     "backpacked.gui.no_backpack_equipped": "No backpack equipped",
     "backpacked.gui.no_backpack_equipped.plural": "No backpacks equipped",
