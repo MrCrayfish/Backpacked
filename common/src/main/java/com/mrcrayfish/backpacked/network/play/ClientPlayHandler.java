@@ -16,6 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 
+import java.util.List;
+
 /**
  * Author: MrCrayfish
  */
@@ -84,19 +86,26 @@ public class ClientPlayHandler
         if(menu == null)
             return;
 
-        int slotIndex = message.slotIndex();
-        if(slotIndex < 0 || slotIndex >= menu.slots.size())
-            return;
-
-        Slot slot = menu.getSlot(slotIndex);
-        if(!(slot instanceof UnlockableSlot unlockableSlot))
-            return;
-
-        unlockableSlot.unlock(minecraft.player);
-
-        if(minecraft.screen instanceof UnlockableContainerScreen<?> screen)
+        boolean changed = false;
+        List<Integer> slotIndexes = message.unlockedSlotIndexes();
+        for(int slotIndex : slotIndexes)
         {
-            screen.onSlotUnlocked();
+            if(slotIndex < 0 || slotIndex >= menu.slots.size())
+                continue;
+
+            Slot slot = menu.getSlot(slotIndex);
+            if(!(slot instanceof UnlockableSlot unlockableSlot))
+                continue;
+
+            if(unlockableSlot.unlock(minecraft.player))
+            {
+                changed = true;
+            }
+        }
+
+        if(changed && minecraft.screen instanceof UnlockableContainerScreen<?> screen)
+        {
+            screen.onSlotUnlocked(slotIndexes);
         }
     }
 }

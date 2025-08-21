@@ -31,12 +31,15 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T>
 {
     private static final Component HOLD_TO_UNLOCK = Component.translatable("backpacked.gui.hold_to_unlock");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final ResourceLocation ICON_LOCK_OUTLINED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_outlined");
     private static final ResourceLocation EXP_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
     private static final int UNLOCK_TIME = 20;
 
@@ -44,10 +47,11 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     private final RandomSource random = RandomSource.create();
 
     private final Player player;
+    protected final Set<UnlockableSlot> selectedSlots = new LinkedHashSet<>();
+    private @Nullable UnlockableSlot lastAddedUnlockableSlot;
     private @Nullable UnlockableSlot hoveredLockedSlot;
-    private UnlockableSlot clickedLockedSlot;
     private int heldUnlockTime;
-    private UnlockableSlot lastUnlockedSlot;
+    private int totalUnlockTime;
     protected boolean hideLockedSlots;
 
     public UnlockableContainerScreen(T menu, Inventory inventory, Component title)
@@ -66,23 +70,25 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     {
         this.screenParticles.tickParticles();
 
-        if(this.clickedLockedSlot != null)
+        if(!this.selectedSlots.isEmpty())
         {
-            // Cancel if the user moves the mouse off the locked slot
-            if(this.hoveredLockedSlot != this.clickedLockedSlot)
+            if(this.hoveredLockedSlot == null)
             {
-                this.clickedLockedSlot = null;
+                this.selectedSlots.clear();
+                this.lastAddedUnlockableSlot = null;
                 return;
             }
+
             if(this.heldUnlockTime-- <= 0)
             {
-                Network.PLAY.sendToServer(new MessageUnlockSlot(this.clickedLockedSlot.index));
-                this.lastUnlockedSlot = this.clickedLockedSlot;
-                this.clickedLockedSlot = null;
+                List<Integer> slotIndexes = this.selectedSlots.stream().map(slot -> slot.index).toList();
+                Network.PLAY.sendToServer(new MessageUnlockSlot(slotIndexes));
+                this.selectedSlots.clear();
+                this.lastAddedUnlockableSlot = null;
             }
             else if(this.heldUnlockTime % 2 == 0)
             {
-                float pitch = 0.9F + 0.4F * (UNLOCK_TIME - this.heldUnlockTime) / (float) UNLOCK_TIME;
+                float pitch = 0.7F + 0.6F * (this.totalUnlockTime - this.heldUnlockTime) / (float) Math.max(1, this.totalUnlockTime);
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.EXPERIENCE_ORB_PICKUP, pitch, 0.25F));
             }
         }
@@ -102,12 +108,15 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     {
         super.renderBackground(graphics, mouseX, mouseY, partialTicks);
 
-        if(this.clickedLockedSlot != null && !this.hideLockedSlots)
+        if(!this.selectedSlots.isEmpty())
         {
-            int progressX = this.leftPos + this.clickedLockedSlot.x;
-            int progressY = this.topPos + this.clickedLockedSlot.y;
-            int progressWidth = (int) (16 * (UNLOCK_TIME - this.heldUnlockTime) / (float) UNLOCK_TIME);
-            graphics.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
+            int progressWidth = (int) (16 * (this.totalUnlockTime - this.heldUnlockTime) / (float) Math.max(1, this.totalUnlockTime));
+            for(UnlockableSlot slot : this.selectedSlots)
+            {
+                int progressX = this.leftPos + slot.x;
+                int progressY = this.topPos + slot.y;
+                graphics.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
+            }
         }
 
         for(Slot slot : this.getMenu().slots)
@@ -120,16 +129,23 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 }
                 if(!lockedSlot.isUnlocked())
                 {
-                    graphics.blitSprite(ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
-
-                    if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
+                    if(this.selectedSlots.contains(slot))
                     {
-                        graphics.fill(this.leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, this.topPos + slot.y + 16, 0x88A89A8A);
+                        graphics.blitSprite(ICON_LOCK_OUTLINED, this.leftPos + slot.x + 1, this.topPos + slot.y + 1, 14, 14);
                     }
-
-                    if(this.hideLockedSlots)
+                    else
                     {
-                        graphics.fill(this.leftPos + slot.x - 1, this.topPos + slot.y - 1, this.leftPos + slot.x + 17, this.topPos + slot.y + 17, 0xAAEFDBC4);
+                        graphics.blitSprite(ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
+
+                        if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
+                        {
+                            graphics.fill(this.leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, this.topPos + slot.y + 16, 0x88A89A8A);
+                        }
+
+                        if(this.hideLockedSlots)
+                        {
+                            graphics.fill(this.leftPos + slot.x - 1, this.topPos + slot.y - 1, this.leftPos + slot.x + 17, this.topPos + slot.y + 17, 0xAAEFDBC4);
+                        }
                     }
                 }
             }
@@ -139,7 +155,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
+        if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && (!this.hideLockedSlots || !this.selectedSlots.isEmpty()))
         {
             List<ClientTooltipComponent> components = this.createUnlockTooltip(this.hoveredLockedSlot);
             ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
@@ -151,8 +167,8 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     private List<ClientTooltipComponent> createUnlockTooltip(UnlockableSlot slot)
     {
         Component hintText = HOLD_TO_UNLOCK;
-        int nextCost = slot.getNextUnlockCost();
-        boolean canAfford = slot.canAffordToUnlock(this.player); // TODO this call is somewhat expensive if looking for items
+        int nextCost = slot.getNextUnlockCost(Math.max(1, this.selectedSlots.size()));
+        boolean canAfford = slot.canAffordToUnlock(this.player, Math.max(1, this.selectedSlots.size())); // TODO this call is somewhat expensive if looking for items
         List<ClientTooltipComponent> components = new ArrayList<>();
         switch(slot.getController().getCostModel().getPaymentType())
         {
@@ -183,10 +199,9 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     {
         if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
-            if(this.hoveredLockedSlot.canAffordToUnlock(this.player))
+            if(this.hoveredLockedSlot.canAffordToUnlock(this.player, 1))
             {
-                this.heldUnlockTime = UNLOCK_TIME;
-                this.clickedLockedSlot = this.hoveredLockedSlot;
+                this.addSlotToSelected(this.hoveredLockedSlot);
                 return true;
             }
         }
@@ -194,80 +209,122 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    {
+        if(button == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked())
+        {
+            if(!this.selectedSlots.contains(this.hoveredLockedSlot))
+            {
+                if(this.hoveredLockedSlot.canAffordToUnlock(this.player, this.selectedSlots.size() + 1))
+                {
+                    this.addSlotToSelected(this.hoveredLockedSlot);
+                }
+            }
+        }
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    protected void addSlotToSelected(UnlockableSlot slot)
+    {
+        this.selectedSlots.add(slot);
+        this.lastAddedUnlockableSlot = slot;
+        this.totalUnlockTime = Mth.clamp(UNLOCK_TIME + 4 * (this.selectedSlots.size() - 1), 20, 50);
+        this.heldUnlockTime = this.totalUnlockTime;
+
+        float pitch = 1.0F + 0.4F * this.random.nextFloat();
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, pitch, 0.4F));
+    }
+
+    @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
-        if(button == 0 && this.clickedLockedSlot != null)
+        if(button == 0 && !this.selectedSlots.isEmpty())
         {
-            this.clickedLockedSlot = null;
+            this.selectedSlots.clear();
+            this.lastAddedUnlockableSlot = null;
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    public void onSlotUnlocked()
+    public void onSlotUnlocked(List<Integer> slotIndexes)
     {
-        if(this.lastUnlockedSlot != null)
+        boolean playSound = false;
+        for(int slotIndex : slotIndexes)
+        {
+            if(slotIndex < 0 || slotIndex >= this.menu.slots.size())
+                continue;
+
+            Slot slot = this.menu.getSlot(slotIndex);
+            if(!(slot instanceof UnlockableSlot))
+                return;
+
+            int slotX = this.leftPos + slot.x;
+            int slotY = this.topPos + slot.y;
+            this.spawnSlotUnlockedParticles(slotX, slotY);
+            playSound = true;
+        }
+
+        if(playSound)
         {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.25F));
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_BREAK, 1.3F, 0.7F));
+        }
+    }
 
-            int slotX = this.leftPos + this.lastUnlockedSlot.x;
-            int slotY = this.topPos + this.lastUnlockedSlot.y;
+    private void spawnSlotUnlockedParticles(int slotX, int slotY)
+    {
+        Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6)
+            .setLife(50)
+            .setSprite(0F, 0F, 1F, 0.5F, ICON_LOCK)
+            .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), -100))
+            .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
+            .setGravity(new Vector2d(0, 12))
+            .setFriction(0.025)
+            .setStartScale(1F, 40)
+            .setEndScale(0F);
+        this.screenParticles.addParticle(top);
 
-            Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6)
-                .setLife(50)
-                .setSprite(0F, 0F, 1F, 0.5F, ICON_LOCK)
-                .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), -100))
-                .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
+        Particle2D bottom = new Particle2D(slotX + 2, slotY + 8, 12, 6)
+            .setLife(50)
+            .setSprite(0F, 0.5F, 1F, 1F, ICON_LOCK)
+            .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), 50))
+            .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
+            .setGravity(new Vector2d(0, 12))
+            .setFriction(0.025)
+            .setStartScale(1F, 40)
+            .setEndScale(0F);
+        this.screenParticles.addParticle(bottom);
+
+        for(int i = 0; i < 10; i++)
+        {
+            Particle2D damageParticle = new Particle2D(slotX + 7, slotY + 7, 2, 2)
+                .setLife(20)
+                .setSprite(0.45F, 0.5F, 0.55F, 0.6F, ICON_LOCK)
+                .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(50, 100)))
+                .setRotationSpeed(180)
                 .setGravity(new Vector2d(0, 12))
-                .setFriction(0.025)
-                .setStartScale(1F, 40)
+                .setFriction(0.05)
+                .setStartScale(1F)
                 .setEndScale(0F);
-            this.screenParticles.addParticle(top);
+            this.screenParticles.addParticle(damageParticle);
+        }
 
-            Particle2D bottom = new Particle2D(slotX + 2, slotY + 8, 12, 6)
-                .setLife(50)
-                .setSprite(0F, 0.5F, 1F, 1F, ICON_LOCK)
-                .setMotion(new Vector2d(this.random.nextIntBetweenInclusive(-20, 20), 50))
-                .setRotationSpeed(this.random.nextIntBetweenInclusive(-180, 180))
-                .setGravity(new Vector2d(0, 12))
-                .setFriction(0.025)
-                .setStartScale(1F, 40)
-                .setEndScale(0F);
-            this.screenParticles.addParticle(bottom);
-
-            for(int i = 0; i < 10; i++)
+        if(Config.CLIENT.glitterBomb.get())
+        {
+            for(int i = 0; i < 200; i++)
             {
-                Particle2D damageParticle = new Particle2D(slotX + 7, slotY + 7, 2, 2)
-                        .setLife(20)
-                        .setSprite(0.45F, 0.5F, 0.55F, 0.6F, ICON_LOCK)
-                        .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(50, 100)))
-                        .setRotationSpeed(180)
-                        .setGravity(new Vector2d(0, 12))
-                        .setFriction(0.05)
-                        .setStartScale(1F)
-                        .setEndScale(0F);
-                this.screenParticles.addParticle(damageParticle);
+                Particle2D expOrbParticle = new Particle2D(slotX + 6, slotY + 6, 4, 4)
+                    .setLife(50)
+                    .setSprite(0F, 0F, 1F, 1F, EXP_ORB)
+                    .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(1, 500)))
+                    .setRotationSpeed(180)
+                    .setGravity(new Vector2d(0, 20))
+                    .setFriction(0.05)
+                    .setStartScale(1F)
+                    .setEndScale(0F);
+                this.screenParticles.addParticle(expOrbParticle);
             }
-
-            if(Config.CLIENT.glitterBomb.get())
-            {
-                for(int i = 0; i < 200; i++)
-                {
-                    Particle2D expOrbParticle = new Particle2D(slotX + 6, slotY + 6, 4, 4)
-                            .setLife(50)
-                            .setSprite(0F, 0F, 1F, 1F, EXP_ORB)
-                            .setMotion(new Vector2d(Mth.cos(2 * Mth.PI * this.random.nextFloat()), Mth.sin(2 * Mth.PI * this.random.nextFloat())).mul(this.random.nextIntBetweenInclusive(1, 500)))
-                            .setRotationSpeed(180)
-                            .setGravity(new Vector2d(0, 20))
-                            .setFriction(0.05)
-                            .setStartScale(1F)
-                            .setEndScale(0F);
-                    this.screenParticles.addParticle(expOrbParticle);
-                }
-            }
-
-            this.lastUnlockedSlot = null;
         }
     }
 }

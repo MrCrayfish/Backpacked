@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.common.backpack;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.InterpolateFunction;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
@@ -147,23 +146,29 @@ public final class UnlockableSlots
      *
      * @return the experience level cost to unlock the next slot
      */
-    public int nextUnlockCost(CostModel model)
+    public int nextUnlockCost(CostModel model, int numberOfSlots)
     {
-        if(!model.useCustomCosts())
+        int totalCost = 0;
+        for(int nextOffset = 0; nextOffset < numberOfSlots; nextOffset++)
         {
+            if(model.useCustomCosts())
+            {
+                totalCost += this.getNextCustomCost(model.getCustomCosts(), nextOffset);
+                continue;
+            }
             int minLevelCost = model.getMinCost();
             int maxLevelCost = model.getMaxCost();
-            float costNormal = this.nextCostNormal(maxLevelCost, model.getInterpolateFunction());
-            return (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
+            float costNormal = this.nextCostNormal(maxLevelCost, model.getInterpolateFunction(), nextOffset);
+            totalCost += (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
         }
-        return this.getNextCustomCost(model.getCustomCosts());
+        return totalCost;
     }
 
-    private int getNextCustomCost(List<Integer> costs)
+    private int getNextCustomCost(List<Integer> costs, int countOffset)
     {
         if(!costs.isEmpty())
         {
-            float normal = Math.clamp(this.nextCount / (float) Math.max(1, this.maxSlots), 0, 1);
+            float normal = Math.clamp((this.nextCount + countOffset) / (float) Math.max(1, this.maxSlots), 0, 1);
             int index = (int) (costs.size() * (normal - 0.001F));
             index = Mth.clamp(index, 0, costs.size() - 1);
             return Math.max(1, costs.get(index));
@@ -171,22 +176,23 @@ public final class UnlockableSlots
         return 1;
     }
 
-    private float nextCostNormal(int maxLevelCost, InterpolateFunction scaling)
+    private float nextCostNormal(int maxLevelCost, InterpolateFunction scaling, int countOffset)
     {
+        int nextCount = this.nextCount + countOffset;
         int totalSlots = Math.max(1, this.maxSlots);
         return switch(scaling)
         {
-            case LINEAR -> (float) this.nextCount / totalSlots;
+            case LINEAR -> (float) nextCount / totalSlots;
             case SQUARED ->
             {
                 float levelCost = maxLevelCost / (float) (totalSlots * totalSlots);
-                levelCost = levelCost * (this.nextCount * this.nextCount);
+                levelCost = levelCost * (nextCount * nextCount);
                 yield Math.clamp(levelCost + 0.5F, 1, maxLevelCost) / maxLevelCost;
             }
             case CUBIC ->
             {
                 float levelCost = maxLevelCost / (float) (totalSlots * totalSlots * totalSlots);
-                levelCost = levelCost * (this.nextCount * this.nextCount * this.nextCount);
+                levelCost = levelCost * (nextCount * nextCount * nextCount);
                 yield Math.clamp(levelCost + 0.5F, 1, maxLevelCost) / maxLevelCost;
             }
         };

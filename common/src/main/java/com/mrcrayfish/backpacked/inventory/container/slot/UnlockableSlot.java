@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class UnlockableSlot extends Slot
@@ -82,14 +83,14 @@ public class UnlockableSlot extends Slot
         return this.controller;
     }
 
-    public int getNextUnlockCost()
+    public int getNextUnlockCost(int numberOfSlots)
     {
-        return this.controller.getNextUnlockCost();
+        return this.controller.getNextUnlockCost(numberOfSlots);
     }
 
-    public boolean canAffordToUnlock(Player player)
+    public boolean canAffordToUnlock(Player player, int numberOfSlots)
     {
-        return this.controller.canAffordNextSlot(player);
+        return this.controller.canAffordNextSlot(player, numberOfSlots);
     }
 
     public PaymentType getPaymentType()
@@ -97,15 +98,22 @@ public class UnlockableSlot extends Slot
         return this.controller.getCostModel().getPaymentType();
     }
 
-    public void unlock(Player player)
+    public boolean unlock(Player player)
     {
         if(player instanceof ServerPlayer)
         {
-            this.controller.handleUnlockSlot((ServerPlayer) player, this.index, this.getContainerSlot());
+            return this.controller.handleUnlockSlot((ServerPlayer) player, this.getContainerSlot());
         }
         else if(player.isLocalPlayer())
         {
-            this.controller.unlockSlot(this.getContainerSlot());
+            return this.controller.unlockSlot(this.getContainerSlot());
         }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.container, this.slot);
     }
 }

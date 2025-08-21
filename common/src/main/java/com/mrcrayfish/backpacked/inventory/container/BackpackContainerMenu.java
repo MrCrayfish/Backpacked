@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.BackpackSlot;
+import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockSlot;
@@ -29,7 +30,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class BackpackContainerMenu extends CustomContainerMenu
+public class BackpackContainerMenu extends CustomContainerMenu implements SyncUnlockableSlots
 {
     // There is a technical hard limit of 256, these values allow the widest and tallest inventory possible
     public static final int MAX_COLUMNS = 23;
@@ -186,6 +187,23 @@ public class BackpackContainerMenu extends CustomContainerMenu
         }
     }
 
+    @Override
+    public void handleSyncSlots(ServerPlayer unlockingPlayer, List<UnlockableSlot> unlockedSlots)
+    {
+        List<Integer> slotIndexes = unlockedSlots.stream().map(slot -> slot.index).toList();
+        List<ServerPlayer> players = unlockingPlayer.server.getPlayerList().getPlayers();
+        players.forEach(otherPlayer -> {
+            if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
+                if(this.backpackInventory == otherMenu.backpackInventory) {
+                    if(otherPlayer != unlockingPlayer) {
+                        otherMenu.controller.cachedSlots = this.controller.cachedSlots;
+                    }
+                    Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndexes));
+                }
+            }
+        });
+    }
+
     private static class BackpackUnlockableController extends UnlockableController
     {
         private final BackpackContainerMenu menu;
@@ -235,26 +253,6 @@ public class BackpackContainerMenu extends CustomContainerMenu
         public List<Container> getPaymentContainers()
         {
             return this.paymentContainers;
-        }
-
-        @Override
-        protected void onSlotUnlocked(ServerPlayer player, int slotIndex)
-        {
-            // Ensure shelf saves the changes
-            this.menu.getBackpackInventory().setChanged();
-
-            // Sync to players that are currently in the same menu
-            List<ServerPlayer> players = player.server.getPlayerList().getPlayers();
-            players.forEach(otherPlayer -> {
-                if(!(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu))
-                    return;
-                if(this.menu.getBackpackInventory() != otherMenu.getBackpackInventory())
-                    return;
-                if(otherPlayer != player) {
-                    otherMenu.getController().cachedSlots = this.cachedSlots;
-                }
-                Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndex));
-            });
         }
     }
 }

@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import com.mrcrayfish.backpacked.inventory.container.SyncUnlockableSlots;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
@@ -21,12 +22,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
@@ -144,15 +145,41 @@ public class ServerPlayHandler
     public static void handleUnlockSlot(MessageUnlockSlot message, MessageContext context)
     {
         context.getPlayer().ifPresent(player -> {
+            if(!(player instanceof ServerPlayer))
+                return;
+
             AbstractContainerMenu menu = player.containerMenu;
             if(menu == null || !menu.stillValid(player))
                 return;
-            int slotIndex = message.slotIndex();
-            if(slotIndex >= 0 && slotIndex < menu.slots.size()) {
-                Slot slot = menu.getSlot(slotIndex);
-                if(slot instanceof UnlockableSlot unlockableSlot) {
-                    unlockableSlot.unlock(player);
+
+            for(int slotIndex : message.slotIndexes()) {
+                // Player should not be sending out of bounds indexes
+                if(slotIndex < 0 || slotIndex >= menu.slots.size()) {
+                    // This will boot them
+                    throw new IllegalArgumentException("Invalid slot index: " + slotIndex);
                 }
+            }
+
+            List<UnlockableSlot> changed = new ArrayList<>();
+            for(int slotIndex : message.slotIndexes()) {
+                if(menu.getSlot(slotIndex) instanceof UnlockableSlot slot) {
+                    if(slot.unlock(player)) {
+                        changed.add(slot);
+                    }
+                }
+            }
+
+            if(changed.isEmpty())
+                return;
+
+            // Find distinct containers and mark as changed
+            changed.stream().map(slot -> slot.container).distinct().forEach(Container::setChanged);
+
+            if(menu instanceof SyncUnlockableSlots) {
+                ((SyncUnlockableSlots) menu).handleSyncSlots((ServerPlayer) player, changed);
+            } else {
+                List<Integer> slotIndexes = changed.stream().map(slot -> slot.index).toList();
+                Network.PLAY.sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockSlot(slotIndexes));
             }
         });
     }

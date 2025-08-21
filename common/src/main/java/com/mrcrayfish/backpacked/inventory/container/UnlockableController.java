@@ -4,14 +4,13 @@ import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.PaymentItem;
 import com.mrcrayfish.backpacked.common.PaymentType;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
-import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockSlot;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class UnlockableController
@@ -33,9 +32,11 @@ public abstract class UnlockableController
 
     public abstract List<Container> getPaymentContainers();
 
-    public final void unlockSlot(int slot)
+    public final boolean unlockSlot(int slot)
     {
+        UnlockableSlots before = this.cachedSlots;
         this.cachedSlots = this.cachedSlots.unlockSlot(slot);
+        return !Objects.equals(this.cachedSlots, before);
     }
 
     public final boolean isSlotUnlocked(int slot)
@@ -43,17 +44,12 @@ public abstract class UnlockableController
         return this.cachedSlots.isUnlocked(slot);
     }
 
-    public final boolean isSlotUnlockable(int slot)
+    public final int getNextUnlockCost(int numberOfSlots)
     {
-        return this.cachedSlots.isUnlockable(slot);
+        return this.cachedSlots.nextUnlockCost(this.getCostModel(), numberOfSlots);
     }
 
-    public final int getNextUnlockCost()
-    {
-        return this.cachedSlots.nextUnlockCost(this.getCostModel());
-    }
-
-    public final boolean canAffordNextSlot(Player player)
+    public final boolean canAffordNextSlot(Player player, int numberOfSlots)
     {
         if(player.isCreative())
             return true;
@@ -61,19 +57,19 @@ public abstract class UnlockableController
         CostModel model = this.getCostModel();
         if(model.getPaymentType() == PaymentType.EXPERIENCE)
         {
-            return player.experienceLevel >= this.getNextUnlockCost();
+            return player.experienceLevel >= this.getNextUnlockCost(numberOfSlots);
         }
         else if(model.getPaymentType() == PaymentType.ITEM)
         {
             PaymentItem payment = this.getPaymentItem();
-            int nextCost = this.getNextUnlockCost();
+            int nextCost = this.getNextUnlockCost(numberOfSlots);
             List<Container> containers = this.getPaymentContainers();
             return InventoryHelper.hasRemovableItemAndCount(payment.getItem(), nextCost, containers);
         }
         return false;
     }
 
-    private Optional<Runnable> getPaymentJob(Player player)
+    private Optional<Runnable> getPaymentJob(Player player, int numberOfSlots)
     {
         if(player.isCreative())
             return Optional.of(() -> {}); // Simply do nothing
@@ -81,7 +77,7 @@ public abstract class UnlockableController
         CostModel model = this.getCostModel();
         if(model.getPaymentType() == PaymentType.EXPERIENCE)
         {
-            int cost = this.getNextUnlockCost();
+            int cost = this.getNextUnlockCost(numberOfSlots);
             if(player.experienceLevel >= cost)
             {
                 return Optional.of(() -> player.giveExperienceLevels(-cost));
@@ -90,38 +86,31 @@ public abstract class UnlockableController
         else if(model.getPaymentType() == PaymentType.ITEM)
         {
             PaymentItem payment = this.getPaymentItem();
-            int nextCost = this.getNextUnlockCost();
+            int nextCost = this.getNextUnlockCost(numberOfSlots);
             List<Container> containers = this.getPaymentContainers();
             return InventoryHelper.createRemoveItemJob(payment.getItem(), nextCost, containers);
         }
         return Optional.empty();
     }
 
-    public void handleUnlockSlot(ServerPlayer player, int slotIndex, int containerIndex)
+    public boolean handleUnlockSlot(ServerPlayer player, int containerIndex)
     {
         Optional<UnlockableSlots> slotsOptional = this.getSlots(player);
         if(slotsOptional.isEmpty())
-            return;
+            return false;
 
         UnlockableSlots slots = slotsOptional.get();
         if(!slots.isUnlockable(containerIndex))
-            return;
+            return false;
 
-        Optional<Runnable> paymentJob = this.getPaymentJob(player);
+        Optional<Runnable> paymentJob = this.getPaymentJob(player, 1);
         if(paymentJob.isEmpty())
-            return;
+            return false;
 
         paymentJob.get().run(); // Consumes experience/items
         slots = slots.unlockSlot(containerIndex);
         this.setSlots(player, slots);
         this.cachedSlots = slots;
-
-        this.onSlotUnlocked(player, slotIndex);
-    }
-
-    protected void onSlotUnlocked(ServerPlayer player, int slotIndex)
-    {
-        // Sync the unlock change to the player
-        Network.PLAY.sendToPlayer(() -> player, new MessageSyncUnlockSlot(slotIndex));
+        return true;
     }
 }

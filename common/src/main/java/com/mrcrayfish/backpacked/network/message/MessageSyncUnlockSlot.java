@@ -6,13 +6,15 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
+import java.util.List;
+
 /**
  * Author: MrCrayfish
  */
-public record MessageSyncUnlockSlot(int slotIndex)
+public record MessageSyncUnlockSlot(List<Integer> unlockedSlotIndexes)
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageSyncUnlockSlot> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.INT, MessageSyncUnlockSlot::slotIndex,
+        ByteBufCodecs.UNSIGNED_SHORT.apply(ByteBufCodecs.list()), MessageSyncUnlockSlot::unlockedSlotIndexes,
         MessageSyncUnlockSlot::new
     );
 
