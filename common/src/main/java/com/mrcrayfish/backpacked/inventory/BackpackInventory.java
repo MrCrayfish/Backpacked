@@ -8,10 +8,13 @@ import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -31,14 +34,30 @@ public class BackpackInventory extends UnlockableContainer
         this.player = player;
         this.stack = stack;
         this.state = BackpackState.create(stack);
-        this.loadBackpackContents(player);
+        this.loadBackpackContents();
     }
 
-    private void loadBackpackContents(Player player)
+    private void loadBackpackContents()
     {
         ItemContainerContents contents = this.stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        contents.copyInto(this.items); // TODO reimplement dropping items if inventory is resized
+        contents.copyInto(this.items);
         this.spawnItemsFromLockedSlots();
+
+        NonNullList<ItemStack> allItems = NonNullList.withSize(256, ItemStack.EMPTY);
+        contents.copyInto(allItems);
+        this.spawnTrailingItems(allItems);
+    }
+
+    private void spawnTrailingItems(List<ItemStack> allItems)
+    {
+        for(int i = this.items.size(); i < allItems.size(); i++)
+        {
+            ItemStack stack = allItems.get(i);
+            if(!stack.isEmpty())
+            {
+                InventoryHelper.spawnStack(stack, this.player.level(), this.player.position());
+            }
+        }
     }
 
     private void spawnItemsFromLockedSlots()
@@ -55,7 +74,7 @@ public class BackpackInventory extends UnlockableContainer
             ItemStack stack = this.getItem(i);
             if(!stack.isEmpty() && !slots.isUnlocked(i))
             {
-                InventoryHelper.spawnStack(stack, player.level(), player.position());
+                InventoryHelper.spawnStack(stack, this.player.level(), this.player.position());
                 this.setChanged();
             }
         }

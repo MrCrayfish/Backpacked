@@ -66,7 +66,7 @@ public class Config
                     If set to true, all equipable slots will be unlocked by default.
                     WARNING: Reverting the option from true to false will cause backpacks to be dropped
                     into the world if the slot they are in is now locked. You have been warned.""")
-            public final BoolProperty unlockAllEquipableSlots = BoolProperty.create(false); // TODO
+            public final BoolProperty unlockAllEquipableSlots = BoolProperty.create(false);
 
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for equipable slots")
             public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.LINEAR, 30, 30);

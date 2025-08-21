@@ -144,7 +144,8 @@ public class ServerPlayHandler
     @SuppressWarnings("ConstantValue")
     public static void handleUnlockSlot(MessageUnlockSlot message, MessageContext context)
     {
-        context.getPlayer().ifPresent(player -> {
+        context.getPlayer().ifPresent(player ->
+        {
             if(!(player instanceof ServerPlayer))
                 return;
 
@@ -175,6 +176,7 @@ public class ServerPlayHandler
             // Find distinct containers and mark as changed
             changed.stream().map(slot -> slot.container).distinct().forEach(Container::setChanged);
 
+            // Finally sync the changes to the player. If menu has custom sync handling, call that instead.
             if(menu instanceof SyncUnlockableSlots) {
                 ((SyncUnlockableSlots) menu).handleSyncSlots((ServerPlayer) player, changed);
             } else {
