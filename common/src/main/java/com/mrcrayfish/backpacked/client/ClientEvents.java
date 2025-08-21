@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
@@ -83,8 +84,8 @@ public class ClientEvents
         List<LivingEntity> entities = new ArrayList<>();
         if(Config.PICKPOCKETING.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-                // TODO add back test if player is wearing backpack
-                return !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
+                Optional<BackpackProperties> optional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player); // Just use properties to determine if backpack is equipped on client
+                return !player.equals(mc.player) && optional.isPresent() && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {
