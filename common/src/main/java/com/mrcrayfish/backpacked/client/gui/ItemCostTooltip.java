@@ -35,7 +35,7 @@ public class ItemCostTooltip implements ClientTooltipComponent
     public void renderImage(Font font, int x, int y, GuiGraphics graphics)
     {
         graphics.renderFakeItem(this.item, x - 1, y - 1);
-        graphics.renderItemDecorations(font, this.item, x - 1, y - 1);
+        graphics.renderItemDecorations(font, this.item, x - 1, y - 1, this.item.getCount() == 1 ? "1" : null);
         graphics.drawString(font, this.label, x + 15 + 2, y + 3, 0xFF2B2203, false);
         graphics.drawString(font, this.label, x + 15 + 4, y + 3, 0xFF2B2203, false);
         graphics.drawString(font, this.label, x + 15 + 3, y + 2, 0xFF2B2203, false);
