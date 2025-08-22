@@ -231,8 +231,8 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
         this.totalUnlockTime = Mth.clamp(UNLOCK_TIME + 4 * (this.selectedSlots.size() - 1), 20, 50);
         this.heldUnlockTime = this.totalUnlockTime;
 
-        float pitch = 1.0F + 0.4F * this.random.nextFloat();
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_HIT, pitch, 0.4F));
+        float pitch = 0.6F + 0.4F * this.random.nextFloat();
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.COPPER_HIT, pitch, 0.6F));
     }
 
     @Override

@@ -409,7 +409,6 @@ public class CustomiseBackpackScreen extends Screen
 
     private void renderPlayer(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, Player player)
     {
-        // TODO test
         Quaternionf playerRotation = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf cameraRotation = new Quaternionf();
         cameraRotation.mul(Axis.XN.rotationDegrees(this.windowRotationY + (this.windowGrabbed ? mouseY - this.mouseClickedY : 0)));
