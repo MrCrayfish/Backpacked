@@ -228,7 +228,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     {
         this.selectedSlots.add(slot);
         this.lastAddedUnlockableSlot = slot;
-        this.totalUnlockTime = Mth.clamp(UNLOCK_TIME + 4 * (this.selectedSlots.size() - 1), 20, 50);
+        this.totalUnlockTime = Mth.clamp(UNLOCK_TIME + 4 * (this.selectedSlots.size() - 1), 20, 80);
         this.heldUnlockTime = this.totalUnlockTime;
 
         float pitch = 0.6F + 0.4F * this.random.nextFloat();
