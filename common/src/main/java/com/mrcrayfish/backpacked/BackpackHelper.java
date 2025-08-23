@@ -29,7 +29,12 @@ public class BackpackHelper
         if(getBackpackStack(player, selected).isEmpty())
         {
             int radius = 1;
-            while(radius < ManagementInventory.getMaxEquipable())
+            if(selected == -1)
+            {
+                selected = 0;
+                radius = 0;
+            }
+            while(radius <= ManagementInventory.getMaxEquipable())
             {
                 ItemStack stack = getBackpackStack(player, selected + radius);
                 if(!stack.isEmpty())
@@ -37,11 +42,14 @@ public class BackpackHelper
                     ModSyncedDataKeys.SELECTED_BACKPACK.setValue(player, selected + radius);
                     return;
                 }
-                stack = getBackpackStack(player, selected - radius);
-                if(!stack.isEmpty())
+                if(radius > 0)
                 {
-                    ModSyncedDataKeys.SELECTED_BACKPACK.setValue(player, selected - radius);
-                    return;
+                    stack = getBackpackStack(player, selected - radius);
+                    if(!stack.isEmpty())
+                    {
+                        ModSyncedDataKeys.SELECTED_BACKPACK.setValue(player, selected - radius);
+                        return;
+                    }
                 }
                 radius++;
             }
