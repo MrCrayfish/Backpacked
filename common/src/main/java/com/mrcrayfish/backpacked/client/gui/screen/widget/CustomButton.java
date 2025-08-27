@@ -42,15 +42,15 @@ public class CustomButton extends AbstractButton
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         graphics.setColor(1, 1, 1, this.alpha);
-        graphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        graphics.blitSprite(SPRITES.get(this.active, this.isHovered()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         graphics.setColor(1, 1, 1, 1);
 
         Font font = Minecraft.getInstance().font;
         Component message = this.getMessage();
-        int textColour = this.active ? 0xFF5B4A36 : 0xFF3D3124;
+        int textColour = this.active ? 0xFFFFFFFF : 0xFF8C7E6D;
         int textX = this.getX() + (this.getWidth() - font.width(message)) / 2;
         int textY = this.getY() + (this.getHeight() - font.lineHeight) / 2 + 1;
-        graphics.drawString(font, message, textX, textY, textColour, false);
+        graphics.drawString(font, message, textX, textY, textColour, this.active);
     }
 
     @Override
