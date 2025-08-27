@@ -50,7 +50,7 @@ public class Config
             @ConfigProperty(name = "maxEquipable", comment = """
                     The maximum amount of backpacks that can be equipped by a player. This will determine
                     how many slots will appear when opening the "Equipped Backpacks" menu.""")
-            public final IntProperty maxEquipable = IntProperty.create(5, 1, 9);
+            public final IntProperty maxEquipable = IntProperty.create(5, 1, MAX_EQUIPPABLE_BACKPACKS);
 
             @ConfigProperty(name = "keepOnDeath", comment = """
                     If enabled, backpacks will stay equipped on the player after death (same as the
@@ -429,6 +429,7 @@ public class Config
         }
     }
 
+    public static final int MAX_EQUIPPABLE_BACKPACKS = 9;
     private static final PaymentItem INVENTORY_PAYMENT_ITEM = new PaymentItem(BACKPACK.inventory.slots.unlockCost.paymentItem::get);
     private static final PaymentItem BACKPACK_PAYMENT_ITEM = new PaymentItem(BACKPACK.equipable.unlockCost.paymentItem::get);
     private static Set<ResourceLocation> bannedItemsList;
