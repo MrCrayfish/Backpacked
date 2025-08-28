@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
@@ -32,6 +33,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -59,6 +61,7 @@ public class CustomiseBackpackScreen extends Screen
     private static final ResourceLocation LIST_ITEM_SELECTED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_selected");
     private static final ResourceLocation LIST_ITEM_LOCKED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final ResourceLocation UNLOCK_PROGRESS_BAR = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
@@ -101,7 +104,7 @@ public class CustomiseBackpackScreen extends Screen
     private final MutableInt scroll = new MutableInt();
     private ScrollBar scrollBar;
 
-    public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning)
+    public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning, Map<ResourceLocation, Double> completionMap)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
         this.backpackIndex = backpackIndex;
@@ -111,7 +114,7 @@ public class CustomiseBackpackScreen extends Screen
         Comparator<BackpackModelEntry> compareLabel = Comparator.comparing(e -> e.label.getString());
         List<BackpackModelEntry> models = ClientRegistry.instance().getBackpacks()
                 .stream()
-                .map(backpack -> new BackpackModelEntry(backpack, progressMap))
+                .map(backpack -> new BackpackModelEntry(backpack, progressMap, completionMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toList());
         this.models = ImmutableList.copyOf(models);
@@ -254,7 +257,6 @@ public class CustomiseBackpackScreen extends Screen
 
     private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height)
     {
-        //graphics.fill(x, y, x + width, y + height, 0xFFFFFFFF);
         int titleWidth = this.font.width(this.title);
         int labelWidth = 20 + titleWidth + 20;
         int labelX = x + (this.windowWidth - labelWidth) / 2;
@@ -269,13 +271,7 @@ public class CustomiseBackpackScreen extends Screen
             graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
-        /*int buttonsWidth = 5 + (5 * 11 - 1) + 5;
-        int buttonsX = x + width - 5 - buttonsWidth;
-        graphics.blitSprite(LABEL_BACKGROUND, buttonsX, y, buttonsWidth, 21);*/
-
-        // Backpack Inventory
-        int backpackHeight = height - 17;
-        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, backpackHeight);
+        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
 
     private void drawBackpackItem(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, BackpackModelEntry entry)
@@ -288,16 +284,23 @@ public class CustomiseBackpackScreen extends Screen
         ResourceLocation itemTexture = this.getItemTexture(unlocked, selected, hovered);
         graphics.blitSprite(itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
 
-
-
         if(!unlocked)
         {
+            int progressBarX = x + 24;
+            int progressBarY = y + ITEM_HEIGHT - 5 - 4;
+            graphics.blitSprite(UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
+
+            double completionProgress = entry.getCompletionProgress();
+            int progressBarColour = FastColor.ARGB32.lerp((float) completionProgress, 0xCCFF3232, 0xCC43FF32);
+            graphics.fill(progressBarX + 1, progressBarY + 1, progressBarX + 1 + (int) (87 * completionProgress), progressBarY + 4, progressBarColour);
+
             graphics.blitSprite(ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
         }
 
         // Draw label
-        int color = this.getItemTextColour(unlocked, selected, hovered);
-        graphics.drawString(this.font, entry.getLabel(), x + 24, y + 8, color, selected);
+        int textColour = this.getItemTextColour(unlocked, selected, hovered);
+        int textY = y + (unlocked ? 8 : 5);
+        graphics.drawString(this.font, entry.getLabel(), x + 24, textY, textColour, selected);
 
         // Draw backpack cosmetic
         drawBackpackInGui(this.minecraft, graphics, entry.getBackpack(), x + 12, y + 12, partialTick);
@@ -411,8 +414,9 @@ public class CustomiseBackpackScreen extends Screen
         private final ClientBackpack backpack;
         private final Component label;
         private final List<FormattedCharSequence> unlockTooltip;
+        private final double completionProgress;
 
-        public BackpackModelEntry(ClientBackpack backpack, Map<ResourceLocation, Component> progressMap)
+        public BackpackModelEntry(ClientBackpack backpack, Map<ResourceLocation, Component> labelMap, Map<ResourceLocation, Double> completionMap)
         {
             this.cosmeticId = backpack.getId();
             this.backpack = backpack;
@@ -420,12 +424,13 @@ public class CustomiseBackpackScreen extends Screen
             Component unlockMessage = Component.translatable(backpack.getTranslationKey() + ".unlock");
             List<FormattedCharSequence> list = new ArrayList<>(Minecraft.getInstance().font.split(unlockMessage, 150));
             list.addFirst(Language.getInstance().getVisualOrder(LOCKED));
-            if(progressMap.containsKey(backpack.getId()))
+            if(labelMap.containsKey(backpack.getId()))
             {
-                Component component = progressMap.get(backpack.getId()).plainCopy().withStyle(ChatFormatting.YELLOW);
+                Component component = labelMap.get(backpack.getId()).plainCopy().withStyle(ChatFormatting.YELLOW);
                 list.add(Language.getInstance().getVisualOrder(component));
             }
             this.unlockTooltip = ImmutableList.copyOf(list);
+            this.completionProgress = completionMap.getOrDefault(backpack.getId(), 1.0);
         }
 
         public ResourceLocation getCosmeticId()
@@ -446,6 +451,11 @@ public class CustomiseBackpackScreen extends Screen
         public ClientBackpack getBackpack()
         {
             return this.backpack;
+        }
+
+        public double getCompletionProgress()
+        {
+            return this.completionProgress;
         }
     }
 }

@@ -117,19 +117,21 @@ public class ServerPlayHandler
             return;
 
         boolean showCosmeticWarning = BackpackHelper.getFirstBackpackStack(serverPlayer) != stack;
-        Map<ResourceLocation, Component> map = new HashMap<>();
+        Map<ResourceLocation, Component> labelMap = new HashMap<>();
+        Map<ResourceLocation, Double> completionMap = new HashMap<>();
         UnlockManager.getTracker(player).ifPresent(unlockTracker -> {
             for(Backpack backpack : BackpackManager.instance().getBackpacks()) {
                 if(!unlockTracker.isUnlocked(backpack.getId())) {
                     unlockTracker.getProgressTracker(backpack.getId()).ifPresent(progressTracker -> {
-                        map.put(backpack.getId(), progressTracker.getDisplayComponent());
+                        labelMap.put(backpack.getId(), progressTracker.getDisplayComponent());
+                        completionMap.put(backpack.getId(), progressTracker.getCompletionProgress());
                     });
                 }
             }
         });
         BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
         serverPlayer.closeContainer();
-        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(message.backpackIndex(), map, properties, showCosmeticWarning));
+        Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(message.backpackIndex(), labelMap, properties, showCosmeticWarning, completionMap));
     }
 
     public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)

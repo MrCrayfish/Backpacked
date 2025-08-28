@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
@@ -17,24 +18,16 @@ import java.util.Map;
  * Author: MrCrayfish
  */
 public record MessageOpenCustomisation(int backpackIndex, Map<ResourceLocation, Component> progressMap, BackpackProperties properties,
-                                       boolean showCosmeticWarning)
+                                       boolean showCosmeticWarning, Map<ResourceLocation, Double> completionProgressMap)
 {
-    public static final StreamCodec<RegistryFriendlyByteBuf, MessageOpenCustomisation> STREAM_CODEC = StreamCodec.of((buf, message) -> {
-        buf.writeVarInt(message.backpackIndex);
-        buf.writeMap(message.progressMap, FriendlyByteBuf::writeResourceLocation, (buf2, label) -> {
-            ComponentSerialization.STREAM_CODEC.encode(buf, label);
-        });
-        BackpackProperties.STREAM_CODEC.encode(buf, message.properties);
-        buf.writeBoolean(message.showCosmeticWarning);
-    }, buf -> {
-        int index = buf.readVarInt();
-        Map<ResourceLocation, Component> map = buf.readMap(HashMap::new, FriendlyByteBuf::readResourceLocation, buf1 -> {
-            return ComponentSerialization.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf1);
-        });
-        BackpackProperties properties = BackpackProperties.STREAM_CODEC.decode(buf);
-        boolean showCosmeticWarning = buf.readBoolean();
-        return new MessageOpenCustomisation(index, map, properties, showCosmeticWarning);
-    });
+    public static final StreamCodec<RegistryFriendlyByteBuf, MessageOpenCustomisation> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.VAR_INT, MessageOpenCustomisation::backpackIndex,
+        ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ComponentSerialization.STREAM_CODEC), MessageOpenCustomisation::progressMap,
+        BackpackProperties.STREAM_CODEC, MessageOpenCustomisation::properties,
+        ByteBufCodecs.BOOL, MessageOpenCustomisation::showCosmeticWarning,
+        ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.DOUBLE), MessageOpenCustomisation::completionProgressMap,
+        MessageOpenCustomisation::new
+    );
 
     public static void handle(MessageOpenCustomisation message, MessageContext context)
     {

@@ -18,6 +18,8 @@ public interface IProgressTracker
 
     Component getDisplayComponent();
 
+    double getCompletionProgress();
+
     default void markForCompletionTest(ServerPlayer player)
     {
         UnlockManager.queuePlayerForCompletionTest(player);

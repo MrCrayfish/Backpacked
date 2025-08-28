@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashSet;
@@ -123,6 +124,12 @@ public class ExploreBiomeChallenge extends Challenge
         public Component getDisplayComponent()
         {
             return this.formatter.formatter().apply(this.exploredBiomes.size(), this.biomes.size());
+        }
+
+        @Override
+        public double getCompletionProgress()
+        {
+            return Mth.clamp(this.exploredBiomes.size() / (double) Math.max(1, this.biomes.size()), 0, 1);
         }
 
         public static void registerEvent()

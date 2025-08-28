@@ -7,6 +7,7 @@ import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
@@ -57,6 +58,12 @@ public class CraftingProgressTracker implements IProgressTracker
     public Component getDisplayComponent()
     {
         return this.formatter.formatter().apply(this.count, this.totalCount);
+    }
+
+    @Override
+    public double getCompletionProgress()
+    {
+        return Mth.clamp(this.count / (double) Math.max(1, this.totalCount), 0, 1);
     }
 
     public static void registerEvent()

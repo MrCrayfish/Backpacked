@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 
 /**
  * Author: MrCrayfish
@@ -55,5 +56,11 @@ public class CountProgressTracker implements IProgressTracker
     public Component getDisplayComponent()
     {
         return this.formatter.formatter().apply(this.count, this.maxCount);
+    }
+
+    @Override
+    public double getCompletionProgress()
+    {
+        return Mth.clamp(this.count / (double) Math.max(1, this.maxCount), 0, 1);
     }
 }
