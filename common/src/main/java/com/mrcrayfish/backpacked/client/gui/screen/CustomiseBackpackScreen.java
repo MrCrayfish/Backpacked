@@ -55,6 +55,9 @@ public class CustomiseBackpackScreen extends Screen
     private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
     private static final ResourceLocation ROUNDED_BOX = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rounded_box");
     private static final ResourceLocation LIST_ITEM = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item");
+    private static final ResourceLocation LIST_ITEM_FOCUSED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_focused");
+    private static final ResourceLocation LIST_ITEM_SELECTED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_selected");
+    private static final ResourceLocation LIST_ITEM_LOCKED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
@@ -279,11 +282,13 @@ public class CustomiseBackpackScreen extends Screen
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
         boolean selected = unlocked && this.displayBackpack.cosmetic().stream().anyMatch(id -> id.equals(entry.getCosmeticId()));
-        boolean hovered = unlocked && !selected && ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT);
+        boolean hovered = unlocked && (selected || ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT));
 
         // Draw background for item
-        int offset = (unlocked ? 0 : 60) + (selected ? 20 : 0) + (hovered ? 40 : 0);
-        graphics.blitSprite(LIST_ITEM, x, y, ITEM_WIDTH, ITEM_HEIGHT);
+        ResourceLocation itemTexture = this.getItemTexture(unlocked, selected, hovered);
+        graphics.blitSprite(itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
+
+
 
         if(!unlocked)
         {
@@ -292,15 +297,24 @@ public class CustomiseBackpackScreen extends Screen
 
         // Draw label
         int color = this.getItemTextColour(unlocked, selected, hovered);
-        graphics.drawString(this.font, entry.getLabel(), x + 24, y + 8, color, false);
+        graphics.drawString(this.font, entry.getLabel(), x + 24, y + 8, color, selected);
 
         // Draw backpack cosmetic
         drawBackpackInGui(this.minecraft, graphics, entry.getBackpack(), x + 12, y + 12, partialTick);
     }
 
+    private ResourceLocation getItemTexture(boolean unlocked, boolean selected, boolean hovered)
+    {
+        if(selected) return LIST_ITEM_SELECTED;
+        if(unlocked) return hovered ? LIST_ITEM_FOCUSED : LIST_ITEM;
+        return LIST_ITEM_LOCKED;
+    }
+
     private int getItemTextColour(boolean unlocked, boolean selected, boolean hovered)
     {
-        return UNLOCKED_ITEM_TEXT_COLOUR;
+        if(selected) return 0xFFFFFFFF;
+        if(unlocked) return UNLOCKED_ITEM_TEXT_COLOUR;
+        return 0xFF5C5145;
     }
 
     public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick)
