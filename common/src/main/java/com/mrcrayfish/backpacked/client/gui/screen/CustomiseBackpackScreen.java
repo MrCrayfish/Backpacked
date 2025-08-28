@@ -370,8 +370,11 @@ public class CustomiseBackpackScreen extends Screen
                     BackpackModelEntry entry = this.models.get(hoveredIndex);
                     if(entry.getBackpack().isUnlocked(this.minecraft.player))
                     {
-                        this.displayBackpack = this.displayBackpack.setCosmetic(entry.getCosmeticId());
-                        this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                        if(this.displayBackpack.cosmetic().stream().noneMatch(id -> id.equals(entry.getCosmeticId())))
+                        {
+                            this.displayBackpack = this.displayBackpack.setCosmetic(entry.getCosmeticId());
+                            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                        }
                         return true;
                     }
                 }
