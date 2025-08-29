@@ -219,7 +219,7 @@ public class CustomiseBackpackScreen extends Screen
 
         // Draw title
         int titleWidth = this.font.width(this.title);
-        graphics.drawString(this.font, this.title, this.windowLeft + (this.windowWidth - titleWidth) / 2, this.windowTop + 6, 4210752, false);
+        graphics.drawString(this.font, this.title, this.windowLeft + (this.windowWidth - titleWidth) / 2, this.windowTop + 6, 0xFF61503D, false);
 
         // Draw backpack items
         int startIndex = (int) (Math.max(0, this.models.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
