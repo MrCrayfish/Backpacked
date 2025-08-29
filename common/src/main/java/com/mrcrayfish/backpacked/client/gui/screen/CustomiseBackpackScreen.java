@@ -62,6 +62,7 @@ public class CustomiseBackpackScreen extends Screen
     private static final ResourceLocation LIST_ITEM_LOCKED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
     private static final ResourceLocation UNLOCK_PROGRESS_BAR = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
+    private static final ResourceLocation UNLOCK_PROGRESS_BAR_INNER = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
@@ -290,9 +291,8 @@ public class CustomiseBackpackScreen extends Screen
             int progressBarY = y + ITEM_HEIGHT - 5 - 4;
             graphics.blitSprite(UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
 
-            double completionProgress = entry.getCompletionProgress();
-            int progressBarColour = FastColor.ARGB32.lerp((float) completionProgress, 0xCCFF3232, 0xCC43FF32);
-            graphics.fill(progressBarX + 1, progressBarY + 1, progressBarX + 1 + (int) (87 * completionProgress), progressBarY + 4, progressBarColour);
+            int progressWidth = (int) (87 * entry.getCompletionProgress());
+            graphics.blitSprite(UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
 
             graphics.blitSprite(ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
         }
