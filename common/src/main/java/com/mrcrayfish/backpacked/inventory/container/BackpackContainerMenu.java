@@ -64,8 +64,8 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         backpackContainer.startOpen(playerInventory.player);
 
         int backpackWidth = 11 + Math.max(9 * 18, this.cols * 18) + 11;
-        int backpackSlotWidth = this.cols * 18;
-        int backpackSlotsX = Math.max((backpackWidth - backpackSlotWidth) / 2, 0) + 1;
+        int backpackSlotsWidth = this.cols * 18;
+        int backpackSlotsX = Math.max((backpackWidth - backpackSlotsWidth) / 2, 0) + 1;
         int backpackSlotsY = 28;
         for(int y = 0; y < rows; y++)
         {

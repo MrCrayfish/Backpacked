@@ -55,7 +55,18 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
-    private static final int TITLE_LABEL_WIDTH = 94;
+    private static final int TITLE_LABEL_WIDTH = 110;
+    private static final int TITLE_PADDING = 5;
+    private static final int BACKPACK_TOP = 16;
+    private static final int BACKPACK_PADDING_TOP = 11;
+    private static final int BACKPACK_PADDING_SIDE = 11;
+    private static final int BACKPACK_PADDING_BOTTOM = 14;
+    private static final int GAP = 3;
+    private static final int INVENTORY_WIDTH = 176;
+    private static final int INVENTORY_HEIGHT = 101;
+    private static final int QUICK_BUTTONS_PADDING = 4;
+    private static final int QUICK_BUTTONS_GAP = 2;
+    private static final int QUICK_BUTTONS_SIZE = 10;
 
     private final Player player;
     private final int cols;
@@ -72,8 +83,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         this.cols = menu.getCols();
         this.rows = menu.getRows();
         this.owner = menu.isOwner();
-        this.imageWidth = 11 + Math.max(this.cols, 9) * 18 + 11;
-        this.imageHeight = 26 + this.rows * 18 + 15 + 3 + 101;
+        this.imageWidth = BACKPACK_PADDING_SIDE + Math.max(this.cols, 9) * 18 + BACKPACK_PADDING_SIDE;
+        this.imageHeight = BACKPACK_TOP + BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM + GAP + INVENTORY_HEIGHT;
         this.titleLabelX = 6;
         this.titleLabelY = 0;
         this.inventoryLabelX = this.imageWidth / 2 - 80;
@@ -93,17 +104,23 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             this.opened = true;
         }
 
-        List<AbstractButton> buttons = this.gatherButtons();
-        int buttonsWidth = 5 + (buttons.size() * 11 - 1) + 5;
-        int buttonStart = this.leftPos + this.imageWidth - 5 - buttonsWidth + 5;
-        for(int i = 0; i < buttons.size(); i++)
+        List<AbstractButton> quickButtons = this.gatherQuickButtons();
+        int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
+        int buttonsHeight = QUICK_BUTTONS_PADDING + (quickButtons.size() * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP) - QUICK_BUTTONS_GAP) + QUICK_BUTTONS_PADDING;
+        int buttonLeft = this.leftPos + this.imageWidth + 2;
+        if(buttonsHeight > backpackHeight - QUICK_BUTTONS_PADDING * 2)
         {
-            AbstractButton button = buttons.get(i);
-            button.setX(buttonStart + i * 11);
-            button.setY(this.topPos + 4);
+            buttonLeft += 6;
+        }
+        int buttonTop = this.topPos + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2 + QUICK_BUTTONS_PADDING;
+        for(int i = 0; i < quickButtons.size(); i++)
+        {
+            AbstractButton button = quickButtons.get(i);
+            button.setX(buttonLeft);
+            button.setY(buttonTop + i * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP));
             this.addRenderableWidget(button);
         }
-        this.buttonCount = buttons.size();
+        this.buttonCount = quickButtons.size();
 
         if(this.owner)
         {
@@ -115,13 +132,15 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                             .append(Integer.toString(totalBackpacks))
             );
 
-            MiniButton navPrevious = this.addRenderableWidget(new MiniButton(this.leftPos + 2, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+            int imageCenter = this.imageWidth / 2;
+            int navBtnOffset = TITLE_LABEL_WIDTH / 2 + 2;
+            MiniButton navPrevious = this.addRenderableWidget(new MiniButton(this.leftPos + imageCenter - navBtnOffset - 12, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
             }));
             navPrevious.setTooltip(navigateTooltip);
             navPrevious.active = backpackIndex > 0;
 
-            MiniButton navNext = this.addRenderableWidget(new MiniButton(this.leftPos + 16 + TITLE_LABEL_WIDTH + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
+            MiniButton navNext = this.addRenderableWidget(new MiniButton(this.leftPos + imageCenter + navBtnOffset, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
                 Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
             }));
             navNext.setTooltip(navigateTooltip);
@@ -131,7 +150,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         this.updateUnlockableSlots();
     }
 
-    private List<AbstractButton> gatherButtons()
+    private List<AbstractButton> gatherQuickButtons()
     {
         List<AbstractButton> buttons = new ArrayList<>();
 
@@ -155,13 +174,6 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             buttons.add(customiseButton);
         }
 
-        if(!Config.CLIENT.hideConfigButton.get())
-        {
-            MiniButton configButton = new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen());
-            configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
-            buttons.add(configButton);
-        }
-
         if(!Config.BACKPACK.inventory.slots.unlockAllSlots.get())
         {
             EnumButton<UnlockableSlotMode> lockButton = new EnumButton<>(0, 0, 10, 10, Config.CLIENT.unlockableSlotMode.get(), (btn, value) -> {
@@ -173,6 +185,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             });
             lockButton.setTooltip(this.createLockTooltip(Config.CLIENT.unlockableSlotMode.get()));
             buttons.add(lockButton);
+        }
+
+        if(!Config.CLIENT.hideConfigButton.get())
+        {
+            MiniButton configButton = new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen());
+            configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
+            buttons.add(configButton);
         }
 
         return buttons;
@@ -230,7 +249,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
         int titleWidth = this.font.width(trimmedTitle);
-        graphics.drawString(this.font, trimmedTitle, 16 + (TITLE_LABEL_WIDTH - titleWidth) / 2, 5, 0xFF61503D, false);
+        graphics.drawString(this.font, trimmedTitle, (this.imageWidth - titleWidth) / 2, 6, 0xFF61503D, false);
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }
 
@@ -242,7 +261,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private FormattedCharSequence getTrimmedTitle()
     {
-        int maxWidth = TITLE_LABEL_WIDTH - 10;
+        int maxWidth = TITLE_LABEL_WIDTH - TITLE_PADDING * 2;
         if(this.font.width(this.title) > maxWidth)
         {
             return Language.getInstance().getVisualOrder(FormattedText.composite(this.font.substrByWidth(this.title, maxWidth - this.font.width("...")), FormattedText.of("...")));
@@ -253,27 +272,36 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
     {
         //graphics.fill(this.leftPos, this.topPos, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xFFFFFFFF);
-        graphics.blitSprite(LABEL_BACKGROUND, x + 16, y - 1, TITLE_LABEL_WIDTH, 21);
 
         FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
         int titleWidth = this.font.width(trimmedTitle);
-        int titleX = x + 16 + (TITLE_LABEL_WIDTH - titleWidth) / 2;
-        int checkersX = x + 21;
-        int checkersWidth = titleX - checkersX - 1;
+        int labelX = x + (width - TITLE_LABEL_WIDTH) / 2;
+        graphics.blitSprite(LABEL_BACKGROUND, labelX, y, TITLE_LABEL_WIDTH, 21);
+
+        int titleX = x + (width - titleWidth) / 2;
+        int checkersX = labelX + 5;
+        int checkersWidth = titleX - checkersX - 2;
         if(checkersWidth > 0)
         {
             graphics.blitSprite(CHECKERS, checkersX, y + 7, checkersWidth, 5);
             graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
-        int buttonsWidth = 5 + (this.buttonCount * 11 - 1) + 5;
-        int buttonsX = x + width - 5 - buttonsWidth;
-        graphics.blitSprite(LABEL_BACKGROUND, buttonsX, y - 1, buttonsWidth, 21);
+        // Calculate the height for the backpack inventory
+        int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
+
+        // Draw the background label for the quick action buttons
+        int buttonsHeight = QUICK_BUTTONS_PADDING + this.buttonCount * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP) + QUICK_BUTTONS_PADDING;
+        int buttonsX = x + width - 3;
+        if(buttonsHeight > backpackHeight - QUICK_BUTTONS_PADDING * 2)
+        {
+            buttonsX += 6;
+        }
+        int buttonsY = y + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2;
+        graphics.blitSprite(LABEL_BACKGROUND, buttonsX, buttonsY, 20, buttonsHeight);
 
         // Backpack Inventory
-        int backpackHeight = 20 + this.rows * 18 + 15;
-        //graphics.blitSprite(BACKPACK_BACKGROUND, x - 60, y + 8, 70, backpackHeight - 16);
-        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 16, width, backpackHeight - 10);
+        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
 
         // Draw Backpack Slots
         int backpackSlotsWidth = this.cols * 18;
@@ -290,11 +318,9 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
 
         // Player Inventory
-        int inventoryWidth = 7 + 9 * 18 + 7;
-        int inventoryHeight = 101;
-        int inventoryX = (width - inventoryWidth) / 2;
-        int inventoryY = backpackHeight + 9;
-        graphics.blitSprite(INVENTORY_SPRITE, x + inventoryX, y + inventoryY, inventoryWidth, inventoryHeight);
+        int inventoryX = (width - INVENTORY_WIDTH) / 2;
+        int inventoryY = BACKPACK_TOP + backpackHeight + GAP;
+        graphics.blitSprite(INVENTORY_SPRITE, x + inventoryX, y + inventoryY, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
         // Draw Player Inventory Slots
         int inventorySlotsWidth = 9 * 18;
