@@ -20,6 +20,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
+import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -71,6 +72,7 @@ public class CustomiseBackpackScreen extends Screen
     private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
     private static final Component COSMETIC_WARNING = Component.translatable("backpacked.gui.cosmetic_warning");
+    private static final Component BACK_TO_INVENTORY = Component.translatable("backpacked.gui.back_to_inventory");
 
     private static final int PLAYER_DISPLAY_WIDTH = 80;
 
@@ -96,6 +98,7 @@ public class CustomiseBackpackScreen extends Screen
     private int windowLeft;
     private int windowTop;
     private CustomButton saveButton;
+    private CustomButton backButton;
     private CheckBox showEnchantmentGlintButton;
     private CheckBox showWithElytraButton;
     private CheckBox showEffectsButton;
@@ -168,6 +171,11 @@ public class CustomiseBackpackScreen extends Screen
 
         this.scrollBar = this.addRenderableWidget(new ScrollBar(this.windowLeft + this.windowWidth - 24, this.windowTop + 29, contentHeight - 4, this.scroll));
         this.scrollBar.active = this.models.size() > MAX_VISIBLE_ITEMS;
+
+        this.backButton = this.addRenderableWidget(new CustomButton(this.windowLeft - 23, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17, 16, 16, Component.literal("<"), btn -> {
+            Network.getPlay().sendToServer(new MessageOpenBackpack());
+        }));
+        this.backButton.setTooltip(Tooltip.create(BACK_TO_INVENTORY));
 
         this.updateButtons();
     }
@@ -281,6 +289,10 @@ public class CustomiseBackpackScreen extends Screen
             graphics.blitSprite(CHECKERS, checkersX, y + 7, checkersWidth, 5);
             graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
+
+        int backPanelX = this.backButton.getX() - 5;
+        int backPanelY = this.backButton.getY() - 5;
+        graphics.blitSprite(LABEL_BACKGROUND, backPanelX, backPanelY, 26, 26);
 
         graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }

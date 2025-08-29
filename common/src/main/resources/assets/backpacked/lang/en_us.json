@@ -68,6 +68,7 @@
     "backpacked.gui.no_backpack_equipped": "No backpack equipped",
     "backpacked.gui.no_backpack_equipped.plural": "No backpacks equipped",
     "backpacked.gui.cosmetic_warning": "Only the customizations of the first equipped backpack will be shown on the player",
+    "backpacked.gui.back_to_inventory": "Back to Inventory",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
