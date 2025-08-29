@@ -238,7 +238,16 @@ public class CustomiseBackpackScreen extends Screen
             BackpackModelEntry entry = this.models.get(hoveredIndex);
             if(!entry.getBackpack().isUnlocked(this.minecraft.player))
             {
-                graphics.renderTooltip(this.font, entry.getUnlockTooltip(), mouseX, mouseY);
+                int itemX = this.windowLeft + ITEM_LIST_LEFT;
+                int itemY = this.windowTop + ITEM_LIST_TOP + (hoveredIndex - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
+                int progressBarX = itemX + 24;
+                int progressBarY = itemY + ITEM_HEIGHT - 5 - 4;
+                int lockX = itemX + ITEM_WIDTH - 12 - 4;
+                int lockY = itemY + 6;
+                if(ScreenUtil.isPointInArea(mouseX, mouseY, progressBarX, progressBarY, 89, 5) || ScreenUtil.isPointInArea(mouseX, mouseY, lockX, lockY, 12, 12))
+                {
+                    graphics.renderTooltip(this.font, entry.getUnlockTooltip(), mouseX, mouseY);
+                }
             }
         }
     }
@@ -350,7 +359,7 @@ public class CustomiseBackpackScreen extends Screen
         if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
         {
             int startIndex = (int) (Math.max(0, this.models.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
-            int offsetIndex = (mouseY - this.windowTop - ITEM_LIST_TOP) / ITEM_HEIGHT;
+            int offsetIndex = (mouseY - this.windowTop - ITEM_LIST_TOP) / (ITEM_HEIGHT + ITEM_LIST_GAP);
             int hoveredIndex = startIndex + offsetIndex;
             if(hoveredIndex >= 0 && hoveredIndex < this.models.size())
             {
