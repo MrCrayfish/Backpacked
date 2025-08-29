@@ -16,6 +16,7 @@ import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
+import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
@@ -287,7 +288,7 @@ public class CustomiseBackpackScreen extends Screen
     private void drawBackpackItem(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, BackpackModelEntry entry)
     {
         boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
-        boolean selected = unlocked && this.displayBackpack.cosmetic().stream().anyMatch(id -> id.equals(entry.getCosmeticId()));
+        boolean selected = unlocked && this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(entry.getCosmeticId());
         boolean hovered = unlocked && (selected || ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT));
 
         // Draw background for item
@@ -382,7 +383,7 @@ public class CustomiseBackpackScreen extends Screen
                     BackpackModelEntry entry = this.models.get(hoveredIndex);
                     if(entry.getBackpack().isUnlocked(this.minecraft.player))
                     {
-                        if(this.displayBackpack.cosmetic().stream().noneMatch(id -> id.equals(entry.getCosmeticId())))
+                        if(!this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(entry.getCosmeticId()))
                         {
                             this.displayBackpack = this.displayBackpack.setCosmetic(entry.getCosmeticId());
                             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
