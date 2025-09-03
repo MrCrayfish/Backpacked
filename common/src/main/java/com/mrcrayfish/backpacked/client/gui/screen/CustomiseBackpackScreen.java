@@ -146,10 +146,14 @@ public class CustomiseBackpackScreen extends Screen
             return this.displayBackpack;
         }));
 
-        this.saveButton = this.addRenderableWidget(new CustomButton(this.windowLeft + 12, this.playerDisplay.getBottom() + 1, 76, 20, SAVE, btn -> {
-            Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.backpackIndex, this.displayBackpack));
-            this.currentProperties = this.displayBackpack;
-        }));
+        this.saveButton = this.addRenderableWidget(CustomButton.builder()
+            .setPosition(this.windowLeft + 12, this.playerDisplay.getBottom() + 1)
+            .setSize(76, 20)
+            .setMessage(SAVE)
+            .setAction(btn -> {
+                Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.backpackIndex, this.displayBackpack));
+                this.currentProperties = this.displayBackpack;
+            }).build());
 
         this.showEnchantmentGlintButton = new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
             this.displayBackpack = this.displayBackpack.setShowEnchantmentGlint(!this.displayBackpack.showEnchantmentGlint());
@@ -172,9 +176,14 @@ public class CustomiseBackpackScreen extends Screen
         this.scrollBar = this.addRenderableWidget(new ScrollBar(this.windowLeft + this.windowWidth - 24, this.windowTop + 29, contentHeight - 4, this.scroll));
         this.scrollBar.active = this.models.size() > MAX_VISIBLE_ITEMS;
 
-        this.backButton = this.addRenderableWidget(new CustomButton(this.windowLeft - 23, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17, 16, 16, Component.literal("<"), btn -> {
-            Network.getPlay().sendToServer(new MessageOpenBackpack());
-        }));
+        this.backButton = this.addRenderableWidget(CustomButton.builder()
+            .setPosition(this.windowLeft - 23, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17)
+            .setSize(16, 16)
+            .setMessage(Component.literal("<"))
+            .setAction(btn -> {
+                Network.getPlay().sendToServer(new MessageOpenBackpack());
+            }).build()
+        );
         this.backButton.setTooltip(Tooltip.create(BACK_TO_INVENTORY));
 
         this.updateButtons();
