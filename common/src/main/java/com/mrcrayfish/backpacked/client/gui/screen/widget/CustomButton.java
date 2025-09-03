@@ -59,7 +59,12 @@ public class CustomButton extends AbstractButton
         int contentHeight = font.lineHeight;
         if(this.icon != null)
         {
-            contentWidth += this.gap + this.icon.width;
+            // Only add gap if the message is not empty
+            if(contentWidth > 0)
+            {
+                contentWidth += this.gap;
+            }
+            contentWidth += this.icon.width;
             contentHeight = Math.max(contentHeight, this.icon.height);
         }
         int contentLeft = this.getX() + (this.getWidth() - contentWidth) / 2;
