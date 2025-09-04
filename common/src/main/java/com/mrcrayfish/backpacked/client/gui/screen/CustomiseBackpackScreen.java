@@ -74,6 +74,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
     private static final Component COSMETIC_WARNING = Component.translatable("backpacked.gui.cosmetic_warning");
     private static final Component BACK_TO_INVENTORY = Component.translatable("backpacked.gui.back_to_inventory");
+    private static final Component UNSAVED_CHANGES = Component.translatable("backpacked.gui.unsaved_changes").withStyle(ChatFormatting.RED);
 
     private static final int PLAYER_DISPLAY_WIDTH = 80;
 
@@ -188,7 +189,6 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
                 Network.getPlay().sendToServer(new MessageOpenBackpack());
             }).build()
         );
-        this.backButton.setTooltip(Tooltip.create(BACK_TO_INVENTORY));
 
         this.updateButtons();
     }
@@ -232,6 +232,21 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         int itemBgX = this.playerDisplay.getRight() + 3;
         int itemBgWidth = (this.scrollBar.getX() - 2 - 2) - itemBgX;
         graphics.blitSprite(ROUNDED_BOX, itemBgX, this.windowTop + 27, itemBgWidth, scrollBarBgHeight);
+
+        if(this.backButton.isHovered())
+        {
+            if(this.saveButton.active)
+            {
+                this.setTooltipForNextRenderPass(List.of(
+                    BACK_TO_INVENTORY.getVisualOrderText(),
+                    UNSAVED_CHANGES.getVisualOrderText()
+                ));
+            }
+            else
+            {
+                this.setTooltipForNextRenderPass(BACK_TO_INVENTORY);
+            }
+        }
     }
 
     @Override
