@@ -263,7 +263,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
                 int lockY = itemY + 6;
                 if(ScreenUtil.isPointInArea(mouseX, mouseY, progressBarX, progressBarY, 89, 5) || ScreenUtil.isPointInArea(mouseX, mouseY, lockX, lockY, 12, 12))
                 {
-                    graphics.renderTooltip(this.font, entry.getUnlockTooltip(), mouseX, mouseY);
+                    this.setTooltipForNextRenderPass(entry.getUnlockTooltip());
                 }
             }
         }
