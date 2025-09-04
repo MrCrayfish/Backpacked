@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
@@ -119,7 +120,9 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
                 .map(backpack -> new BackpackModelItem(backpack, progressMap, completionMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toCollection(ArrayList::new));
-        items.add(new GuideItem());
+        if(!Config.CLIENT.hideAddonsCallToAction.get()) {
+            items.add(new GuideItem());
+        }
         this.items = ImmutableList.copyOf(items);
         this.showCosmeticWarning = showCosmeticWarning;
         this.currentProperties = properties;

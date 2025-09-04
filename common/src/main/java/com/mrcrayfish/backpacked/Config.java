@@ -405,6 +405,10 @@ public class Config
         @ConfigProperty(name = "glitterBomb", comment = """
                 Very secret feature, do not enable if you don't want your screen filled with particle effects""")
         public final BoolProperty glitterBomb = BoolProperty.create(false);
+
+        @ConfigProperty(name = "hideAddonsCallToAction", comment = """
+                If enabled, hides the call to action at the bottom of the customisation menu which links out to community addons and a guide.""")
+        public final BoolProperty hideAddonsCallToAction = BoolProperty.create(false);
     }
 
     public static class ResourceLocationValidator implements Validator<String>
