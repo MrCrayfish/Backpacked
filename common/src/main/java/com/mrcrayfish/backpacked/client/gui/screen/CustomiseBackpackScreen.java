@@ -1,17 +1,16 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CheckBox;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.ScrollBar;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.Alignment;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.DropdownMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.MenuItem;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
@@ -26,18 +25,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -51,7 +48,7 @@ import java.util.stream.Collectors;
 /**
  * Author: MrCrayfish
  */
-public class CustomiseBackpackScreen extends Screen
+public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
 {
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
@@ -65,11 +62,11 @@ public class CustomiseBackpackScreen extends Screen
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
     private static final ResourceLocation UNLOCK_PROGRESS_BAR = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
     private static final ResourceLocation UNLOCK_PROGRESS_BAR_INNER = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
+    private static final ResourceLocation SETTINGS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/settings");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
-    private static final Component SHOW_EFFECTS_TOOLTIP = Component.translatable("backpacked.button.show_effects.tooltip");
-    private static final Component SHOW_WITH_ELYTRA_TOOLTIP = Component.translatable("backpacked.button.show_with_elytra.tooltip");
-    private static final Component SHOW_ENCHANTMENT_GLINT = Component.translatable("backpacked.button.show_enchantment_glint.tooltip");
+    private static final Component SHOW_PARTICLES = Component.translatable("backpacked.button.show_particles");
+    private static final Component HIDE_WITH_ELYTRA = Component.translatable("backpacked.button.hide_with_elytra");
     private static final Component LOCKED = Component.translatable("backpacked.gui.locked").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
     private static final Component COSMETIC_WARNING = Component.translatable("backpacked.gui.cosmetic_warning");
     private static final Component BACK_TO_INVENTORY = Component.translatable("backpacked.gui.back_to_inventory");
@@ -98,10 +95,8 @@ public class CustomiseBackpackScreen extends Screen
     private int windowLeft;
     private int windowTop;
     private CustomButton saveButton;
+    private CustomButton settingsButton;
     private CustomButton backButton;
-    private CheckBox showEnchantmentGlintButton;
-    private CheckBox showWithElytraButton;
-    private CheckBox showEffectsButton;
     private BackpackProperties currentProperties;
     private BackpackProperties displayBackpack = null;
     private final List<BackpackModelEntry> models;
@@ -133,6 +128,7 @@ public class CustomiseBackpackScreen extends Screen
         MouseRestorer.loadCapturedPosition();
 
         super.init();
+
         if(this.displayBackpack == null)
         {
             this.displayBackpack = this.currentProperties;
@@ -147,31 +143,33 @@ public class CustomiseBackpackScreen extends Screen
         }));
 
         this.saveButton = this.addRenderableWidget(CustomButton.builder()
-            .setPosition(this.windowLeft + 12, this.playerDisplay.getBottom() + 1)
-            .setSize(76, 20)
+            .setPosition(this.windowLeft + 10, this.playerDisplay.getBottom() + 1)
+            .setSize(60, 20)
             .setMessage(SAVE)
             .setAction(btn -> {
                 Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.backpackIndex, this.displayBackpack));
                 this.currentProperties = this.displayBackpack;
             }).build());
 
-        this.showEnchantmentGlintButton = new CheckBox(this.windowLeft + 133, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
-            this.displayBackpack = this.displayBackpack.setShowEnchantmentGlint(!this.displayBackpack.showEnchantmentGlint());
-        });
-        this.showEnchantmentGlintButton.setTooltip(Tooltip.create(SHOW_ENCHANTMENT_GLINT));
-        this.showEnchantmentGlintButton.setChecked(this.displayBackpack.showEnchantmentGlint());
-
-        this.showWithElytraButton = new CheckBox(this.windowLeft + 160, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
-            this.displayBackpack = this.displayBackpack.setShowWithElytra(!this.displayBackpack.showWithElytra());
-        });
-        this.showWithElytraButton.setTooltip(Tooltip.create(SHOW_WITH_ELYTRA_TOOLTIP));
-        this.showWithElytraButton.setChecked(this.displayBackpack.showWithElytra());
-
-        this.showEffectsButton = new CheckBox(this.windowLeft + 186, this.windowTop + 6, CommonComponents.EMPTY, onPress -> {
-            this.displayBackpack = this.displayBackpack.setShowEffects(!this.displayBackpack.showEffects());
-        });
-        this.showEffectsButton.setTooltip(Tooltip.create(SHOW_EFFECTS_TOOLTIP));
-        this.showEffectsButton.setChecked(this.displayBackpack.showEffects());
+        DropdownMenu settingMenu = DropdownMenu.builder(this)
+            .setMinItemSize(70, 16)
+            .addItem(MenuItem.checkbox(HIDE_WITH_ELYTRA, new MutableBoolean(!this.displayBackpack.showWithElytra()), value -> {
+                this.displayBackpack = this.displayBackpack.setShowWithElytra(!value);
+                return false;
+            }))
+            .addItem(MenuItem.checkbox(SHOW_PARTICLES, new MutableBoolean(this.displayBackpack.showEffects()), value -> {
+                this.displayBackpack = this.displayBackpack.setShowEffects(value);
+                return false;
+            }))
+            .setAlignment(Alignment.ABOVE_LEFT)
+            .build();
+        this.settingsButton = this.addRenderableWidget(CustomButton.builder()
+            .setPosition(this.saveButton.getX() + this.saveButton.getWidth(), this.saveButton.getY())
+            .setSize(20, 20)
+            .setIcon(SETTINGS, 10, 10)
+            .setAction(settingMenu::toggle)
+            .build()
+        );
 
         this.scrollBar = this.addRenderableWidget(new ScrollBar(this.windowLeft + this.windowWidth - 24, this.windowTop + 29, contentHeight - 4, this.scroll));
         this.scrollBar.active = this.models.size() > MAX_VISIBLE_ITEMS;
@@ -231,10 +229,8 @@ public class CustomiseBackpackScreen extends Screen
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        super.render(graphics, mouseX, mouseY, partialTick);
-
         // Draw title
         int titleWidth = this.font.width(this.title);
         graphics.drawString(this.font, this.title, this.windowLeft + (this.windowWidth - titleWidth) / 2, this.windowTop + 6, 0xFF61503D, false);
@@ -249,6 +245,9 @@ public class CustomiseBackpackScreen extends Screen
             this.drawBackpackItem(graphics, itemX, itemY, mouseX, mouseY, partialTick, this.models.get(i));
             graphics.disableScissor();
         }
+
+        if(this.hasDropdownMenu())
+            return;
 
         int hoveredIndex = this.getHoveredIndex(mouseX, mouseY);
         if(hoveredIndex != -1)
@@ -392,7 +391,7 @@ public class CustomiseBackpackScreen extends Screen
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    protected boolean onMouseClicked(double mouseX, double mouseY, int button)
     {
         if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
         {
@@ -414,7 +413,7 @@ public class CustomiseBackpackScreen extends Screen
                 }
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.onMouseClicked(mouseX, mouseY, button);
     }
 
     @Override
