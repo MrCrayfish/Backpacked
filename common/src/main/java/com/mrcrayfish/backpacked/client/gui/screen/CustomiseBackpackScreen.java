@@ -82,10 +82,9 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
     private static final int ITEM_LIST_WIDTH = ITEM_WIDTH;
     private static final int ITEM_LIST_HEIGHT = ITEM_HEIGHT * MAX_VISIBLE_ITEMS + ITEM_LIST_GAP * MAX_VISIBLE_ITEMS - 1;
 
-    private static final int DEFAULT_ITEM_TEXT_COLOUR = 0x4E1C1C;
-    private static final int SELECTED_ITEM_TEXT_COLOUR = 0x407F10;
-    private static final int HOVERED_ITEM_TEXT_COLOUR = 0xFFFF80;
-    private static final int UNLOCKED_ITEM_TEXT_COLOUR = 0x685E4A;
+    private static final int DEFAULT_ITEM_TEXT_COLOUR = 0xFF5C5145;
+    private static final int SELECTED_ITEM_TEXT_COLOUR = 0xFFFFFFFF;
+    private static final int UNLOCKED_ITEM_TEXT_COLOUR = 0xFF685E4A;
     private static final int MODEL_LIGHTING = 0xF000F0;
 
     private final int backpackIndex;
@@ -99,7 +98,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
     private CustomButton backButton;
     private BackpackProperties currentProperties;
     private BackpackProperties displayBackpack = null;
-    private final List<BackpackModelEntry> models;
+    private final List<CosmeticItem> items;
     private PlayerDisplay playerDisplay;
     private final MutableInt scroll = new MutableInt();
     private ScrollBar scrollBar;
@@ -110,14 +109,14 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         this.backpackIndex = backpackIndex;
         this.windowWidth = 260;
         this.windowHeight = 174;
-        Comparator<BackpackModelEntry> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
-        Comparator<BackpackModelEntry> compareLabel = Comparator.comparing(e -> e.label.getString());
-        List<BackpackModelEntry> models = ClientRegistry.instance().getBackpacks()
+        Comparator<BackpackModelItem> compareUnlock = Comparator.comparing(e -> !e.backpack.isUnlocked(Minecraft.getInstance().player));
+        Comparator<BackpackModelItem> compareLabel = Comparator.comparing(e -> e.label.getString());
+        List<CosmeticItem> items = ClientRegistry.instance().getBackpacks()
                 .stream()
-                .map(backpack -> new BackpackModelEntry(backpack, progressMap, completionMap))
+                .map(backpack -> new BackpackModelItem(backpack, progressMap, completionMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
-                .collect(Collectors.toList());
-        this.models = ImmutableList.copyOf(models);
+                .collect(Collectors.toCollection(ArrayList::new));
+        this.items = ImmutableList.copyOf(items);
         this.showCosmeticWarning = showCosmeticWarning;
         this.currentProperties = properties;
     }
@@ -172,7 +171,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         );
 
         this.scrollBar = this.addRenderableWidget(new ScrollBar(this.windowLeft + this.windowWidth - 24, this.windowTop + 29, contentHeight - 4, this.scroll));
-        this.scrollBar.active = this.models.size() > MAX_VISIBLE_ITEMS;
+        this.scrollBar.active = this.items.size() > MAX_VISIBLE_ITEMS;
 
         this.backButton = this.addRenderableWidget(CustomButton.builder()
             .setPosition(this.windowLeft - 20, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17)
@@ -236,13 +235,13 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         graphics.drawString(this.font, this.title, this.windowLeft + (this.windowWidth - titleWidth) / 2, this.windowTop + 6, 0xFF61503D, false);
 
         // Draw backpack items
-        int startIndex = (int) (Math.max(0, this.models.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
-        for(int i = startIndex; i < this.models.size() && i < startIndex + MAX_VISIBLE_ITEMS; i++)
+        int startIndex = (int) (Math.max(0, this.items.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
+        for(int i = startIndex; i < this.items.size() && i < startIndex + MAX_VISIBLE_ITEMS; i++)
         {
             int itemX = this.windowLeft + ITEM_LIST_LEFT;
             int itemY = this.windowTop + ITEM_LIST_TOP + (i - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
             graphics.enableScissor(itemX, itemY, itemX + ITEM_WIDTH, itemY + ITEM_HEIGHT);
-            this.drawBackpackItem(graphics, itemX, itemY, mouseX, mouseY, partialTick, this.models.get(i));
+            this.items.get(i).draw(graphics, itemX, itemY, mouseX, mouseY, partialTick, this.minecraft);
             graphics.disableScissor();
         }
 
@@ -252,20 +251,10 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         int hoveredIndex = this.getHoveredIndex(mouseX, mouseY);
         if(hoveredIndex != -1)
         {
-            BackpackModelEntry entry = this.models.get(hoveredIndex);
-            if(!entry.getBackpack().isUnlocked(this.minecraft.player))
-            {
-                int itemX = this.windowLeft + ITEM_LIST_LEFT;
-                int itemY = this.windowTop + ITEM_LIST_TOP + (hoveredIndex - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
-                int progressBarX = itemX + 24;
-                int progressBarY = itemY + ITEM_HEIGHT - 5 - 4;
-                int lockX = itemX + ITEM_WIDTH - 12 - 4;
-                int lockY = itemY + 6;
-                if(ScreenUtil.isPointInArea(mouseX, mouseY, progressBarX, progressBarY, 89, 5) || ScreenUtil.isPointInArea(mouseX, mouseY, lockX, lockY, 12, 12))
-                {
-                    this.setTooltipForNextRenderPass(entry.getUnlockTooltip());
-                }
-            }
+            int itemX = this.windowLeft + ITEM_LIST_LEFT;
+            int itemY = this.windowTop + ITEM_LIST_TOP + (hoveredIndex - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
+            CosmeticItem item = this.items.get(hoveredIndex);
+            item.onMouseHover(this.minecraft, itemX, itemY, mouseX, mouseY);
         }
     }
 
@@ -305,51 +294,6 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
 
-    private void drawBackpackItem(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, BackpackModelEntry entry)
-    {
-        boolean unlocked = entry.getBackpack().isUnlocked(this.minecraft.player);
-        boolean selected = unlocked && this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(entry.getCosmeticId());
-        boolean hovered = unlocked && (selected || ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT));
-
-        // Draw background for item
-        ResourceLocation itemTexture = this.getItemTexture(unlocked, selected, hovered);
-        graphics.blitSprite(itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
-
-        if(!unlocked)
-        {
-            int progressBarX = x + 24;
-            int progressBarY = y + ITEM_HEIGHT - 5 - 4;
-            graphics.blitSprite(UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
-
-            int progressWidth = (int) (87 * entry.getCompletionProgress());
-            graphics.blitSprite(UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
-
-            graphics.blitSprite(ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
-        }
-
-        // Draw label
-        int textColour = this.getItemTextColour(unlocked, selected, hovered);
-        int textY = y + (unlocked ? 8 : 5);
-        graphics.drawString(this.font, entry.getLabel(), x + 24, textY, textColour, selected);
-
-        // Draw backpack cosmetic
-        drawBackpackInGui(this.minecraft, graphics, entry.getBackpack(), x + 12, y + 12, partialTick);
-    }
-
-    private ResourceLocation getItemTexture(boolean unlocked, boolean selected, boolean hovered)
-    {
-        if(selected) return LIST_ITEM_SELECTED;
-        if(unlocked) return hovered ? LIST_ITEM_FOCUSED : LIST_ITEM;
-        return LIST_ITEM_LOCKED;
-    }
-
-    private int getItemTextColour(boolean unlocked, boolean selected, boolean hovered)
-    {
-        if(selected) return 0xFFFFFFFF;
-        if(unlocked) return UNLOCKED_ITEM_TEXT_COLOUR;
-        return 0xFF5C5145;
-    }
-
     public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick)
     {
         PoseStack pose = graphics.pose();
@@ -379,10 +323,10 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
     {
         if(ScreenUtil.isPointInArea(mouseX, mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
         {
-            int startIndex = (int) (Math.max(0, this.models.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
+            int startIndex = (int) (Math.max(0, this.items.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
             int offsetIndex = (mouseY - this.windowTop - ITEM_LIST_TOP) / (ITEM_HEIGHT + ITEM_LIST_GAP);
             int hoveredIndex = startIndex + offsetIndex;
-            if(hoveredIndex >= 0 && hoveredIndex < this.models.size())
+            if(hoveredIndex >= 0 && hoveredIndex < this.items.size())
             {
                 return hoveredIndex;
             }
@@ -400,14 +344,9 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
                 int hoveredIndex = this.getHoveredIndex((int) mouseX, (int) mouseY);
                 if(hoveredIndex != -1)
                 {
-                    BackpackModelEntry entry = this.models.get(hoveredIndex);
-                    if(entry.getBackpack().isUnlocked(this.minecraft.player))
+                    CosmeticItem item = this.items.get(hoveredIndex);
+                    if(item.onMouseClicked(this.minecraft))
                     {
-                        if(!this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(entry.getCosmeticId()))
-                        {
-                            this.displayBackpack = this.displayBackpack.setCosmetic(entry.getCosmeticId());
-                            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                        }
                         return true;
                     }
                 }
@@ -421,11 +360,11 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
     {
         if(!this.scrollBar.isGrabbed() && ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
         {
-            int scrollableContentHeight = Math.max(this.models.size() * (ITEM_HEIGHT + ITEM_LIST_GAP) - ITEM_LIST_HEIGHT, 0);
+            int scrollableContentHeight = Math.max(this.items.size() * (ITEM_HEIGHT + ITEM_LIST_GAP) - ITEM_LIST_HEIGHT, 0);
             double scrollNormal = this.scrollBar.getScroll((int) mouseY);
             int currentIndex = (int) (scrollableContentHeight * scrollNormal) / (ITEM_HEIGHT + ITEM_LIST_GAP);
             int nextIndex = currentIndex + Mth.sign(-deltaY);
-            double amount = (double) nextIndex / Math.max(this.models.size() - MAX_VISIBLE_ITEMS, 1);
+            double amount = (double) nextIndex / Math.max(this.items.size() - MAX_VISIBLE_ITEMS, 1);
             this.scrollBar.scrollTo(amount);
         }
         return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
@@ -438,7 +377,19 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         MouseRestorer.capturePosition();
     }
 
-    private static class BackpackModelEntry
+    private abstract static class CosmeticItem
+    {
+        protected abstract void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc);
+
+        protected boolean onMouseClicked(Minecraft mc)
+        {
+            return false;
+        }
+
+        protected void onMouseHover(Minecraft mc, int x, int y, int mouseX, int mouseY) {}
+    }
+
+    private class BackpackModelItem extends CosmeticItem
     {
         private final ResourceLocation cosmeticId;
         private final ClientBackpack backpack;
@@ -446,7 +397,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         private final List<FormattedCharSequence> unlockTooltip;
         private final double completionProgress;
 
-        public BackpackModelEntry(ClientBackpack backpack, Map<ResourceLocation, Component> labelMap, Map<ResourceLocation, Double> completionMap)
+        public BackpackModelItem(ClientBackpack backpack, Map<ResourceLocation, Component> labelMap, Map<ResourceLocation, Double> completionMap)
         {
             this.cosmeticId = backpack.getId();
             this.backpack = backpack;
@@ -463,29 +414,81 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
             this.completionProgress = completionMap.getOrDefault(backpack.getId(), 1.0);
         }
 
-        public ResourceLocation getCosmeticId()
+        @Override
+        protected void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc)
         {
-            return this.cosmeticId;
+            boolean unlocked = this.backpack.isUnlocked(mc.player);
+            boolean selected = unlocked && CustomiseBackpackScreen.this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(this.cosmeticId);
+            boolean hovered = unlocked && (selected || ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT));
+
+            // Draw background for item
+            ResourceLocation itemTexture = this.getItemTexture(unlocked, selected, hovered);
+            graphics.blitSprite(itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
+
+            if(!unlocked)
+            {
+                int progressBarX = x + 24;
+                int progressBarY = y + ITEM_HEIGHT - 5 - 4;
+                graphics.blitSprite(UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
+
+                int progressWidth = (int) (87 * this.completionProgress);
+                graphics.blitSprite(UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
+
+                graphics.blitSprite(ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
+            }
+
+            // Draw label
+            int textColour = this.getItemTextColour(unlocked, selected);
+            int textY = y + (unlocked ? 8 : 5);
+            graphics.drawString(mc.font, this.label, x + 24, textY, textColour, selected);
+
+            // Draw backpack cosmetic
+            drawBackpackInGui(mc, graphics, this.backpack, x + 12, y + 12, partialTick);
         }
 
-        public Component getLabel()
+        @Override
+        protected void onMouseHover(Minecraft mc, int x, int y, int mouseX, int mouseY)
         {
-            return this.label;
+            if(!this.backpack.isUnlocked(mc.player))
+            {
+                int progressBarX = x + 24;
+                int progressBarY = y + ITEM_HEIGHT - 5 - 4;
+                int lockX = x + ITEM_WIDTH - 12 - 4;
+                int lockY = y + 6;
+                if(ScreenUtil.isPointInArea(mouseX, mouseY, progressBarX, progressBarY, 89, 5) || ScreenUtil.isPointInArea(mouseX, mouseY, lockX, lockY, 12, 12))
+                {
+                    CustomiseBackpackScreen.this.setTooltipForNextRenderPass(this.unlockTooltip);
+                }
+            }
         }
 
-        public List<FormattedCharSequence> getUnlockTooltip()
+        @Override
+        protected boolean onMouseClicked(Minecraft mc)
         {
-            return this.unlockTooltip;
+            if(this.backpack.isUnlocked(mc.player))
+            {
+                if(!CustomiseBackpackScreen.this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(this.cosmeticId))
+                {
+                    CustomiseBackpackScreen.this.displayBackpack = CustomiseBackpackScreen.this.displayBackpack.setCosmetic(this.cosmeticId);
+                    mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                }
+                return true;
+            }
+            return false;
         }
 
-        public ClientBackpack getBackpack()
+        private ResourceLocation getItemTexture(boolean unlocked, boolean selected, boolean hovered)
         {
-            return this.backpack;
+            if(selected) return LIST_ITEM_SELECTED;
+            if(unlocked) return hovered ? LIST_ITEM_FOCUSED : LIST_ITEM;
+            return LIST_ITEM_LOCKED;
         }
 
-        public double getCompletionProgress()
+        private int getItemTextColour(boolean unlocked, boolean selected)
         {
-            return this.completionProgress;
+            if(selected) return SELECTED_ITEM_TEXT_COLOUR;
+            if(unlocked) return UNLOCKED_ITEM_TEXT_COLOUR;
+            return DEFAULT_ITEM_TEXT_COLOUR;
         }
     }
 }
