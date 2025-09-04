@@ -29,7 +29,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
@@ -116,6 +119,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
                 .map(backpack -> new BackpackModelItem(backpack, progressMap, completionMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toCollection(ArrayList::new));
+        items.add(new GuideItem());
         this.items = ImmutableList.copyOf(items);
         this.showCosmeticWarning = showCosmeticWarning;
         this.currentProperties = properties;
@@ -489,6 +493,41 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
             if(selected) return SELECTED_ITEM_TEXT_COLOUR;
             if(unlocked) return UNLOCKED_ITEM_TEXT_COLOUR;
             return DEFAULT_ITEM_TEXT_COLOUR;
+        }
+    }
+
+    private class GuideItem extends CosmeticItem
+    {
+        private static final Component MESSAGE = Component.translatable("backpacked.gui.want_more_backpacks");
+        private static final Component VIEW_ADDONS = Component.translatable("backpacked.gui.view_addons");
+
+        private final CustomButton button = CustomButton.builder()
+                .setSize(100, 14)
+                .setMessage(VIEW_ADDONS)
+                .setAction(btn -> {
+                    Style style = Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://mrcrayfish.github.io/Backpacked/"));
+                    CustomiseBackpackScreen.this.handleComponentClicked(style);
+                }).build();
+
+        @Override
+        protected void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc)
+        {
+            int width = mc.font.width(MESSAGE);
+            graphics.drawString(mc.font, MESSAGE, x + (ITEM_WIDTH - width) / 2, y + 1, UNLOCKED_ITEM_TEXT_COLOUR, false);
+
+            this.button.setX(x + (ITEM_WIDTH - this.button.getWidth()) / 2);
+            this.button.setY(y + ITEM_HEIGHT - this.button.getHeight());
+            this.button.render(graphics, mouseX, mouseY, partialTick);
+        }
+
+        @Override
+        protected boolean onMouseClicked(Minecraft mc)
+        {
+            if(this.button.isHovered())
+            {
+                this.button.onPress();
+            }
+            return false;
         }
     }
 }

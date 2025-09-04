@@ -68,6 +68,8 @@
     "backpacked.gui.no_backpack_equipped": "No backpack equipped",
     "backpacked.gui.no_backpack_equipped.plural": "No backpacks equipped",
     "backpacked.gui.not_enough_exp": "Not Enough Exp",
+    "backpacked.gui.want_more_backpacks": "Want more cosmetics?",
+    "backpacked.gui.view_addons": "View Addons",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
