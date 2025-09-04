@@ -175,7 +175,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         this.scrollBar.active = this.models.size() > MAX_VISIBLE_ITEMS;
 
         this.backButton = this.addRenderableWidget(CustomButton.builder()
-            .setPosition(this.windowLeft - 23, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17)
+            .setPosition(this.windowLeft - 20, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17)
             .setSize(16, 16)
             .setMessage(Component.literal("<"))
             .setAction(btn -> {
@@ -298,9 +298,9 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
             graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
-        int backPanelX = this.backButton.getX() - 5;
+        int backPanelX = this.backButton.getX() - 6;
         int backPanelY = this.backButton.getY() - 5;
-        graphics.blitSprite(LABEL_BACKGROUND, backPanelX, backPanelY, 26, 26);
+        graphics.blitSprite(LABEL_BACKGROUND, backPanelX, backPanelY, 50, 26);
 
         graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
