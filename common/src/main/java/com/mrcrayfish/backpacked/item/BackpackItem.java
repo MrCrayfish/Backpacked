@@ -93,18 +93,18 @@ public class BackpackItem extends Item
             Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), title);
             return true;
         }
-        openBackpackManagement(ownerPlayer);
+        openBackpackManagement(ownerPlayer, false);
         return false;
     }
 
-    public static void openBackpackManagement(ServerPlayer player)
+    public static void openBackpackManagement(ServerPlayer player, boolean showInventoryButton)
     {
         UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
         FrameworkAPI.openMenuWithData(player, new SimpleMenuProvider((id, playerInventory, entity) -> {
             SimpleContainerData data = new SimpleContainerData(1);
             data.set(0, BackpackHelper.getFirstBackpackStack(player).isEmpty() ? 0 : 1);
-            return new BackpackManagementMenu(id, player.getInventory(), new ManagementInventory(player), data, slots);
-        }, BACKPACK_MANAGEMENT_TRANSLATION), new ManagementContainerData(slots));
+            return new BackpackManagementMenu(id, player.getInventory(), new ManagementInventory(player), data, slots, showInventoryButton);
+        }, BACKPACK_MANAGEMENT_TRANSLATION), new ManagementContainerData(slots, showInventoryButton));
     }
 
     @Nullable

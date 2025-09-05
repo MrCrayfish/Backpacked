@@ -3,17 +3,23 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import org.jetbrains.annotations.Nullable;
 
 public class BackpackManagementScreen extends UnlockableContainerScreen<BackpackManagementMenu>
 {
     private static final Component LABEL_NO_BACKPACK = Component.translatable("backpacked.gui.no_backpack_equipped");
     private static final Component LABEL_NO_BACKPACK_PLURAL = Component.translatable("backpacked.gui.no_backpack_equipped.plural");
+    private static final Component LABEL_OPEN_BACKPACK_INVENTORY = Component.translatable("backpacked.gui.open_backpack_inventory");
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -22,6 +28,8 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
     private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+
+    private @Nullable CustomButton backButton;
 
     public BackpackManagementScreen(BackpackManagementMenu menu, Inventory inventory, Component title)
     {
@@ -39,6 +47,19 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     {
         MouseRestorer.loadCapturedPosition();
         super.init();
+
+        if(this.menu.showInventoryButton())
+        {
+            this.backButton = this.addRenderableWidget(CustomButton.builder()
+                .setPosition(this.leftPos + this.imageWidth + 4, this.topPos + (41 - 16) / 2 + 17)
+                .setSize(16, 16)
+                .setMessage(Component.literal(">"))
+                .setAction(btn -> {
+                    Network.getPlay().sendToServer(new MessageOpenBackpack());
+                }).build()
+            );
+            this.backButton.setTooltip(Tooltip.create(LABEL_OPEN_BACKPACK_INVENTORY));
+        }
     }
 
     @Override
@@ -58,7 +79,7 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
     {
-        if(this.menu.hasNothingEquipped())
+        if(this.menu.hadNoBackpacksEquippedOnInitialOpen())
         {
             boolean plural = this.menu.getContainer().getContainerSize() > 1;
             Component message = plural ? LABEL_NO_BACKPACK_PLURAL : LABEL_NO_BACKPACK;
@@ -68,6 +89,14 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
             graphics.fillGradient(0, 0, this.width, 50, 0xAA000000, 0x00000000);
             graphics.blitSprite(LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
             graphics.drawString(this.font, message, (this.width - messageWidth) / 2, messageY + 6, 0xFFFFFFFF);
+        }
+
+        if(this.menu.showInventoryButton() && this.backButton != null)
+        {
+            this.backButton.active = this.menu.getContainer().hasAnyMatching(stack -> !stack.isEmpty());
+            int backPanelX = this.backButton.getX() - 28;
+            int backPanelY = this.backButton.getY() - 5;
+            graphics.blitSprite(LABEL_BACKGROUND, backPanelX, backPanelY, 50, 26);
         }
 
         int slotsWidth = this.menu.getContainer().getContainerSize() * 18;

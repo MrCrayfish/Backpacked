@@ -117,7 +117,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         UnlockableSlots slots = BackpackHelper.getBackpackUnlockableSlots(player);
         FrameworkAPI.openMenuWithData(player, new SimpleMenuProvider((windowId, playerInventory, player1) -> {
             return new BackpackShelfMenu(windowId, playerInventory, new ManagementInventory(player), this.container, slots);
-        }, Component.translatable("container.backpack_shelf")), new ManagementContainerData(slots));
+        }, Component.translatable("container.backpack_shelf")), new ManagementContainerData(slots, false));
     }
 
     public void copyInventoryToStack(ItemStack stack)

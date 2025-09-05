@@ -183,7 +183,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         }
         else if(this.backpackInventory instanceof BackpackInventory)
         {
-            BackpackItem.openBackpackManagement(player);
+            BackpackItem.openBackpackManagement(player, true);
         }
     }
 

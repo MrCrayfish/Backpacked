@@ -31,18 +31,20 @@ public class BackpackManagementMenu extends CustomContainerMenu
     private final Inventory inventory;
     private final Container container;
     private final ContainerData data;
+    private final boolean showInventoryButton;
 
     public BackpackManagementMenu(int windowId, Inventory inventory, ManagementContainerData customData)
     {
-        this(windowId, inventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainerData(1), customData.slots());
+        this(windowId, inventory, new SimpleContainer(ManagementInventory.getMaxEquipable()), new SimpleContainerData(1), customData.slots(), customData.showInventoryButton());
     }
 
-    public BackpackManagementMenu(int windowId, Inventory inventory, Container container, ContainerData data, UnlockableSlots slots)
+    public BackpackManagementMenu(int windowId, Inventory inventory, Container container, ContainerData data, UnlockableSlots slots, boolean showInventoryButton)
     {
         super(ModContainers.MANAGEMENT.get(), windowId);
         this.inventory = inventory;
         this.container = container;
         this.data = data;
+        this.showInventoryButton = showInventoryButton;
         checkContainerDataCount(data, 1);
 
         UnlockableController controller = new ManagementUnlockableController(slots, List.of(inventory));
@@ -62,9 +64,14 @@ public class BackpackManagementMenu extends CustomContainerMenu
         return this.container;
     }
 
-    public boolean hasNothingEquipped()
+    public boolean hadNoBackpacksEquippedOnInitialOpen()
     {
         return this.data.get(0) == 0;
+    }
+
+    public boolean showInventoryButton()
+    {
+        return this.showInventoryButton;
     }
 
     @Override
