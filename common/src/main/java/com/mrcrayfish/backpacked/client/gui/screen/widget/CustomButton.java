@@ -56,7 +56,7 @@ public class CustomButton extends AbstractButton
         Component message = this.getMessage();
         Font font = Minecraft.getInstance().font;
         int contentWidth = font.width(message);
-        int contentHeight = font.lineHeight;
+        int contentHeight = contentWidth > 0 ? font.lineHeight : 0;
         if(this.icon != null)
         {
             // Only add gap if the message is not empty
