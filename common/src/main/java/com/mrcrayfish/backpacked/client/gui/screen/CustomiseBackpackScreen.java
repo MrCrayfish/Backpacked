@@ -67,6 +67,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
     private static final ResourceLocation UNLOCK_PROGRESS_BAR = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
     private static final ResourceLocation UNLOCK_PROGRESS_BAR_INNER = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
     private static final ResourceLocation SETTINGS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/settings");
+    private static final ResourceLocation ARROW_LEFT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_left");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_PARTICLES = Component.translatable("backpacked.button.show_particles");
@@ -184,7 +185,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
         this.backButton = this.addRenderableWidget(CustomButton.builder()
             .setPosition(this.windowLeft - 20, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17)
             .setSize(16, 16)
-            .setMessage(Component.literal("<"))
+            .setIcon(ARROW_LEFT, 4, 6)
             .setAction(btn -> {
                 Network.getPlay().sendToServer(new MessageOpenBackpack());
             }).build()

@@ -28,6 +28,7 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
     private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final ResourceLocation ARROW_RIGHT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_right");
 
     private @Nullable CustomButton backButton;
 
@@ -53,7 +54,7 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
             this.backButton = this.addRenderableWidget(CustomButton.builder()
                 .setPosition(this.leftPos + this.imageWidth + 4, this.topPos + (41 - 16) / 2 + 17)
                 .setSize(16, 16)
-                .setMessage(Component.literal(">"))
+                .setIcon(ARROW_RIGHT, 4, 6)
                 .setAction(btn -> {
                     Network.getPlay().sendToServer(new MessageOpenBackpack());
                 }).build()
