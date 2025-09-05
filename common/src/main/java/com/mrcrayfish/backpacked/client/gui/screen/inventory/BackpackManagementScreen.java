@@ -73,7 +73,8 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF61503D, false);
+        int titleWidth = this.font.width(this.title);
+        graphics.drawString(this.font, this.title, (this.imageWidth - titleWidth) / 2, this.titleLabelY, 0xFF61503D, false);
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }
 
@@ -103,8 +104,18 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
         int slotsWidth = this.menu.getContainer().getContainerSize() * 18;
         int backgroundWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11); // Padding + Width + Padding
         int titleWidth = this.font.width(this.title);
-        int headerWidth = 7 + titleWidth + 7;
-        graphics.blitSprite(LABEL_BACKGROUND, this.leftPos + 10, this.topPos, headerWidth, 20);
+        int headerWidth = 20 + titleWidth + 20;
+        int labelX = this.leftPos + (this.imageWidth - headerWidth) / 2;
+        graphics.blitSprite(LABEL_BACKGROUND, labelX, this.topPos, headerWidth, 20);
+
+        int titleX = this.leftPos + (this.imageWidth - titleWidth) / 2;
+        int titleCheckersX = labelX + 5;
+        int titleCheckersWidth = titleX - titleCheckersX - 2;
+        if(titleCheckersWidth > 0)
+        {
+            graphics.blitSprite(CHECKERS, titleCheckersX, this.topPos + 7, titleCheckersWidth, 5);
+            graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, this.topPos + 7, titleCheckersWidth, 5);
+        }
 
         int backgroundX = (this.imageWidth - backgroundWidth) / 2;
         int backgroundY = 16;
