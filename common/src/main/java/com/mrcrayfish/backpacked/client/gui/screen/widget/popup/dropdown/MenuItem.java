@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown;
+package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown;
+package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 

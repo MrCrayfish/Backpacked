@@ -1,9 +1,11 @@
-package com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown;
+package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mrcrayfish.backpacked.client.gui.screen.DropdownMenuHandler;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.BorderedLinearLayout;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,9 +24,9 @@ import java.util.function.Consumer;
 /**
  * Author: MrCrayfish
  */
-public class DropdownMenu extends AbstractWidget
+public class DropdownMenu extends AbstractWidget implements PopupMenu
 {
-    private final DropdownMenuHandler handler;
+    private final PopupMenuHandler handler;
     private final BorderedLinearLayout layout = (BorderedLinearLayout)
         BorderedLinearLayout.vertical().border(3).spacing(2);
     private final List<AbstractWidget> items = new ArrayList<>();
@@ -33,7 +35,7 @@ public class DropdownMenu extends AbstractWidget
     @Nullable DropdownMenu parent;
     @Nullable DropdownMenu subMenu;
 
-    private DropdownMenu(DropdownMenuHandler handler)
+    private DropdownMenu(PopupMenuHandler handler)
     {
         super(0, 0, 0, 0, CommonComponents.EMPTY);
         this.handler = handler;
@@ -76,7 +78,7 @@ public class DropdownMenu extends AbstractWidget
         this.visible = true;
         if(this.parent == null)
         {
-            this.handler.setDropdownMenu(this);
+            this.handler.setPopupMenu(this);
         }
     }
 
@@ -112,7 +114,7 @@ public class DropdownMenu extends AbstractWidget
 
     void deepClose()
     {
-        this.handler.setDropdownMenu(null);
+        this.handler.setPopupMenu(null);
     }
 
     @Override
@@ -153,13 +155,29 @@ public class DropdownMenu extends AbstractWidget
         if(!this.active || !this.visible)
             return false;
 
-        AtomicBoolean clicked = new AtomicBoolean();
-        this.layout.visitWidgets(widget -> {
-            if(widget.mouseClicked(mouseX, mouseY, button)) {
-                clicked.set(true);
+        if(this.subMenu != null)
+        {
+            if(this.subMenu.mouseClicked(mouseX, mouseY, button))
+            {
+                return true;
             }
-        });
-        return clicked.get();
+            if(this.getRectangle().containsPoint((int) mouseX, (int) mouseY))
+            {
+                this.subMenu.hide();
+                this.subMenu = null;
+                return true;
+            }
+        }
+
+        for(AbstractWidget widget : this.items)
+        {
+            if(widget.mouseClicked(mouseX, mouseY, button))
+            {
+                return true;
+            }
+        }
+
+        return this.subMenu == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY);
     }
 
     @Override
@@ -168,14 +186,14 @@ public class DropdownMenu extends AbstractWidget
         this.layout.visitWidgets(consumer);
     }
 
-    public static Builder builder(DropdownMenuHandler handler)
+    public static Builder builder(PopupMenuHandler handler)
     {
         return new Builder(handler);
     }
 
     public static class Builder
     {
-        private final DropdownMenuHandler handler;
+        private final PopupMenuHandler handler;
         private final DropdownMenu base;
         private final List<MenuItem> items = new ArrayList<>();
         private int minItemWidth = 0;
@@ -184,7 +202,7 @@ public class DropdownMenu extends AbstractWidget
         private @Nullable Integer padding;
         private @Nullable Integer spacing;
 
-        private Builder(DropdownMenuHandler handler)
+        private Builder(PopupMenuHandler handler)
         {
             this.handler = handler;
             this.base = new DropdownMenu(handler);

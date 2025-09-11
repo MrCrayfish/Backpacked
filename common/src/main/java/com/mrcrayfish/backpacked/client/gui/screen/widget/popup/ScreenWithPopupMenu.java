@@ -1,28 +1,31 @@
-package com.mrcrayfish.backpacked.client.gui.screen;
+package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.DropdownMenu;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ScreenWithDropdownMenu extends Screen implements DropdownMenuHandler
-{
-    protected @Nullable DropdownMenu menu;
+import java.util.Optional;
 
-    protected ScreenWithDropdownMenu(Component title)
+public abstract class ScreenWithPopupMenu extends Screen implements PopupMenuHandler
+{
+    protected @Nullable PopupMenu menu;
+
+    protected ScreenWithPopupMenu(Component title)
     {
         super(title);
     }
 
-    protected boolean hasDropdownMenu()
+    protected boolean hasPopupMenu()
     {
         return this.menu != null;
     }
 
     @Override
-    public void setDropdownMenu(@Nullable DropdownMenu menu)
+    public void setPopupMenu(@Nullable PopupMenu menu)
     {
         if(this.menu != null && this.menu != menu)
         {
@@ -34,7 +37,7 @@ public abstract class ScreenWithDropdownMenu extends Screen implements DropdownM
     @Override
     public final void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        boolean dropdown = this.hasDropdownMenu();
+        boolean dropdown = this.hasPopupMenu();
         super.render(graphics, dropdown ? -1000 : mouseX, dropdown ? -1000 : mouseY, partialTick);
         this.renderForeground(graphics, dropdown ? -1000 : mouseX, dropdown ? -1000 : mouseY, partialTick);
         if(this.menu != null)
@@ -56,7 +59,7 @@ public abstract class ScreenWithDropdownMenu extends Screen implements DropdownM
         {
             if(!this.menu.mouseClicked(mouseX, mouseY, button))
             {
-                this.setDropdownMenu(null);
+                this.setPopupMenu(null);
             }
             return true;
         }

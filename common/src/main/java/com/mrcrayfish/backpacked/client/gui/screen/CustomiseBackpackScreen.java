@@ -9,9 +9,10 @@ import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.Alignment;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.DropdownMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.dropdown.MenuItem;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.Alignment;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.ScreenWithPopupMenu;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
@@ -25,14 +26,12 @@ import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -52,7 +51,7 @@ import java.util.stream.Collectors;
 /**
  * Author: MrCrayfish
  */
-public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
+public class CustomiseBackpackScreen extends ScreenWithPopupMenu
 {
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
@@ -169,6 +168,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
                 this.displayBackpack = this.displayBackpack.setShowEffects(value);
                 return false;
             }))
+                .addItem(MenuItem.dropdown(Component.literal("Test"), DropdownMenu.builder(this).addItem(MenuItem.dropdown(Component.literal("Test"), DropdownMenu.builder(this).addItem(MenuItem.button(Component.literal("Test"), () -> {})).build())).build()))
             .setAlignment(Alignment.ABOVE_LEFT)
             .build();
         this.settingsButton = this.addRenderableWidget(CustomButton.builder()
@@ -268,7 +268,7 @@ public class CustomiseBackpackScreen extends ScreenWithDropdownMenu
             graphics.disableScissor();
         }
 
-        if(this.hasDropdownMenu())
+        if(this.hasPopupMenu())
             return;
 
         int hoveredIndex = this.getHoveredIndex(mouseX, mouseY);
