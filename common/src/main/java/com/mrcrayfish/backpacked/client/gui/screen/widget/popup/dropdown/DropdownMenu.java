@@ -23,7 +23,6 @@ public class DropdownMenu extends PopupMenu
 {
     private final BorderedLinearLayout layout = (BorderedLinearLayout)
         BorderedLinearLayout.vertical().border(3).spacing(2);
-    private final List<AbstractWidget> items = new ArrayList<>();
 
     private DropdownMenu(PopupMenuHandler handler)
     {
@@ -46,20 +45,7 @@ public class DropdownMenu extends PopupMenu
     {
         item.setParent(this);
         this.layout.addChild(item);
-        this.items.add(item);
-    }
-
-    @Override
-    protected boolean onClick(int mouseX, int mouseY, int button)
-    {
-        for(AbstractWidget widget : this.items)
-        {
-            if(widget.mouseClicked(mouseX, mouseY, button))
-            {
-                return true;
-            }
-        }
-        return false;
+        this.invalidateWidgets();
     }
 
     @Override
@@ -154,7 +140,6 @@ public class DropdownMenu extends PopupMenu
 
         public DropdownMenu build()
         {
-            this.base.items.clear();
             int maxWidth = this.items.stream().mapToInt(MenuItem::calculateWidth).max().orElse(100);
             this.items.forEach(item -> {
                 item.setSize(Math.max(maxWidth, this.minItemWidth), this.minItemHeight);

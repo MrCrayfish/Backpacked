@@ -11,9 +11,13 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class PopupMenu extends AbstractWidget
 {
     private final PopupMenuHandler handler;
+    private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable ResourceLocation background;
     protected @Nullable PopupMenu parent;
@@ -30,8 +34,6 @@ public abstract class PopupMenu extends AbstractWidget
 
     protected abstract int border();
 
-    protected abstract boolean onClick(int mouseX, int mouseY, int button);
-
     protected void setAlignment(Alignment alignment)
     {
         this.alignment = alignment;
@@ -40,6 +42,22 @@ public abstract class PopupMenu extends AbstractWidget
     public void setBackground(@Nullable ResourceLocation background)
     {
         this.background = background;
+    }
+
+    private List<AbstractWidget> getWidgets()
+    {
+        if(this.cachedWidgets == null)
+        {
+            List<AbstractWidget> widgets = new ArrayList<>();
+            this.layout().visitWidgets(widgets::add);
+            this.cachedWidgets = List.copyOf(widgets);
+        }
+        return this.cachedWidgets;
+    }
+
+    protected void invalidateWidgets()
+    {
+        this.cachedWidgets = null;
     }
 
     @Override
@@ -60,7 +78,7 @@ public abstract class PopupMenu extends AbstractWidget
         }
 
         // Draw all widgets from the layout
-        this.layout().visitWidgets(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
+        this.getWidgets().forEach(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
 
         if(this.child != null)
         {
@@ -98,11 +116,13 @@ public abstract class PopupMenu extends AbstractWidget
             }
         }
 
-        // Call the popup menu specific method for handling widget clicks. Unfortunately Layouts do
-        // not allow access to widgets
-        if(this.onClick((int) mouseX, (int) mouseY, button))
+        // Send the event to widgets, and return true on first handled
+        for(AbstractWidget widget : this.getWidgets())
         {
-            return true;
+            if(widget.mouseClicked(mouseX, mouseY, button))
+            {
+                return true;
+            }
         }
 
         // If click occurred inside the menu, just mark as handled to prevent it from hiding
