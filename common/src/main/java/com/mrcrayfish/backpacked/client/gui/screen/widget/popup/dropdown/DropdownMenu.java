@@ -88,17 +88,18 @@ public class DropdownMenu extends PopupMenu
 
     public static class Builder
     {
-        private final DropdownMenu base;
+        private final PopupMenuHandler handler;
         private final List<MenuItem> items = new ArrayList<>();
         private int minItemWidth = 0;
         private int minItemHeight = 20;
+        private @Nullable Alignment alignment;
         private @Nullable ResourceLocation background = Utils.rl("backpack/dropdown/background");
         private @Nullable Integer border;
         private @Nullable Integer spacing;
 
         private Builder(PopupMenuHandler handler)
         {
-            this.base = new DropdownMenu(handler);
+            this.handler = handler;
         }
 
         public Builder setMinItemSize(int width, int height)
@@ -128,7 +129,7 @@ public class DropdownMenu extends PopupMenu
 
         public Builder setAlignment(Alignment alignment)
         {
-            this.base.setAlignment(alignment);
+            this.alignment = alignment;
             return this;
         }
 
@@ -140,21 +141,26 @@ public class DropdownMenu extends PopupMenu
 
         public DropdownMenu build()
         {
+            DropdownMenu menu = new DropdownMenu(this.handler);
             int maxWidth = this.items.stream().mapToInt(MenuItem::calculateWidth).max().orElse(100);
             this.items.forEach(item -> {
                 item.setSize(Math.max(maxWidth, this.minItemWidth), this.minItemHeight);
-                this.base.addItem(item);
+                menu.addItem(item);
             });
-            this.base.setBackground(this.background);
+            if(this.alignment != null)
+            {
+                menu.setAlignment(this.alignment);
+            }
+            menu.setBackground(this.background);
             if(this.border != null)
             {
-                this.base.layout.border(this.border);
+                menu.layout.border(this.border);
             }
             if(this.spacing != null)
             {
-                this.base.layout.spacing(this.spacing);
+                menu.layout.spacing(this.spacing);
             }
-            return this.base;
+            return menu;
         }
     }
 }
