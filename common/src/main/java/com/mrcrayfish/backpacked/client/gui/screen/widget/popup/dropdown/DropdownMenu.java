@@ -41,7 +41,7 @@ public class DropdownMenu extends PopupMenu
         return this.layout.getBorder();
     }
 
-    public void addItem(MenuItem item)
+    protected void addItem(MenuItem item)
     {
         item.setParent(this);
         this.layout.addChild(item);
