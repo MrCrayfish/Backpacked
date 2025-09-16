@@ -44,11 +44,6 @@ public abstract class PopupMenu extends AbstractWidget
         this.background = background;
     }
 
-    protected void setParent(@Nullable PopupMenu parent)
-    {
-        this.parent = parent;
-    }
-
     private List<AbstractWidget> getWidgets()
     {
         if(this.cachedWidgets == null)
@@ -134,25 +129,30 @@ public abstract class PopupMenu extends AbstractWidget
         return this.child == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY);
     }
 
-    public void toggle(int mouseX, int mouseY)
+    public void show(AbstractWidget widget)
     {
-        this.toggle(new ScreenRectangle(mouseX, mouseY, 0, 0));
+        this.show(widget.getRectangle());
     }
 
-    public void toggle(AbstractWidget widget)
+    public void show(ScreenRectangle rect)
     {
-        this.toggle(widget.getRectangle());
-    }
-
-    public void toggle(ScreenRectangle rect)
-    {
-        if(!this.visible)
+        this.updatePosition(rect);
+        this.visible = true;
+        if(this.parent == null)
         {
-            this.show(rect);
+            this.handler.setPopupMenu(this);
+        }
+        else if(this.parent.visible)
+        {
+            if(this.parent.child != null)
+            {
+                this.parent.child.hide();
+            }
+            this.parent.child = this;
         }
         else
         {
-            this.hide();
+            this.visible = false;
         }
     }
 
@@ -164,22 +164,6 @@ public abstract class PopupMenu extends AbstractWidget
         }
         this.child = null;
         this.visible = false;
-    }
-
-    protected void show(ScreenRectangle rect)
-    {
-        this.updatePosition(rect);
-        this.visible = true;
-        if(this.parent == null)
-        {
-            this.handler.setPopupMenu(this);
-        }
-    }
-
-    protected void showChild(PopupMenu menu, ScreenRectangle rect)
-    {
-        this.child = menu;
-        menu.show(rect);
     }
 
     private void updatePosition(ScreenRectangle rect)
@@ -201,5 +185,10 @@ public abstract class PopupMenu extends AbstractWidget
     protected void adoptChild(PopupMenu menu)
     {
         menu.parent = this;
+    }
+
+    public boolean isActiveChildMenu(PopupMenu child)
+    {
+        return this.child == child;
     }
 }

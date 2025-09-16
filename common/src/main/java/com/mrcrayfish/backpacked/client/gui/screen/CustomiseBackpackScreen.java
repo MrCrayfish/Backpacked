@@ -10,9 +10,10 @@ import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.ScreenWithPopupMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.PopupItem;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
@@ -160,22 +161,22 @@ public class CustomiseBackpackScreen extends ScreenWithPopupMenu
 
         DropdownMenu settingMenu = DropdownMenu.builder(this)
             .setMinItemSize(70, 16)
-            .addItem(MenuItem.checkbox(HIDE_WITH_ELYTRA, new MutableBoolean(!this.displayBackpack.showWithElytra()), value -> {
+            .addItem(CheckboxItem.create(HIDE_WITH_ELYTRA, new MutableBoolean(!this.displayBackpack.showWithElytra()), value -> {
                 this.displayBackpack = this.displayBackpack.setShowWithElytra(!value);
                 return false;
             }))
-            .addItem(MenuItem.checkbox(SHOW_PARTICLES, new MutableBoolean(this.displayBackpack.showEffects()), value -> {
+            .addItem(CheckboxItem.create(SHOW_PARTICLES, new MutableBoolean(this.displayBackpack.showEffects()), value -> {
                 this.displayBackpack = this.displayBackpack.setShowEffects(value);
                 return false;
             }))
-                .addItem(MenuItem.dropdown(Component.literal("Test"), DropdownMenu.builder(this).addItem(MenuItem.dropdown(Component.literal("Test"), DropdownMenu.builder(this).addItem(MenuItem.button(Component.literal("Test"), () -> {})).build())).build()))
+                .addItem(PopupItem.create(Component.literal("Test"), DropdownMenu.builder(this).addItem(PopupItem.create(Component.literal("Test"), new AugmentMenu(this))).build()))
             .setAlignment(Alignment.ABOVE_LEFT)
             .build();
         this.settingsButton = this.addRenderableWidget(CustomButton.builder()
             .setPosition(this.saveButton.getX() + this.saveButton.getWidth(), this.saveButton.getY())
             .setSize(20, 20)
             .setIcon(SETTINGS, 10, 10)
-            .setAction(settingMenu::toggle)
+            .setAction(settingMenu::show)
             .build()
         );
 

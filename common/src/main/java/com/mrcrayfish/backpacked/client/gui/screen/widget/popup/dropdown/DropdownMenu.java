@@ -50,34 +50,12 @@ public class DropdownMenu extends PopupMenu
         this.layout.visitWidgets(consumer);
     }
 
-    @Override
-    protected void showChild(PopupMenu menu, ScreenRectangle rect)
-    {
-        super.showChild(menu, rect);
-    }
-
-    @Override
-    protected void setParent(@Nullable PopupMenu parent)
-    {
-        super.setParent(parent);
-    }
-
     protected void addItem(MenuItem item)
     {
         item.parent = this;
         item.visitChildMenus(this::adoptChild);
         this.layout.addChild(item);
         this.invalidateWidgets();
-    }
-
-    protected boolean hasChild()
-    {
-        return this.child != null;
-    }
-
-    protected boolean isChild(PopupMenu child)
-    {
-        return this.child == child;
     }
 
     public static Builder builder(PopupMenuHandler handler)
