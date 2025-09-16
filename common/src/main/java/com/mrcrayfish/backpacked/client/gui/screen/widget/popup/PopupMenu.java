@@ -39,9 +39,14 @@ public abstract class PopupMenu extends AbstractWidget
         this.alignment = alignment;
     }
 
-    public void setBackground(@Nullable ResourceLocation background)
+    protected void setBackground(@Nullable ResourceLocation background)
     {
         this.background = background;
+    }
+
+    protected void setParent(@Nullable PopupMenu parent)
+    {
+        this.parent = parent;
     }
 
     private List<AbstractWidget> getWidgets()
@@ -191,5 +196,10 @@ public abstract class PopupMenu extends AbstractWidget
     public void deepClose()
     {
         this.handler.setPopupMenu(null);
+    }
+
+    protected void adoptChild(PopupMenu menu)
+    {
+        menu.parent = this;
     }
 }

@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -15,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class MenuItem extends AbstractWidget
@@ -24,16 +26,16 @@ public abstract class MenuItem extends AbstractWidget
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item_hovered")
     );
 
-    protected DropdownMenu parent;
+    DropdownMenu parent;
 
     public MenuItem(Component label)
     {
         super(0, 0, 100, 20, label);
     }
 
-    void setParent(DropdownMenu parent)
+    protected DropdownMenu getParent()
     {
-        this.parent = parent;
+        return this.parent;
     }
 
     protected boolean selected()
@@ -41,11 +43,13 @@ public abstract class MenuItem extends AbstractWidget
         return false;
     }
 
+    protected void visitChildMenus(Consumer<PopupMenu> consumer) {}
+
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
         RenderSystem.enableBlend();
-        boolean hovered = this.parent != null && !this.parent.hasChild() && this.isHovered();
+        boolean hovered = this.getParent() != null && !this.getParent().hasChild() && this.isHovered();
         graphics.blitSprite(SPRITES.get(this.active, hovered || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         RenderSystem.disableBlend();
 
@@ -78,6 +82,11 @@ public abstract class MenuItem extends AbstractWidget
         return new Checkbox(label, value, callbackHandler);
     }
 
+    public static MenuItem popup(Component label, PopupMenu menu)
+    {
+        return new Popup(label, menu);
+    }
+
     public static MenuItem dropdown(Component label, DropdownMenu menu)
     {
         return new Dropdown(label, menu);
@@ -97,7 +106,7 @@ public abstract class MenuItem extends AbstractWidget
         public void onClick(double mouseX, double mouseY)
         {
             this.action.run();
-            this.parent.deepClose();
+            this.getParent().deepClose();
         }
     }
 
@@ -137,7 +146,7 @@ public abstract class MenuItem extends AbstractWidget
             this.holder.setValue(newValue);
             if(this.callback.apply(newValue))
             {
-                this.parent.deepClose();
+                this.getParent().deepClose();
             }
         }
 
@@ -152,21 +161,20 @@ public abstract class MenuItem extends AbstractWidget
         }
     }
 
-    static class Dropdown extends MenuItem
+    static class Popup extends MenuItem
     {
-        final DropdownMenu subMenu;
+        final PopupMenu child;
 
-        public Dropdown(Component label, DropdownMenu subMenu)
+        public Popup(Component label, PopupMenu child)
         {
             super(label);
-            this.subMenu = subMenu;
+            this.child = child;
         }
 
         @Override
-        void setParent(DropdownMenu parent)
+        protected void visitChildMenus(Consumer<PopupMenu> consumer)
         {
-            super.setParent(parent);
-            this.subMenu.setParent(parent);
+            consumer.accept(this.child);
         }
 
         @Override
@@ -188,13 +196,68 @@ public abstract class MenuItem extends AbstractWidget
         @Override
         public void onClick(double mouseX, double mouseY)
         {
-            this.parent.showChild(this.subMenu, this.getRectangle());
+            this.getParent().showChild(this.child, this.getRectangle());
         }
 
         @Override
         protected boolean selected()
         {
-            return this.parent.isChild(this.subMenu);
+            return this.getParent().isChild(this.child);
+        }
+
+        @Override
+        protected int calculateWidth()
+        {
+            Font font = Minecraft.getInstance().font;
+            int labelOffset = (this.getHeight() - font.lineHeight) / 2 + 1;
+            int labelWidth = font.width(this.getMessage());
+            int arrowWidth = font.width(">");
+            return labelOffset + labelWidth + labelOffset + arrowWidth + labelOffset;
+        }
+    }
+
+    static class Dropdown extends MenuItem
+    {
+        final DropdownMenu subMenu;
+
+        public Dropdown(Component label, DropdownMenu subMenu)
+        {
+            super(label);
+            this.subMenu = subMenu;
+        }
+
+        @Override
+        protected void visitChildMenus(Consumer<PopupMenu> consumer)
+        {
+            consumer.accept(this.subMenu);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+        {
+            PoseStack poseStack = graphics.pose();
+            poseStack.pushPose();
+            if(this.selected())
+            {
+                poseStack.translate(0, 0, 51);
+            }
+            super.renderWidget(graphics, mouseX, mouseY, deltaTick);
+            Font font = Minecraft.getInstance().font;
+            int top = this.getY() + (this.getHeight() - font.lineHeight) / 2 + 1;
+            graphics.drawString(Minecraft.getInstance().font, ">", this.getX() + this.getWidth() - 10, top, 0xFFFFFFFF);
+            poseStack.popPose();
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY)
+        {
+            this.getParent().showChild(this.subMenu, this.getRectangle());
+        }
+
+        @Override
+        protected boolean selected()
+        {
+            return this.getParent().isChild(this.subMenu);
         }
 
         @Override

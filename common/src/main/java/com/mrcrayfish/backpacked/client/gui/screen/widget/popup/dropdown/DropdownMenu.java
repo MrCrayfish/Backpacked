@@ -41,18 +41,8 @@ public class DropdownMenu extends PopupMenu
         return this.layout.getBorder();
     }
 
-    protected void addItem(MenuItem item)
-    {
-        item.setParent(this);
-        this.layout.addChild(item);
-        this.invalidateWidgets();
-    }
-
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput output)
-    {
-
-    }
+    protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer)
@@ -66,9 +56,18 @@ public class DropdownMenu extends PopupMenu
         super.showChild(menu, rect);
     }
 
+    @Override
     protected void setParent(@Nullable PopupMenu parent)
     {
-        this.parent = parent;
+        super.setParent(parent);
+    }
+
+    protected void addItem(MenuItem item)
+    {
+        item.parent = this;
+        item.visitChildMenus(this::adoptChild);
+        this.layout.addChild(item);
+        this.invalidateWidgets();
     }
 
     protected boolean hasChild()
