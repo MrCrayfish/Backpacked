@@ -150,6 +150,10 @@ public class DropdownMenu extends PopupMenu
             {
                 this.base.layout.border(this.padding);
             }
+            if(this.spacing != null)
+            {
+                this.base.layout.spacing(this.spacing);
+            }
             return this.base;
         }
     }
