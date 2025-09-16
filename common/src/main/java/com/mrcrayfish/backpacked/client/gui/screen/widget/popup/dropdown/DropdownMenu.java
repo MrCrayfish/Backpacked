@@ -93,7 +93,7 @@ public class DropdownMenu extends PopupMenu
         private int minItemWidth = 0;
         private int minItemHeight = 20;
         private @Nullable ResourceLocation background = Utils.rl("backpack/dropdown/background");
-        private @Nullable Integer padding;
+        private @Nullable Integer border;
         private @Nullable Integer spacing;
 
         private Builder(PopupMenuHandler handler)
@@ -114,9 +114,9 @@ public class DropdownMenu extends PopupMenu
             return this;
         }
 
-        public Builder setPadding(int padding)
+        public Builder setBorder(int border)
         {
-            this.padding = padding;
+            this.border = border;
             return this;
         }
 
@@ -146,9 +146,9 @@ public class DropdownMenu extends PopupMenu
                 this.base.addItem(item);
             });
             this.base.setBackground(this.background);
-            if(this.padding != null)
+            if(this.border != null)
             {
-                this.base.layout.border(this.padding);
+                this.base.layout.border(this.border);
             }
             if(this.spacing != null)
             {
