@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.Alignment;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.ScreenWithPopupMenu;

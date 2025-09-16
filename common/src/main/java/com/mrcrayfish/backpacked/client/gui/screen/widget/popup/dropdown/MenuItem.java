@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class MenuItem extends AbstractWidget
@@ -46,7 +45,8 @@ public abstract class MenuItem extends AbstractWidget
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
         RenderSystem.enableBlend();
-        graphics.blitSprite(SPRITES.get(this.active, this.isHovered() || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        boolean hovered = this.parent != null && !this.parent.hasChild() && this.isHovered();
+        graphics.blitSprite(SPRITES.get(this.active, hovered || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         RenderSystem.disableBlend();
 
         Font font = Minecraft.getInstance().font;
@@ -166,7 +166,7 @@ public abstract class MenuItem extends AbstractWidget
         void setParent(DropdownMenu parent)
         {
             super.setParent(parent);
-            this.subMenu.parent = parent;
+            this.subMenu.setParent(parent);
         }
 
         @Override
@@ -188,30 +188,13 @@ public abstract class MenuItem extends AbstractWidget
         @Override
         public void onClick(double mouseX, double mouseY)
         {
-            if(this.parent.subMenu != null)
-            {
-                this.parent.subMenu.hide();
-                if(this.parent.subMenu == this.subMenu)
-                {
-                    this.parent.subMenu = null;
-                    return;
-                }
-            }
-            this.parent.subMenu = this.subMenu;
-            this.subMenu.show(this.getRectangle());
-        }
-
-        @Override
-        public void visitWidgets(Consumer<AbstractWidget> consumer)
-        {
-            consumer.accept(this);
-            this.subMenu.visitWidgets(consumer);
+            this.parent.showChild(this.subMenu, this.getRectangle());
         }
 
         @Override
         protected boolean selected()
         {
-            return this.parent.subMenu == this.subMenu;
+            return this.parent.isChild(this.subMenu);
         }
 
         @Override

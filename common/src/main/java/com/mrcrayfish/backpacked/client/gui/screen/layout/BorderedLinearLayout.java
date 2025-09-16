@@ -23,6 +23,11 @@ public class BorderedLinearLayout extends LinearLayout
         return this;
     }
 
+    public int getBorder()
+    {
+        return this.border;
+    }
+
     @Override
     public int getX()
     {

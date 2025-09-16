@@ -1,107 +1,45 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.BorderedLinearLayout;
-import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
  * Author: MrCrayfish
  */
-public class DropdownMenu extends AbstractWidget implements PopupMenu
+public class DropdownMenu extends PopupMenu
 {
-    private final PopupMenuHandler handler;
     private final BorderedLinearLayout layout = (BorderedLinearLayout)
         BorderedLinearLayout.vertical().border(3).spacing(2);
     private final List<AbstractWidget> items = new ArrayList<>();
-    private Alignment alignment = Alignment.BELOW_LEFT;
-    private @Nullable ResourceLocation background;
-    @Nullable DropdownMenu parent;
-    @Nullable DropdownMenu subMenu;
 
     private DropdownMenu(PopupMenuHandler handler)
     {
-        super(0, 0, 0, 0, CommonComponents.EMPTY);
-        this.handler = handler;
-        this.visible = false;
+        super(handler);
     }
 
-    private void setAlignment(Alignment alignment)
+    @Override
+    protected Layout layout()
     {
-        this.alignment = alignment;
+        return this.layout;
     }
 
-    public void toggle(int mouseX, int mouseY)
+    @Override
+    protected int border()
     {
-        this.toggle(new ScreenRectangle(mouseX, mouseY, 0, 0));
-    }
-
-    public void toggle(AbstractWidget widget)
-    {
-        this.toggle(widget.getRectangle());
-    }
-
-    public void toggle(ScreenRectangle rect)
-    {
-        if(!this.visible)
-        {
-            this.show(rect);
-        }
-        else
-        {
-            this.hide();
-        }
-    }
-
-    void show(ScreenRectangle rect)
-    {
-        this.updatePosition(rect);
-        this.items.forEach(child -> {
-            child.visible = true;
-        });
-        this.visible = true;
-        if(this.parent == null)
-        {
-            this.handler.setPopupMenu(this);
-        }
-    }
-
-    public void hide()
-    {
-        this.items.forEach(child -> {
-            child.visible = false;
-            if(child instanceof MenuItem.Dropdown menu) {
-                menu.subMenu.hide();
-            }
-        });
-        this.subMenu = null;
-        this.visible = false;
-    }
-
-    private void updatePosition(ScreenRectangle rect)
-    {
-        this.layout.arrangeElements();
-        this.width = this.layout.getWidth();
-        this.height = this.layout.getHeight();
-        this.alignment.aligner().accept(this, rect);
-        this.layout.setX(this.getX());
-        this.layout.setY(this.getY());
+        return this.layout.getBorder();
     }
 
     public void addItem(MenuItem item)
@@ -109,38 +47,19 @@ public class DropdownMenu extends AbstractWidget implements PopupMenu
         item.setParent(this);
         this.layout.addChild(item);
         this.items.add(item);
-        item.visible = false;
-    }
-
-    void deepClose()
-    {
-        this.handler.setPopupMenu(null);
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    protected boolean onClick(int mouseX, int mouseY, int button)
     {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(0, 0, 10);
-
-        Minecraft minecraft = Minecraft.getInstance();
-        Window window = minecraft.getWindow();
-        graphics.fill(0, 0, window.getWidth(), window.getHeight(), 0x50000000);
-
-        if(this.background != null)
+        for(AbstractWidget widget : this.items)
         {
-            graphics.blitSprite(this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            if(widget.mouseClicked(mouseX, mouseY, button))
+            {
+                return true;
+            }
         }
-
-        this.items.forEach(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
-
-        if(this.subMenu != null)
-        {
-            this.subMenu.render(graphics, mouseX, mouseY, deltaTick);
-        }
-
-        poseStack.popPose();
+        return false;
     }
 
     @Override
@@ -150,40 +69,30 @@ public class DropdownMenu extends AbstractWidget implements PopupMenu
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
-    {
-        if(!this.active || !this.visible)
-            return false;
-
-        if(this.subMenu != null)
-        {
-            if(this.subMenu.mouseClicked(mouseX, mouseY, button))
-            {
-                return true;
-            }
-            if(this.getRectangle().containsPoint((int) mouseX, (int) mouseY))
-            {
-                this.subMenu.hide();
-                this.subMenu = null;
-                return true;
-            }
-        }
-
-        for(AbstractWidget widget : this.items)
-        {
-            if(widget.mouseClicked(mouseX, mouseY, button))
-            {
-                return true;
-            }
-        }
-
-        return this.subMenu == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY);
-    }
-
-    @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer)
     {
         this.layout.visitWidgets(consumer);
+    }
+
+    @Override
+    protected void showChild(PopupMenu menu, ScreenRectangle rect)
+    {
+        super.showChild(menu, rect);
+    }
+
+    protected void setParent(@Nullable PopupMenu parent)
+    {
+        this.parent = parent;
+    }
+
+    protected boolean hasChild()
+    {
+        return this.child != null;
+    }
+
+    protected boolean isChild(PopupMenu child)
+    {
+        return this.child == child;
     }
 
     public static Builder builder(PopupMenuHandler handler)
@@ -193,7 +102,6 @@ public class DropdownMenu extends AbstractWidget implements PopupMenu
 
     public static class Builder
     {
-        private final PopupMenuHandler handler;
         private final DropdownMenu base;
         private final List<MenuItem> items = new ArrayList<>();
         private int minItemWidth = 0;
@@ -204,7 +112,6 @@ public class DropdownMenu extends AbstractWidget implements PopupMenu
 
         private Builder(PopupMenuHandler handler)
         {
-            this.handler = handler;
             this.base = new DropdownMenu(handler);
         }
 
@@ -253,7 +160,7 @@ public class DropdownMenu extends AbstractWidget implements PopupMenu
                 item.setSize(Math.max(maxWidth, this.minItemWidth), this.minItemHeight);
                 this.base.addItem(item);
             });
-            this.base.background = this.background;
+            this.base.setBackground(this.background);
             if(this.padding != null)
             {
                 this.base.layout.border(this.padding);
