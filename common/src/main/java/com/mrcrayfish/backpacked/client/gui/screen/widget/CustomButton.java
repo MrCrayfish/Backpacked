@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class CustomButton extends AbstractButton
 {
@@ -64,13 +65,13 @@ public class CustomButton extends AbstractButton
             {
                 contentWidth += this.gap;
             }
-            contentWidth += this.icon.width;
-            contentHeight = Math.max(contentHeight, this.icon.height);
+            contentWidth += this.icon.width();
+            contentHeight = Math.max(contentHeight, this.icon.height());
         }
         int contentLeft = this.getX() + (this.getWidth() - contentWidth) / 2;
         int contentTop = this.getY() + (this.getHeight() - contentHeight) / 2;
 
-        int textX = contentLeft + (this.icon != null ? this.gap + this.icon.width : 0);
+        int textX = contentLeft + (this.icon != null ? this.gap + this.icon.width() : 0);
         int textY = contentTop + (contentHeight - font.lineHeight) / 2 + 1;
         int textColour = this.active ? 0xFFFFFFFF : 0xFF8C7E6D;
         graphics.drawString(font, message, textX, textY, textColour, this.active);
@@ -78,10 +79,10 @@ public class CustomButton extends AbstractButton
         if(this.icon != null)
         {
             int iconX = contentLeft;
-            int iconY = contentTop + (contentHeight - this.icon.height) / 2;
+            int iconY = contentTop + (contentHeight - this.icon.height()) / 2;
             RenderSystem.enableBlend();
             graphics.setColor(1, 1, 1, this.active ? 1 : 0.25F);
-            graphics.blitSprite(this.icon.sprite, iconX, iconY, this.icon.width, this.icon.height);
+            graphics.blitSprite(this.icon.sprite(), iconX, iconY, this.icon.width(), this.icon.height());
             graphics.setColor(1, 1, 1, 1);
             RenderSystem.disableBlend();
         }
@@ -92,8 +93,6 @@ public class CustomButton extends AbstractButton
     {
         this.defaultButtonNarrationText(output);
     }
-
-    public record Icon(ResourceLocation sprite, int width, int height) {}
 
     public static Builder builder()
     {
@@ -139,7 +138,13 @@ public class CustomButton extends AbstractButton
 
         public Builder setIcon(ResourceLocation sprite, int width, int height)
         {
-            this.icon = new Icon(sprite, width, height);
+            this.icon = new StaticIcon(sprite, width, height);
+            return this;
+        }
+
+        public Builder setIcon(Supplier<ResourceLocation> supplier, int width, int height)
+        {
+            this.icon = new DynamicIcon(supplier, width, height);
             return this;
         }
 
@@ -159,6 +164,26 @@ public class CustomButton extends AbstractButton
         {
             this.texture = texture;
             return this;
+        }
+    }
+
+    private interface Icon
+    {
+        ResourceLocation sprite();
+
+        int width();
+
+        int height();
+    }
+
+    private record StaticIcon(ResourceLocation sprite, int width, int height) implements Icon {}
+
+    private record DynamicIcon(Supplier<ResourceLocation> supplier, int width, int height) implements Icon
+    {
+        @Override
+        public ResourceLocation sprite()
+        {
+            return this.supplier.get();
         }
     }
 }
