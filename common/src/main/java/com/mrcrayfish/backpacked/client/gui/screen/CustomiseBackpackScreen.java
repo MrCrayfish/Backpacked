@@ -169,7 +169,6 @@ public class CustomiseBackpackScreen extends ScreenWithPopupMenu
                 this.displayBackpack = this.displayBackpack.setShowEffects(value);
                 return false;
             }))
-                .addItem(PopupItem.create(Component.literal("Test"), DropdownMenu.builder(this).addItem(PopupItem.create(Component.literal("Test"), new AugmentMenu(this))).build()))
             .setAlignment(Alignment.ABOVE_LEFT)
             .build();
         this.settingsButton = this.addRenderableWidget(CustomButton.builder()
