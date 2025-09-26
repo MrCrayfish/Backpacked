@@ -1,29 +1,30 @@
 package com.mrcrayfish.backpacked.common.augment;
 
-import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
+import com.mrcrayfish.backpacked.core.ModRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.Comparator;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, ResourceLocation sprite, Component name)
+public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, ResourceLocation sprite, Component name) implements Comparable<AugmentType<?>>
 {
-    static final Map<ResourceLocation, AugmentType<?>> REGISTRY = HashBiMap.create();
+    public static final Comparator<AugmentType<?>> BY_NAME = Comparator.comparing(type -> type.name().getString());
     static final Codec<AugmentType<?>> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
-        AugmentType<?> type = REGISTRY.get(id);
+        AugmentType<?> type = ModRegistries.AUGMENT_TYPES.getValue(id);
         if(type != null)
             return DataResult.success(type);
         return DataResult.error(() -> "Unknown augment type: " + id);
     }, type -> {
-        if(REGISTRY.containsKey(type.id))
+        if(ModRegistries.AUGMENT_TYPES.containsKey(type.id))
             return DataResult.success(type.id);
         return DataResult.error(() -> "Unregistered augment type: " + type.id);
     });
@@ -36,20 +37,14 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
         );
     }
 
-    public static <T extends Augment<T>> void register(final AugmentType<T> type)
+    public static Stream<AugmentType<? extends Augment<?>>> stream()
     {
-        synchronized (REGISTRY)
-        {
-            AugmentType<?> old = REGISTRY.put(type.id(), type);
-            if(old != null)
-            {
-                throw new IllegalArgumentException("Duplicate augment: " + old.id());
-            }
-        }
+        return StreamSupport.stream(ModRegistries.AUGMENT_TYPES.spliterator(), false);
     }
 
-    public static Collection<AugmentType<?>> all()
+    @Override
+    public int compareTo(@NotNull AugmentType<?> other)
     {
-        return Collections.unmodifiableCollection(REGISTRY.values());
+        return BY_NAME.compare(this, other);
     }
 }

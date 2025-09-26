@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.serialization.Codec;
+import com.mrcrayfish.backpacked.core.ModRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,7 @@ public interface Augment<T extends Augment<T>>
         ((StreamCodec<RegistryFriendlyByteBuf, Augment<?>>) augment.type().streamCodec()).encode(buf, augment);
     }, buf -> {
         ResourceLocation id = buf.readResourceLocation();
-        AugmentType<?> type = AugmentType.REGISTRY.get(id);
+        AugmentType<?> type = ModRegistries.AUGMENT_TYPES.getValue(id);
         if(type == null)
             throw new IllegalStateException("Unknown augment type " + id);
         return type.streamCodec().decode(buf);

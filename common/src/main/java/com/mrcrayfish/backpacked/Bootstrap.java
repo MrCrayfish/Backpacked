@@ -53,8 +53,5 @@ public class Bootstrap
         MerchantTradeChallenge.Tracker.registerEvent();
         CraftingProgressTracker.registerEvent();
         UniqueCraftingProgressTracker.registerEvent();
-
-        AugmentType.register(EmptyAugment.TYPE);
-        AugmentType.register(GiantAugment.TYPE);
     }
 }

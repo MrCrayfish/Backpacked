@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.Layout;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
 public class AugmentPopupMenu extends PopupMenu
 {
@@ -28,7 +30,7 @@ public class AugmentPopupMenu extends PopupMenu
         this.setAlignment(Alignment.BELOW_LEFT);
         this.setBackground(Utils.rl("backpack/dropdown/background"));
         AtomicInteger count = new AtomicInteger();
-        AugmentType.all().stream().sorted(Comparator.comparing(type -> type.name().getString())).forEach(type -> {
+        AugmentType.stream().sorted().forEach(type -> {
             CustomButton augmentBtn = CustomButton.builder()
                 .setIcon(type.sprite(), 12, 12)
                 .setAction(btn -> {
