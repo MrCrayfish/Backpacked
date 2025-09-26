@@ -3,6 +3,8 @@ package com.mrcrayfish.backpacked.item;
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -40,6 +42,7 @@ public class BackpackItem extends Item
         super(properties
             .component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT)
             .component(ModDataComponents.UNLOCKABLE_SLOTS.get(), new UnlockableSlots(0))
+            .component(ModDataComponents.AUGMENTS.get(), Augments.EMPTY)
         );
     }
 
@@ -90,7 +93,8 @@ public class BackpackItem extends Item
             boolean owner = ownerPlayer.equals(openingPlayer);
             UnlockableSlots slots = item.getUnlockableSlots(backpack);
             Pair<Integer, Integer> data = BackpackHelper.createPaginationInfo(ownerPlayer);
-            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), title);
+            Augments augments = backpack.get(ModDataComponents.AUGMENTS.get());
+            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), augments, title);
             return true;
         }
         openBackpackManagement(ownerPlayer, false);

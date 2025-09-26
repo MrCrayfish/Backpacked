@@ -1,11 +1,14 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
+import com.mrcrayfish.backpacked.common.augment.impl.GiantAugment;
 import com.mrcrayfish.framework.api.event.InputEvents;
 
 /**
@@ -41,5 +44,8 @@ public class ClientBootstrap
     public static void init()
     {
         ClientEvents.init();
+        AugmentSettingsMenu.registerFactory(GiantAugment.TYPE, (handler, augment) -> {
+            return DropdownMenu.builder(handler).build();
+        });
     }
 }

@@ -103,6 +103,8 @@ public class BackpackInventory extends UnlockableContainer
     @Override
     public boolean stillValid(Player player)
     {
+        if(this.stack.isEmpty())
+            return false;
         if(!this.player.isAlive())
             return false;
         if(this.getState().isInvalid())
@@ -129,6 +131,9 @@ public class BackpackInventory extends UnlockableContainer
 
     public void saveItemsToStack()
     {
-        this.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.items));
+        if(!this.stack.isEmpty())
+        {
+            this.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.items));
+        }
     }
 }

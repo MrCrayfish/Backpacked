@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
@@ -34,11 +35,11 @@ public class NeoForgeBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockableSlots slots, int index, int total, Component title)
+    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, UnlockableSlots slots, int index, int total, Augments augments, Component title)
     {
         FrameworkAPI.openMenuWithData(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
-            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner, slots, index, total);
-        }, title), new BackpackContainerData(cols, rows, owner, slots, index, total));
+            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, cols, rows, owner, slots, index, total, augments);
+        }, title), new BackpackContainerData(cols, rows, owner, slots, index, total, augments));
     }
 
     @Override

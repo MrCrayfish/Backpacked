@@ -4,9 +4,12 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.AugmentPopupMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
@@ -14,12 +17,14 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
 import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
+import com.mrcrayfish.backpacked.network.message.MessageSetAugments;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -145,9 +150,40 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             }));
             navNext.setTooltip(navigateTooltip);
             navNext.active = backpackIndex < totalBackpacks - 1;
+
+            GridLayout augments = this.createAugmentsPanel();
+            augments.arrangeElements();
+            augments.visitWidgets(this::addRenderableWidget);
         }
 
         this.updateUnlockableSlots();
+    }
+
+    private GridLayout createAugmentsPanel()
+    {
+        GridLayout grid = new GridLayout(this.leftPos - 60, this.topPos + BACKPACK_TOP).spacing(2);
+        grid.addChild(CustomButton.builder().setSize(16, 16).setAction(btn -> {
+            new AugmentPopupMenu(this, this.menu.getAugments().first(), augment -> {
+                Augments updatedAugments = this.menu.getAugments().setFirst(augment);
+                this.menu.setAugments(updatedAugments);
+                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
+            }).show(btn);
+        }).setIcon(() -> this.menu.getAugments().first().type().sprite(), 12, 12).build(), 0, 0);
+        grid.addChild(CustomButton.builder().setSize(16, 16).setAction(btn -> {
+            new AugmentPopupMenu(this, this.menu.getAugments().second(), augment -> {
+                Augments updatedAugments = this.menu.getAugments().setSecond(augment);
+                this.menu.setAugments(updatedAugments);
+                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
+            }).show(btn);
+        }).setIcon(() -> this.menu.getAugments().second().type().sprite(), 12, 12).build(), 0, 1);
+        grid.addChild(CustomButton.builder().setSize(16, 16).setAction(btn -> {
+            new AugmentPopupMenu(this, this.menu.getAugments().third(), augment -> {
+                Augments updatedAugments = this.menu.getAugments().setThird(augment);
+                this.menu.setAugments(updatedAugments);
+                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
+            }).show(btn);
+        }).setIcon(() -> this.menu.getAugments().third().type().sprite(), 12, 12).build(), 0, 2);
+        return grid;
     }
 
     private List<AbstractButton> gatherQuickButtons()

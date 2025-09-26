@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
@@ -20,5 +21,9 @@ public class ModDataComponents
 
     public static final RegistryEntry<DataComponentType<UnlockableSlots>> UNLOCKABLE_SLOTS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_slots"), builder -> {
         return builder.persistent(UnlockableSlots.CODEC).networkSynchronized(UnlockableSlots.STREAM_CODEC);
+    });
+
+    public static final RegistryEntry<DataComponentType<Augments>> AUGMENTS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "augments"), builder -> {
+        return builder.persistent(Augments.CODEC).networkSynchronized(Augments.STREAM_CODEC);
     });
 }

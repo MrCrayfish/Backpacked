@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.PaymentItem;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -21,7 +22,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -43,13 +43,14 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
     private final int backpackIndex;
     private final int totalBackpacks;
     private final UnlockableController controller;
+    private Augments augments;
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner(), data.slots(), data.index(), data.total());
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), data.columns(), data.rows(), data.owner(), data.slots(), data.index(), data.total(), data.augments());
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockableSlots slots, int backpackIndex, int totalBackpacks)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int cols, int rows, boolean owner, UnlockableSlots slots, int backpackIndex, int totalBackpacks, Augments augments)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackContainer;
@@ -59,6 +60,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         this.backpackIndex = backpackIndex;
         this.totalBackpacks = totalBackpacks;
         this.controller = new BackpackUnlockableController(this, slots, List.of(playerInventory, backpackContainer));
+        this.augments = augments;
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
         backpackContainer.startOpen(playerInventory.player);
@@ -114,6 +116,16 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
     public UnlockableController getController()
     {
         return this.controller;
+    }
+
+    public Augments getAugments()
+    {
+        return this.augments;
+    }
+
+    public void setAugments(Augments augments)
+    {
+        this.augments = augments;
     }
 
     @Override

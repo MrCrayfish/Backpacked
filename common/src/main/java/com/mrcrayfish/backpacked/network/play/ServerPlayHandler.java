@@ -209,4 +209,29 @@ public class ServerPlayHandler
             BackpackItem.openBackpack(serverPlayer, serverPlayer);
         }
     }
+
+    public static void handleSetAugments(MessageSetAugments message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container and must be the wearer
+        if(!(serverPlayer.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+            return;
+
+        // Only works if in an equipped backpack, not a shelf
+        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
+            return;
+
+        // TODO validate if has unlocked augments, also validate augment settings, sync augments on fail
+
+        int backpackIndex = menu.getBackpackIndex();
+        ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
+        if(stack.isEmpty())
+            return;
+
+        stack.set(ModDataComponents.AUGMENTS.get(), message.augments());
+        menu.setAugments(message.augments());
+    }
 }

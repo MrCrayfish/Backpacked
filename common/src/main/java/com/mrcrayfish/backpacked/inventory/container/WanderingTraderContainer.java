@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
@@ -19,7 +20,7 @@ public class WanderingTraderContainer extends BackpackContainerMenu
 
     public WanderingTraderContainer(int id, Inventory playerInventory, WanderingTrader trader)
     {
-        super(id, playerInventory, trader.getInventory(), 8, 1, false, UnlockableSlots.ALL, 0, 1);
+        super(id, playerInventory, trader.getInventory(), 8, 1, false, UnlockableSlots.ALL, 0, 1, Augments.EMPTY);
         this.trader = trader;
     }
 

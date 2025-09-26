@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.blockentity;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
@@ -106,7 +107,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 UnlockableSlots slots = backpackItem.getUnlockableSlots(backpack);
                 if(slots != null)
                 {
-                    Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, 0, 1, title);
+                    Services.BACKPACK.openBackpackScreen(player, inventory, cols, rows, false, slots, 0, 1, Augments.EMPTY, title);
                 }
             });
         });
