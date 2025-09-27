@@ -9,7 +9,6 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
-import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
@@ -43,8 +42,6 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Author: MrCrayfish
@@ -187,28 +184,46 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private GridLayout createAugmentsPanel()
     {
-        GridLayout grid = new GridLayout(this.leftPos - 60, this.topPos + BACKPACK_TOP).spacing(3);
-        grid.addChild(this.createAugmentLayout(Augments::first, Augments::setFirst), 0, 0);
-        grid.addChild(this.createAugmentLayout(Augments::second, Augments::setSecond), 1, 0);
-        grid.addChild(this.createAugmentLayout(Augments::third, Augments::setThird), 2, 0);
+        GridLayout grid = new GridLayout().spacing(3);
+        grid.addChild(this.createAugmentLayout(Augments.Position.FIRST), 0, 0);
+        grid.addChild(this.createAugmentLayout(Augments.Position.SECOND), 1, 0);
+        grid.addChild(this.createAugmentLayout(Augments.Position.THIRD), 2, 0);
         return grid;
     }
 
-    private LinearLayout createAugmentLayout(Function<Augments, Augment<?>> getter, BiFunction<Augments, Augment<?>, Augments> setter)
+    private LinearLayout createAugmentLayout(Augments.Position position)
     {
         LinearLayout layout = LinearLayout.vertical().spacing(0);
-        layout.addChild(CustomButton.builder().setSize(20, 16).setAction(btn -> {
-            new AugmentPopupMenu(this, getter.apply(this.menu.getAugments()), augment -> {
-                Augments updatedAugments = setter.apply(this.menu.getAugments(), augment);
-                this.menu.setAugments(updatedAugments);
-                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
-            }).show(btn);
-        }).setIcon(() -> getter.apply(this.menu.getAugments()).type().sprite(), 10, 10).build(), LayoutSettings::alignHorizontallyCenter);
+        layout.addChild(CustomButton.builder()
+            .setSize(20, 20)
+            .setIcon(() -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
+            .setAction(btn -> {
+                new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
+                    this.updateAugments(this.menu.getAugments().setAugment(position, augment));
+                }).show(btn);
+            }).build(), LayoutSettings::alignHorizontallyCenter);
+
+        // Adds a toggle and settings button for the augment
         GridLayout options = new GridLayout().spacing(0);
-        options.addChild(CustomButton.builder().setSize(10, 10).setTexture(AUGMENT_TOGGLE_SPRITES).build(), 0, 0);
-        options.addChild(CustomButton.builder().setSize(10, 10).setTexture(AUGMENT_SETTINGS_SPRITES).build(), 0, 1);
+        options.addChild(CustomButton.toggle(this.menu.getAugments().getState(position))
+            .setSize(10, 10)
+            .setTexture(AUGMENT_TOGGLE_SPRITES)
+            .setAction(btn -> {
+                this.updateAugments(this.menu.getAugments().setState(position, btn.isToggled()));
+            }).build(), 0, 0);
+        options.addChild(CustomButton.builder()
+            .setSize(10, 10)
+            .setTexture(AUGMENT_SETTINGS_SPRITES)
+            .build(), 0, 1);
         layout.addChild(options, LayoutSettings::alignHorizontallyCenter);
+
         return layout;
+    }
+
+    private void updateAugments(Augments augments)
+    {
+        this.menu.setAugments(augments);
+        Network.getPlay().sendToServer(new MessageSetAugments(augments));
     }
 
     private List<AbstractButton> gatherQuickButtons()
