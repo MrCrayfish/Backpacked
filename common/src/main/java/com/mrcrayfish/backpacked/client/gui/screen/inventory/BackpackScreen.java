@@ -3,12 +3,16 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
+import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.AugmentPopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
+import com.mrcrayfish.backpacked.common.augment.Augment;
+import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
@@ -214,7 +218,18 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         options.addChild(CustomButton.builder()
             .setSize(10, 10)
             .setTexture(AUGMENT_SETTINGS_SPRITES)
-            .build(), 0, 1);
+            .setAction(btn -> {
+                Augment<?> augment = this.menu.getAugments().getAugment(position);
+                var factory = AugmentSettingsMenu.getFactory(augment);
+                if(factory != null) {
+                    factory.apply(this, augment).show(btn);
+                }
+            })
+            .setActive(() -> {
+                // Setting button should only be active if it has a settings factory
+                AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
+                return AugmentSettingsMenu.hasFactory(type);
+            }).build(), 0, 1);
         layout.addChild(options, LayoutSettings::alignHorizontallyCenter);
 
         return layout;

@@ -2,6 +2,9 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.ButtonItem;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
@@ -10,6 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.backpacked.common.augment.impl.GiantAugment;
 import com.mrcrayfish.framework.api.event.InputEvents;
+import net.minecraft.network.chat.Component;
 
 /**
  * Author: MrCrayfish
@@ -45,7 +49,7 @@ public class ClientBootstrap
     {
         ClientEvents.init();
         AugmentSettingsMenu.registerFactory(GiantAugment.TYPE, (handler, augment) -> {
-            return DropdownMenu.builder(handler).build();
+            return DropdownMenu.builder(handler).addItem(ButtonItem.create(Component.literal("Test"), () -> {})).build();
         });
     }
 }
