@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.client.augment;
 
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 
@@ -11,9 +11,9 @@ import java.util.function.BiFunction;
 
 public class AugmentSettingsMenu
 {
-    private static final Map<AugmentType<?>, BiFunction<PopupMenuHandler, ? extends Augment<?>, DropdownMenu>> FACTORIES = new HashMap<>();
+    private static final Map<AugmentType<?>, BiFunction<PopupMenuHandler, ? extends Augment<?>, PopupMenu>> FACTORIES = new HashMap<>();
 
-    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, BiFunction<PopupMenuHandler, T, DropdownMenu> menu)
+    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, BiFunction<PopupMenuHandler, T, PopupMenu> menu)
     {
         if(FACTORIES.put(type, menu) != null)
         {
@@ -27,8 +27,8 @@ public class AugmentSettingsMenu
     }
 
     @SuppressWarnings("unchecked")
-    public static BiFunction<PopupMenuHandler, Augment<?>, DropdownMenu> getFactory(Augment<?> augment)
+    public static BiFunction<PopupMenuHandler, Augment<?>, PopupMenu> getFactory(Augment<?> augment)
     {
-        return (BiFunction<PopupMenuHandler, Augment<?>, DropdownMenu>) FACTORIES.get(augment.type());
+        return (BiFunction<PopupMenuHandler, Augment<?>, PopupMenu>) FACTORIES.get(augment.type());
     }
 }
