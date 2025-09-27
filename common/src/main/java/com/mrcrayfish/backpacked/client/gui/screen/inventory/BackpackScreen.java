@@ -20,11 +20,13 @@ import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
 import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.network.message.MessageSetAugments;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -64,6 +66,18 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
     private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+
+    private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
+        Utils.rl("backpack/augment_toggle_on"),
+        Utils.rl("backpack/augment_toggle_off"),
+        Utils.rl("backpack/augment_toggle_on_focused"),
+        Utils.rl("backpack/augment_toggle_off_focused")
+    );
+    private static final WidgetSprites AUGMENT_SETTINGS_SPRITES = new WidgetSprites(
+        Utils.rl("backpack/augment_settings"),
+        Utils.rl("backpack/augment_settings_disabled"),
+        Utils.rl("backpack/augment_settings_focused")
+    );
 
     private static final int TITLE_LABEL_WIDTH = 110;
     private static final int TITLE_PADDING = 5;
@@ -173,7 +187,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private GridLayout createAugmentsPanel()
     {
-        GridLayout grid = new GridLayout(this.leftPos - 60, this.topPos + BACKPACK_TOP).spacing(2);
+        GridLayout grid = new GridLayout(this.leftPos - 60, this.topPos + BACKPACK_TOP).spacing(3);
         grid.addChild(this.createAugmentLayout(Augments::first, Augments::setFirst), 0, 0);
         grid.addChild(this.createAugmentLayout(Augments::second, Augments::setSecond), 1, 0);
         grid.addChild(this.createAugmentLayout(Augments::third, Augments::setThird), 2, 0);
@@ -183,7 +197,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private LinearLayout createAugmentLayout(Function<Augments, Augment<?>> getter, BiFunction<Augments, Augment<?>, Augments> setter)
     {
         LinearLayout layout = LinearLayout.vertical().spacing(0);
-        layout.addChild(CustomButton.builder().setSize(24, 16).setAction(btn -> {
+        layout.addChild(CustomButton.builder().setSize(20, 16).setAction(btn -> {
             new AugmentPopupMenu(this, getter.apply(this.menu.getAugments()), augment -> {
                 Augments updatedAugments = setter.apply(this.menu.getAugments(), augment);
                 this.menu.setAugments(updatedAugments);
@@ -191,9 +205,9 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             }).show(btn);
         }).setIcon(() -> getter.apply(this.menu.getAugments()).type().sprite(), 10, 10).build(), LayoutSettings::alignHorizontallyCenter);
         GridLayout options = new GridLayout().spacing(0);
-        options.addChild(CustomButton.builder().setSize(12, 12).build(), 0, 0);
-        options.addChild(CustomButton.builder().setSize(12, 12).build(), 0, 1);
-        layout.addChild(options);
+        options.addChild(CustomButton.builder().setSize(10, 10).setTexture(AUGMENT_TOGGLE_SPRITES).build(), 0, 0);
+        options.addChild(CustomButton.builder().setSize(10, 10).setTexture(AUGMENT_SETTINGS_SPRITES).build(), 0, 1);
+        layout.addChild(options, LayoutSettings::alignHorizontallyCenter);
         return layout;
     }
 
