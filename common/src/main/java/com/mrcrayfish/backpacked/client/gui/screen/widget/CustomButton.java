@@ -28,9 +28,10 @@ public class CustomButton extends AbstractButton
     private final int gap;
     private final Consumer<CustomButton> action;
     private final WidgetSprites texture;
+    private final @Nullable Supplier<Boolean> activeSupplier;
     private @Nullable Boolean state;
 
-    private CustomButton(int x, int y, int width, int height, Component text, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state)
+    private CustomButton(int x, int y, int width, int height, Component text, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state, @Nullable Supplier<Boolean> activeSupplier)
     {
         super(x, y, width, height, text);
         this.icon = icon;
@@ -38,6 +39,11 @@ public class CustomButton extends AbstractButton
         this.action = action;
         this.texture = texture;
         this.state = state;
+        this.activeSupplier = activeSupplier;
+        if(this.activeSupplier != null)
+        {
+            this.active = this.activeSupplier.get();
+        }
     }
 
     @Override
@@ -58,10 +64,13 @@ public class CustomButton extends AbstractButton
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
+        if(this.activeSupplier != null)
+        {
+            this.active = this.activeSupplier.get();
+        }
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        float alpha = this.state != null ? (this.active ? 1.0F : 0.5F) : this.alpha;
-        graphics.setColor(1, 1, 1, alpha);
+        graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
         boolean state = this.state != null ? this.state : this.active;
         graphics.blitSprite(this.texture.get(state, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         graphics.setColor(1, 1, 1, 1);
@@ -129,6 +138,7 @@ public class CustomButton extends AbstractButton
         private Consumer<CustomButton> action = btn -> {};
         private WidgetSprites texture = DEFAULT_SPRITES;
         private @Nullable Boolean state;
+        private @Nullable Supplier<Boolean> active;
 
         private Builder() {}
 
@@ -139,7 +149,7 @@ public class CustomButton extends AbstractButton
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.state);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.state, this.active);
         }
 
         public Builder setPosition(int x, int y)
@@ -189,6 +199,12 @@ public class CustomButton extends AbstractButton
         public Builder setTexture(WidgetSprites texture)
         {
             this.texture = texture;
+            return this;
+        }
+
+        public Builder setActive(Supplier<Boolean> active)
+        {
+            this.active = active;
             return this;
         }
     }
