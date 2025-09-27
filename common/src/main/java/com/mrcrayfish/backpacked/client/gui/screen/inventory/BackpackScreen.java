@@ -6,9 +6,10 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.AugmentPopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
+import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
@@ -25,6 +26,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -38,6 +41,8 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Author: MrCrayfish
@@ -80,6 +85,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private boolean opened;
     private int buttonCount;
     private int timer;
+    private GridLayout augmentsLayout;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -154,6 +160,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             GridLayout augments = this.createAugmentsPanel();
             augments.arrangeElements();
             augments.visitWidgets(this::addRenderableWidget);
+            int augmentsX = this.leftPos - augments.getWidth() - 2;
+            if(backpackHeight < 5 + augments.getHeight() + 5)
+                augmentsX = this.leftPos - augments.getWidth() - 8;
+            augments.setX(augmentsX);
+            augments.setY(this.topPos + BACKPACK_TOP + (backpackHeight - augments.getHeight()) / 2);
+            this.augmentsLayout = augments;
         }
 
         this.updateUnlockableSlots();
@@ -162,28 +174,27 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private GridLayout createAugmentsPanel()
     {
         GridLayout grid = new GridLayout(this.leftPos - 60, this.topPos + BACKPACK_TOP).spacing(2);
-        grid.addChild(CustomButton.builder().setSize(16, 16).setAction(btn -> {
-            new AugmentPopupMenu(this, this.menu.getAugments().first(), augment -> {
-                Augments updatedAugments = this.menu.getAugments().setFirst(augment);
-                this.menu.setAugments(updatedAugments);
-                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
-            }).show(btn);
-        }).setIcon(() -> this.menu.getAugments().first().type().sprite(), 12, 12).build(), 0, 0);
-        grid.addChild(CustomButton.builder().setSize(16, 16).setAction(btn -> {
-            new AugmentPopupMenu(this, this.menu.getAugments().second(), augment -> {
-                Augments updatedAugments = this.menu.getAugments().setSecond(augment);
-                this.menu.setAugments(updatedAugments);
-                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
-            }).show(btn);
-        }).setIcon(() -> this.menu.getAugments().second().type().sprite(), 12, 12).build(), 0, 1);
-        grid.addChild(CustomButton.builder().setSize(16, 16).setAction(btn -> {
-            new AugmentPopupMenu(this, this.menu.getAugments().third(), augment -> {
-                Augments updatedAugments = this.menu.getAugments().setThird(augment);
-                this.menu.setAugments(updatedAugments);
-                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
-            }).show(btn);
-        }).setIcon(() -> this.menu.getAugments().third().type().sprite(), 12, 12).build(), 0, 2);
+        grid.addChild(this.createAugmentLayout(Augments::first, Augments::setFirst), 0, 0);
+        grid.addChild(this.createAugmentLayout(Augments::second, Augments::setSecond), 1, 0);
+        grid.addChild(this.createAugmentLayout(Augments::third, Augments::setThird), 2, 0);
         return grid;
+    }
+
+    private LinearLayout createAugmentLayout(Function<Augments, Augment<?>> getter, BiFunction<Augments, Augment<?>, Augments> setter)
+    {
+        LinearLayout layout = LinearLayout.vertical().spacing(0);
+        layout.addChild(CustomButton.builder().setSize(24, 16).setAction(btn -> {
+            new AugmentPopupMenu(this, getter.apply(this.menu.getAugments()), augment -> {
+                Augments updatedAugments = setter.apply(this.menu.getAugments(), augment);
+                this.menu.setAugments(updatedAugments);
+                Network.getPlay().sendToServer(new MessageSetAugments(updatedAugments));
+            }).show(btn);
+        }).setIcon(() -> getter.apply(this.menu.getAugments()).type().sprite(), 10, 10).build(), LayoutSettings::alignHorizontallyCenter);
+        GridLayout options = new GridLayout().spacing(0);
+        options.addChild(CustomButton.builder().setSize(12, 12).build(), 0, 0);
+        options.addChild(CustomButton.builder().setSize(12, 12).build(), 0, 1);
+        layout.addChild(options);
+        return layout;
     }
 
     private List<AbstractButton> gatherQuickButtons()
@@ -330,11 +341,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         int buttonsHeight = QUICK_BUTTONS_PADDING + this.buttonCount * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP) + QUICK_BUTTONS_PADDING;
         int buttonsX = x + width - 3;
         if(buttonsHeight > backpackHeight - QUICK_BUTTONS_PADDING * 2)
-        {
             buttonsX += 6;
-        }
         int buttonsY = y + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2;
         graphics.blitSprite(LABEL_BACKGROUND, buttonsX, buttonsY, 20, buttonsHeight);
+
+        graphics.blitSprite(LABEL_BACKGROUND, this.augmentsLayout.getX() - 5, this.augmentsLayout.getY() - 5, 5 + this.augmentsLayout.getWidth() + 5, 5 + this.augmentsLayout.getHeight() + 5);
 
         // Backpack Inventory
         graphics.blitSprite(BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
