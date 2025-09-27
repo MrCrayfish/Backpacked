@@ -28,20 +28,31 @@ public class CustomButton extends AbstractButton
     private final int gap;
     private final Consumer<CustomButton> action;
     private final WidgetSprites texture;
+    private @Nullable Boolean state;
 
-    private CustomButton(int x, int y, int width, int height, Component text, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture)
+    private CustomButton(int x, int y, int width, int height, Component text, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state)
     {
         super(x, y, width, height, text);
         this.icon = icon;
         this.gap = gap;
         this.action = action;
         this.texture = texture;
+        this.state = state;
     }
 
     @Override
     public void onPress()
     {
+        if(this.state != null)
+        {
+            this.state = !this.state;
+        }
         this.action.accept(this);
+    }
+
+    public boolean isToggled()
+    {
+        return this.state != null ? this.state : true;
     }
 
     @Override
@@ -49,8 +60,10 @@ public class CustomButton extends AbstractButton
     {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        graphics.setColor(1, 1, 1, this.alpha);
-        graphics.blitSprite(this.texture.get(this.active, this.isHovered()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        float alpha = this.state != null ? (this.active ? 1.0F : 0.5F) : this.alpha;
+        graphics.setColor(1, 1, 1, alpha);
+        boolean state = this.state != null ? this.state : this.active;
+        graphics.blitSprite(this.texture.get(state, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         graphics.setColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
 
@@ -81,7 +94,7 @@ public class CustomButton extends AbstractButton
             int iconX = contentLeft;
             int iconY = contentTop + (contentHeight - this.icon.height()) / 2;
             RenderSystem.enableBlend();
-            graphics.setColor(1, 1, 1, this.active ? 1 : 0.25F);
+            graphics.setColor(1, 1, 1, alpha);
             graphics.blitSprite(this.icon.sprite(), iconX, iconY, this.icon.width(), this.icon.height());
             graphics.setColor(1, 1, 1, 1);
             RenderSystem.disableBlend();
@@ -99,6 +112,11 @@ public class CustomButton extends AbstractButton
         return new Builder();
     }
 
+    public static Builder toggle(boolean initialState)
+    {
+        return new Builder(initialState);
+    }
+
     public static final class Builder
     {
         private int x;
@@ -110,10 +128,18 @@ public class CustomButton extends AbstractButton
         private int gap = 2;
         private Consumer<CustomButton> action = btn -> {};
         private WidgetSprites texture = DEFAULT_SPRITES;
+        private @Nullable Boolean state;
+
+        private Builder() {}
+
+        private Builder(@Nullable Boolean state)
+        {
+            this.state = state;
+        }
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.state);
         }
 
         public Builder setPosition(int x, int y)
