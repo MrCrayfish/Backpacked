@@ -103,7 +103,7 @@ public class CustomButton extends AbstractButton
             int iconX = contentLeft;
             int iconY = contentTop + (contentHeight - this.icon.height()) / 2;
             RenderSystem.enableBlend();
-            graphics.setColor(1, 1, 1, alpha);
+            graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
             graphics.blitSprite(this.icon.sprite(), iconX, iconY, this.icon.width(), this.icon.height());
             graphics.setColor(1, 1, 1, 1);
             RenderSystem.disableBlend();
