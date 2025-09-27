@@ -8,25 +8,25 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Nullable;
 
-public record Augments(Augment<?> first, boolean firstState, Augment<?> second, boolean secondState, Augment<?> third, boolean thirdState)
+public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> secondAugment, boolean secondState, Augment<?> thirdAugment, boolean thirdState)
 {
     public static final Augments EMPTY = new Augments(EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true);
 
     public static final Codec<Augments> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-        Augment.CODEC.fieldOf("first").forGetter(Augments::first),
-        Codec.BOOL.fieldOf("firstState").forGetter(Augments::firstState),
-        Augment.CODEC.fieldOf("second").forGetter(Augments::second),
-        Codec.BOOL.fieldOf("secondState").forGetter(Augments::secondState),
-        Augment.CODEC.fieldOf("third").forGetter(Augments::third),
-        Codec.BOOL.fieldOf("thirdState").forGetter(Augments::thirdState)
+        Augment.CODEC.optionalFieldOf("first", EmptyAugment.INSTANCE).forGetter(Augments::firstAugment),
+        Codec.BOOL.optionalFieldOf("firstState", true).forGetter(Augments::firstState),
+        Augment.CODEC.optionalFieldOf("second", EmptyAugment.INSTANCE).forGetter(Augments::secondAugment),
+        Codec.BOOL.optionalFieldOf("secondState", true).forGetter(Augments::secondState),
+        Augment.CODEC.optionalFieldOf("third", EmptyAugment.INSTANCE).forGetter(Augments::thirdAugment),
+        Codec.BOOL.optionalFieldOf("thirdState", true).forGetter(Augments::thirdState)
     ).apply(builder, Augments::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Augments> STREAM_CODEC = StreamCodec.composite(
-        Augment.STREAM_CODEC, Augments::first,
+        Augment.STREAM_CODEC, Augments::firstAugment,
         ByteBufCodecs.BOOL, Augments::firstState,
-        Augment.STREAM_CODEC, Augments::second,
+        Augment.STREAM_CODEC, Augments::secondAugment,
         ByteBufCodecs.BOOL, Augments::secondState,
-        Augment.STREAM_CODEC, Augments::third,
+        Augment.STREAM_CODEC, Augments::thirdAugment,
         ByteBufCodecs.BOOL, Augments::thirdState,
         Augments::new
     );
@@ -34,18 +34,18 @@ public record Augments(Augment<?> first, boolean firstState, Augment<?> second, 
     public Augment<?> getAugment(Position position)
     {
         return switch(position) {
-            case FIRST -> this.first;
-            case SECOND -> this.second;
-            case THIRD -> this.third;
+            case FIRST -> this.firstAugment;
+            case SECOND -> this.secondAugment;
+            case THIRD -> this.thirdAugment;
         };
     }
 
     public Augments setAugment(Position position, Augment<?> augment)
     {
         return switch(position) {
-            case FIRST -> new Augments(augment, this.firstState, this.second, this.secondState, this.third, this.thirdState);
-            case SECOND -> new Augments(this.first, this.firstState, augment, this.secondState, this.third, this.thirdState);
-            case THIRD -> new Augments(this.first, this.firstState, this.second, this.secondState, augment, this.thirdState);
+            case FIRST -> new Augments(augment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState);
+            case SECOND -> new Augments(this.firstAugment, this.firstState, augment, this.secondState, this.thirdAugment, this.thirdState);
+            case THIRD -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, augment, this.thirdState);
         };
     }
 
@@ -61,9 +61,9 @@ public record Augments(Augment<?> first, boolean firstState, Augment<?> second, 
     public Augments setState(Position position, boolean state)
     {
         return switch(position) {
-            case FIRST -> new Augments(this.first, state, this.second, this.secondState, this.third, this.thirdState);
-            case SECOND -> new Augments(this.first, this.firstState, this.second, state, this.third, this.thirdState);
-            case THIRD -> new Augments(this.first, this.firstState, this.second, this.secondState, this.third, state);
+            case FIRST -> new Augments(this.firstAugment, state, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState);
+            case SECOND -> new Augments(this.firstAugment, this.firstState, this.secondAugment, state, this.thirdAugment, this.thirdState);
+            case THIRD -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, state);
         };
     }
 
@@ -71,12 +71,12 @@ public record Augments(Augment<?> first, boolean firstState, Augment<?> second, 
     @SuppressWarnings("unchecked")
     public <T extends Augment<T>> T findAndCast(AugmentType<T> type)
     {
-        if(this.first.type() == type)
-            return (T) this.first;
-        if(this.second.type() == type)
-            return (T) this.second;
-        if(this.third.type() == type)
-            return (T) this.third;
+        if(this.firstAugment.type() == type)
+            return (T) this.firstAugment;
+        if(this.secondAugment.type() == type)
+            return (T) this.secondAugment;
+        if(this.thirdAugment.type() == type)
+            return (T) this.thirdAugment;
         return null;
     }
 
