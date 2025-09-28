@@ -5,10 +5,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.AugmentPopupMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.EnumButton;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.MiniButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
@@ -188,16 +185,18 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private GridLayout createAugmentsPanel()
     {
-        GridLayout grid = new GridLayout().spacing(3);
+        GridLayout grid = new GridLayout().spacing(2);
         grid.addChild(this.createAugmentLayout(Augments.Position.FIRST), 0, 0);
-        grid.addChild(this.createAugmentLayout(Augments.Position.SECOND), 1, 0);
-        grid.addChild(this.createAugmentLayout(Augments.Position.THIRD), 2, 0);
+        grid.addChild(Divider.horizontal(30).colour(0xFFE0CDB7), 1, 0);
+        grid.addChild(this.createAugmentLayout(Augments.Position.SECOND), 2, 0);
+        grid.addChild(Divider.horizontal(30).colour(0xFFE0CDB7), 3, 0);
+        grid.addChild(this.createAugmentLayout(Augments.Position.THIRD), 4, 0);
         return grid;
     }
 
     private LinearLayout createAugmentLayout(Augments.Position position)
     {
-        LinearLayout layout = LinearLayout.vertical().spacing(0);
+        LinearLayout layout = LinearLayout.horizontal().spacing(0);
         layout.addChild(CustomButton.builder()
             .setSize(20, 20)
             .setIcon(() -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
@@ -229,7 +228,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 // Setting button should only be active if it has a settings factory
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 return AugmentSettingsMenu.hasFactory(type);
-            }).build(), 0, 1);
+            }).build(), 1, 0);
         layout.addChild(options, LayoutSettings::alignHorizontallyCenter);
 
         return layout;
