@@ -196,7 +196,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private LinearLayout createAugmentLayout(Augments.Position position)
     {
-        LinearLayout layout = LinearLayout.horizontal().spacing(0);
+        LinearLayout layout = LinearLayout.horizontal().spacing(1);
         layout.addChild(CustomButton.builder()
             .setSize(20, 20)
             .setIcon(() -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
