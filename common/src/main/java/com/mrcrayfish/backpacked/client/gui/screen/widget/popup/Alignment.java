@@ -16,20 +16,20 @@ public enum Alignment
         menu.setY(rectangle.top() - menu.getHeight());
     }),
     BELOW_LEFT((menu, rectangle) -> {
-        menu.setX(rectangle.left() - menu.border());
+        menu.setX(rectangle.left() - menu.padding());
         menu.setY(rectangle.bottom());
     }),
     BELOW_RIGHT((menu, rectangle) -> {
-        menu.setX(rectangle.right() - menu.getWidth() + menu.border());
+        menu.setX(rectangle.right() - menu.getWidth() + menu.padding());
         menu.setY(rectangle.bottom());
     }),
     END_TOP((menu, rectangle) -> {
         menu.setX(rectangle.right());
-        menu.setY(rectangle.top() - menu.border());
+        menu.setY(rectangle.top() - menu.padding());
     }),
     END_BOTTOM((menu, rectangle) -> {
         menu.setX(rectangle.right());
-        menu.setY(rectangle.bottom() - menu.getHeight() + menu.border());
+        menu.setY(rectangle.bottom() - menu.getHeight() + menu.padding());
     });
 
     private final BiConsumer<PopupMenu, ScreenRectangle> aligner;

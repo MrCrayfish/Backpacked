@@ -289,4 +289,42 @@ public class ServerPlayHandler
 
         Augments.set(stack, Augments.get(stack).setState(message.position(), message.state()));
     }
+
+    public static void handleUpdateAugment(MessageUpdateAugment message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container and must be the wearer
+        if(!(serverPlayer.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+            return;
+
+        // Only works if in an equipped backpack, not a shelf
+        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
+            return;
+
+        int backpackIndex = menu.getBackpackIndex();
+        ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
+        if(stack.isEmpty())
+            return;
+
+        // TODO check for unique augments
+        Augments currentAugments = Augments.get(stack);
+
+        // The updating augment must match the augment type of the position it is trying to update
+        Augment<?> currentAugment = currentAugments.getAugment(message.position());
+        Augment<?> updatedAugment = message.augment();
+        if(currentAugment.type() != updatedAugment.type())
+            return;
+
+        // Don't need to update if the augments are the same
+        if(Objects.equals(currentAugment, updatedAugment))
+            return;
+
+        // TODO perform validation
+
+        currentAugments = currentAugments.setAugment(message.position(), updatedAugment);
+        Augments.set(stack, currentAugments);
+    }
 }

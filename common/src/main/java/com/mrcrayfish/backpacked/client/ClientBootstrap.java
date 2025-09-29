@@ -1,10 +1,10 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.ButtonItem;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
+import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
@@ -48,8 +48,14 @@ public class ClientBootstrap
     public static void init()
     {
         ClientEvents.init();
-        AugmentSettingsMenu.registerFactory(GiantAugment.TYPE, (handler, augment) -> {
-            return DropdownMenu.builder(handler).addItem(ButtonItem.create(Component.literal("Test"), () -> {})).build();
+        AugmentSettingsFactories.registerFactory(GiantAugment.TYPE, (handler, augment, updater) -> {
+            return new AugmentSettingsMenu(handler, () -> {
+                PaddedLinearLayout layout = PaddedLinearLayout.horizontal().padding(5);
+                layout.addChild(CustomButton.builder().setSize(16, 16).setMessage(Component.literal("1")).setAction(customButton -> {
+                    updater.accept(augment.setSize(1));
+                }).build());
+                return layout;
+            });
         });
     }
 }

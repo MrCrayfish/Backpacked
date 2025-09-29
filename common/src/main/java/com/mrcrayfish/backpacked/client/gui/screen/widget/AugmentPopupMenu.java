@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
-import com.mrcrayfish.backpacked.client.gui.screen.layout.BorderedLinearLayout;
+import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
@@ -13,7 +13,6 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +22,7 @@ public class AugmentPopupMenu extends PopupMenu
 {
     private static final int MAX_COLUMNS = 5;
 
-    private final BorderedLinearLayout layout = (BorderedLinearLayout) new BorderedLinearLayout(LinearLayout.Orientation.VERTICAL).border(6).spacing(2);
+    private final PaddedLinearLayout layout = (PaddedLinearLayout) new PaddedLinearLayout(LinearLayout.Orientation.VERTICAL).padding(6).spacing(2);
 
     public AugmentPopupMenu(PopupMenuHandler handler, Augment<?> selected, Consumer<Augment<?>> updater)
     {
@@ -58,14 +57,8 @@ public class AugmentPopupMenu extends PopupMenu
     }
 
     @Override
-    protected int border()
+    protected int padding()
     {
-        return this.layout.getBorder();
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput output)
-    {
-        this.defaultButtonNarrationText(output);
+        return this.layout.padding();
     }
 }

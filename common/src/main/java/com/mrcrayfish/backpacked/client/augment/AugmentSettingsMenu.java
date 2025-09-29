@@ -1,34 +1,33 @@
 package com.mrcrayfish.backpacked.client.augment;
 
+import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
-import com.mrcrayfish.backpacked.common.augment.Augment;
-import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.util.Utils;
+import net.minecraft.client.gui.layouts.Layout;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
-public class AugmentSettingsMenu
+public class AugmentSettingsMenu extends PopupMenu
 {
-    private static final Map<AugmentType<?>, BiFunction<PopupMenuHandler, ? extends Augment<?>, PopupMenu>> FACTORIES = new HashMap<>();
+    private final Layout layout;
 
-    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, BiFunction<PopupMenuHandler, T, PopupMenu> menu)
+    public AugmentSettingsMenu(PopupMenuHandler handler, Supplier<Layout> layoutSupplier)
     {
-        if(FACTORIES.put(type, menu) != null)
-        {
-            throw new IllegalStateException("Duplicate factory for augment type: " + type.id());
-        }
+        super(handler);
+        this.setBackground(Utils.rl("backpack/dropdown/background"));
+        this.layout = layoutSupplier.get();
     }
 
-    public static <T extends Augment<T>> boolean hasFactory(AugmentType<T> type)
+    @Override
+    protected Layout layout()
     {
-        return FACTORIES.containsKey(type);
+        return this.layout;
     }
 
-    @SuppressWarnings("unchecked")
-    public static BiFunction<PopupMenuHandler, Augment<?>, PopupMenu> getFactory(Augment<?> augment)
+    @Override
+    protected int padding()
     {
-        return (BiFunction<PopupMenuHandler, Augment<?>, PopupMenu>) FACTORIES.get(augment.type());
+        return this.layout instanceof PaddedLayout padded ? padded.padding() : 0;
     }
 }

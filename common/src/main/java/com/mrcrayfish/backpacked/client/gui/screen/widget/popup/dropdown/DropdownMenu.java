@@ -3,12 +3,10 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
-import com.mrcrayfish.backpacked.client.gui.screen.layout.BorderedLinearLayout;
+import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.layouts.Layout;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +19,8 @@ import java.util.function.Consumer;
  */
 public class DropdownMenu extends PopupMenu
 {
-    private final BorderedLinearLayout layout = (BorderedLinearLayout)
-        BorderedLinearLayout.vertical().border(3).spacing(2);
+    private final PaddedLinearLayout layout = (PaddedLinearLayout)
+        PaddedLinearLayout.vertical().padding(3).spacing(2);
 
     private DropdownMenu(PopupMenuHandler handler)
     {
@@ -36,13 +34,10 @@ public class DropdownMenu extends PopupMenu
     }
 
     @Override
-    protected int border()
+    protected int padding()
     {
-        return this.layout.getBorder();
+        return this.layout.padding();
     }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer)
@@ -131,7 +126,7 @@ public class DropdownMenu extends PopupMenu
             menu.setBackground(this.background);
             if(this.border != null)
             {
-                menu.layout.border(this.border);
+                menu.layout.padding(this.border);
             }
             if(this.spacing != null)
             {

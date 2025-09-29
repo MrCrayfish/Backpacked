@@ -2,10 +2,12 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class PopupMenu extends AbstractWidget
 {
@@ -32,7 +36,7 @@ public abstract class PopupMenu extends AbstractWidget
 
     protected abstract Layout layout();
 
-    protected abstract int border();
+    protected abstract int padding();
 
     protected void setAlignment(Alignment alignment)
     {
@@ -128,6 +132,9 @@ public abstract class PopupMenu extends AbstractWidget
         // If click occurred inside the menu, just mark as handled to prevent it from hiding
         return this.child == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY);
     }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     public void show(AbstractWidget widget)
     {
