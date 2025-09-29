@@ -21,10 +21,4 @@ public record EmptyAugment() implements Augment<EmptyAugment>
     {
         return TYPE;
     }
-
-    @Override
-    public boolean hasSettings()
-    {
-        return false;
-    }
 }

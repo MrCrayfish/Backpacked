@@ -3,10 +3,15 @@ package com.mrcrayfish.backpacked.network.play;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.augment.Augment;
+import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.SavedAugments;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
@@ -226,12 +231,49 @@ public class ServerPlayHandler
 
         // TODO validate if has unlocked augments, also validate augment settings, sync augments on fail
 
+        // TODO add events to aguments when they are added and removed so they can add/remove data like components (e.g. fluid tank)
+
         int backpackIndex = menu.getBackpackIndex();
         ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
         if(stack.isEmpty())
             return;
 
-        stack.set(ModDataComponents.AUGMENTS.get(), message.augments());
-        menu.setAugments(message.augments());
+        // Must always be 3 in size, to match Augments member count
+        List<ResourceLocation> typeIds = message.augments().toTypeIds();
+        if(typeIds.size() != 3)
+            return;
+
+        // TODO check for unique augments
+
+        // Construct the new augments, using saved
+        Augments updatedAugments = Augments.EMPTY;
+        SavedAugments savedAugments = SavedAugments.get(stack);
+        for(int i = 0; i < typeIds.size(); i++)
+        {
+            AugmentType<?> type = ModRegistries.AUGMENT_TYPES.getValue(typeIds.get(i));
+            if(type == null)
+                throw new IllegalArgumentException("Player sent an invalid augment type");
+            Augment<?> augment = savedAugments.getSavedOrCreateDefault(type);
+            updatedAugments = updatedAugments.setAugment(Augments.Position.values()[i], augment);
+            // Updated augments should no longer be in the saved augments
+            savedAugments = savedAugments.remove(augment);
+        }
+
+        // When an augment is switched out, preserve the settings
+        Augments currentAugments = Augments.get(stack);
+        for(var position : Augments.Position.values())
+        {
+            Augment<?> current = currentAugments.getAugment(position);
+            Augment<?> updated = updatedAugments.getAugment(position);
+            if(current.hasSettings() && current.type() != updated.type() && !Objects.equals(current, updated))
+            {
+                savedAugments = savedAugments.add(current); // TODO add in one call, rather than many
+            }
+        }
+
+        SavedAugments.set(stack, savedAugments);
+        Augments.set(stack, updatedAugments);
+        menu.setAugments(updatedAugments);
+        // TODO sync back to client. RIght now the client assumes the packet to the server is sucessful
     }
 }

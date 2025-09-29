@@ -3,10 +3,15 @@ package com.mrcrayfish.backpacked.common.augment;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> secondAugment, boolean secondState, Augment<?> thirdAugment, boolean thirdState)
 {
@@ -80,8 +85,23 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
         return null;
     }
 
+    public List<ResourceLocation> toTypeIds()
+    {
+        return List.of(this.firstAugment.type().id(), this.secondAugment.type().id(), this.thirdAugment.type().id());
+    }
+
     public enum Position
     {
         FIRST, SECOND, THIRD;
+    }
+
+    public static Augments get(ItemStack stack)
+    {
+        return stack.getOrDefault(ModDataComponents.AUGMENTS.get(), Augments.EMPTY);
+    }
+
+    public static void set(ItemStack stack, Augments augments)
+    {
+        stack.set(ModDataComponents.AUGMENTS.get(), augments);
     }
 }

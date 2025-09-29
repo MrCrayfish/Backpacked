@@ -23,5 +23,8 @@ public interface Augment<T extends Augment<T>>
 
     AugmentType<T> type();
 
-    boolean hasSettings();
+    default boolean hasSettings()
+    {
+        return false;
+    }
 }
