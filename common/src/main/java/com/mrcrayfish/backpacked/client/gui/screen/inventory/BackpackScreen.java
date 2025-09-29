@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
@@ -15,10 +14,7 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpackIndex;
-import com.mrcrayfish.backpacked.network.message.MessageRequestCustomisation;
-import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
-import com.mrcrayfish.backpacked.network.message.MessageSetAugments;
+import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -202,6 +198,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setIcon(() -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
             .setAction(btn -> {
                 new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
+                    Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
                 }).show(btn);
             }).build(), LayoutSettings::alignHorizontallyCenter);
@@ -212,6 +209,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setSize(10, 10)
             .setTexture(AUGMENT_TOGGLE_SPRITES)
             .setAction(btn -> {
+                Network.getPlay().sendToServer(new MessageSetAugmentState(position, btn.isToggled()));
                 this.updateAugments(this.menu.getAugments().setState(position, btn.isToggled()));
             }).build(), 0, 0);
         options.addChild(CustomButton.builder()
@@ -237,7 +235,6 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private void updateAugments(Augments augments)
     {
         this.menu.setAugments(augments);
-        Network.getPlay().sendToServer(new MessageSetAugments(augments));
     }
 
     private List<AbstractButton> gatherQuickButtons()

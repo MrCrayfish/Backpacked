@@ -215,7 +215,7 @@ public class ServerPlayHandler
         }
     }
 
-    public static void handleSetAugments(MessageSetAugments message, MessageContext context)
+    public static void handleChangeAugment(MessageChangeAugment message, MessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -229,51 +229,64 @@ public class ServerPlayHandler
         if(!(menu.getBackpackInventory() instanceof BackpackInventory))
             return;
 
-        // TODO validate if has unlocked augments, also validate augment settings, sync augments on fail
+        int backpackIndex = menu.getBackpackIndex();
+        ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
+        if(stack.isEmpty())
+            return;
 
+        // TODO validate if has unlocked augments, also validate augment settings, sync augments on fail
         // TODO add events to aguments when they are added and removed so they can add/remove data like components (e.g. fluid tank)
+
+        AugmentType<?> type = ModRegistries.AUGMENT_TYPES.getValue(message.augmentTypeId());
+        if(type == null)
+            throw new IllegalArgumentException("Player sent an invalid augment type");
+
+        Augments currentAugments = Augments.get(stack);
+        SavedAugments savedAugments = SavedAugments.get(stack);
+
+        // Don't update if the augment is the same
+        Augment<?> updatedAugment = savedAugments.getSavedOrCreateDefault(type);
+        Augment<?> currentAugment = currentAugments.getAugment(message.position());
+        if(updatedAugment.equals(currentAugment))
+            return;
+
+        // TODO check for unique augments
+
+        // If the current augment has settings, save them so it can be restored later
+        if(currentAugment.hasSettings() && currentAugment.type() != updatedAugment.type())
+            savedAugments = savedAugments.add(currentAugment);
+
+        // Ensure updated augment is no longer in saved
+        savedAugments = savedAugments.remove(updatedAugment);
+        currentAugments = currentAugments.setAugment(message.position(), updatedAugment);
+
+        // Finally update the stack with the changes
+        SavedAugments.set(stack, savedAugments);
+        Augments.set(stack, currentAugments);
+        menu.setAugments(currentAugments);
+
+        // TODO sync back to client. RIght now the client assumes the packet to the server is sucessful
+    }
+
+    public static void handleSetAugmentState(MessageSetAugmentState message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container and must be the wearer
+        if(!(serverPlayer.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+            return;
+
+        // Only works if in an equipped backpack, not a shelf
+        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
+            return;
 
         int backpackIndex = menu.getBackpackIndex();
         ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
         if(stack.isEmpty())
             return;
 
-        // Must always be 3 in size, to match Augments member count
-        List<ResourceLocation> typeIds = message.augments().toTypeIds();
-        if(typeIds.size() != 3)
-            return;
-
-        // TODO check for unique augments
-
-        // Construct the new augments, using saved
-        Augments updatedAugments = Augments.EMPTY;
-        SavedAugments savedAugments = SavedAugments.get(stack);
-        for(int i = 0; i < typeIds.size(); i++)
-        {
-            AugmentType<?> type = ModRegistries.AUGMENT_TYPES.getValue(typeIds.get(i));
-            if(type == null)
-                throw new IllegalArgumentException("Player sent an invalid augment type");
-            Augment<?> augment = savedAugments.getSavedOrCreateDefault(type);
-            updatedAugments = updatedAugments.setAugment(Augments.Position.values()[i], augment);
-            // Updated augments should no longer be in the saved augments
-            savedAugments = savedAugments.remove(augment);
-        }
-
-        // When an augment is switched out, preserve the settings
-        Augments currentAugments = Augments.get(stack);
-        for(var position : Augments.Position.values())
-        {
-            Augment<?> current = currentAugments.getAugment(position);
-            Augment<?> updated = updatedAugments.getAugment(position);
-            if(current.hasSettings() && current.type() != updated.type() && !Objects.equals(current, updated))
-            {
-                savedAugments = savedAugments.add(current); // TODO add in one call, rather than many
-            }
-        }
-
-        SavedAugments.set(stack, savedAugments);
-        Augments.set(stack, updatedAugments);
-        menu.setAugments(updatedAugments);
-        // TODO sync back to client. RIght now the client assumes the packet to the server is sucessful
+        Augments.set(stack, Augments.get(stack).setState(message.position(), message.state()));
     }
 }

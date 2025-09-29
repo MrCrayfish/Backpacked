@@ -30,7 +30,8 @@ public class Network
         .registerPlayMessage("unlock_slot", MessageUnlockSlot.class, MessageUnlockSlot.STREAM_CODEC, MessageUnlockSlot::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("sync_unlock_slot", MessageSyncUnlockSlot.class, MessageSyncUnlockSlot.STREAM_CODEC, MessageSyncUnlockSlot::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("navigate_backpack_index", MessageNavigateBackpackIndex.class, MessageNavigateBackpackIndex.STREAM_CODEC, MessageNavigateBackpackIndex::handle, PacketFlow.SERVERBOUND)
-        .registerPlayMessage("set_augments", MessageSetAugments.class, MessageSetAugments.STREAM_CODEC, MessageSetAugments::handle, PacketFlow.SERVERBOUND)
+        .registerPlayMessage("change_augment", MessageChangeAugment.class, MessageChangeAugment.STREAM_CODEC, MessageChangeAugment::handle, PacketFlow.SERVERBOUND)
+        .registerPlayMessage("set_augment_state", MessageSetAugmentState.class, MessageSetAugmentState.STREAM_CODEC, MessageSetAugmentState::handle, PacketFlow.SERVERBOUND)
         .build();
 
     public static void init() {}

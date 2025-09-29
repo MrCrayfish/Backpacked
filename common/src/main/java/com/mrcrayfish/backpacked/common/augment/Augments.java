@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -93,6 +94,8 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
     public enum Position
     {
         FIRST, SECOND, THIRD;
+
+        public static final StreamCodec<FriendlyByteBuf, Position> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Position.class));
     }
 
     public static Augments get(ItemStack stack)
