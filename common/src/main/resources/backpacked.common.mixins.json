@@ -1,28 +1,29 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.mrcrayfish.backpacked.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "refmap": "backpacked.refmap.json",
-  "mixins": [
-    "common.BredAnimalsTriggerMixin",
-    "common.EntityMixin",
-    "common.ItemEntityMixin",
-    "common.MerchantResultSlotMixin",
-    "common.MobMixin",
-    "common.PackDetectorMixin",
-    "common.PackMixin",
-    "common.PlayerInteractTriggerMixin",
-    "common.PlayerInventoryMixin",
-    "common.PlayerMixin",
-    "common.ServerPlayerGameModeMixin",
-    "common.ServerPlayerMixin"
-  ],
-  "client": [
-  ],
-  "injectors": {
-    "defaultRequire": 1,
-    "maxShiftBy": 1
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.mrcrayfish.backpacked.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "backpacked.refmap.json",
+    "mixins": [
+        "common.BredAnimalsTriggerMixin",
+        "common.EntityMixin",
+        "common.ItemEntityMixin",
+        "common.MerchantResultSlotMixin",
+        "common.MobMixin",
+        "common.PackDetectorMixin",
+        "common.PackMixin",
+        "common.PlayerInteractTriggerMixin",
+        "common.PlayerInventoryMixin",
+        "common.PlayerMixin",
+        "common.ServerPlayerGameModeMixin",
+        "common.ServerPlayerMixin"
+    ],
+    "client": [
+        "client.AbstractSelectionListMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1,
+        "maxShiftBy": 1
   }
 }
   
