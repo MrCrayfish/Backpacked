@@ -6,6 +6,8 @@ import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class PopupMenu extends AbstractWidget
+public abstract class PopupMenu extends AbstractWidget implements ContainerEventHandler
 {
     private final PopupMenuHandler handler;
     private @Nullable List<AbstractWidget> cachedWidgets;
@@ -26,6 +28,7 @@ public abstract class PopupMenu extends AbstractWidget
     private @Nullable ResourceLocation background;
     protected @Nullable PopupMenu parent;
     protected @Nullable PopupMenu child;
+    protected @Nullable GuiEventListener focused;
 
     public PopupMenu(PopupMenuHandler handler)
     {
@@ -116,6 +119,7 @@ public abstract class PopupMenu extends AbstractWidget
             {
                 this.child.hide();
                 this.child = null;
+                this.setFocused(this);
                 return true;
             }
         }
@@ -125,16 +129,70 @@ public abstract class PopupMenu extends AbstractWidget
         {
             if(widget.mouseClicked(mouseX, mouseY, button))
             {
+                this.setFocused(widget);
                 return true;
             }
         }
 
         // If click occurred inside the menu, just mark as handled to prevent it from hiding
-        return this.child == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY);
+        if(this.child == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY))
+        {
+            this.setFocused(this);
+            return true;
+        }
+        return false;
     }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput output) {}
+
+    @Override
+    public List<? extends GuiEventListener> children()
+    {
+        return this.getWidgets();
+    }
+
+    @Override
+    public boolean isDragging()
+    {
+        return false;
+    }
+
+    @Override
+    public void setDragging(boolean b)
+    {
+
+    }
+
+    @Override
+    public @Nullable GuiEventListener getFocused()
+    {
+        if(this.parent != null)
+        {
+            return this.parent.getFocused();
+        }
+        return this.focused;
+    }
+
+    @Override
+    public void setFocused(@Nullable GuiEventListener listener)
+    {
+        // The root popup should be the controller
+        if(this.parent != null)
+        {
+            this.parent.setFocused(listener);
+            return;
+        }
+        if(this.focused != null)
+        {
+            this.focused.setFocused(false);
+        }
+        if(listener != null)
+        {
+            listener.setFocused(true);
+        }
+        this.focused = listener;
+    }
 
     public void show(AbstractWidget widget)
     {
@@ -148,6 +206,7 @@ public abstract class PopupMenu extends AbstractWidget
         if(this.parent == null)
         {
             this.handler.setPopupMenu(this);
+            this.setFocused(this);
         }
         else if(this.parent.visible)
         {
@@ -156,6 +215,7 @@ public abstract class PopupMenu extends AbstractWidget
                 this.parent.child.hide();
             }
             this.parent.child = this;
+            this.setFocused(this);
         }
         else
         {
@@ -171,6 +231,7 @@ public abstract class PopupMenu extends AbstractWidget
         }
         this.child = null;
         this.visible = false;
+        this.setFocused(this.parent);
     }
 
     private void updatePosition(ScreenRectangle rect)

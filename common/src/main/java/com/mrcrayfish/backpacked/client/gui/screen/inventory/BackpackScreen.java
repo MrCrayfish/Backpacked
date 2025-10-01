@@ -428,7 +428,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     @Override
     public boolean keyPressed(int key, int scanCode, int action)
     {
-        if(Keys.KEY_BACKPACK.matches(key, scanCode))
+        if(!this.hasPopupMenu() && Keys.KEY_BACKPACK.matches(key, scanCode))
         {
             this.onClose();
             return true;

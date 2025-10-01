@@ -1,14 +1,12 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.ItemCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
 import com.mrcrayfish.backpacked.client.gui.particle.ScreenParticles;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.CustomContainerScreen;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
@@ -16,7 +14,6 @@ import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -38,7 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements PopupMenuHandler
+public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends CustomContainerScreen<T>
 {
     private static final Component HOLD_TO_UNLOCK = Component.translatable("backpacked.gui.hold_to_unlock");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
@@ -56,7 +53,6 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     private int heldUnlockTime;
     private int totalUnlockTime;
     protected boolean hideLockedSlots;
-    protected @Nullable PopupMenu popup;
 
     public UnlockableContainerScreen(T menu, Inventory inventory, Component title)
     {
@@ -67,16 +63,6 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     public void setHideLockedSlots(boolean hideLockedSlots)
     {
         this.hideLockedSlots = hideLockedSlots;
-    }
-
-    @Override
-    public void setPopupMenu(@Nullable PopupMenu menu)
-    {
-        if(this.popup != null && this.popup != menu)
-        {
-            this.popup.hide();
-        }
-        this.popup = menu;
     }
 
     @Override
@@ -112,18 +98,13 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
         this.hoveredLockedSlot = null;
-        boolean hasPopup = this.popup != null;
-        super.render(graphics, hasPopup ? -1000 : mouseX, hasPopup ? -1000 : mouseY, partialTicks);
-        if(this.popup != null)
-        {
-            PoseStack poseStack = graphics.pose();
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 300);
-            this.popup.render(graphics, mouseX, mouseY, partialTicks);
-            poseStack.popPose();
-        }
+        super.render(graphics, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
+    {
         this.screenParticles.renderParticles(graphics, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
@@ -220,15 +201,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(this.popup != null)
-        {
-            if(!this.popup.mouseClicked(mouseX, mouseY, button))
-            {
-                this.setPopupMenu(null);
-            }
-            return true;
-        }
-        if(button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
+        if(!this.hasPopupMenu() && button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
         {
             if(this.hoveredLockedSlot.canAffordToUnlock(this.player, 1))
             {
@@ -242,7 +215,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
     {
-        if(button == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked())
+        if(!this.hasPopupMenu() && button == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked())
         {
             if(!this.selectedSlots.contains(this.hoveredLockedSlot))
             {

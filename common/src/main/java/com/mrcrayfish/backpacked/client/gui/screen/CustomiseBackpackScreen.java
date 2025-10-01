@@ -12,8 +12,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.ScreenWithPopupMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.PopupItem;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.CustomScreen;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
@@ -52,7 +51,7 @@ import java.util.stream.Collectors;
 /**
  * Author: MrCrayfish
  */
-public class CustomiseBackpackScreen extends ScreenWithPopupMenu
+public class CustomiseBackpackScreen extends CustomScreen
 {
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
@@ -358,30 +357,33 @@ public class CustomiseBackpackScreen extends ScreenWithPopupMenu
     }
 
     @Override
-    protected boolean onMouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
+        if(!this.hasPopupMenu())
         {
-            if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
             {
-                int hoveredIndex = this.getHoveredIndex((int) mouseX, (int) mouseY);
-                if(hoveredIndex != -1)
+                if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    CosmeticItem item = this.items.get(hoveredIndex);
-                    if(item.onMouseClicked(this.minecraft))
+                    int hoveredIndex = this.getHoveredIndex((int) mouseX, (int) mouseY);
+                    if(hoveredIndex != -1)
                     {
-                        return true;
+                        CosmeticItem item = this.items.get(hoveredIndex);
+                        if(item.onMouseClicked(this.minecraft))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
         }
-        return super.onMouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY)
     {
-        if(!this.scrollBar.isGrabbed() && ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
+        if(!this.hasPopupMenu() && !this.scrollBar.isGrabbed() && ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
         {
             int scrollableContentHeight = Math.max(this.items.size() * (ITEM_HEIGHT + ITEM_LIST_GAP) - ITEM_LIST_HEIGHT, 0);
             double scrollNormal = this.scrollBar.getScroll((int) mouseY);

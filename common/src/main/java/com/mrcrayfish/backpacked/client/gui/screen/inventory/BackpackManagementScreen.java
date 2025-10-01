@@ -64,13 +64,6 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
-    {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(graphics, mouseX, mouseY);
-    }
-
-    @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
         int titleWidth = this.font.width(this.title);
