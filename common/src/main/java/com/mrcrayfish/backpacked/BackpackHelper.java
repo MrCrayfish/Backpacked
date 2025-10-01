@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -291,7 +290,7 @@ public class BackpackHelper
         return access.backpacked$streamNonNullBackpackInventories().map(inventory -> {
             ItemStack stack = inventory.getBackpackStack();
             Augments augments = Augments.get(stack);
-            return Pair.of(inventory, augments.findAndCast(type));
+            return Pair.of(inventory, augments.findEnabledAndCast(type));
         }).filter(pair -> Objects.nonNull(pair.getSecond())).toList();
     }
 }

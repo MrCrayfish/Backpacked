@@ -75,13 +75,13 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public <T extends Augment<T>> T findAndCast(AugmentType<T> type)
+    public <T extends Augment<T>> T findEnabledAndCast(AugmentType<T> type)
     {
-        if(this.firstAugment.type() == type)
+        if(this.firstState && this.firstAugment.type() == type)
             return (T) this.firstAugment;
-        if(this.secondAugment.type() == type)
+        if(this.secondState && this.secondAugment.type() == type)
             return (T) this.secondAugment;
-        if(this.thirdAugment.type() == type)
+        if(this.thirdState && this.thirdAugment.type() == type)
             return (T) this.thirdAugment;
         return null;
     }
