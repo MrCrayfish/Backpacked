@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mojang.serialization.DataResult;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
 import net.minecraft.core.NonNullList;
@@ -23,9 +24,9 @@ public class CustomDataSerializers
 
     public static final DataSerializer<NonNullList<ItemStack>> BACKPACKS = new DataSerializer<>(ByteBufCodecs.collection(NonNullList::createWithCapacity, ItemStack.OPTIONAL_STREAM_CODEC, Config.MAX_EQUIPPABLE_BACKPACKS), (items, provider) -> {
         DataResult<Tag> result = ItemStack.OPTIONAL_CODEC.sizeLimitedListOf(Config.MAX_EQUIPPABLE_BACKPACKS).encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), items);
-        return result.result().orElse(null);
+        return result.resultOrPartial(Constants.LOG::error).orElse(null);
     }, (tag, provider) -> {
         DataResult<NonNullList<ItemStack>> result = BackpackedCodecs.BACKPACK_LIST.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag);
-        return result.result().orElse(NonNullList.withSize(Config.MAX_EQUIPPABLE_BACKPACKS, ItemStack.EMPTY));
+        return result.resultOrPartial(Constants.LOG::error).orElse(NonNullList.withSize(Config.MAX_EQUIPPABLE_BACKPACKS, ItemStack.EMPTY));
     });
 }
