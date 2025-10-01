@@ -1,10 +1,13 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
+import com.mrcrayfish.backpacked.client.gui.ItemSprites;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E>
@@ -19,6 +22,8 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected int scrollBarHighlightColour = 0xFF332E2D;
     protected int itemSpacing = 2;
     protected boolean scrolling;
+    protected @Nullable ResourceLocation background;
+    protected @Nullable ItemSprites itemBackground;
 
     public CustomSelectionList(int width, int height, int x, int y, int itemHeight)
     {
@@ -65,6 +70,16 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     public void setItemSpacing(int itemSpacing)
     {
         this.itemSpacing = itemSpacing;
+    }
+
+    public void setBackground(@Nullable ResourceLocation background)
+    {
+        this.background = background;
+    }
+
+    public void setItemBackground(@Nullable ItemSprites itemBackground)
+    {
+        this.itemBackground = itemBackground;
     }
 
     @Override
@@ -145,8 +160,10 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Draw outlines and background
-        graphics.fill(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight(), this.outlineColour);
-        graphics.fill(this.getX() + 1, this.getY() + 1, this.getX() + this.getWidth() - 1, this.getY() + this.getHeight() - 1, this.backgroundColour);
+        if(this.background != null)
+        {
+            graphics.blitSprite(this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        }
 
         // Draw items
         graphics.enableScissor(this.getRowLeft() - 1, this.getY() + 1, this.getRowRight() + 1, this.getY() + this.getHeight() - 1);
@@ -185,23 +202,27 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
             int rowTop = this.getRowTop(i);
             if(rowTop <= this.getY() + this.getHeight())
             {
+                this.renderItemBackground(graphics, i, rowLeft, rowTop, rowWidth, rowHeight, mouseX, mouseY);
                 this.renderItem(graphics, mouseX, mouseY, partialTick, i, rowLeft, rowTop, rowWidth, rowHeight);
                 continue;
             }
             // Break if the item is below the content area. Also stops drawing subsequent items.
             break;
         }
+    }
 
+    private void renderItemBackground(GuiGraphics graphics, int index, int rowLeft, int rowTop, int rowWidth, int rowHeight, int mouseX, int mouseY)
+    {
+        if(this.itemBackground != null)
+        {
+            boolean selected = this.isSelectedItem(index);
+            boolean hovered = ScreenUtil.isPointInArea(mouseX, mouseY, rowLeft, rowTop, rowWidth, rowHeight);
+            graphics.blitSprite(this.itemBackground.get(selected, hovered), rowLeft, rowTop, rowWidth, rowHeight);
+        }
     }
 
     @Override
-    protected void renderSelection(GuiGraphics graphics, int top, int rowWidth, int itemHeight, int outlineColour, int innerColour)
-    {
-        int start = this.getRowLeft();
-        int end = this.getRowRight();
-        graphics.fill(start - 1, top - 1, end + 1, top + itemHeight + 1, outlineColour);
-        //graphics.fill(start + 1, top - 1, end - 1, top + itemHeight + 1, innerColour);
-    }
+    protected void renderSelection(GuiGraphics graphics, int top, int rowWidth, int rowHeight, int outlineColour, int innerColour) {}
 
     @Override
     protected void updateScrollingState(double mouseX, double mouseY, int button)
