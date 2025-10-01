@@ -1,9 +1,15 @@
 package com.mrcrayfish.backpacked;
 
 import com.mojang.datafixers.util.Pair;
+import com.mrcrayfish.backpacked.common.augment.Augment;
+import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
+import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -13,6 +19,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class BackpackHelper
@@ -275,5 +283,15 @@ public class BackpackHelper
         }
         int selected = getSelectedBackpackIndex(player);
         return Pair.of(list.indexOf(selected), list.size());
+    }
+
+    public static <T extends Augment<T>> List<Pair<BackpackInventory, T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
+    {
+        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+        return access.backpacked$streamNonNullBackpackInventories().map(inventory -> {
+            ItemStack stack = inventory.getBackpackStack();
+            Augments augments = Augments.get(stack);
+            return Pair.of(inventory, augments.findAndCast(type));
+        }).filter(pair -> Objects.nonNull(pair.getSecond())).toList();
     }
 }

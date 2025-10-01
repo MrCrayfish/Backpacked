@@ -48,6 +48,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -152,17 +153,13 @@ public class Backpacked
 
     private void onBlockDrops(BlockDropsEvent event)
     {
-        BlockState state = event.getState();
         Entity breaker = event.getBreaker();
-        if(state.is(ModTags.Blocks.FUNNELLING) && breaker instanceof ServerPlayer serverPlayer)
+        if(breaker instanceof ServerPlayer serverPlayer)
         {
-            if(EnchantmentHandler.onBreakBlock(state, event.getLevel(), event.getPos(), event.getBlockEntity(), serverPlayer, event.getTool()))
+            List<ItemStack> drops = event.getDrops().stream().map(ItemEntity::getItem).toList();
+            if(EnchantmentHandler.onBreakBlock(serverPlayer, drops))
             {
-                event.setCanceled(true);
-                if(event.getDroppedExperience() > 0)
-                {
-                    state.getBlock().popExperience(event.getLevel(), event.getPos(), event.getDroppedExperience());
-                }
+                event.getDrops().removeIf(drop -> drop.getItem().isEmpty());
             }
         }
     }

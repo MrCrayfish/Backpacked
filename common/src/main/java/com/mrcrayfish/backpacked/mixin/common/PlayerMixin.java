@@ -23,7 +23,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Author: MrCrayfish
@@ -80,6 +86,21 @@ public class PlayerMixin implements BackpackedInventoryAccess
             inventories[index] = inventory;
         }
         return inventory;
+    }
+
+    @Override
+    public Stream<BackpackInventory> backpacked$streamNonNullBackpackInventories()
+    {
+        Stream.Builder<BackpackInventory> builder = Stream.builder();
+        for(int i = 0; i < this.backpacked$GetBackpackInventoryCount(); i++)
+        {
+            BackpackInventory inventory = this.backpacked$GetBackpackInventory(i);
+            if(inventory != null)
+            {
+                builder.add(inventory);
+            }
+        }
+        return builder.build();
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))

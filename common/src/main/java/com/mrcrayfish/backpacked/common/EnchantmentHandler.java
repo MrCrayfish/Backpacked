@@ -1,7 +1,11 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.google.common.collect.Iterators;
+import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
@@ -28,6 +32,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Author: MrCrayfish
@@ -39,28 +45,30 @@ public class EnchantmentHandler
         PlayerEvents.PICKUP_EXPERIENCE.register(EnchantmentHandler::onPickupExperience);
     }
 
-    public static boolean onBreakBlock(BlockState state, ServerLevel level, BlockPos pos, @Nullable BlockEntity blockEntity, ServerPlayer player, ItemStack stack)
+    public static boolean onBreakBlock(ServerPlayer player, List<ItemStack> drops)
     {
-        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
-        for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
-        {
-            BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
-            if(inventory == null)
-                continue;
+        List<Pair<BackpackInventory, FunnellingAugment>> list = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get());
+        if(list.isEmpty())
+            return false;
 
-            ItemStack backpack = inventory.getBackpackStack();
-            HolderLookup<Enchantment> lookup = level.holderLookup(Registries.ENCHANTMENT);
-            if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.FUNNELLING), backpack) <= 0)
-                continue;
-
-            Block.getDrops(state, level, pos, blockEntity, player, stack).forEach((dropStack) -> {
-                Block.popResource(level, pos, inventory.addItem(dropStack));
-            });
-            state.spawnAfterBreak(level, pos, stack, true);
-
-            return true;
-        }
-        return false;
+        AtomicBoolean changed = new AtomicBoolean(false);
+        drops.forEach(drop -> {
+            if(drop.isEmpty())
+                return;
+            for(Pair<BackpackInventory, FunnellingAugment> pair : list) {
+                BackpackInventory inventory = pair.getFirst();
+                FunnellingAugment funnelling = pair.getSecond();
+                if(funnelling.test(drop)) {
+                    ItemStack remaining = inventory.addItem(drop);
+                    changed.compareAndSet(false, drop.getCount() != remaining.getCount());
+                    drop.setCount(remaining.getCount());
+                    if(drop.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        });
+        return changed.get();
     }
 
     public static boolean onDropLoot(Collection<ItemEntity> drops, DamageSource source)
