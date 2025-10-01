@@ -4,8 +4,6 @@ import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.TextWidget;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;
@@ -15,9 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.GiantAugment;
 import com.mrcrayfish.framework.api.event.InputEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Items;
 
 /**
  * Author: MrCrayfish
@@ -59,19 +55,6 @@ public class ClientBootstrap
                     updater.accept(augment.setSize(1));
                     menu.hide();
                 }).build());
-                return layout;
-            });
-        });
-        AugmentSettingsFactories.registerFactory(FunnellingAugment.TYPE, (handler, augment, updater) -> {
-            return new AugmentSettingsMenu(handler, menu -> {
-                PaddedLinearLayout layout = PaddedLinearLayout.vertical().padding(2);
-                layout.addChild(CustomButton.builder().setSize(50, 16).setMessage(Component.literal("Add")).setAction(customButton -> {
-                    updater.accept(augment.addFilter(Items.COBBLESTONE));
-                    menu.deepClose();
-                }).build());
-                augment.filters().forEach(filter -> {
-                    layout.addChild(new TextWidget(Component.literal(filter.id().toString()), Minecraft.getInstance().font));
-                });
                 return layout;
             });
         });
