@@ -86,11 +86,6 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
         return null;
     }
 
-    public List<ResourceLocation> toTypeIds()
-    {
-        return List.of(this.firstAugment.type().id(), this.secondAugment.type().id(), this.thirdAugment.type().id());
-    }
-
     public enum Position
     {
         FIRST, SECOND, THIRD;
