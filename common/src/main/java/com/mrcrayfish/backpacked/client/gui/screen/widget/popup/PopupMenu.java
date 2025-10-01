@@ -122,7 +122,7 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
             {
                 this.child.hide();
                 this.child = null;
-                this.setFocused(this);
+                this.setFocused(null);
                 return true;
             }
         }
@@ -140,7 +140,7 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
         // If click occurred inside the menu, just mark as handled to prevent it from hiding
         if(this.child == null && this.getRectangle().containsPoint((int) mouseX, (int) mouseY))
         {
-            this.setFocused(this);
+            this.setFocused(null);
             return true;
         }
         return false;
@@ -209,7 +209,6 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
         if(this.parent == null)
         {
             this.handler.setPopupMenu(this);
-            this.setFocused(this);
         }
         else if(this.parent.visible)
         {
@@ -218,7 +217,6 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
                 this.parent.child.hide();
             }
             this.parent.child = this;
-            this.setFocused(this);
         }
         else
         {
@@ -234,7 +232,7 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
         }
         this.child = null;
         this.visible = false;
-        this.setFocused(this.parent);
+        this.setFocused(null);
     }
 
     private void updatePosition(ScreenRectangle rect)
