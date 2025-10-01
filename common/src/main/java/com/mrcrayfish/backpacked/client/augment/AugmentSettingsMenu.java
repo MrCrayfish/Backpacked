@@ -25,10 +25,4 @@ public class AugmentSettingsMenu extends PopupMenu
     {
         return this.layout;
     }
-
-    @Override
-    protected int padding()
-    {
-        return this.layout instanceof PaddedLayout padded ? padded.padding() : 0;
-    }
 }

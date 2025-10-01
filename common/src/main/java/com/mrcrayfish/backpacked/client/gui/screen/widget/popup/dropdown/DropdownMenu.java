@@ -34,12 +34,6 @@ public class DropdownMenu extends PopupMenu
     }
 
     @Override
-    protected int padding()
-    {
-        return this.layout.padding();
-    }
-
-    @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer)
     {
         this.layout.visitWidgets(consumer);

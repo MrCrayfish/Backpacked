@@ -39,7 +39,10 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
 
     protected abstract Layout layout();
 
-    protected abstract int padding();
+    protected int padding()
+    {
+        return this.layout() instanceof PaddedLayout layout ? layout.padding() : 0;
+    }
 
     protected void setAlignment(Alignment alignment)
     {

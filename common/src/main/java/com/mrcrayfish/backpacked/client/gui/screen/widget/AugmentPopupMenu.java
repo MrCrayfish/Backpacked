@@ -55,10 +55,4 @@ public class AugmentPopupMenu extends PopupMenu
     {
         return this.layout;
     }
-
-    @Override
-    protected int padding()
-    {
-        return this.layout.padding();
-    }
 }
