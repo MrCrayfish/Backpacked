@@ -22,7 +22,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected int scrollBarHighlightColour = 0xFF332E2D;
     protected int itemSpacing = 2;
     protected boolean scrolling;
-    protected @Nullable ResourceLocation background;
+    protected @Nullable ResourceLocation listBackground;
     protected @Nullable ItemSprites itemBackground;
 
     public CustomSelectionList(int width, int height, int x, int y, int itemHeight)
@@ -72,14 +72,14 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         this.itemSpacing = itemSpacing;
     }
 
-    public void setBackground(@Nullable ResourceLocation background)
+    public void setListBackground(@Nullable ResourceLocation background)
     {
-        this.background = background;
+        this.listBackground = background;
     }
 
-    public void setItemBackground(@Nullable ItemSprites itemBackground)
+    public void setItemBackground(@Nullable ItemSprites sprites)
     {
-        this.itemBackground = itemBackground;
+        this.itemBackground = sprites;
     }
 
     @Override
@@ -160,9 +160,9 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         // Draw outlines and background
-        if(this.background != null)
+        if(this.listBackground != null)
         {
-            graphics.blitSprite(this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            graphics.blitSprite(this.listBackground, this.getX(), this.getY(), this.getWidth(), this.getHeight());
         }
 
         // Draw items
