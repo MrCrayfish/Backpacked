@@ -7,9 +7,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.CommonComponents;
@@ -18,25 +20,28 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class PopupMenu extends AbstractWidget implements ContainerEventHandler
+public abstract class PopupMenu implements Renderable, ContainerEventHandler, LayoutElement
 {
     private final PopupMenuHandler handler;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
+    private boolean dragging;
+    private @Nullable GuiEventListener focused;
     private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable ResourceLocation background;
-    protected @Nullable PopupMenu parent;
-    protected @Nullable PopupMenu child;
-    protected @Nullable GuiEventListener focused;
-    protected boolean dragging;
-
+    private @Nullable PopupMenu parent;
+    private @Nullable PopupMenu child;
+    
     public PopupMenu(PopupMenuHandler handler)
     {
-        super(0, 0, 0, 0, CommonComponents.EMPTY);
         this.handler = handler;
-        this.visible = false;
     }
 
     protected abstract Layout layout();
@@ -44,6 +49,48 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     protected int padding()
     {
         return this.layout() instanceof PaddedLayout layout ? layout.padding() : 0;
+    }
+
+    @Override
+    public void setX(int x)
+    {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y)
+    {
+        this.y = y;
+    }
+
+    @Override
+    public int getX()
+    {
+        return this.x;
+    }
+
+    @Override
+    public int getY()
+    {
+        return this.y;
+    }
+
+    @Override
+    public int getWidth()
+    {
+        return this.width;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        return this.height;
+    }
+
+    @Override
+    public void visitWidgets(Consumer<AbstractWidget> consumer)
+    {
+        this.layout().visitWidgets(consumer);
     }
 
     protected void setAlignment(Alignment alignment)
@@ -73,7 +120,7 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
         PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
@@ -103,10 +150,6 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     @Override
     public final boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        // If the menu is not active or visible, ignore the click event
-        if(!this.active || !this.visible)
-            return false;
-
         // If a child menu was spawned off this menu, send the event to the child first
         if(this.child != null)
         {
@@ -152,27 +195,10 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY)
+    public ScreenRectangle getRectangle()
     {
-        return this.getFocused() != null && this.isDragging() && button == 0 && this.getFocused().mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return new ScreenRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
-    {
-        if(button == 0 && this.isDragging())
-        {
-            this.setDragging(false);
-            if(this.getFocused() != null)
-            {
-                return this.getFocused().mouseReleased(mouseX, mouseY, button);
-            }
-        }
-        return this.getChildAt(mouseX, mouseY).filter(listener -> listener.mouseReleased(mouseX, mouseY, button)).isPresent();
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
     public List<? extends GuiEventListener> children()
@@ -239,23 +265,16 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     public void show(ScreenRectangle rect)
     {
         this.updatePosition(rect);
-        this.visible = true;
         if(this.parent == null)
         {
             this.handler.setPopupMenu(this);
+            return;
         }
-        else if(this.parent.visible)
+        if(this.parent.child != null)
         {
-            if(this.parent.child != null)
-            {
-                this.parent.child.hide();
-            }
-            this.parent.child = this;
+            this.parent.child.hide();
         }
-        else
-        {
-            this.visible = false;
-        }
+        this.parent.child = this;
     }
 
     public void hide()
@@ -263,9 +282,8 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
         if(this.child != null)
         {
             this.child.hide();
+            this.child = null;
         }
-        this.child = null;
-        this.visible = false;
         this.setFocused(null);
     }
 
