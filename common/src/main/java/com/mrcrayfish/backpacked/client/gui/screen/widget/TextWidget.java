@@ -33,7 +33,7 @@ public class TextWidget extends AbstractWidget
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        graphics.drawString(this.font, this.getMessage(), this.getX(), this.getY(), this.colour, this.shadow);
+        graphics.drawString(this.font, this.getMessage(), this.getX(), this.getY() + 1, this.colour, this.shadow);
     }
 
     @Override
