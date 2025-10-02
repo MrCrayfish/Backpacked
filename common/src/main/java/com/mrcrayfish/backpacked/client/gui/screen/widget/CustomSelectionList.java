@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
-import com.mrcrayfish.backpacked.client.gui.ItemSprites;
+import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,14 +16,12 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
 
     protected int contentPadding = 2;
     protected int scrollBarWidth = 6;
-    protected int outlineColour = 0xFF47403E;
-    protected int backgroundColour = 0xFF262626;
-    protected int scrollBarColour = 0xFF47403E;
-    protected int scrollBarHighlightColour = 0xFF332E2D;
     protected int itemSpacing = 2;
     protected boolean scrolling;
     protected @Nullable ResourceLocation listBackground;
-    protected @Nullable ItemSprites itemBackground;
+    protected @Nullable ResourceLocation dividerSprite;
+    protected @Nullable StateSprites itemSprites;
+    protected @Nullable StateSprites scrollBarSprites;
 
     public CustomSelectionList(int width, int height, int x, int y, int itemHeight)
     {
@@ -47,26 +45,6 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         this.scrollBarWidth = scrollBarWidth;
     }
 
-    public void setOutlineColour(int outlineColour)
-    {
-        this.outlineColour = outlineColour;
-    }
-
-    public void setBackgroundColour(int backgroundColour)
-    {
-        this.backgroundColour = backgroundColour;
-    }
-
-    public void setScrollBarColour(int scrollBarColour)
-    {
-        this.scrollBarColour = scrollBarColour;
-    }
-
-    public void setScrollBarHighlightColour(int scrollBarHighlightColour)
-    {
-        this.scrollBarHighlightColour = scrollBarHighlightColour;
-    }
-
     public void setItemSpacing(int itemSpacing)
     {
         this.itemSpacing = itemSpacing;
@@ -77,9 +55,19 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         this.listBackground = background;
     }
 
-    public void setItemBackground(@Nullable ItemSprites sprites)
+    public void setItemSprites(@Nullable StateSprites sprites)
     {
-        this.itemBackground = sprites;
+        this.itemSprites = sprites;
+    }
+
+    public void setScrollBarSprites(@Nullable StateSprites sprites)
+    {
+        this.scrollBarSprites = sprites;
+    }
+
+    public void setDividerSprite(@Nullable ResourceLocation sprite)
+    {
+        this.dividerSprite = sprite;
     }
 
     @Override
@@ -175,15 +163,31 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         if(maxScroll > 0)
         {
             // Draw divider between items and scroll bar
-            graphics.fill(this.getScrollbarPosition() - this.contentPadding - 1, this.getY() + 1, this.getScrollbarPosition() - this.contentPadding, this.getY() + this.getHeight() - 1, this.outlineColour);
+            if(this.dividerSprite != null)
+            {
+                graphics.blitSprite(this.dividerSprite, this.getScrollbarPosition() - this.contentPadding - 1, this.getY() + 1, 1, this.getHeight() - 2);
+            }
+            else
+            {
+                graphics.fill(this.getScrollbarPosition() - this.contentPadding - 1, this.getY() + 1, this.getScrollbarPosition() - this.contentPadding, this.getY() + this.getHeight() - 1, 0xFFFFFFFF);
+            }
 
             // Draw scroll bar
             int scrollBarStart = this.getScrollbarPosition();
             int scrollBarEnd = scrollBarStart + this.scrollBarWidth;
             int scrollBarHeight = this.getScrollbarHeight();
             int scrollBarTop = (int) (this.getScrollAreaTop() + (this.getScrollAreaHeight() - this.getScrollbarHeight()) * (this.getScrollAmount() / maxScroll));
-            int scrollBarColour = ScreenUtil.isPointInArea(mouseX, mouseY, scrollBarStart, scrollBarTop, this.scrollBarWidth, scrollBarHeight) ? this.scrollBarHighlightColour : this.scrollBarColour;
-            graphics.fill(scrollBarStart, scrollBarTop, scrollBarEnd, scrollBarTop + scrollBarHeight, scrollBarColour);
+            boolean scrollBarHovered = ScreenUtil.isPointInArea(mouseX, mouseY, scrollBarStart, scrollBarTop, this.scrollBarWidth, scrollBarHeight);
+            if(this.scrollBarSprites != null)
+            {
+                graphics.blitSprite(this.scrollBarSprites.get(this.scrolling, scrollBarHovered), scrollBarStart, scrollBarTop, scrollBarEnd - scrollBarStart, scrollBarHeight);
+            }
+            else
+            {
+                // Fallback
+                int scrollBarColour = scrollBarHovered ? 0xFF332E2D : 0xFF47403E;
+                graphics.fill(scrollBarStart, scrollBarTop, scrollBarEnd, scrollBarTop + scrollBarHeight, scrollBarColour);
+            }
         }
     }
 
@@ -213,11 +217,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
 
     private void renderItemBackground(GuiGraphics graphics, int index, int rowLeft, int rowTop, int rowWidth, int rowHeight, int mouseX, int mouseY)
     {
-        if(this.itemBackground != null)
+        if(this.itemSprites != null)
         {
             boolean selected = this.isSelectedItem(index);
             boolean hovered = ScreenUtil.isPointInArea(mouseX, mouseY, rowLeft, rowTop, rowWidth, rowHeight);
-            graphics.blitSprite(this.itemBackground.get(selected, hovered), rowLeft, rowTop, rowWidth, rowHeight);
+            graphics.blitSprite(this.itemSprites.get(selected, hovered), rowLeft, rowTop, rowWidth, rowHeight);
         }
     }
 
