@@ -23,6 +23,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected @Nullable StateSprites itemSprites;
     protected @Nullable StateSprites scrollBarSprites;
     protected @Nullable ResourceLocation scrollBarBackground;
+    protected ScrollBarStyle scrollBarStyle = ScrollBarStyle.DETACHED;
 
     public CustomSelectionList(int width, int height, int x, int y, int itemHeight)
     {
@@ -71,6 +72,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         this.scrollBarBackground = background;
     }
 
+    public void setScrollBarStyle(ScrollBarStyle scrollBarStyle)
+    {
+        this.scrollBarStyle = scrollBarStyle;
+    }
+
     @Override
     public boolean isMouseOver(double mouseX, double mouseY)
     {
@@ -94,7 +100,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     {
         if(this.getMaxScroll() > 0)
         {
-            return this.getX() + this.getWidth() - this.contentPadding - OUTLINE_SIZE - SCROLL_BAR_GAP - OUTLINE_SIZE - this.contentPadding - this.scrollBarWidth - this.contentPadding - OUTLINE_SIZE;
+            int scrollBarArea = switch(this.scrollBarStyle) {
+                case DETACHED -> this.contentPadding + OUTLINE_SIZE + SCROLL_BAR_GAP + OUTLINE_SIZE + this.contentPadding + this.scrollBarWidth + this.contentPadding + OUTLINE_SIZE;
+                case MERGED -> this.contentPadding + this.scrollBarWidth + this.contentPadding + OUTLINE_SIZE;
+            };
+            return this.getX() + this.getWidth() - scrollBarArea;
         }
         return this.getX() + this.getWidth() - this.contentPadding - OUTLINE_SIZE;
     }
@@ -151,8 +161,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         // Draw outlines and background
         if(this.listBackground != null)
         {
-            int width = this.getRowWidth() + this.contentPadding * 2 + OUTLINE_SIZE * 2;
-            graphics.blitSprite(this.listBackground, this.getX(), this.getY(), width, this.getHeight());
+            int backgroundWidth = switch(this.scrollBarStyle) {
+                case DETACHED -> OUTLINE_SIZE + this.contentPadding + this.getRowWidth() + this.contentPadding + OUTLINE_SIZE;
+                case MERGED -> this.getWidth();
+            };
+            graphics.blitSprite(this.listBackground, this.getX(), this.getY(), backgroundWidth, this.getHeight());
         }
 
         // Draw items
@@ -165,7 +178,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         if(maxScroll > 0)
         {
             // Draw a background behind the scroll bar
-            if(this.listBackground != null)
+            if(this.scrollBarStyle == ScrollBarStyle.DETACHED && this.listBackground != null)
             {
                 graphics.blitSprite(this.listBackground, this.getScrollbarPosition() - this.contentPadding - OUTLINE_SIZE, this.getY(), OUTLINE_SIZE + this.contentPadding + this.scrollBarWidth + this.contentPadding + OUTLINE_SIZE, this.getHeight());
             }
@@ -283,5 +296,10 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     {
         this.scrolling = button == GLFW.GLFW_MOUSE_BUTTON_LEFT && ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.getScrollbarPosition(), this.getScrollAreaTop(), this.scrollBarWidth, this.getScrollAreaHeight());
         return this.scrolling;
+    }
+
+    public enum ScrollBarStyle
+    {
+        DETACHED, MERGED
     }
 }
