@@ -9,9 +9,9 @@ public record ItemSprites(ResourceLocation background, ResourceLocation hovered,
         this(background, hovered, selected, selected);
     }
 
-    public ResourceLocation get(boolean hovered, boolean selected)
+    public ResourceLocation get(boolean selected, boolean hovered)
     {
         if(selected) return hovered ? this.selectedHovered : this.selected;
-        return hovered ? this.background : this.hovered;
+        return hovered ? this.hovered : this.background;
     }
 }
