@@ -13,15 +13,16 @@ import org.lwjgl.glfw.GLFW;
 public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E>
 {
     private static final int OUTLINE_SIZE = 1;
+    private static final int SCROLL_BAR_GAP = 2;
 
     protected int contentPadding = 2;
     protected int scrollBarWidth = 6;
     protected int itemSpacing = 2;
     protected boolean scrolling;
     protected @Nullable ResourceLocation listBackground;
-    protected @Nullable ResourceLocation dividerSprite;
     protected @Nullable StateSprites itemSprites;
     protected @Nullable StateSprites scrollBarSprites;
+    protected @Nullable ResourceLocation scrollBarBackground;
 
     public CustomSelectionList(int width, int height, int x, int y, int itemHeight)
     {
@@ -65,9 +66,9 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         this.scrollBarSprites = sprites;
     }
 
-    public void setDividerSprite(@Nullable ResourceLocation sprite)
+    public void setScrollBarBackground(@Nullable ResourceLocation background)
     {
-        this.dividerSprite = sprite;
+        this.scrollBarBackground = background;
     }
 
     @Override
@@ -93,7 +94,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     {
         if(this.getMaxScroll() > 0)
         {
-            return this.getX() + this.getWidth() - this.contentPadding - OUTLINE_SIZE - this.contentPadding - this.scrollBarWidth - this.contentPadding - OUTLINE_SIZE;
+            return this.getX() + this.getWidth() - this.contentPadding - OUTLINE_SIZE - SCROLL_BAR_GAP - OUTLINE_SIZE - this.contentPadding - this.scrollBarWidth - this.contentPadding - OUTLINE_SIZE;
         }
         return this.getX() + this.getWidth() - this.contentPadding - OUTLINE_SIZE;
     }
@@ -150,7 +151,8 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         // Draw outlines and background
         if(this.listBackground != null)
         {
-            graphics.blitSprite(this.listBackground, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            int width = this.getRowWidth() + this.contentPadding * 2 + OUTLINE_SIZE * 2;
+            graphics.blitSprite(this.listBackground, this.getX(), this.getY(), width, this.getHeight());
         }
 
         // Draw items
@@ -162,14 +164,10 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         int maxScroll = this.getMaxScroll();
         if(maxScroll > 0)
         {
-            // Draw divider between items and scroll bar
-            if(this.dividerSprite != null)
+            // Draw a background behind the scroll bar
+            if(this.listBackground != null)
             {
-                graphics.blitSprite(this.dividerSprite, this.getScrollbarPosition() - this.contentPadding - 1, this.getY() + 1, 1, this.getHeight() - 2);
-            }
-            else
-            {
-                graphics.fill(this.getScrollbarPosition() - this.contentPadding - 1, this.getY() + 1, this.getScrollbarPosition() - this.contentPadding, this.getY() + this.getHeight() - 1, 0xFFFFFFFF);
+                graphics.blitSprite(this.listBackground, this.getScrollbarPosition() - this.contentPadding - OUTLINE_SIZE, this.getY(), OUTLINE_SIZE + this.contentPadding + this.scrollBarWidth + this.contentPadding + OUTLINE_SIZE, this.getHeight());
             }
 
             // Draw scroll bar
