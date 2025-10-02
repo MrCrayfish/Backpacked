@@ -66,6 +66,16 @@ public abstract class CustomContainerScreen<T extends AbstractContainerMenu> ext
     }
 
     @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    {
+        if(this.popup != null)
+        {
+            return this.popup.mouseReleased(mouseX, mouseY, button);
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
     {
         // Exclusive input given to popups

@@ -178,7 +178,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
             boolean scrollBarHovered = ScreenUtil.isPointInArea(mouseX, mouseY, scrollBarStart, scrollBarTop, this.scrollBarWidth, scrollBarHeight);
             if(this.scrollBarSprites != null)
             {
-                graphics.blitSprite(this.scrollBarSprites.get(this.scrolling, scrollBarHovered), scrollBarStart, scrollBarTop, scrollBarEnd - scrollBarStart, scrollBarHeight);
+                graphics.blitSprite(this.scrollBarSprites.get(false, scrollBarHovered || this.scrolling), scrollBarStart, scrollBarTop, scrollBarEnd - scrollBarStart, scrollBarHeight);
             }
             else
             {
@@ -218,7 +218,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         if(this.itemSprites != null)
         {
             boolean selected = this.isSelectedItem(index);
-            boolean hovered = ScreenUtil.isPointInArea(mouseX, mouseY, rowLeft, rowTop, rowWidth, rowHeight);
+            boolean hovered = !this.scrolling && ScreenUtil.isPointInArea(mouseX, mouseY, rowLeft, rowTop, rowWidth, rowHeight);
             graphics.blitSprite(this.itemSprites.get(selected, hovered), rowLeft, rowTop, rowWidth, rowHeight);
         }
     }
@@ -227,9 +227,10 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected void renderSelection(GuiGraphics graphics, int top, int rowWidth, int rowHeight, int outlineColour, int innerColour) {}
 
     @Override
-    protected void updateScrollingState(double mouseX, double mouseY, int button)
+    public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
-        this.scrolling = button == GLFW.GLFW_MOUSE_BUTTON_LEFT && ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.getScrollbarPosition(), this.getScrollAreaTop(), 6, this.getScrollAreaHeight());
+        this.scrolling = false;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
@@ -275,5 +276,12 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
             }
         }
         return null;
+    }
+
+    /* Hooked via Mixin to update the super scrolling state */
+    public boolean updateScroll(double mouseX, double mouseY, int button)
+    {
+        this.scrolling = button == GLFW.GLFW_MOUSE_BUTTON_LEFT && ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.getScrollbarPosition(), this.getScrollAreaTop(), this.scrollBarWidth, this.getScrollAreaHeight());
+        return this.scrolling;
     }
 }

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -29,6 +30,7 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     protected @Nullable PopupMenu parent;
     protected @Nullable PopupMenu child;
     protected @Nullable GuiEventListener focused;
+    protected boolean dragging;
 
     public PopupMenu(PopupMenuHandler handler)
     {
@@ -122,7 +124,6 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
             {
                 this.child.hide();
                 this.child = null;
-                this.setFocused(null);
                 return true;
             }
         }
@@ -133,6 +134,10 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
             if(widget.mouseClicked(mouseX, mouseY, button))
             {
                 this.setFocused(widget);
+                if(button == 0)
+                {
+                    this.setDragging(true);
+                }
                 return true;
             }
         }
@@ -147,24 +152,32 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
     }
 
     @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY)
+    {
+        return this.getFocused() != null && this.isDragging() && button == 0 && this.getFocused().mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    {
+        if(button == 0 && this.isDragging())
+        {
+            this.setDragging(false);
+            if(this.getFocused() != null)
+            {
+                return this.getFocused().mouseReleased(mouseX, mouseY, button);
+            }
+        }
+        return this.getChildAt(mouseX, mouseY).filter(listener -> listener.mouseReleased(mouseX, mouseY, button)).isPresent();
+    }
+
+    @Override
     protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
     public List<? extends GuiEventListener> children()
     {
         return this.getWidgets();
-    }
-
-    @Override
-    public boolean isDragging()
-    {
-        return false;
-    }
-
-    @Override
-    public void setDragging(boolean b)
-    {
-
     }
 
     @Override
@@ -195,6 +208,27 @@ public abstract class PopupMenu extends AbstractWidget implements ContainerEvent
             listener.setFocused(true);
         }
         this.focused = listener;
+    }
+
+    @Override
+    public void setDragging(boolean dragging)
+    {
+        if(this.parent != null)
+        {
+            this.parent.setDragging(dragging);
+            return;
+        }
+        this.dragging = dragging;
+    }
+
+    @Override
+    public boolean isDragging()
+    {
+        if(this.parent != null)
+        {
+            return this.parent.isDragging();
+        }
+        return this.dragging;
     }
 
     public void show(AbstractWidget widget)
