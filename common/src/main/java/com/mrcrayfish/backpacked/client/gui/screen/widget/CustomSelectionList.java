@@ -234,11 +234,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     }
 
     @Override
-    public boolean mouseDragged(double $$0, double $$1, int button, double deltaX, double deltaY)
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
     {
         if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
         {
-            if(this.getFocused() != null && this.isDragging() && this.getFocused().mouseDragged($$0, $$1, button, deltaX, deltaY))
+            if(this.getFocused() != null && this.isDragging() && this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY))
             {
                 return true;
             }
