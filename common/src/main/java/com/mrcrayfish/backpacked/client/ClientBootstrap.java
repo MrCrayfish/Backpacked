@@ -48,10 +48,11 @@ public class ClientBootstrap
     public static void init()
     {
         ClientEvents.init();
-        AugmentSettingsFactories.registerFactory(GiantAugment.TYPE, (handler, augment, updater) -> {
+        AugmentSettingsFactories.registerFactory(GiantAugment.TYPE, (handler, supplier, updater) -> {
             return new AugmentSettingsMenu(handler, menu -> {
                 PaddedLinearLayout layout = PaddedLinearLayout.horizontal().padding(2);
                 layout.addChild(CustomButton.builder().setSize(16, 16).setMessage(Component.literal("1")).setAction(customButton -> {
+                    GiantAugment augment = supplier.get();
                     updater.accept(augment.setSize(1));
                     menu.hide();
                 }).build());

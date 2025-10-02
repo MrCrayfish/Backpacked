@@ -220,7 +220,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 var factory = AugmentSettingsFactories.getFactory(augment);
                 if(factory == null)
                     return;
-                factory.apply(this, augment, updatedAugment -> {
+                factory.apply(this, () -> this.menu.getAugments().getAugment(position), updatedAugment -> {
                     Network.getPlay().sendToServer(new MessageUpdateAugment(position, updatedAugment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, updatedAugment));
                 }).show(btn);

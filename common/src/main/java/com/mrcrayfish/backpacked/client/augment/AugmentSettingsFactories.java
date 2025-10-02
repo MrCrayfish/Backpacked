@@ -9,12 +9,13 @@ import org.apache.commons.lang3.function.TriFunction;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class AugmentSettingsFactories
 {
     private static final Map<AugmentType<?>, TriFunction<?, ?, ?, ?>> FACTORIES = new HashMap<>();
 
-    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, TriFunction<PopupMenuHandler, T, Consumer<T>, PopupMenu> menu)
+    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, TriFunction<PopupMenuHandler, Supplier<T>, Consumer<T>, PopupMenu> menu)
     {
         if(FACTORIES.put(type, menu) != null)
         {
@@ -28,8 +29,8 @@ public class AugmentSettingsFactories
     }
 
     @SuppressWarnings("unchecked")
-    public static TriFunction<PopupMenuHandler, Augment<?>, Consumer<Augment<?>>, PopupMenu> getFactory(Augment<?> augment)
+    public static TriFunction<PopupMenuHandler, Supplier<Augment<?>>, Consumer<Augment<?>>, PopupMenu> getFactory(Augment<?> augment)
     {
-        return (TriFunction<PopupMenuHandler, Augment<?>, Consumer<Augment<?>>, PopupMenu>) FACTORIES.get(augment.type());
+        return (TriFunction<PopupMenuHandler, Supplier<Augment<?>>, Consumer<Augment<?>>, PopupMenu>) FACTORIES.get(augment.type());
     }
 }
