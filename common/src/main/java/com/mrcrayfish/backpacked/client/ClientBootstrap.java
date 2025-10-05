@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
+import com.mrcrayfish.backpacked.client.augment.widget.FunnellingMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
@@ -59,5 +60,6 @@ public class ClientBootstrap
                 return layout;
             });
         });
+        AugmentSettingsFactories.registerFactory(FunnellingAugment.TYPE, FunnellingMenu::new);
     }
 }

@@ -56,11 +56,24 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
         return TYPE;
     }
 
-    public FunnellingAugment addFilter(Item item)
+    public FunnellingAugment addFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
-        filters.add(new ItemFilter(BuiltInRegistries.ITEM.getKey(item)));
+        filters.add(new ItemFilter(id));
         return new FunnellingAugment(filters, this.mode);
+    }
+
+    public FunnellingAugment removeFilter(ResourceLocation id)
+    {
+        List<ItemFilter> filters = new ArrayList<>(this.filters);
+        filters.removeIf(filter -> filter.id.equals(id));
+        return new FunnellingAugment(filters, this.mode);
+    }
+
+    public boolean isFilter(Item item)
+    {
+        Map<Item, List<ItemFilter>> lookup = this.buildLookup();
+        return lookup.containsKey(item);
     }
 
     public List<ItemFilter> filters()

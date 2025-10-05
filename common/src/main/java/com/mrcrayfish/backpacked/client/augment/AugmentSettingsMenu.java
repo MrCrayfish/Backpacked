@@ -16,7 +16,7 @@ public class AugmentSettingsMenu extends PopupMenu
     public AugmentSettingsMenu(PopupMenuHandler handler, Function<PopupMenu, Layout> layoutSupplier)
     {
         super(handler);
-        this.setBackground(Utils.rl("backpack/dropdown/background"));
+        this.setBackground(Utils.rl("backpack/label"));
         this.layout = layoutSupplier.apply(this);
     }
 
