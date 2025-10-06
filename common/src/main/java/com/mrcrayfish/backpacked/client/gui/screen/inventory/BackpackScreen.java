@@ -195,7 +195,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         LinearLayout layout = LinearLayout.horizontal().spacing(1);
         layout.addChild(CustomButton.builder()
             .setSize(20, 20)
-            .setIcon(() -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
+            .setIcon(btn -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
             .setAction(btn -> {
                 new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));

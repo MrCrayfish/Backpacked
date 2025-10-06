@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class CustomButton extends AbstractButton
@@ -104,7 +105,7 @@ public class CustomButton extends AbstractButton
             int iconY = contentTop + (contentHeight - this.icon.height()) / 2;
             RenderSystem.enableBlend();
             graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
-            graphics.blitSprite(this.icon.sprite(), iconX, iconY, this.icon.width(), this.icon.height());
+            graphics.blitSprite(this.icon.sprite(this), iconX, iconY, this.icon.width(), this.icon.height());
             graphics.setColor(1, 1, 1, 1);
             RenderSystem.disableBlend();
         }
@@ -178,9 +179,9 @@ public class CustomButton extends AbstractButton
             return this;
         }
 
-        public Builder setIcon(Supplier<ResourceLocation> supplier, int width, int height)
+        public Builder setIcon(Function<CustomButton, ResourceLocation> function, int width, int height)
         {
-            this.icon = new DynamicIcon(supplier, width, height);
+            this.icon = new DynamicIcon(function, width, height);
             return this;
         }
 
@@ -211,21 +212,28 @@ public class CustomButton extends AbstractButton
 
     private interface Icon
     {
-        ResourceLocation sprite();
+        ResourceLocation sprite(CustomButton button);
 
         int width();
 
         int height();
     }
 
-    private record StaticIcon(ResourceLocation sprite, int width, int height) implements Icon {}
-
-    private record DynamicIcon(Supplier<ResourceLocation> supplier, int width, int height) implements Icon
+    private record StaticIcon(ResourceLocation sprite, int width, int height) implements Icon
     {
         @Override
-        public ResourceLocation sprite()
+        public ResourceLocation sprite(CustomButton button)
         {
-            return this.supplier.get();
+            return this.sprite;
+        }
+    }
+
+    private record DynamicIcon(Function<CustomButton, ResourceLocation> function, int width, int height) implements Icon
+    {
+        @Override
+        public ResourceLocation sprite(CustomButton button)
+        {
+            return this.function.apply(button);
         }
     }
 }
