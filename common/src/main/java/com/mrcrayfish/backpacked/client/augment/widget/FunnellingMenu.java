@@ -31,6 +31,9 @@ import java.util.function.Supplier;
 
 public class FunnellingMenu extends AugmentSettingsMenu
 {
+    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
+    private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
+    
     private static String lastQuery = "";
     private static boolean lastFilter = false;
 
@@ -52,14 +55,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 Utils.rl("backpack/editbox/background_focused")
             ));
             searchField.getEditBox().setValue(lastQuery);
-            searchField.getEditBox().setHint(Component.literal("Search..."));
+            searchField.getEditBox().setHint(SEARCH_HINT);
             searchField.getEditBox().setResponder(s -> {
                 lastQuery = s;
                 list.setQuery(s);
             });
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
             header.addChild(CustomButton.toggle(lastFilter).setSize(52, 18)
-                .setMessage(Component.literal("Active"))
+                .setMessage(ACTIVE_LABEL)
                 .setGap(4)
                 .setAction(btn -> {
                     lastFilter = btn.isToggled();
