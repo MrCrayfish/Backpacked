@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.augment.impl;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.util.Utils;
@@ -193,19 +194,21 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
         }
     }
 
-    public enum Mode implements StringRepresentable
+    public enum Mode implements StringRepresentable, LabelAndDescription
     {
-        ALLOW(Component.translatable("augment.backpacked.funnelling.mode.allow")),
-        DISALLOW(Component.translatable("augment.backpacked.funnelling.mode.disallow"));
+        ALLOW, DISALLOW;
 
         public static final Codec<Mode> CODEC = StringRepresentable.fromEnum(Mode::values);
         public static final StreamCodec<FriendlyByteBuf, Mode> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Mode.class));
+        private static final String LANGUAGE_KEY = "augment.backpacked.funnelling.mode";
 
-        private final Component label;
+        private final Component name;
+        private final Component tooltip;
 
-        Mode(Component label)
+        Mode()
         {
-            this.label = label;
+            this.name = Component.translatable("%s.%s".formatted(LANGUAGE_KEY, this.getSerializedName()));
+            this.tooltip = Component.translatable("%s.%s.tooltip".formatted(LANGUAGE_KEY, this.getSerializedName()));
         }
 
         @Override
@@ -214,9 +217,14 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
             return this.name().toLowerCase(Locale.ROOT);
         }
 
-        public Component getLabel()
+        public Component label()
         {
-            return this.label;
+            return Component.translatable(LANGUAGE_KEY, this.name);
+        }
+
+        public Component description()
+        {
+            return this.tooltip;
         }
 
         public Mode other()

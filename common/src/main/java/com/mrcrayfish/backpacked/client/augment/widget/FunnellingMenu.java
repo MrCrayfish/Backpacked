@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -76,15 +77,9 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 )).build());
             layout.addChild(header);
             layout.addChild(list);
-
-            layout.addChild(CustomButton.builder()
-                .setSize(divider.getWidth(), 18)
-                .setMessage(() -> Component.translatable("augment.backpacked.funnelling.mode", supplier.get().mode().getLabel()))
-                .setAction(btn -> {
-                    FunnellingAugment augment = supplier.get();
-                    augment = augment.setMode(augment.mode().other());
-                    updater.accept(augment);
-                }).build());
+            layout.addChild(CustomButton.values(supplier.get().mode(), mode -> {
+                updater.accept(supplier.get().setMode(mode));
+            }).setSize(divider.getWidth(), 18).build());
             return layout;
         });
     }
@@ -102,7 +97,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_hovered"),
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_selected")
         );
-        
+
         private final Supplier<FunnellingAugment> supplier;
         private final Consumer<FunnellingAugment> updater;
         private String query = "";

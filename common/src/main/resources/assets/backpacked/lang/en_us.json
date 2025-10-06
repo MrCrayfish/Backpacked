@@ -111,5 +111,7 @@
     "message.backpacked.player_opened": "A player has opened your backpack",
     "augment.backpacked.funnelling.mode": "Mode: %s",
     "augment.backpacked.funnelling.mode.allow": "Allow",
-    "augment.backpacked.funnelling.mode.disallow": "Disallow"
+    "augment.backpacked.funnelling.mode.allow.tooltip": "Only items that are activated in the list will be funnelled into the backpack",
+    "augment.backpacked.funnelling.mode.disallow": "Disallow",
+    "augment.backpacked.funnelling.mode.disallow.tooltip": "All items except the items that are activated in the list will be funnelled into the backpack"
 }
