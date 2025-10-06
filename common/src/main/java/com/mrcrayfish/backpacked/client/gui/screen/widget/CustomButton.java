@@ -34,11 +34,11 @@ public class CustomButton extends AbstractButton
     private final int gap;
     private final Consumer<CustomButton> action;
     private final WidgetSprites texture;
-    private final @Nullable StateController stateController;
+    private final @Nullable Controller controller;
     private final @Nullable Supplier<Boolean> activeSupplier;
     private final @Nullable Function<CustomButton, Tooltip> tooltip;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable StateController stateController, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -46,13 +46,10 @@ public class CustomButton extends AbstractButton
         this.gap = gap;
         this.action = action;
         this.texture = texture;
-        this.stateController = stateController;
+        this.controller = controller;
         this.activeSupplier = activeSupplier;
         this.tooltip = tooltip;
-        if(this.activeSupplier != null)
-        {
-            this.active = this.activeSupplier.get();
-        }
+        this.updateActiveState();
         this.updateTooltip();
     }
 
@@ -65,12 +62,20 @@ public class CustomButton extends AbstractButton
     @Override
     public void onPress()
     {
-        if(this.stateController != null)
+        if(this.controller != null)
         {
-            this.stateController.toggle();
+            this.controller.run();
         }
         this.action.accept(this);
         this.updateTooltip();
+    }
+
+    private void updateActiveState()
+    {
+        if(this.activeSupplier != null)
+        {
+            this.active = this.activeSupplier.get();
+        }
     }
 
     private void updateTooltip()
@@ -85,15 +90,12 @@ public class CustomButton extends AbstractButton
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        if(this.activeSupplier != null)
-        {
-            this.active = this.activeSupplier.get();
-        }
+        this.updateActiveState();
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
-        boolean state = this.stateController != null ? this.stateController.getter().get() : this.active;
-        graphics.blitSprite(this.texture.get(state, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        boolean enabled = this.controller instanceof StateController state ? state.getter.get() : this.active;
+        graphics.blitSprite(this.texture.get(enabled, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         graphics.setColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
 
@@ -147,18 +149,11 @@ public class CustomButton extends AbstractButton
         return new Builder(new StateController(getter, setter));
     }
 
-    public static <T extends Enum<T> & LabelAndDescription> Builder values(T initialValue, Consumer<T> callback)
+    public static <T extends Enum<T> & LabelAndDescription> Builder values(Supplier<T> getter, Consumer<T> setter)
     {
-        final MutableObject<T> holder = new MutableObject<>(initialValue);
-        return new Builder()
-            .setMessage(() -> holder.getValue().label())
-            .setTooltip(btn -> Tooltip.create(holder.getValue().description()))
-            .setAction(btn -> {
-                T[] values = initialValue.getDeclaringClass().getEnumConstants();
-                T nextValue = values[(holder.getValue().ordinal() + 1) % values.length];
-                holder.setValue(nextValue);
-                callback.accept(nextValue);
-            });
+        return new Builder(new EnumController<>(getter, setter))
+            .setMessage(() -> getter.get().label())
+            .setTooltip(btn -> Tooltip.create(getter.get().description()));
     }
 
     public static final class Builder
@@ -172,20 +167,20 @@ public class CustomButton extends AbstractButton
         private int gap = 2;
         private Consumer<CustomButton> action = btn -> {};
         private WidgetSprites texture = DEFAULT_SPRITES;
-        private @Nullable StateController stateController;
+        private @Nullable Controller controller;
         private @Nullable Supplier<Boolean> active;
         private @Nullable Function<CustomButton, Tooltip> tooltip;
 
         private Builder() {}
 
-        private Builder(@Nullable StateController stateController)
+        private Builder(@Nullable Controller controller)
         {
-            this.stateController = stateController;
+            this.controller = controller;
         }
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.stateController, this.active, this.tooltip);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip);
         }
 
         public Builder setPosition(int x, int y)
@@ -305,11 +300,29 @@ public class CustomButton extends AbstractButton
         }
     }
 
-    private record StateController(Supplier<Boolean> getter, Consumer<Boolean> setter)
+    private interface Controller
     {
-        public void toggle()
+        void run();
+    }
+
+    private record StateController(Supplier<Boolean> getter, Consumer<Boolean> setter) implements Controller
+    {
+        @Override
+        public void run()
         {
             this.setter.accept(!this.getter.get());
+        }
+    }
+
+    private record EnumController<T extends Enum<T> & LabelAndDescription>(Supplier<T> getter, Consumer<T> setter) implements Controller
+    {
+        @Override
+        public void run()
+        {
+            T currentValue = this.getter.get();
+            T[] values = currentValue.getDeclaringClass().getEnumConstants();
+            T nextValue = values[(currentValue.ordinal() + 1) % values.length];
+            this.setter.accept(nextValue);
         }
     }
 }

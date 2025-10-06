@@ -70,9 +70,10 @@ public class FunnellingMenu extends AugmentSettingsMenu
 
             layout.addChild(header);
             layout.addChild(list);
-            layout.addChild(CustomButton.values(supplier.get().mode(), mode -> {
-                updater.accept(supplier.get().setMode(mode));
-            }).setSize(divider.getWidth(), 18).build());
+            layout.addChild(CustomButton.values(() -> supplier.get().mode(), mode -> updater.accept(supplier.get().setMode(mode)))
+                .setSize(divider.getWidth(), 18)
+                .build()
+            );
             return layout;
         });
     }
