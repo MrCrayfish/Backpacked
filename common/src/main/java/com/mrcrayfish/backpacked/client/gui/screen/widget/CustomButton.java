@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -31,9 +33,10 @@ public class CustomButton extends AbstractButton
     private final Consumer<CustomButton> action;
     private final WidgetSprites texture;
     private final @Nullable Supplier<Boolean> activeSupplier;
+    private final @Nullable Function<CustomButton, Tooltip> tooltip;
     private @Nullable Boolean state;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state, @Nullable Supplier<Boolean> activeSupplier)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -43,10 +46,12 @@ public class CustomButton extends AbstractButton
         this.texture = texture;
         this.state = state;
         this.activeSupplier = activeSupplier;
+        this.tooltip = tooltip;
         if(this.activeSupplier != null)
         {
             this.active = this.activeSupplier.get();
         }
+        this.updateTooltip();
     }
 
     @Override
@@ -63,6 +68,16 @@ public class CustomButton extends AbstractButton
             this.state = !this.state;
         }
         this.action.accept(this);
+        this.updateTooltip();
+    }
+
+    private void updateTooltip()
+    {
+        if(this.tooltip != null)
+        {
+            this.setTooltip(this.tooltip.apply(this));
+            this.setTooltipDelay(Duration.ofMillis(350));
+        }
     }
 
     public boolean isToggled()
@@ -148,6 +163,7 @@ public class CustomButton extends AbstractButton
         private WidgetSprites texture = DEFAULT_SPRITES;
         private @Nullable Boolean state;
         private @Nullable Supplier<Boolean> active;
+        private @Nullable Function<CustomButton, Tooltip> tooltip;
 
         private Builder() {}
 
@@ -158,7 +174,7 @@ public class CustomButton extends AbstractButton
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.state, this.active);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.state, this.active, this.tooltip);
         }
 
         public Builder setPosition(int x, int y)
@@ -220,6 +236,18 @@ public class CustomButton extends AbstractButton
         public Builder setActive(Supplier<Boolean> active)
         {
             this.active = active;
+            return this;
+        }
+
+        public Builder setTooltip(Tooltip tooltip)
+        {
+            this.tooltip = btn -> tooltip;
+            return this;
+        }
+
+        public Builder setTooltip(Function<CustomButton, Tooltip> function)
+        {
+            this.tooltip = function;
             return this;
         }
     }
