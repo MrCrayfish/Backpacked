@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.client.augment.widget;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
-import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
@@ -44,10 +43,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             TextWidget title = layout.addChild(new TextWidget(Component.literal("Filters"), Minecraft.getInstance().font).setColour(0xFF61503D));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(170, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
 
-            FilterList list = new FilterList(supplier, updater, divider.getWidth());
-            list.setSearchQuery(lastQuery);
-            list.setActivatedOnly(lastFilter);
-            list.updateList();
+            FilterList list = new FilterList(supplier, updater, divider.getWidth(), lastQuery, lastFilter);
 
             int filterButtonWidth = 55;
             LinearLayout header = LinearLayout.horizontal().spacing(3);
@@ -98,7 +94,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
         private String searchQuery = "";
         private boolean activatedOnly = false;
 
-        public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater, int width)
+        public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater, int width, String lastQuery, boolean lastFilter)
         {
             super(width, 104, 0, 0, 18);
             this.supplier = supplier;
@@ -111,11 +107,9 @@ public class FunnellingMenu extends AugmentSettingsMenu
             this.setItemSpacing(2);
             this.setScrollBarWidth(10);
             this.setScrollBarStyle(ScrollBarStyle.DETACHED);
-            FunnellingAugment augment = supplier.get();
-            BuiltInRegistries.ITEM.forEach(item -> {
-                this.addEntry(new FilterItem(item, augment.isFilter(item)));
-            });
-            this.children().sort(Comparator.comparing(item -> item.label.getString()));
+            this.searchQuery = lastQuery;
+            this.activatedOnly = lastFilter;
+            this.updateList();
         }
 
         private void updateList()
