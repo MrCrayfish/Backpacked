@@ -61,6 +61,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
 
             header.addChild(CustomButton.state(list::isActivatedOnly, list::setActivatedOnly)
+                .setSize(filterButtonWidth, 18)
                 .setMessage(ACTIVE_LABEL)
                 .setIcon(btn -> list.isActivatedOnly() ? FilterList.FilterItem.TOGGLE_ON : FilterList.FilterItem.TOGGLE_OFF, 6, 6)
                 .setTexture(new WidgetSprites(
