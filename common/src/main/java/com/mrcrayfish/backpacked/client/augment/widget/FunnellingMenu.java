@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -46,8 +45,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
             Divider divider = layout.addChild(Divider.horizontal(Math.max(170, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
 
             FilterList list = new FilterList(supplier, updater, divider.getWidth());
-            list.setQuery(lastQuery);
-            list.setFilterByToggled(lastFilter);
+            list.setSearchQuery(lastQuery);
+            list.setActivatedOnly(lastFilter);
             list.updateList();
 
             int filterButtonWidth = 55;
@@ -58,23 +57,17 @@ public class FunnellingMenu extends AugmentSettingsMenu
             ));
             searchField.getEditBox().setValue(lastQuery);
             searchField.getEditBox().setHint(SEARCH_HINT);
-            searchField.getEditBox().setResponder(s -> {
-                lastQuery = s;
-                list.setQuery(s);
-            });
+            searchField.getEditBox().setResponder(list::setSearchQuery);
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
-            header.addChild(CustomButton.toggle(lastFilter).setSize(filterButtonWidth, 18)
+
+            header.addChild(CustomButton.state(list::isActivatedOnly, list::setActivatedOnly)
                 .setMessage(ACTIVE_LABEL)
-                .setGap(4)
-                .setAction(btn -> {
-                    lastFilter = btn.isToggled();
-                    list.setFilterByToggled(btn.isToggled());
-                }).setIcon(btn -> {
-                    return btn.isToggled() ? FilterList.FilterItem.TOGGLE_ON : FilterList.FilterItem.TOGGLE_OFF;
-                }, 6, 6).setTexture(new WidgetSprites(
+                .setIcon(btn -> list.isActivatedOnly() ? FilterList.FilterItem.TOGGLE_ON : FilterList.FilterItem.TOGGLE_OFF, 6, 6)
+                .setTexture(new WidgetSprites(
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
                 )).build());
+
             layout.addChild(header);
             layout.addChild(list);
             layout.addChild(CustomButton.values(supplier.get().mode(), mode -> {
@@ -100,8 +93,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
 
         private final Supplier<FunnellingAugment> supplier;
         private final Consumer<FunnellingAugment> updater;
-        private String query = "";
-        private boolean filterByToggled = false;
+        private String searchQuery = "";
+        private boolean activatedOnly = false;
 
         public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater, int width)
         {
@@ -125,14 +118,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
 
         private void updateList()
         {
-            String search = this.query.toLowerCase();
+            String search = this.searchQuery.toLowerCase();
             boolean empty = search.trim().isBlank();
             this.clearEntries();
             FunnellingAugment augment = this.supplier.get();
             BuiltInRegistries.ITEM.forEach(item -> {
                 if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
                     boolean toggled = augment.isFilter(item);
-                    if(!this.filterByToggled || toggled) {
+                    if(!this.activatedOnly || toggled) {
                         this.addEntry(new FilterItem(item, toggled));
                     }
                 }
@@ -159,16 +152,23 @@ public class FunnellingMenu extends AugmentSettingsMenu
             }
         }
 
-        private void setQuery(String query)
+        private void setSearchQuery(String searchQuery)
         {
-            this.query = query;
+            lastQuery = searchQuery;
+            this.searchQuery = searchQuery;
             this.updateList();
         }
 
-        private void setFilterByToggled(boolean toggled)
+        private void setActivatedOnly(boolean activatedOnly)
         {
-            this.filterByToggled = toggled;
+            lastFilter = activatedOnly;
+            this.activatedOnly = activatedOnly;
             this.updateList();
+        }
+
+        public boolean isActivatedOnly()
+        {
+            return this.activatedOnly;
         }
 
         public final class FilterItem extends ObjectSelectionList.Entry<FilterItem>

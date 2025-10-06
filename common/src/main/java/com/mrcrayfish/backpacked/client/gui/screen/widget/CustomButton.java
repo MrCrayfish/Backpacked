@@ -34,11 +34,11 @@ public class CustomButton extends AbstractButton
     private final int gap;
     private final Consumer<CustomButton> action;
     private final WidgetSprites texture;
+    private final @Nullable StateController stateController;
     private final @Nullable Supplier<Boolean> activeSupplier;
     private final @Nullable Function<CustomButton, Tooltip> tooltip;
-    private @Nullable Boolean state;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable StateController stateController, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -46,7 +46,7 @@ public class CustomButton extends AbstractButton
         this.gap = gap;
         this.action = action;
         this.texture = texture;
-        this.state = state;
+        this.stateController = stateController;
         this.activeSupplier = activeSupplier;
         this.tooltip = tooltip;
         if(this.activeSupplier != null)
@@ -65,9 +65,9 @@ public class CustomButton extends AbstractButton
     @Override
     public void onPress()
     {
-        if(this.state != null)
+        if(this.stateController != null)
         {
-            this.state = !this.state;
+            this.stateController.toggle();
         }
         this.action.accept(this);
         this.updateTooltip();
@@ -82,11 +82,6 @@ public class CustomButton extends AbstractButton
         }
     }
 
-    public boolean isToggled()
-    {
-        return this.state != null ? this.state : true;
-    }
-
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
@@ -97,7 +92,7 @@ public class CustomButton extends AbstractButton
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
-        boolean state = this.state != null ? this.state : this.active;
+        boolean state = this.stateController != null ? this.stateController.getter().get() : this.active;
         graphics.blitSprite(this.texture.get(state, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         graphics.setColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
@@ -147,9 +142,9 @@ public class CustomButton extends AbstractButton
         return new Builder();
     }
 
-    public static Builder toggle(boolean initialState)
+    public static Builder state(Supplier<Boolean> getter, Consumer<Boolean> setter)
     {
-        return new Builder(initialState);
+        return new Builder(new StateController(getter, setter));
     }
 
     public static <T extends Enum<T> & LabelAndDescription> Builder values(T initialValue, Consumer<T> callback)
@@ -177,20 +172,20 @@ public class CustomButton extends AbstractButton
         private int gap = 2;
         private Consumer<CustomButton> action = btn -> {};
         private WidgetSprites texture = DEFAULT_SPRITES;
-        private @Nullable Boolean state;
+        private @Nullable StateController stateController;
         private @Nullable Supplier<Boolean> active;
         private @Nullable Function<CustomButton, Tooltip> tooltip;
 
         private Builder() {}
 
-        private Builder(@Nullable Boolean state)
+        private Builder(@Nullable StateController stateController)
         {
-            this.state = state;
+            this.stateController = stateController;
         }
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.state, this.active, this.tooltip);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.stateController, this.active, this.tooltip);
         }
 
         public Builder setPosition(int x, int y)
@@ -307,6 +302,14 @@ public class CustomButton extends AbstractButton
         public ResourceLocation sprite(CustomButton button)
         {
             return this.function.apply(button);
+        }
+    }
+
+    private record StateController(Supplier<Boolean> getter, Consumer<Boolean> setter)
+    {
+        public void toggle()
+        {
+            this.setter.accept(!this.getter.get());
         }
     }
 }

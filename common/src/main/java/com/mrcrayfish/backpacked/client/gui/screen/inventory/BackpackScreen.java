@@ -205,13 +205,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
         // Adds a toggle and settings button for the augment
         GridLayout options = new GridLayout().spacing(0);
-        options.addChild(CustomButton.toggle(this.menu.getAugments().getState(position))
-            .setSize(10, 10)
-            .setTexture(AUGMENT_TOGGLE_SPRITES)
-            .setAction(btn -> {
-                Network.getPlay().sendToServer(new MessageSetAugmentState(position, btn.isToggled()));
-                this.updateAugments(this.menu.getAugments().setState(position, btn.isToggled()));
-            }).build(), 0, 0);
+        options.addChild(CustomButton.state(() -> {
+                return this.menu.getAugments().getState(position);
+            }, newValue -> {
+                Network.getPlay().sendToServer(new MessageSetAugmentState(position, newValue));
+                this.updateAugments(this.menu.getAugments().setState(position, newValue));
+            }).setSize(10, 10).setTexture(AUGMENT_TOGGLE_SPRITES).build(), 0, 0);
         options.addChild(CustomButton.builder()
             .setSize(10, 10)
             .setTexture(AUGMENT_SETTINGS_SPRITES)
