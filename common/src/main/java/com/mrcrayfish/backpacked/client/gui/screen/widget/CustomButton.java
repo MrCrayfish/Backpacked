@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -148,6 +150,20 @@ public class CustomButton extends AbstractButton
     public static Builder toggle(boolean initialState)
     {
         return new Builder(initialState);
+    }
+
+    public static <T extends Enum<T> & LabelAndDescription> Builder values(T initialValue, Consumer<T> callback)
+    {
+        final MutableObject<T> holder = new MutableObject<>(initialValue);
+        return new Builder()
+            .setMessage(() -> holder.getValue().label())
+            .setTooltip(btn -> Tooltip.create(holder.getValue().description()))
+            .setAction(btn -> {
+                T[] values = initialValue.getDeclaringClass().getEnumConstants();
+                T nextValue = values[(holder.getValue().ordinal() + 1) % values.length];
+                holder.setValue(nextValue);
+                callback.accept(nextValue);
+            });
     }
 
     public static final class Builder
