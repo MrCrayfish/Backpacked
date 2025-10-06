@@ -42,14 +42,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
         super(handler, menu -> {
             PaddedLinearLayout layout = (PaddedLinearLayout) PaddedLinearLayout.vertical().padding(6).spacing(2);
             TextWidget title = layout.addChild(new TextWidget(Component.literal("Filters"), Minecraft.getInstance().font).setColour(0xFF61503D));
-            Divider divider = layout.addChild(Divider.horizontal(Math.max(180, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
+            Divider divider = layout.addChild(Divider.horizontal(Math.max(170, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
 
             FilterList list = new FilterList(supplier, updater, divider.getWidth());
             list.setQuery(lastQuery);
             list.setFilterByToggled(lastFilter);
             list.updateList();
 
-            int filterButtonWidth = 60;
+            int filterButtonWidth = 55;
             LinearLayout header = LinearLayout.horizontal().spacing(3);
             CustomEditBox searchField = CustomEditBox.create(divider.getWidth() - 3 - filterButtonWidth, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
@@ -76,6 +76,15 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 )).build());
             layout.addChild(header);
             layout.addChild(list);
+
+            layout.addChild(CustomButton.builder()
+                .setSize(divider.getWidth(), 18)
+                .setMessage(() -> Component.translatable("augment.backpacked.funnelling.mode", supplier.get().mode().getLabel()))
+                .setAction(btn -> {
+                    FunnellingAugment augment = supplier.get();
+                    augment = augment.setMode(augment.mode().other());
+                    updater.accept(augment);
+                }).build());
             return layout;
         });
     }
@@ -93,15 +102,16 @@ public class FunnellingMenu extends AugmentSettingsMenu
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_hovered"),
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_selected")
         );
-
+        
+        private final Supplier<FunnellingAugment> supplier;
         private final Consumer<FunnellingAugment> updater;
-        private FunnellingAugment augment;
         private String query = "";
         private boolean filterByToggled = false;
 
         public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater, int width)
         {
             super(width, 104, 0, 0, 18);
+            this.supplier = supplier;
             this.updater = updater;
             this.setRenderHeader(false, 0);
             this.setListBackground(LIST_BACKGROUND_SPRITE);
@@ -111,9 +121,9 @@ public class FunnellingMenu extends AugmentSettingsMenu
             this.setItemSpacing(2);
             this.setScrollBarWidth(10);
             this.setScrollBarStyle(ScrollBarStyle.DETACHED);
-            this.augment = supplier.get();
+            FunnellingAugment augment = supplier.get();
             BuiltInRegistries.ITEM.forEach(item -> {
-                this.addEntry(new FilterItem(item, this.augment.isFilter(item)));
+                this.addEntry(new FilterItem(item, augment.isFilter(item)));
             });
             this.children().sort(Comparator.comparing(item -> item.label.getString()));
         }
@@ -123,9 +133,10 @@ public class FunnellingMenu extends AugmentSettingsMenu
             String search = this.query.toLowerCase();
             boolean empty = search.trim().isBlank();
             this.clearEntries();
+            FunnellingAugment augment = this.supplier.get();
             BuiltInRegistries.ITEM.forEach(item -> {
                 if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
-                    boolean toggled = this.augment.isFilter(item);
+                    boolean toggled = augment.isFilter(item);
                     if(!this.filterByToggled || toggled) {
                         this.addEntry(new FilterItem(item, toggled));
                     }
@@ -140,15 +151,15 @@ public class FunnellingMenu extends AugmentSettingsMenu
             if(item != null)
             {
                 item.toggled = !item.toggled;
+                FunnellingAugment augment = this.supplier.get();
                 if(item.toggled)
                 {
-                    this.augment = this.augment.addFilter(item.id);
+                    this.updater.accept(augment.addFilter(item.id));
                 }
                 else
                 {
-                    this.augment = this.augment.removeFilter(item.id);
+                    this.updater.accept(augment.removeFilter(item.id));
                 }
-                this.updater.accept(this.augment);
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             }
         }

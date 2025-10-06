@@ -108,5 +108,8 @@
     "itemGroup.backpacked": "Backpacked",
     "key.backpack": "Open Backpack",
     "message.backpacked.occupied_back_slot": "Back slot is occupied by another item",
-    "message.backpacked.player_opened": "A player has opened your backpack"
+    "message.backpacked.player_opened": "A player has opened your backpack",
+    "augment.backpacked.funnelling.mode": "Mode: %s",
+    "augment.backpacked.funnelling.mode.allow": "Allow",
+    "augment.backpacked.funnelling.mode.disallow": "Disallow"
 }

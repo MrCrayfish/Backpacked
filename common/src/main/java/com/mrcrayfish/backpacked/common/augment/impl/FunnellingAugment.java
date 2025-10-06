@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -74,6 +75,11 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
     {
         Map<Item, List<ItemFilter>> lookup = this.buildLookup();
         return lookup.containsKey(item);
+    }
+
+    public FunnellingAugment setMode(Mode mode)
+    {
+        return new FunnellingAugment(this.filters, mode);
     }
 
     public List<ItemFilter> filters()
@@ -189,15 +195,36 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
 
     public enum Mode implements StringRepresentable
     {
-        ALLOW, DISALLOW;
+        ALLOW(Component.translatable("augment.backpacked.funnelling.mode.allow")),
+        DISALLOW(Component.translatable("augment.backpacked.funnelling.mode.disallow"));
 
         public static final Codec<Mode> CODEC = StringRepresentable.fromEnum(Mode::values);
         public static final StreamCodec<FriendlyByteBuf, Mode> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Mode.class));
+
+        private final Component label;
+
+        Mode(Component label)
+        {
+            this.label = label;
+        }
 
         @Override
         public String getSerializedName()
         {
             return this.name().toLowerCase(Locale.ROOT);
+        }
+
+        public Component getLabel()
+        {
+            return this.label;
+        }
+
+        public Mode other()
+        {
+            return switch(this) {
+                case ALLOW -> DISALLOW;
+                case DISALLOW -> ALLOW;
+            };
         }
     }
 }
