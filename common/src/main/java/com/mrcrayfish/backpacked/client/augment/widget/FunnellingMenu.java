@@ -33,7 +33,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
 {
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
-    
+
     private static String lastQuery = "";
     private static boolean lastFilter = false;
 
@@ -49,8 +49,9 @@ public class FunnellingMenu extends AugmentSettingsMenu
             list.setFilterByToggled(lastFilter);
             list.updateList();
 
+            int filterButtonWidth = 60;
             LinearLayout header = LinearLayout.horizontal().spacing(3);
-            CustomEditBox searchField = CustomEditBox.create(divider.getWidth() - 3 - 52, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
+            CustomEditBox searchField = CustomEditBox.create(divider.getWidth() - 3 - filterButtonWidth, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
                 Utils.rl("backpack/editbox/background_focused")
             ));
@@ -61,7 +62,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 list.setQuery(s);
             });
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
-            header.addChild(CustomButton.toggle(lastFilter).setSize(52, 18)
+            header.addChild(CustomButton.toggle(lastFilter).setSize(filterButtonWidth, 18)
                 .setMessage(ACTIVE_LABEL)
                 .setGap(4)
                 .setAction(btn -> {
@@ -74,7 +75,6 @@ public class FunnellingMenu extends AugmentSettingsMenu
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
                 )).build());
             layout.addChild(header);
-
             layout.addChild(list);
             return layout;
         });
