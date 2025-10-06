@@ -40,7 +40,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
     public FunnellingMenu(PopupMenuHandler handler, Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater)
     {
         super(handler, menu -> {
-            PaddedLinearLayout layout = (PaddedLinearLayout) PaddedLinearLayout.vertical().padding(6).spacing(2);
+            PaddedLinearLayout layout = (PaddedLinearLayout) PaddedLinearLayout.vertical().padding(8).spacing(2);
             TextWidget title = layout.addChild(new TextWidget(Component.literal("Filters"), Minecraft.getInstance().font).setColour(0xFF61503D));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(170, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
 
@@ -59,7 +59,6 @@ public class FunnellingMenu extends AugmentSettingsMenu
             searchField.getEditBox().setHint(SEARCH_HINT);
             searchField.getEditBox().setResponder(list::setSearchQuery);
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
-
             header.addChild(CustomButton.state(list::isActivatedOnly, list::setActivatedOnly)
                 .setSize(filterButtonWidth, 18)
                 .setGap(4)
@@ -69,8 +68,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
                 )).build());
-
             layout.addChild(header);
+
             layout.addChild(list);
             layout.addChild(CustomButton.values(() -> supplier.get().mode(), mode -> updater.accept(supplier.get().setMode(mode)))
                 .setSize(divider.getWidth(), 18)
