@@ -166,6 +166,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             lastFilter = activatedOnly;
             this.activatedOnly = activatedOnly;
             this.updateList();
+            this.setScrollAmount(0);
         }
 
         public boolean isActivatedOnly()
