@@ -13,6 +13,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -29,20 +31,47 @@ import java.util.function.Supplier;
 
 public class FunnellingMenu extends AugmentSettingsMenu
 {
+    private static String lastQuery = "";
+    private static boolean lastFilter = false;
+
     public FunnellingMenu(PopupMenuHandler handler, Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater)
     {
         super(handler, menu -> {
             PaddedLinearLayout layout = (PaddedLinearLayout) PaddedLinearLayout.vertical().padding(6).spacing(2);
             TextWidget title = layout.addChild(new TextWidget(Component.literal("Filters"), Minecraft.getInstance().font).setColour(0xFF61503D));
-            layout.addChild(Divider.horizontal(Math.max(160, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
-            FilterList list = new FilterList(supplier, updater);
-            CustomEditBox searchField = CustomEditBox.create(160, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
+            Divider divider = layout.addChild(Divider.horizontal(Math.max(180, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
+
+            FilterList list = new FilterList(supplier, updater, divider.getWidth());
+            list.setQuery(lastQuery);
+            list.setFilterByToggled(lastFilter);
+            list.updateList();
+
+            LinearLayout header = LinearLayout.horizontal().spacing(3);
+            CustomEditBox searchField = CustomEditBox.create(divider.getWidth() - 3 - 52, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
                 Utils.rl("backpack/editbox/background_focused")
             ));
+            searchField.getEditBox().setValue(lastQuery);
             searchField.getEditBox().setHint(Component.literal("Search..."));
-            searchField.getEditBox().setResponder(list::filter);
-            layout.addChild(searchField);
+            searchField.getEditBox().setResponder(s -> {
+                lastQuery = s;
+                list.setQuery(s);
+            });
+            header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
+            header.addChild(CustomButton.toggle(lastFilter).setSize(52, 18)
+                .setMessage(Component.literal("Active"))
+                .setGap(4)
+                .setAction(btn -> {
+                    lastFilter = btn.isToggled();
+                    list.setFilterByToggled(btn.isToggled());
+                }).setIcon(btn -> {
+                    return btn.isToggled() ? FilterList.FilterItem.TOGGLE_ON : FilterList.FilterItem.TOGGLE_OFF;
+                }, 6, 6).setTexture(new WidgetSprites(
+                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+                )).build());
+            layout.addChild(header);
+
             layout.addChild(list);
             return layout;
         });
@@ -64,10 +93,12 @@ public class FunnellingMenu extends AugmentSettingsMenu
 
         private final Consumer<FunnellingAugment> updater;
         private FunnellingAugment augment;
+        private String query = "";
+        private boolean filterByToggled = false;
 
-        public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater)
+        public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater, int width)
         {
-            super(160, 104, 0, 0, 18);
+            super(width, 104, 0, 0, 18);
             this.updater = updater;
             this.setRenderHeader(false, 0);
             this.setListBackground(LIST_BACKGROUND_SPRITE);
@@ -84,15 +115,17 @@ public class FunnellingMenu extends AugmentSettingsMenu
             this.children().sort(Comparator.comparing(item -> item.label.getString()));
         }
 
-        private void filter(String text)
+        private void updateList()
         {
-            text = text.toLowerCase();
-            boolean empty = text.trim().isBlank();
+            String search = this.query.toLowerCase();
+            boolean empty = search.trim().isBlank();
             this.clearEntries();
-            String filter = text;
             BuiltInRegistries.ITEM.forEach(item -> {
-                if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(filter)) {
-                    this.addEntry(new FilterItem(item, this.augment.isFilter(item)));
+                if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
+                    boolean toggled = this.augment.isFilter(item);
+                    if(!this.filterByToggled || toggled) {
+                        this.addEntry(new FilterItem(item, toggled));
+                    }
                 }
             });
             this.children().sort(Comparator.comparing(item -> item.label.getString()));
@@ -117,7 +150,19 @@ public class FunnellingMenu extends AugmentSettingsMenu
             }
         }
 
-        public static final class FilterItem extends ObjectSelectionList.Entry<FilterItem>
+        private void setQuery(String query)
+        {
+            this.query = query;
+            this.updateList();
+        }
+
+        private void setFilterByToggled(boolean toggled)
+        {
+            this.filterByToggled = toggled;
+            this.updateList();
+        }
+
+        public final class FilterItem extends ObjectSelectionList.Entry<FilterItem>
         {
             private static final ResourceLocation TOGGLE_OFF = Utils.rl("backpack/toggle_off");
             private static final ResourceLocation TOGGLE_ON = Utils.rl("backpack/toggle_on");
@@ -139,9 +184,10 @@ public class FunnellingMenu extends AugmentSettingsMenu
             {
                 Font font = Minecraft.getInstance().font;
                 String rawName = name.getString();
-                if(font.width(rawName) > 100)
+                int maxWidth = FilterList.this.getRowWidth() - 20 - 15;
+                if(font.width(rawName) > maxWidth)
                 {
-                    rawName = font.plainSubstrByWidth(rawName, 100 - font.width("...")).trim() + "...";
+                    rawName = font.plainSubstrByWidth(rawName, maxWidth - font.width("...")).trim() + "...";
                 }
                 return Component.literal(rawName);
             }
