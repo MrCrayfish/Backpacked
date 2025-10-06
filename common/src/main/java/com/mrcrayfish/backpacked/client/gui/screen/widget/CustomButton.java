@@ -25,6 +25,7 @@ public class CustomButton extends AbstractButton
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
     );
 
+    private final Message message;
     private final @Nullable Icon icon;
     private final int gap;
     private final Consumer<CustomButton> action;
@@ -32,9 +33,10 @@ public class CustomButton extends AbstractButton
     private final @Nullable Supplier<Boolean> activeSupplier;
     private @Nullable Boolean state;
 
-    private CustomButton(int x, int y, int width, int height, Component text, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state, @Nullable Supplier<Boolean> activeSupplier)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Boolean state, @Nullable Supplier<Boolean> activeSupplier)
     {
-        super(x, y, width, height, text);
+        super(x, y, width, height, message.component());
+        this.message = message;
         this.icon = icon;
         this.gap = gap;
         this.action = action;
@@ -45,6 +47,12 @@ public class CustomButton extends AbstractButton
         {
             this.active = this.activeSupplier.get();
         }
+    }
+
+    @Override
+    public Component getMessage()
+    {
+        return this.message.component();
     }
 
     @Override
@@ -133,7 +141,7 @@ public class CustomButton extends AbstractButton
         private int y;
         private int width = 20;
         private int height = 20;
-        private Component message = CommonComponents.EMPTY;
+        private Message message = new ConstantMessage(CommonComponents.EMPTY);
         private @Nullable Icon icon;
         private int gap = 2;
         private Consumer<CustomButton> action = btn -> {};
@@ -169,7 +177,13 @@ public class CustomButton extends AbstractButton
 
         public Builder setMessage(Component message)
         {
-            this.message = message;
+            this.message = new ConstantMessage(message);
+            return this;
+        }
+
+        public Builder setMessage(Supplier<Component> supplier)
+        {
+            this.message = new DynamicMessage(supplier);
             return this;
         }
 
@@ -207,6 +221,21 @@ public class CustomButton extends AbstractButton
         {
             this.active = active;
             return this;
+        }
+    }
+
+    private interface Message
+    {
+        Component component();
+    }
+
+    private record ConstantMessage(Component component) implements Message {}
+
+    private record DynamicMessage(Supplier<Component> supplier) implements Message
+    {
+        public Component component()
+        {
+            return this.supplier.get();
         }
     }
 
