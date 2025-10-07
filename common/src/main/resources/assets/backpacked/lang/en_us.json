@@ -94,8 +94,6 @@
     "container.backpack_management": "Equipped Backpacks",
     "container.backpack_shelf": "Backpack Shelf",
     "curios.identifier.backpacked": "Backpacked",
-    "enchantment.backpacked.funnelling": "Funnelling",
-    "enchantment.backpacked.funnelling.desc": "Funnels drops from mining or harvesting certain resources directly into a Backpack",
     "enchantment.backpacked.imbued_hide": "Imbued Hide",
     "enchantment.backpacked.imbued_hide.desc": "Strengthens the material of a Backpack to prevent it from fire damage",
     "enchantment.backpacked.looted": "Looted",
