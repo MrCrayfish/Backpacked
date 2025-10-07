@@ -47,7 +47,7 @@ public class EnchantmentHandler
 
     public static boolean onBreakBlock(ServerPlayer player, List<ItemStack> drops)
     {
-        List<Pair<BackpackInventory, FunnellingAugment>> list = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get());
+        /*List<Pair<BackpackInventory, FunnellingAugment>> list = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get());
         if(list.isEmpty())
             return false;
 
@@ -68,7 +68,8 @@ public class EnchantmentHandler
                 }
             }
         });
-        return changed.get();
+        return changed.get();*/
+        return false;
     }
 
     public static boolean onDropLoot(Collection<ItemEntity> drops, DamageSource source)
