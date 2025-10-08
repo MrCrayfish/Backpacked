@@ -13,7 +13,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -28,6 +27,7 @@ public class CustomButton extends AbstractButton
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
     );
+    private static final int DEFAULT_TOOLTIP_DELAY = 350;
 
     private final Message message;
     private final @Nullable Icon icon;
@@ -37,8 +37,10 @@ public class CustomButton extends AbstractButton
     private final @Nullable Controller controller;
     private final @Nullable Supplier<Boolean> activeSupplier;
     private final @Nullable Function<CustomButton, Tooltip> tooltip;
+    private final TooltipMode tooltipMode;
+    private @Nullable Tooltip currentTooltip;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, TooltipMode tooltipMode)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -49,8 +51,10 @@ public class CustomButton extends AbstractButton
         this.controller = controller;
         this.activeSupplier = activeSupplier;
         this.tooltip = tooltip;
+        this.tooltipMode = tooltipMode;
         this.updateActiveState();
-        this.updateTooltip();
+        this.rebuildTooltip();
+        this.setTooltipDelay(Duration.ofMillis(tooltipDelay));
     }
 
     @Override
@@ -67,7 +71,7 @@ public class CustomButton extends AbstractButton
             this.controller.run();
         }
         this.action.accept(this);
-        this.updateTooltip();
+        this.rebuildTooltip();
     }
 
     private void updateActiveState()
@@ -78,12 +82,24 @@ public class CustomButton extends AbstractButton
         }
     }
 
-    private void updateTooltip()
+    private void rebuildTooltip()
     {
         if(this.tooltip != null)
         {
-            this.setTooltip(this.tooltip.apply(this));
-            this.setTooltipDelay(Duration.ofMillis(350));
+            this.currentTooltip = this.tooltip.apply(this);
+            this.updateTooltip();
+        }
+    }
+
+    private void updateTooltip()
+    {
+        if(this.active)
+        {
+            this.setTooltip(this.currentTooltip);
+        }
+        else if(this.tooltipMode == TooltipMode.HIDE_WHEN_WIDGET_INACTIVE)
+        {
+            this.setTooltip(null);
         }
     }
 
@@ -91,6 +107,7 @@ public class CustomButton extends AbstractButton
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.updateActiveState();
+        this.updateTooltip();
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
@@ -170,6 +187,8 @@ public class CustomButton extends AbstractButton
         private @Nullable Controller controller;
         private @Nullable Supplier<Boolean> active;
         private @Nullable Function<CustomButton, Tooltip> tooltip;
+        private int tooltipDelay = DEFAULT_TOOLTIP_DELAY;
+        private TooltipMode tooltipMode = TooltipMode.DEFAULT;
 
         private Builder() {}
 
@@ -180,7 +199,7 @@ public class CustomButton extends AbstractButton
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipMode);
         }
 
         public Builder setPosition(int x, int y)
@@ -245,15 +264,21 @@ public class CustomButton extends AbstractButton
             return this;
         }
 
-        public Builder setTooltip(Tooltip tooltip)
+        public Builder setTooltip(Function<CustomButton, Tooltip> tooltip)
         {
-            this.tooltip = btn -> tooltip;
+            this.tooltip = tooltip;
             return this;
         }
 
-        public Builder setTooltip(Function<CustomButton, Tooltip> function)
+        public Builder setTooltipDelay(int tooltipDelay)
         {
-            this.tooltip = function;
+            this.tooltipDelay = tooltipDelay;
+            return this;
+        }
+
+        public Builder setTooltipVisibility(TooltipMode visibility)
+        {
+            this.tooltipMode = visibility;
             return this;
         }
     }
