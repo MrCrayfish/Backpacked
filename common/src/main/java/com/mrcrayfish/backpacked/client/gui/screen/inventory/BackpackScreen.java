@@ -48,6 +48,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component MANAGEMENT_TOOLTIP = Component.translatable("backpacked.gui.manage_backpacks");
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
+    private static final Component CONFIGURE = Component.translatable("backpacked.gui.configure");
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -227,7 +228,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 // Setting button should only be active if it has a settings factory
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 return AugmentSettingsFactories.hasFactory(type);
-            }).build(), 1, 0);
+            }).setTooltip(btn -> Tooltip.create(CONFIGURE)).setTooltipDelay(0).build(), 1, 0);
         layout.addChild(options, LayoutSettings::alignHorizontallyCenter);
 
         return layout;
