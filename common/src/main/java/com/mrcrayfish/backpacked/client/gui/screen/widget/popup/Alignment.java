@@ -30,6 +30,11 @@ public enum Alignment
     END_BOTTOM((menu, rectangle) -> {
         menu.setX(rectangle.right());
         menu.setY(rectangle.bottom() - menu.getHeight() + menu.padding());
+    }),
+    CENTERED((menu, rectangle) -> {
+        int x = (rectangle.width() - menu.getWidth()) / 2;
+        int y = (rectangle.height() - menu.getHeight()) / 2;
+        menu.setPosition(x, y);
     });
 
     private final BiConsumer<PopupMenu, ScreenRectangle> aligner;
