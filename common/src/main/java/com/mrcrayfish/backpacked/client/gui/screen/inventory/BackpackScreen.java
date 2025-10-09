@@ -24,6 +24,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -83,18 +84,16 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final int GAP = 3;
     private static final int INVENTORY_WIDTH = 176;
     private static final int INVENTORY_HEIGHT = 101;
-    private static final int QUICK_BUTTONS_PADDING = 4;
-    private static final int QUICK_BUTTONS_GAP = 2;
-    private static final int QUICK_BUTTONS_SIZE = 10;
+    private static final int LABEL_PADDING = 5;
 
     private final Player player;
     private final int cols;
     private final int rows;
     private final boolean owner;
     private boolean opened;
-    private int buttonCount;
     private int timer;
     private LinearLayout augmentsLayout;
+    private LinearLayout quickActionsLayout;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -124,23 +123,19 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             this.opened = true;
         }
 
-        List<AbstractButton> quickButtons = this.gatherQuickButtons();
+        LinearLayout quickActions = this.createQuickActionsPanel();
+        quickActions.arrangeElements();
+        quickActions.visitWidgets(this::addRenderableWidget);
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
-        int buttonsHeight = QUICK_BUTTONS_PADDING + (quickButtons.size() * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP) - QUICK_BUTTONS_GAP) + QUICK_BUTTONS_PADDING;
+        int buttonsHeight = LABEL_PADDING + quickActions.getHeight() + LABEL_PADDING;
         int buttonLeft = this.leftPos + this.imageWidth + 2;
-        if(buttonsHeight > backpackHeight - QUICK_BUTTONS_PADDING * 2)
+        if(buttonsHeight > backpackHeight - LABEL_PADDING * 2)
         {
             buttonLeft += 6;
         }
-        int buttonTop = this.topPos + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2 + QUICK_BUTTONS_PADDING;
-        for(int i = 0; i < quickButtons.size(); i++)
-        {
-            AbstractButton button = quickButtons.get(i);
-            button.setX(buttonLeft);
-            button.setY(buttonTop + i * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP));
-            this.addRenderableWidget(button);
-        }
-        this.buttonCount = quickButtons.size();
+        int buttonTop = this.topPos + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2 + LABEL_PADDING;
+        quickActions.setPosition(buttonLeft, buttonTop);
+        this.quickActionsLayout = quickActions;
 
         if(this.owner)
         {
@@ -237,6 +232,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private void updateAugments(Augments augments)
     {
         this.menu.setAugments(augments);
+    }
+
+    private LinearLayout createQuickActionsPanel()
+    {
+        LinearLayout layout = LinearLayout.vertical().spacing(2);
+        this.gatherQuickButtons().forEach(layout::addChild);
+        return layout;
     }
 
     private List<AbstractButton> gatherQuickButtons()
@@ -376,20 +378,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
-        // Calculate the height for the backpack inventory
-        int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
-
-        // Draw the background label for the quick action buttons
-        int buttonsHeight = QUICK_BUTTONS_PADDING + this.buttonCount * (QUICK_BUTTONS_SIZE + QUICK_BUTTONS_GAP) + QUICK_BUTTONS_PADDING;
-        int buttonsX = x + width - 3;
-        if(buttonsHeight > backpackHeight - QUICK_BUTTONS_PADDING * 2)
-            buttonsX += 6;
-        int buttonsY = y + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2;
-        graphics.blitSprite(LABEL_BACKGROUND, buttonsX, buttonsY, 20, buttonsHeight);
-
-        graphics.blitSprite(LABEL_BACKGROUND, this.augmentsLayout.getX() - 5, this.augmentsLayout.getY() - 5, 5 + this.augmentsLayout.getWidth() + 5, 5 + this.augmentsLayout.getHeight() + 5);
+        // Draw the background labels for the quick action buttons and augment
+        graphics.blitSprite(LABEL_BACKGROUND, this.quickActionsLayout.getX() - LABEL_PADDING, this.quickActionsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.quickActionsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.quickActionsLayout.getHeight() + LABEL_PADDING);
+        graphics.blitSprite(LABEL_BACKGROUND, this.augmentsLayout.getX() - LABEL_PADDING, this.augmentsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getHeight() + LABEL_PADDING);
 
         // Backpack Inventory
+        int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
         graphics.blitSprite(BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
 
         // Draw Backpack Slots
