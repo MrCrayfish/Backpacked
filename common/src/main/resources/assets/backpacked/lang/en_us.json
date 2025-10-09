@@ -109,6 +109,8 @@
     "key.backpack": "Open Backpack",
     "message.backpacked.occupied_back_slot": "Back slot is occupied by another item",
     "message.backpacked.player_opened": "A player has opened your backpack",
+    "augment.backpacked.funnelling": "Funnelling",
+    "augment.backpacked.funnelling.desc": "Items that are picked will be funnelled into the backpack instead of the players inventory. A filter can be configured to only allow specific items into the backpack. If the backpack inventory is full or the filter settings do not allow the item, it will placed into the players inventory as normal.",
     "augment.backpacked.funnelling.mode": "Mode: %s",
     "augment.backpacked.funnelling.mode.allow": "Allow",
     "augment.backpacked.funnelling.mode.allow.tooltip": "Only items that are activated in the list will be funnelled into the backpack",
