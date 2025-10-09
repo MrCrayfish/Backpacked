@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, ResourceLocation sprite, Component name) implements Comparable<AugmentType<?>>
+public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, ResourceLocation sprite, Component name, Component description) implements Comparable<AugmentType<?>>
 {
     public static final Comparator<AugmentType<?>> BY_NAME = Comparator.comparing(type -> type.name().getString());
     static final Codec<AugmentType<?>> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
@@ -33,7 +33,8 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
     {
         this(id, codec, streamCodec, defaultSupplier,
             ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "augment/%s".formatted(id.getPath())),
-            Component.translatable("augment.%s.%s".formatted(id.getNamespace(), id.getPath().replace("/", ".")))
+            Component.translatable("augment.%s.%s".formatted(id.getNamespace(), id.getPath().replace("/", "."))),
+            Component.translatable("augment.%s.%s.desc".formatted(id.getNamespace(), id.getPath().replace("/", ".")))
         );
     }
 
