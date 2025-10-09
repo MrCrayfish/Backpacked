@@ -94,7 +94,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private boolean opened;
     private int buttonCount;
     private int timer;
-    private GridLayout augmentsLayout;
+    private LinearLayout augmentsLayout;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -166,7 +166,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             navNext.setTooltip(navigateTooltip);
             navNext.active = backpackIndex < totalBackpacks - 1;
 
-            GridLayout augments = this.createAugmentsPanel();
+            LinearLayout augments = this.createAugmentsPanel();
             augments.arrangeElements();
             augments.visitWidgets(this::addRenderableWidget);
             int augmentsX = this.leftPos - augments.getWidth() - 2;
@@ -180,15 +180,15 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         this.updateUnlockableSlots();
     }
 
-    private GridLayout createAugmentsPanel()
+    private LinearLayout createAugmentsPanel()
     {
-        GridLayout grid = new GridLayout().spacing(2);
-        grid.addChild(this.createAugmentLayout(Augments.Position.FIRST), 0, 0);
-        grid.addChild(Divider.horizontal(30).colour(0xFFE0CDB7), 1, 0);
-        grid.addChild(this.createAugmentLayout(Augments.Position.SECOND), 2, 0);
-        grid.addChild(Divider.horizontal(30).colour(0xFFE0CDB7), 3, 0);
-        grid.addChild(this.createAugmentLayout(Augments.Position.THIRD), 4, 0);
-        return grid;
+        LinearLayout layout = LinearLayout.vertical().spacing(2);
+        layout.addChild(this.createAugmentLayout(Augments.Position.FIRST));
+        layout.addChild(Divider.horizontal(30).colour(0xFFE0CDB7));
+        layout.addChild(this.createAugmentLayout(Augments.Position.SECOND));
+        layout.addChild(Divider.horizontal(30).colour(0xFFE0CDB7));
+        layout.addChild(this.createAugmentLayout(Augments.Position.THIRD));
+        return layout;
     }
 
     private LinearLayout createAugmentLayout(Augments.Position position)
