@@ -16,6 +16,7 @@ import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -50,6 +51,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
     private static final Component CONFIGURE = Component.translatable("backpacked.gui.configure");
+    private static final Component CLICK_TO_CHANGE = Component.translatable("backpacked.gui.click_to_change");
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -197,6 +199,14 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
                 }).show(btn);
+            })
+            .setTooltip(btn -> {
+                AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
+                return ScreenUtil.createMultilineTooltip(
+                    type.name().plainCopy().withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
+                    type.description().plainCopy().withStyle(ChatFormatting.GRAY),
+                    CLICK_TO_CHANGE.plainCopy().withStyle(ChatFormatting.YELLOW)
+                );
             }).build(), LayoutSettings::alignHorizontallyCenter);
 
         // Adds a toggle and settings button for the augment

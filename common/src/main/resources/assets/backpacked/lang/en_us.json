@@ -75,6 +75,7 @@
     "backpacked.gui.search_hint": "Search...",
     "backpacked.gui.active": "Active",
     "backpacked.gui.configure": "Configure",
+    "backpacked.gui.click_to_change": "Click to Change",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
