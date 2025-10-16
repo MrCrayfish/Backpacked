@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
@@ -206,24 +207,27 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 }).show(btn);
             }).setTooltip(btn -> {
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
-                String rawDescription = type.description().getString();
-                if(!Screen.hasShiftDown()) {
-                    int firstBreak = rawDescription.indexOf("\n");
-                    if(firstBreak != -1) {
-                        rawDescription = "• " + rawDescription.substring(0, firstBreak);
-                    }
-                } else {
-                    rawDescription = "• " + rawDescription.replace("\n", "\n• ");
-                }
                 List<Component> lines = new ArrayList<>();
                 lines.add(SWAP_AUGMENT);
                 lines.add(type.name().plainCopy().withStyle(ChatFormatting.BLUE));
-                lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
-                if(!Screen.hasShiftDown()) {
-                    lines.add(ScreenUtil.join(" ",
-                        Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
-                        PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
-                    ));
+                // Empty type should not add a description
+                if(type != ModAugmentTypes.EMPTY.get()) {
+                    String rawDescription = type.description().getString();
+                    if(!Screen.hasShiftDown()) {
+                        int firstBreak = rawDescription.indexOf("\n");
+                        if(firstBreak != -1) {
+                            rawDescription = "• " + rawDescription.substring(0, firstBreak);
+                        }
+                    } else {
+                        rawDescription = "• " + rawDescription.replace("\n", "\n• ");
+                    }
+                    lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
+                    if(!Screen.hasShiftDown()) {
+                        lines.add(ScreenUtil.join(" ",
+                            Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
+                            PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
+                        ));
+                    }
                 }
                 return ScreenUtil.createMultilineTooltip(lines);
             }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build(), LayoutSettings::alignHorizontallyCenter);
