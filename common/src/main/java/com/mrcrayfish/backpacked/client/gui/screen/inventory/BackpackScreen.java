@@ -198,6 +198,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
+                    btn.rebuildTooltip();
                 }).show(btn);
             })
             .setTooltip(btn -> {
