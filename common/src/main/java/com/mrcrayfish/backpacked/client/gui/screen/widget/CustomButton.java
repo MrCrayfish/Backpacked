@@ -10,6 +10,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -37,10 +38,11 @@ public class CustomButton extends AbstractButton
     private final @Nullable Controller controller;
     private final @Nullable Supplier<Boolean> activeSupplier;
     private final @Nullable Function<CustomButton, Tooltip> tooltip;
-    private final TooltipMode tooltipMode;
+    private final int tooltipOptions;
     private @Nullable Tooltip currentTooltip;
+    private boolean shiftWasDown;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, TooltipMode tooltipMode)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -51,7 +53,7 @@ public class CustomButton extends AbstractButton
         this.controller = controller;
         this.activeSupplier = activeSupplier;
         this.tooltip = tooltip;
-        this.tooltipMode = tooltipMode;
+        this.tooltipOptions = tooltipOptions;
         this.updateActiveState();
         this.rebuildTooltip();
         this.setTooltipDelay(Duration.ofMillis(tooltipDelay));
@@ -82,24 +84,36 @@ public class CustomButton extends AbstractButton
         }
     }
 
-    private void rebuildTooltip()
+    public void rebuildTooltip()
     {
         if(this.tooltip != null)
         {
             this.currentTooltip = this.tooltip.apply(this);
-            this.updateTooltip();
         }
     }
 
     private void updateTooltip()
     {
-        if(this.active)
+        if((this.tooltipOptions & TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT) != 0)
         {
-            this.setTooltip(this.currentTooltip);
+            if(!this.shiftWasDown && Screen.hasShiftDown() && this.isHovered())
+            {
+                this.rebuildTooltip();
+                this.shiftWasDown = true;
+            }
         }
-        else if(this.tooltipMode == TooltipMode.HIDE_WHEN_WIDGET_INACTIVE)
+        if(this.shiftWasDown && !Screen.hasShiftDown())
+        {
+            this.rebuildTooltip();
+            this.shiftWasDown = false;
+        }
+        if(!this.active && (this.tooltipOptions & TooltipOptions.DISABLE_TOOLTIP_WHEN_WIDGET_INACTIVE) != 0)
         {
             this.setTooltip(null);
+        }
+        else
+        {
+            this.setTooltip(this.currentTooltip);
         }
     }
 
@@ -188,7 +202,7 @@ public class CustomButton extends AbstractButton
         private @Nullable Supplier<Boolean> active;
         private @Nullable Function<CustomButton, Tooltip> tooltip;
         private int tooltipDelay = DEFAULT_TOOLTIP_DELAY;
-        private TooltipMode tooltipMode = TooltipMode.DEFAULT;
+        private int tooltipOptions;
 
         private Builder() {}
 
@@ -199,7 +213,7 @@ public class CustomButton extends AbstractButton
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipMode);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipOptions);
         }
 
         public Builder setPosition(int x, int y)
@@ -270,15 +284,15 @@ public class CustomButton extends AbstractButton
             return this;
         }
 
-        public Builder setTooltipDelay(int tooltipDelay)
+        public Builder setTooltipDelay(int delay)
         {
-            this.tooltipDelay = tooltipDelay;
+            this.tooltipDelay = delay;
             return this;
         }
 
-        public Builder setTooltipVisibility(TooltipMode visibility)
+        public Builder setTooltipOptions(int options)
         {
-            this.tooltipMode = visibility;
+            this.tooltipOptions = options;
             return this;
         }
     }
