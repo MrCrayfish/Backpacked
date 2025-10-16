@@ -28,8 +28,10 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -41,6 +43,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Author: MrCrayfish
@@ -51,7 +54,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
     private static final Component CONFIGURE = Component.translatable("backpacked.gui.configure");
-    private static final Component CLICK_TO_CHANGE = Component.translatable("backpacked.gui.click_to_change");
+    private static final Component SWAP_AUGMENT = Component.translatable("backpacked.gui.swap_augment");
+    private static final Function<Component, MutableComponent> PRESS_TO_EXPAND = component -> Component.translatable("backpacked.gui.press_button_to_expand", component);
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -200,15 +204,29 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
                     btn.rebuildTooltip();
                 }).show(btn);
-            })
-            .setTooltip(btn -> {
+            }).setTooltip(btn -> {
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
-                return ScreenUtil.createMultilineTooltip(
-                    type.name().plainCopy().withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
-                    type.description().plainCopy().withStyle(ChatFormatting.GRAY),
-                    CLICK_TO_CHANGE.plainCopy().withStyle(ChatFormatting.YELLOW)
-                );
-            }).build(), LayoutSettings::alignHorizontallyCenter);
+                String rawDescription = type.description().getString();
+                if(!Screen.hasShiftDown()) {
+                    int firstBreak = rawDescription.indexOf("\n");
+                    if(firstBreak != -1) {
+                        rawDescription = "• " + rawDescription.substring(0, firstBreak);
+                    }
+                } else {
+                    rawDescription = "• " + rawDescription.replace("\n", "\n• ");
+                }
+                List<Component> lines = new ArrayList<>();
+                lines.add(SWAP_AUGMENT);
+                lines.add(type.name().plainCopy().withStyle(ChatFormatting.BLUE));
+                lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
+                if(!Screen.hasShiftDown()) {
+                    lines.add(ScreenUtil.join(" ",
+                        Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
+                        PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
+                    ));
+                }
+                return ScreenUtil.createMultilineTooltip(lines);
+            }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build(), LayoutSettings::alignHorizontallyCenter);
 
         // Adds a toggle and settings button for the augment
         GridLayout options = new GridLayout().spacing(0);
