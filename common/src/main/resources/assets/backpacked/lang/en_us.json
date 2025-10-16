@@ -110,6 +110,8 @@
     "key.backpack": "Open Backpack",
     "message.backpacked.occupied_back_slot": "Back slot is occupied by another item",
     "message.backpacked.player_opened": "A player has opened your backpack",
+    "augment.backpacked.empty": "Empty",
+    "augment.backpacked.empty.desc": "This augment does nothing!",
     "augment.backpacked.funnelling": "Funnelling",
     "augment.backpacked.funnelling.desc": "Funnels picked up items into the backpack instead of the inventory.\nA filter can be applied to only allow specific items.\nIf the backpack is full or an item is not allowed, it wil be placed into the inventory as normal.",
     "augment.backpacked.funnelling.mode": "Mode: %s",
