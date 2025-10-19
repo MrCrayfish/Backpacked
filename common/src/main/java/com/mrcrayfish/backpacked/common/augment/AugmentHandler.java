@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -41,15 +42,81 @@ public class AugmentHandler
         if(target != null && !target.equals(player.getUUID()))
             return false;
 
+        Item originalItem = stack.getItem();
+        FunnelResult result = funnelItemStackIntoBackpack(player, stack);
+
+        // If at least one item was funnelled into the backpack, run vanilla calls
+        int funnelCount = result.funnelCount();
+        if(funnelCount > 0)
+        {
+            player.take(entity, funnelCount);
+            player.awardStat(Stats.ITEM_PICKED_UP.get(originalItem), funnelCount);
+            player.onItemPickup(entity);
+        }
+
+        // If the entire stack was funnelled, cancel further handling and discard the item entity
+        if(!result.hasRemaining())
+        {
+            entity.discard();
+            return true;
+        }
+
+        // Otherwise remaining stack will be put into inventory as normal
+        return false;
+    }
+
+    /**
+     * Handles the Funnelling augment when picking up arrows.
+     *
+     * @param player the player picking up the arrow
+     * @param arrow  the arrow being picked up
+     * @return True if further handing should be cancelled
+     */
+    public static boolean beforeArrowPickup(Player player, AbstractArrow arrow)
+    {
+        ItemStack stack = arrow.getPickupItemStackOrigin().copy();
+        FunnelResult result = funnelItemStackIntoBackpack(player, stack);
+
+        // If entire stack was funnelled, return true and prevent vanilla handling
+        if(!result.hasRemaining())
+            return true;
+
+        // Rare case the stack is partially funnelled. Arrows in vanilla have a count of 1 but some mods might do weird stuff
+        // Just try and add the remaining to inventory, don't care about if it was added or not
+        if(result.funnelCount() > 0)
+        {
+            player.getInventory().add(stack);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Attempts to funnel the given stack into the backpack only if the backpack has the funnelling
+     * augment. A result of the funnelling action will be returned after this method is called.
+     * <p>
+     * In the case no backpacks has the funnelling augment, a {@link FunnelResult#IGNORE} will be
+     * returned; This means nothing happen and vanilla behaviour should run as normal. If the stack
+     * was partially funnelled, for example only 2 of the 10 items were put into the backpacks,
+     * {@link FunnelResult#hasRemaining} will be true and {@link FunnelResult#funnelCount} will be
+     * assigned 2. If the entire stack was funnelled into the backpacks, {@link FunnelResult#hasRemaining}
+     * will be false and {@link FunnelResult#funnelCount} will be equal to the count of the given
+     * stack before it was funnelled into the backpacks.
+     *
+     * @param player the player which holds the backpacks the item should funnel into
+     * @param stack  the stack to funnell into the backpacks
+     * @return A result of the funnelling action (see docs above)
+     */
+    private static FunnelResult funnelItemStackIntoBackpack(Player player, ItemStack stack)
+    {
         // Get backpacks with the Funnelling augment
         var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get());
         if(pairs.isEmpty())
-            return false;
-
-        Item originalItem = stack.getItem();
-        int funnelCount = 0;
+            return FunnelResult.IGNORE;
 
         // Iterate through the backpacks and attempt to funnel into their inventories
+        int funnelCount = 0;
         for(Pair<BackpackInventory, FunnellingAugment> pair : pairs)
         {
             BackpackInventory inventory = pair.getFirst();
@@ -65,21 +132,11 @@ public class AugmentHandler
             }
         }
 
-        // If at least one item was funnelled into the backpack, run vanilla calls
-        if(funnelCount > 0)
-        {
-            player.take(entity, funnelCount);
-            player.awardStat(Stats.ITEM_PICKED_UP.get(originalItem), funnelCount);
-            player.onItemPickup(entity);
-        }
+        return new FunnelResult(!stack.isEmpty(), funnelCount);
+    }
 
-        // If all the items were funnelled, discard the entity and cancel further handling
-        if(stack.isEmpty())
-        {
-            entity.discard();
-            return true;
-        }
-
-        return false;
+    private record FunnelResult(boolean hasRemaining, int funnelCount)
+    {
+        private static final FunnelResult IGNORE = new FunnelResult(false, 0);
     }
 }
