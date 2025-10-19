@@ -101,8 +101,6 @@
     "enchantment.backpacked.imbued_hide.desc": "Strengthens the material of a Backpack to prevent it from fire damage",
     "enchantment.backpacked.looted": "Looted",
     "enchantment.backpacked.looted.desc": "Loot dropped from killing a mob is placed directly into a Backpack",
-    "enchantment.backpacked.marksman": "Marksman",
-    "enchantment.backpacked.marksman.desc": "Allows bows to retrieve arrows from a Backpack. This will also work with other shootable items and their respective projectile.",
     "enchantment.backpacked.repairman": "Repairman",
     "enchantment.backpacked.repairman.desc": "Repairs all items with Mending in a Backpack when collecting experience",
     "item.backpacked.backpack": "Backpack",
@@ -118,5 +116,7 @@
     "augment.backpacked.funnelling.mode.allow": "Allow",
     "augment.backpacked.funnelling.mode.allow.tooltip": "Only items that are activated in the list will be funnelled into the backpack",
     "augment.backpacked.funnelling.mode.disallow": "Disallow",
-    "augment.backpacked.funnelling.mode.disallow.tooltip": "All items except the items that are activated in the list will be funnelled into the backpack"
+    "augment.backpacked.funnelling.mode.disallow.tooltip": "All items except the items that are activated in the list will be funnelled into the backpack",
+    "augment.backpacked.quiverlink": "Quiverlink",
+    "augment.backpacked.quiverlink.desc": "Projectile weapons will pull ammunition from the backpack.\nAmmunition in offhand will maintain priority.\nFilters can be "
 }

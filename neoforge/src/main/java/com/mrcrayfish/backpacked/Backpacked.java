@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.core.ModTags;
@@ -128,25 +129,17 @@ public class Backpacked
         ItemStack weapon = event.getProjectileWeaponItemStack();
         if(weapon.getItem() instanceof ProjectileWeaponItem item && event.getEntity() instanceof Player player)
         {
-            BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
-            for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
+            var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.QUIVERLINK.get());
+            for(var pair : pairs)
             {
-                BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
-                if(inventory == null)
-                    continue;
-
-                ItemStack backpack = inventory.getBackpackStack();
-                HolderLookup<Enchantment> lookup = player.level().holderLookup(Registries.ENCHANTMENT);
-                if(backpack.getEnchantmentLevel(lookup.getOrThrow(ModEnchantments.MARKSMAN)) <= 0)
-                    continue;
-
-                Predicate<ItemStack> predicate = item.getSupportedHeldProjectiles();
+                BackpackInventory inventory = pair.getFirst();
+                Predicate<ItemStack> predicate = item.getAllSupportedProjectiles(weapon);
                 ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
-                if(projectile.isEmpty())
-                    continue;
-
-                event.setProjectileItemStack(projectile);
-                break;
+                if(!projectile.isEmpty())
+                {
+                    event.setProjectileItemStack(projectile);
+                    break;
+                }
             }
         }
     }

@@ -34,7 +34,6 @@ public class ModCreativeTabs
             Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.REPAIRMAN));
             Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.LOOTED));
             Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.IMBUED_HIDE));
-            Services.PLATFORM.addEnchantedBookToCreativeTab(output, lookup.getOrThrow(ModEnchantments.MARKSMAN));
         });
     });
 }

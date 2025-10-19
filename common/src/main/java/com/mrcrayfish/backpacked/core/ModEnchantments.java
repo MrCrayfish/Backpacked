@@ -16,7 +16,6 @@ public class ModEnchantments
     public static final ResourceKey<Enchantment> REPAIRMAN = create("repairman");
     public static final ResourceKey<Enchantment> LOOTED = create("looted");
     public static final ResourceKey<Enchantment> IMBUED_HIDE = create("imbued_hide");
-    public static final ResourceKey<Enchantment> MARKSMAN = create("marksman");
 
     private static ResourceKey<Enchantment> create(String name)
     {
