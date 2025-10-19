@@ -253,7 +253,7 @@ public class ServerPlayHandler
         // TODO check for unique augments
 
         // If the current augment has settings, save them so it can be restored later
-        if(currentAugment.hasSettings() && currentAugment.type() != updatedAugment.type())
+        if(currentAugment.type() != updatedAugment.type())
             savedAugments = savedAugments.add(currentAugment);
 
         // Ensure updated augment is no longer in saved

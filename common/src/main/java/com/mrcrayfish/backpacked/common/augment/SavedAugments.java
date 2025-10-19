@@ -35,9 +35,6 @@ public record SavedAugments(Map<AugmentType<?>, Augment<?>> map)
 
     public SavedAugments add(Augment<?> augment)
     {
-        if(!augment.hasSettings())
-            return this;
-
         Augment<?> current = this.map.get(augment.type());
         if(augment.equals(current))
             return this;
@@ -50,9 +47,6 @@ public record SavedAugments(Map<AugmentType<?>, Augment<?>> map)
 
     public SavedAugments remove(Augment<?> augment)
     {
-        if(!augment.hasSettings())
-            return this;
-
         Augment<?> current = this.map.get(augment.type());
         if(current == null)
             return this;

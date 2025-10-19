@@ -28,12 +28,6 @@ public record GiantAugment(double size) implements Augment<GiantAugment>
         return TYPE;
     }
 
-    @Override
-    public boolean hasSettings()
-    {
-        return true;
-    }
-
     public GiantAugment setSize(double newSize)
     {
         return new GiantAugment(newSize);
