@@ -38,7 +38,7 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
      * @param streamCodec a stream codec for synchronization to clients
      * @param defaultSupplier a default supplier for the augment value
      */
-    public AugmentType(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, boolean save)
+    public AugmentType(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier)
     {
         this(id, codec, streamCodec, defaultSupplier,
             ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "augment/%s".formatted(id.getPath())),
