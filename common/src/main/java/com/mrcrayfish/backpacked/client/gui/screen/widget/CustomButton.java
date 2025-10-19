@@ -34,7 +34,7 @@ public class CustomButton extends AbstractButton
     private final @Nullable Icon icon;
     private final int gap;
     private final Consumer<CustomButton> action;
-    private final WidgetSprites texture;
+    private final @Nullable WidgetSprites texture;
     private final @Nullable Controller controller;
     private final @Nullable Supplier<Boolean> activeSupplier;
     private final @Nullable Function<CustomButton, Tooltip> tooltip;
@@ -42,7 +42,7 @@ public class CustomButton extends AbstractButton
     private @Nullable Tooltip currentTooltip;
     private boolean shiftWasDown;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, @Nullable WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -122,13 +122,16 @@ public class CustomButton extends AbstractButton
     {
         this.updateActiveState();
         this.updateTooltip();
-        RenderSystem.enableBlend();
-        RenderSystem.enableDepthTest();
-        graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
-        boolean enabled = this.controller instanceof StateController state ? state.getter.get() : this.active;
-        graphics.blitSprite(this.texture.get(enabled, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-        graphics.setColor(1, 1, 1, 1);
-        RenderSystem.disableBlend();
+
+        if(this.texture != null)
+        {
+            RenderSystem.enableBlend();
+            RenderSystem.enableDepthTest();
+            graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
+            graphics.blitSprite(this.texture.get(this.active, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            graphics.setColor(1, 1, 1, 1);
+            RenderSystem.disableBlend();
+        }
 
         Component message = this.getMessage();
         Font font = Minecraft.getInstance().font;
@@ -197,7 +200,7 @@ public class CustomButton extends AbstractButton
         private @Nullable Icon icon;
         private int gap = 2;
         private Consumer<CustomButton> action = btn -> {};
-        private WidgetSprites texture = DEFAULT_SPRITES;
+        private @Nullable WidgetSprites texture = DEFAULT_SPRITES;
         private @Nullable Controller controller;
         private @Nullable Supplier<Boolean> active;
         private @Nullable Function<CustomButton, Tooltip> tooltip;
@@ -269,6 +272,12 @@ public class CustomButton extends AbstractButton
         public Builder setTexture(WidgetSprites texture)
         {
             this.texture = texture;
+            return this;
+        }
+
+        public Builder noTexture()
+        {
+            this.texture = null;
             return this;
         }
 
