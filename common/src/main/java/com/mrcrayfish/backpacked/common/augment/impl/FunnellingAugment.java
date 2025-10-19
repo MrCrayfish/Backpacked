@@ -97,7 +97,11 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
     {
         Map<Item, List<ItemFilter>> lookup = this.buildLookup();
         boolean matched = this.testFilters(stack, lookup.getOrDefault(stack.getItem(), Collections.emptyList()));
-        return (this.mode == Mode.ALLOW) == matched;
+        if(matched && this.mode == Mode.ALLOW)
+            return true;
+        if(matched && this.mode == Mode.DISALLOW)
+            return false;
+        return this.mode == Mode.DISALLOW;
     }
 
     private boolean testFilters(ItemStack stack, List<ItemFilter> filters)
