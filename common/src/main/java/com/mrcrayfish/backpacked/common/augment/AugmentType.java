@@ -29,7 +29,16 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
         return DataResult.error(() -> "Unregistered augment type: " + type.id);
     });
 
-    public AugmentType(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier)
+    /**
+     * Constructor for an augment type that auto generates the name and description based on the
+     * given id of the augment
+     *
+     * @param id a resource location that represents the id of the augment type
+     * @param codec a Codec for serialization
+     * @param streamCodec a stream codec for synchronization to clients
+     * @param defaultSupplier a default supplier for the augment value
+     */
+    public AugmentType(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, boolean save)
     {
         this(id, codec, streamCodec, defaultSupplier,
             ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "augment/%s".formatted(id.getPath())),
