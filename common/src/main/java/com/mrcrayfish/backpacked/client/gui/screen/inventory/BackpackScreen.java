@@ -239,7 +239,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             }, newValue -> {
                 Network.getPlay().sendToServer(new MessageSetAugmentState(position, newValue));
                 this.updateAugments(this.menu.getAugments().setState(position, newValue));
-            }).setSize(10, 10).setTexture(AUGMENT_TOGGLE_SPRITES).build(), 0, 0);
+            }).setSize(10, 10).setIcon(btn -> {
+                boolean state = this.menu.getAugments().getState(position);
+                return AUGMENT_TOGGLE_SPRITES.get(state, btn.isHovered() && btn.isActive());
+        }, 10, 10).noTexture().build(), 0, 0);
         options.addChild(CustomButton.builder()
             .setSize(10, 10)
             .setTexture(AUGMENT_SETTINGS_SPRITES)
