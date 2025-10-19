@@ -3,22 +3,16 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
-import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
-import com.mrcrayfish.backpacked.core.ModEnchantments;
-import com.mrcrayfish.backpacked.core.ModTags;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
-import com.mrcrayfish.backpacked.inventory.BackpackInventory;
-import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
-import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,10 +22,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -51,8 +42,6 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 // TODO clean up this class
 
@@ -126,20 +115,12 @@ public class Backpacked
 
     private void onGetProjectile(LivingGetProjectileEvent event)
     {
-        ItemStack weapon = event.getProjectileWeaponItemStack();
-        if(weapon.getItem() instanceof ProjectileWeaponItem item && event.getEntity() instanceof Player player)
+        if(event.getEntity() instanceof Player player)
         {
-            var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.QUIVERLINK.get());
-            for(var pair : pairs)
+            ItemStack ammo = AugmentHandler.locateAmmunition(player, event.getProjectileWeaponItemStack(), event.getProjectileItemStack());
+            if(!ammo.isEmpty())
             {
-                BackpackInventory inventory = pair.getFirst();
-                Predicate<ItemStack> predicate = item.getAllSupportedProjectiles(weapon);
-                ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
-                if(!projectile.isEmpty())
-                {
-                    event.setProjectileItemStack(projectile);
-                    break;
-                }
+                event.setProjectileItemStack(ammo);
             }
         }
     }

@@ -118,5 +118,10 @@
     "augment.backpacked.funnelling.mode.disallow": "Disallow",
     "augment.backpacked.funnelling.mode.disallow.tooltip": "All items except the items that are activated in the list will be funnelled into the backpack",
     "augment.backpacked.quiverlink": "Quiverlink",
-    "augment.backpacked.quiverlink.desc": "Projectile weapons will pull ammunition from the backpack.\nAmmunition in offhand will maintain priority.\nFilters can be "
+    "augment.backpacked.quiverlink.desc": "Allows projectile weapons to pull ammunition from the backpack.\nCan be configured to prioritise backpack or inventory.",
+    "augment.backpacked.quiverlink.priority": "Priority: %s",
+    "augment.backpacked.quiverlink.priority.backpack": "Backpack",
+    "augment.backpacked.quiverlink.priority.backpack.tooltip": "When locating ammunition, the backpack will be searched first",
+    "augment.backpacked.quiverlink.priority.inventory": "Inventory",
+    "augment.backpacked.quiverlink.priority.inventory.tooltip": "When locating ammunition, the players inventory will be searched first"
 }

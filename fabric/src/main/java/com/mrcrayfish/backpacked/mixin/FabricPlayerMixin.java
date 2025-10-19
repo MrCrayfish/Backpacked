@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.mixin;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -30,24 +31,14 @@ import java.util.stream.IntStream;
 @Mixin(Player.class)
 public class FabricPlayerMixin
 {
-    @Inject(method = "getProjectile", at = @At(value = "RETURN", ordinal = 3), cancellable = true)
-    public void backpackedLocateAmmo(ItemStack weapon, CallbackInfoReturnable<ItemStack> cir)
+    @Inject(method = "getProjectile", at = @At(value = "RETURN"), cancellable = true)
+    public void backpacked$LocateAmmo(ItemStack weapon, CallbackInfoReturnable<ItemStack> cir)
     {
-        if(weapon.getItem() instanceof ProjectileWeaponItem item)
+        Player player = (Player) (Object) this;
+        ItemStack ammo = AugmentHandler.locateAmmunition(player, weapon, cir.getReturnValue());
+        if(!ammo.isEmpty())
         {
-            Player player = (Player) (Object) this;
-            var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.QUIVERLINK.get());
-            for(var pair : pairs)
-            {
-                BackpackInventory inventory = pair.getFirst();
-                Predicate<ItemStack> predicate = item.getAllSupportedProjectiles();
-                ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
-                if(!projectile.isEmpty())
-                {
-                    cir.setReturnValue(projectile);
-                    break;
-                }
-            }
+            cir.setReturnValue(ammo);
         }
     }
 

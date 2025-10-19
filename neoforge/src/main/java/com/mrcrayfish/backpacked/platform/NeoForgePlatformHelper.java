@@ -6,9 +6,13 @@ import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.fml.ModList;
+
+import java.util.function.Predicate;
 
 /**
  * Author: MrCrayfish
@@ -35,5 +39,15 @@ public class NeoForgePlatformHelper implements IPlatformHelper
         if(info.id().equals("mod_data")) return true;
         if(info.knownPackInfo().stream().anyMatch(pack -> pack.namespace().equals("minecraft"))) return true;
         return false;
+    }
+
+    @Override
+    public Predicate<ItemStack> getValidProjectiles(ItemStack weapon)
+    {
+        if(weapon.getItem() instanceof ProjectileWeaponItem item)
+        {
+            return item.getAllSupportedProjectiles(weapon);
+        }
+        return stack -> false;
     }
 }

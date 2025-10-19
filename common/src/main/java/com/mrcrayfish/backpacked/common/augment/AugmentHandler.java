@@ -3,17 +3,22 @@ package com.mrcrayfish.backpacked.common.augment;
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
+import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class AugmentHandler
 {
@@ -138,5 +143,27 @@ public class AugmentHandler
     private record FunnelResult(boolean hasRemaining, int funnelCount)
     {
         private static final FunnelResult IGNORE = new FunnelResult(false, 0);
+    }
+
+    public static ItemStack locateAmmunition(Player player, ItemStack weapon, ItemStack ammo)
+    {
+        if(!weapon.isEmpty() && weapon.getItem() instanceof ProjectileWeaponItem)
+        {
+            var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.QUIVERLINK.get());
+            for(var pair : pairs)
+            {
+                if(!ammo.isEmpty() && pair.getSecond().priority() != QuiverlinkAugment.Priority.BACKPACK)
+                    continue;
+
+                BackpackInventory inventory = pair.getFirst();
+                Predicate<ItemStack> predicate = Services.PLATFORM.getValidProjectiles(weapon);
+                ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
+                if(!projectile.isEmpty())
+                {
+                    return projectile;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
     }
 }
