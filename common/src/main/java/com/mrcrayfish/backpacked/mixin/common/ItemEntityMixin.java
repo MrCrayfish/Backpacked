@@ -1,13 +1,11 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.core.ModEnchantments;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModItems;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,10 +22,11 @@ public class ItemEntityMixin
     {
         ItemEntity entity = (ItemEntity) (Object) this;
         ItemStack stack = entity.getItem();
-        if(stack.getItem() == ModItems.BACKPACK.get())
+        if(stack.is(ModItems.BACKPACK.get()))
         {
-            HolderLookup<Enchantment> lookup = entity.level().holderLookup(Registries.ENCHANTMENT);
-            if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.IMBUED_HIDE), stack) > 0)
+            Augments augments = Augments.get(stack);
+            ImbuedHideAugment augment = augments.findEnabledAndCast(ModAugmentTypes.IMBUED_HIDE.get());
+            if(augment != null)
             {
                 cir.setReturnValue(true);
             }

@@ -1,13 +1,13 @@
 package com.mrcrayfish.backpacked;
 
 import com.mojang.datafixers.util.Pair;
+import com.mrcrayfish.backpacked.common.InventoryAugmentSnapshot;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
-import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
@@ -284,14 +284,14 @@ public class BackpackHelper
         return Pair.of(list.indexOf(selected), list.size());
     }
 
-    public static <T extends Augment<T>> List<Pair<BackpackInventory, T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
     public static <T extends Augment<T>> List<InventoryAugmentSnapshot<T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
     {
         BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
         return access.backpacked$streamNonNullBackpackInventories().map(inventory -> {
             ItemStack stack = inventory.getBackpackStack();
             Augments augments = Augments.get(stack);
-            return Pair.of(inventory, augments.findEnabledAndCast(type));
-        }).filter(pair -> Objects.nonNull(pair.getSecond())).toList();
+            T augment = augments.findEnabledAndCast(type);
+            return new InventoryAugmentSnapshot<>(inventory, augment);
+        }).filter(result -> Objects.nonNull(result.augment())).toList();
     }
 }
