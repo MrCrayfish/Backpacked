@@ -285,6 +285,7 @@ public class BackpackHelper
     }
 
     public static <T extends Augment<T>> List<Pair<BackpackInventory, T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
+    public static <T extends Augment<T>> List<InventoryAugmentSnapshot<T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
     {
         BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
         return access.backpacked$streamNonNullBackpackInventories().map(inventory -> {

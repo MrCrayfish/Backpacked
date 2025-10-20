@@ -1,8 +1,6 @@
 package com.mrcrayfish.backpacked.common.augment;
 
-import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -116,24 +114,24 @@ public class AugmentHandler
     private static FunnelResult funnelItemStackIntoBackpack(Player player, ItemStack stack)
     {
         // Get backpacks with the Funnelling augment
-        var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get());
-        if(pairs.isEmpty())
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get());
+        if(snapshots.isEmpty())
             return FunnelResult.IGNORE;
 
         // Iterate through the backpacks and attempt to funnel into their inventories
         int funnelCount = 0;
-        for(Pair<BackpackInventory, FunnellingAugment> pair : pairs)
+        for(var snapshot : snapshots)
         {
-            BackpackInventory inventory = pair.getFirst();
-            FunnellingAugment funnelling = pair.getSecond();
-            if(funnelling.test(stack))
+            if(snapshot.augment().test(stack))
             {
                 int beforeCount = stack.getCount();
-                ItemStack remaining = inventory.addItem(stack);
+                ItemStack remaining = snapshot.inventory().addItem(stack);
                 stack.setCount(remaining.getCount());
                 funnelCount += (beforeCount - remaining.getCount());
                 if(stack.isEmpty())
+                {
                     break;
+                }
             }
         }
 
@@ -149,13 +147,13 @@ public class AugmentHandler
     {
         if(!weapon.isEmpty() && weapon.getItem() instanceof ProjectileWeaponItem)
         {
-            var pairs = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.QUIVERLINK.get());
-            for(var pair : pairs)
+            var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.QUIVERLINK.get());
+            for(var snapshot : snapshots)
             {
-                if(!ammo.isEmpty() && pair.getSecond().priority() != QuiverlinkAugment.Priority.BACKPACK)
+                if(!ammo.isEmpty() && snapshot.augment().priority() != QuiverlinkAugment.Priority.BACKPACK)
                     continue;
 
-                BackpackInventory inventory = pair.getFirst();
+                BackpackInventory inventory = snapshot.inventory();
                 Predicate<ItemStack> predicate = Services.PLATFORM.getValidProjectiles(weapon);
                 ItemStack projectile = InventoryHelper.streamFor(inventory).filter(predicate).findFirst().orElse(ItemStack.EMPTY);
                 if(!projectile.isEmpty())
