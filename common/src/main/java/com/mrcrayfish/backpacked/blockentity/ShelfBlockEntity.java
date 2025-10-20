@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModSounds;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
@@ -308,7 +309,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         @Override
         public boolean canPlaceItem(int slot, ItemStack stack)
         {
-            return BackpackSlot.isAllowedItem(stack) && super.canPlaceItem(slot, stack);
+            return BackpackInventory.isAllowedItem(stack) && super.canPlaceItem(slot, stack);
         }
 
         @Override

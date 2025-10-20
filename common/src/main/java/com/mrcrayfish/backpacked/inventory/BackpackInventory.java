@@ -10,8 +10,11 @@ import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 
 import java.util.List;
@@ -91,6 +94,12 @@ public class BackpackInventory extends UnlockableContainer
     }
 
     @Override
+    public boolean canPlaceItem(int slot, ItemStack stack)
+    {
+        return super.canPlaceItem(slot, stack) && isAllowedItem(stack);
+    }
+
+    @Override
     protected UnlockableSlots getUnlockableSlots()
     {
         if(this.stack.getItem() instanceof BackpackItem item)
@@ -135,5 +144,17 @@ public class BackpackInventory extends UnlockableContainer
         {
             this.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.items));
         }
+    }
+
+    public static boolean isAllowedItem(ItemStack stack)
+    {
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        if(Config.getBannedItemsList().contains(id))
+            return false;
+
+        if(stack.is(Items.BUNDLE))
+            return false;
+
+        return stack.getItem().canFitInsideContainerItems();
     }
 }

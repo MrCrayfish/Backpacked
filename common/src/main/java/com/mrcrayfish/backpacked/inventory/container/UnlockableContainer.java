@@ -219,7 +219,7 @@ public abstract class UnlockableContainer implements Container
         for(int i = 0; i < this.size; i++)
         {
             ItemStack slotStack = this.getItem(i);
-            if(slots.isUnlocked(i) && slotStack.isEmpty())
+            if(slots.isUnlocked(i) && slotStack.isEmpty() && this.canPlaceItem(i, stack))
             {
                 this.setItem(i, stack.copyAndClear());
                 break;
