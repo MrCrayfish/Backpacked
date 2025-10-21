@@ -41,8 +41,9 @@ public class CustomButton extends AbstractButton
     private final int tooltipOptions;
     private @Nullable Tooltip currentTooltip;
     private boolean shiftWasDown;
+    private final @Nullable ContentRenderer contentRenderer;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, @Nullable WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, @Nullable WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions, @Nullable ContentRenderer contentRenderer)
     {
         super(x, y, width, height, message.component());
         this.message = message;
@@ -54,6 +55,7 @@ public class CustomButton extends AbstractButton
         this.activeSupplier = activeSupplier;
         this.tooltip = tooltip;
         this.tooltipOptions = tooltipOptions;
+        this.contentRenderer = contentRenderer;
         this.updateActiveState();
         this.rebuildTooltip();
         this.setTooltipDelay(Duration.ofMillis(tooltipDelay));
@@ -63,6 +65,23 @@ public class CustomButton extends AbstractButton
     public Component getMessage()
     {
         return this.message.component();
+    }
+
+    @Nullable
+    public Icon getIcon()
+    {
+        return this.icon;
+    }
+
+    @Nullable
+    public WidgetSprites getTexture()
+    {
+        return this.texture;
+    }
+
+    public int getGap()
+    {
+        return this.gap;
     }
 
     @Override
@@ -122,48 +141,9 @@ public class CustomButton extends AbstractButton
     {
         this.updateActiveState();
         this.updateTooltip();
-
-        if(this.texture != null)
+        if(this.contentRenderer != null)
         {
-            RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
-            graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
-            graphics.blitSprite(this.texture.get(this.active, this.isHovered() && this.active), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-            graphics.setColor(1, 1, 1, 1);
-            RenderSystem.disableBlend();
-        }
-
-        Component message = this.getMessage();
-        Font font = Minecraft.getInstance().font;
-        int contentWidth = font.width(message);
-        int contentHeight = contentWidth > 0 ? font.lineHeight + 1 : 0;
-        if(this.icon != null)
-        {
-            // Only add gap if the message is not empty
-            if(contentWidth > 0)
-            {
-                contentWidth += this.gap;
-            }
-            contentWidth += this.icon.width();
-            contentHeight = Math.max(contentHeight, this.icon.height());
-        }
-        int contentLeft = this.getX() + (this.getWidth() - contentWidth) / 2;
-        int contentTop = this.getY() + (this.getHeight() - contentHeight) / 2;
-
-        int textX = contentLeft + (this.icon != null ? this.gap + this.icon.width() : 0);
-        int textY = contentTop + (contentHeight - font.lineHeight) / 2 + 1;
-        int textColour = this.active ? 0xFFFFFFFF : 0xFF8C7E6D;
-        graphics.drawString(font, message, textX, textY, textColour, this.active);
-
-        if(this.icon != null)
-        {
-            int iconX = contentLeft;
-            int iconY = contentTop + (contentHeight - this.icon.height()) / 2;
-            RenderSystem.enableBlend();
-            graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
-            graphics.blitSprite(this.icon.sprite(this), iconX, iconY, this.icon.width(), this.icon.height());
-            graphics.setColor(1, 1, 1, 1);
-            RenderSystem.disableBlend();
+            this.contentRenderer.draw(this, graphics, mouseX, mouseY, partialTick);
         }
     }
 
@@ -206,6 +186,7 @@ public class CustomButton extends AbstractButton
         private @Nullable Function<CustomButton, Tooltip> tooltip;
         private int tooltipDelay = DEFAULT_TOOLTIP_DELAY;
         private int tooltipOptions;
+        private @Nullable ContentRenderer contentRenderer = DefaultContentRenderer.INSTANCE;
 
         private Builder() {}
 
@@ -216,7 +197,7 @@ public class CustomButton extends AbstractButton
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipOptions);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipOptions, this.contentRenderer);
         }
 
         public Builder setPosition(int x, int y)
@@ -304,6 +285,11 @@ public class CustomButton extends AbstractButton
             this.tooltipOptions = options;
             return this;
         }
+
+        public void setContentRenderer(@Nullable ContentRenderer renderer)
+        {
+            this.contentRenderer = renderer;
+        }
     }
 
     private interface Message
@@ -321,7 +307,7 @@ public class CustomButton extends AbstractButton
         }
     }
 
-    private interface Icon
+    public interface Icon
     {
         ResourceLocation sprite(CustomButton button);
 
@@ -371,6 +357,65 @@ public class CustomButton extends AbstractButton
             T[] values = currentValue.getDeclaringClass().getEnumConstants();
             T nextValue = values[(currentValue.ordinal() + 1) % values.length];
             this.setter.accept(nextValue);
+        }
+    }
+
+    public interface ContentRenderer
+    {
+        void draw(CustomButton button, GuiGraphics graphics, int mouseX, int mouseY, float partialTick);
+    }
+
+    public static class DefaultContentRenderer implements ContentRenderer
+    {
+        public static final DefaultContentRenderer INSTANCE = new DefaultContentRenderer();
+
+        private DefaultContentRenderer() {}
+
+        @Override
+        public void draw(CustomButton button, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+        {
+            if(button.texture != null)
+            {
+                RenderSystem.enableBlend();
+                RenderSystem.enableDepthTest();
+                graphics.setColor(1, 1, 1, button.active ? 1.0F : 0.5F);
+                graphics.blitSprite(button.texture.get(button.active, button.isHovered() && button.active), button.getX(), button.getY(), button.getWidth(), button.getHeight());
+                graphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
+
+            Component message = button.getMessage();
+            Font font = Minecraft.getInstance().font;
+            int contentWidth = font.width(message);
+            int contentHeight = contentWidth > 0 ? font.lineHeight + 1 : 0;
+            if(button.icon != null)
+            {
+                // Only add gap if the message is not empty
+                if(contentWidth > 0)
+                {
+                    contentWidth += button.gap;
+                }
+                contentWidth += button.icon.width();
+                contentHeight = Math.max(contentHeight, button.icon.height());
+            }
+            int contentLeft = button.getX() + (button.getWidth() - contentWidth) / 2;
+            int contentTop = button.getY() + (button.getHeight() - contentHeight) / 2;
+
+            int textX = contentLeft + (button.icon != null ? button.gap + button.icon.width() : 0);
+            int textY = contentTop + (contentHeight - font.lineHeight) / 2 + 1;
+            int textColour = button.active ? 0xFFFFFFFF : 0xFF8C7E6D;
+            graphics.drawString(font, message, textX, textY, textColour, button.active);
+
+            if(button.icon != null)
+            {
+                int iconX = contentLeft;
+                int iconY = contentTop + (contentHeight - button.icon.height()) / 2;
+                RenderSystem.enableBlend();
+                graphics.setColor(1, 1, 1, button.active ? 1.0F : 0.5F);
+                graphics.blitSprite(button.icon.sprite(button), iconX, iconY, button.icon.width(), button.icon.height());
+                graphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
         }
     }
 }
