@@ -33,6 +33,7 @@ public class Network
         .registerPlayMessage("change_augment", MessageChangeAugment.class, MessageChangeAugment.STREAM_CODEC, MessageChangeAugment::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("set_augment_state", MessageSetAugmentState.class, MessageSetAugmentState.STREAM_CODEC, MessageSetAugmentState::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("update_augment", MessageUpdateAugment.class, MessageUpdateAugment.STREAM_CODEC, MessageUpdateAugment::handle, PacketFlow.SERVERBOUND)
+        .registerPlayMessage("lootbound_take_item", MessageLootboundTakeItem.class, MessageLootboundTakeItem.STREAM_CODEC, MessageLootboundTakeItem::handle, PacketFlow.CLIENTBOUND)
         .build();
 
     public static void init() {}

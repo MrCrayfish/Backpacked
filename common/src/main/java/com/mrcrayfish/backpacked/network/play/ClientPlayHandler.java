@@ -9,12 +9,17 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.message.*;
+import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -107,5 +112,20 @@ public class ClientPlayHandler
         {
             screen.onSlotUnlocked(slotIndexes);
         }
+    }
+
+    public static void handleLootboundTakeItem(MessageLootboundTakeItem message, MessageContext context)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.level == null || minecraft.player == null)
+            return;
+
+        ItemStack stack = message.stack();
+        if(stack.isEmpty())
+            return;
+
+        Vec3 pos = message.pos();
+        ItemEntity entity = new ItemEntity(minecraft.level, pos.x, pos.y, pos.z, stack);
+        minecraft.particleEngine.add(new ItemPickupParticle(minecraft.getEntityRenderDispatcher(), minecraft.renderBuffers(), minecraft.level, entity, minecraft.player));
     }
 }

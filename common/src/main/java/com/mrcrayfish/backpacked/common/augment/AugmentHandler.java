@@ -1,31 +1,30 @@
 package com.mrcrayfish.backpacked.common.augment;
 
+import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
-import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
-import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerPlayer;
+import com.mrcrayfish.framework.api.network.LevelLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -205,14 +204,28 @@ public class AugmentHandler
             if(!augment.blocks())
                 break;
 
+            List<Pair<ItemStack, Vec3>> consumed = new ArrayList<>();
             drops.removeIf(drop -> {
-                ItemStack stack = drop.getItem().copy();
-                FunnelResult result = funnelItemStackIntoBackpack(player, stack);
-                if(result.hasRemaining()) {
-                    drop.setItem(stack);
+                ItemStack copy = drop.getItem().copy();
+                FunnelResult result = funnelItemStackIntoBackpack(player, copy);
+                if(result.funnelCount() > 0) {
+                    ItemStack stack = drop.getItem().copyWithCount(result.funnelCount());
+                    consumed.add(Pair.of(stack, drop.position()));
                 }
-                return stack.isEmpty();
+                if(result.hasRemaining()) {
+                    drop.setItem(copy);
+                }
+                return copy.isEmpty();
             });
+
+            if(player.level() instanceof ServerLevel level)
+            {
+                consumed.forEach(pair -> {
+                    LevelLocation location = LevelLocation.create(level, pair.getSecond(), 32);
+                    Network.getPlay().sendToNearbyPlayers(() -> location, new MessageLootboundTakeItem(pair.getFirst(), pair.getSecond()));
+                });
+            }
+
         }
     }
 }
