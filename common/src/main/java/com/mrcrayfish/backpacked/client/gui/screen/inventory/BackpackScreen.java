@@ -246,6 +246,9 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         options.addChild(CustomButton.builder()
             .setSize(10, 10)
             .setTexture(AUGMENT_SETTINGS_SPRITES)
+            .setTooltip(btn -> Tooltip.create(CONFIGURE))
+            .setTooltipDelay(0)
+            .setTooltipOptions(TooltipOptions.DISABLE_TOOLTIP_WHEN_WIDGET_INACTIVE)
             .setAction(btn -> {
                 Augment<?> augment = this.menu.getAugments().getAugment(position);
                 var factory = AugmentSettingsFactories.getFactory(augment);
@@ -259,7 +262,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 // Setting button should only be active if it has a settings factory
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 return AugmentSettingsFactories.hasFactory(type);
-            }).setTooltip(btn -> Tooltip.create(CONFIGURE)).setTooltipDelay(0).build(), 1, 0);
+            }).build(), 1, 0);
         layout.addChild(options, LayoutSettings::alignHorizontallyCenter);
 
         return layout;
