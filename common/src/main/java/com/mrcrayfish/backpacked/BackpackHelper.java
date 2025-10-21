@@ -284,14 +284,28 @@ public class BackpackHelper
         return Pair.of(list.indexOf(selected), list.size());
     }
 
-    public static <T extends Augment<T>> List<InventoryAugmentSnapshot<T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
+    public static <T extends Augment<T>> List<InventoryAugmentSnapshot.One<T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
     {
         BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
         return access.backpacked$streamNonNullBackpackInventories().map(inventory -> {
             ItemStack stack = inventory.getBackpackStack();
             Augments augments = Augments.get(stack);
             T augment = augments.findEnabledAndCast(type);
-            return new InventoryAugmentSnapshot<>(inventory, augment);
+            return new InventoryAugmentSnapshot.One<>(inventory, augment);
         }).filter(result -> Objects.nonNull(result.augment())).toList();
+    }
+
+    public static <T extends Augment<T>, R extends Augment<R>> List<InventoryAugmentSnapshot.Two<T, R>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> firstType, AugmentType<R> secondType)
+    {
+        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
+        return access.backpacked$streamNonNullBackpackInventories().map(inventory -> {
+            ItemStack stack = inventory.getBackpackStack();
+            Augments augments = Augments.get(stack);
+            T firstAugment = augments.findEnabledAndCast(firstType);
+            R secondAugment = augments.findEnabledAndCast(secondType);
+            if(firstAugment == null || secondAugment == null)
+                return null;
+            return new InventoryAugmentSnapshot.Two<>(inventory, firstAugment, secondAugment);
+        }).filter(Objects::nonNull).toList();
     }
 }

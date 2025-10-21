@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
-import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
@@ -40,7 +39,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 // TODO clean up this class
@@ -57,11 +55,11 @@ public class Backpacked
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onGatherData);
         bus.addListener(this::onRegisterCapabilities);
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onDropLoot);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onEntityDropLoot);
         NeoForge.EVENT_BUS.addListener(this::onInteract);
         NeoForge.EVENT_BUS.addListener(this::onGetProjectile);
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
-        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBlockDrops);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBlockDropLoot);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onLivingDrops);
 
         if(ModList.get().isLoaded("yigd"))
@@ -91,11 +89,20 @@ public class Backpacked
         event.addListener(new BackpackLoader(event.getServerResources().getRegistryLookup()));
     }
 
-    private void onDropLoot(LivingDropsEvent event)
+    private void onEntityDropLoot(LivingDropsEvent event)
     {
-        if(EnchantmentHandler.onDropLoot(event.getDrops(), event.getSource()))
+        if(event.getSource().getEntity() instanceof ServerPlayer player)
         {
-            event.setCanceled(true);
+            AugmentHandler.onLootDroppedByEntity(event.getDrops(), player);
+        }
+    }
+
+    private void onBlockDropLoot(BlockDropsEvent event)
+    {
+        Entity breaker = event.getBreaker();
+        if(breaker instanceof Player player)
+        {
+            AugmentHandler.onLootDroppedByBlock(event.getDrops(), player);
         }
     }
 
@@ -121,19 +128,6 @@ public class Backpacked
             if(!ammo.isEmpty())
             {
                 event.setProjectileItemStack(ammo);
-            }
-        }
-    }
-
-    private void onBlockDrops(BlockDropsEvent event)
-    {
-        Entity breaker = event.getBreaker();
-        if(breaker instanceof ServerPlayer serverPlayer)
-        {
-            List<ItemStack> drops = event.getDrops().stream().map(ItemEntity::getItem).toList();
-            if(EnchantmentHandler.onBreakBlock(serverPlayer, drops))
-            {
-                event.getDrops().removeIf(drop -> drop.getItem().isEmpty());
             }
         }
     }

@@ -1,20 +1,31 @@
 package com.mrcrayfish.backpacked.common.augment;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.core.ModEnchantments;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -163,5 +174,45 @@ public class AugmentHandler
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    public static void onLootDroppedByEntity(Collection<ItemEntity> drops, Player player)
+    {
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get(), ModAugmentTypes.LOOTBOUND.get());
+        for(var snapshot : snapshots)
+        {
+            LootboundAugment augment = snapshot.secondAugment();
+            if(!augment.entities())
+                break;
+
+            drops.removeIf(drop -> {
+                ItemStack stack = drop.getItem().copy();
+                FunnelResult result = funnelItemStackIntoBackpack(player, stack);
+                if(result.hasRemaining()) {
+                    drop.setItem(stack);
+                }
+                return stack.isEmpty();
+            });
+        }
+    }
+
+    public static void onLootDroppedByBlock(Collection<ItemEntity> drops, Player player)
+    {
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FUNNELLING.get(), ModAugmentTypes.LOOTBOUND.get());
+        for(var snapshot : snapshots)
+        {
+            LootboundAugment augment = snapshot.secondAugment();
+            if(!augment.blocks())
+                break;
+
+            drops.removeIf(drop -> {
+                ItemStack stack = drop.getItem().copy();
+                FunnelResult result = funnelItemStackIntoBackpack(player, stack);
+                if(result.hasRemaining()) {
+                    drop.setItem(stack);
+                }
+                return stack.isEmpty();
+            });
+        }
     }
 }
