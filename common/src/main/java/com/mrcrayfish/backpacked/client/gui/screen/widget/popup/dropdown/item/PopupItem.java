@@ -8,22 +8,14 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-import java.util.function.Consumer;
-
 public class PopupItem extends MenuItem
 {
-    private final PopupMenu child;
+    private final PopupMenu menu;
 
-    private PopupItem(Component label, PopupMenu child)
+    private PopupItem(Component label, PopupMenu menu)
     {
         super(label);
-        this.child = child;
-    }
-
-    @Override
-    protected void visitChildMenus(Consumer<PopupMenu> consumer)
-    {
-        consumer.accept(this.child);
+        this.menu = menu;
     }
 
     @Override
@@ -45,13 +37,13 @@ public class PopupItem extends MenuItem
     @Override
     public void onClick(double mouseX, double mouseY)
     {
-        this.child.show(this.getRectangle());
+        this.menu.show(this.getRectangle());
     }
 
     @Override
     protected boolean selected()
     {
-        return this.getParent().isActiveChildMenu(this.child);
+        return this.menu.hasChild();
     }
 
     @Override

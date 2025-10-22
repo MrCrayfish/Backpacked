@@ -17,7 +17,7 @@ public class ButtonItem extends MenuItem
     public void onClick(double mouseX, double mouseY)
     {
         this.action.run();
-        this.getParent().deepClose();
+        this.getPopupMenu().deepClose();
     }
 
     public static MenuItem create(Component label, Runnable clickHandler)

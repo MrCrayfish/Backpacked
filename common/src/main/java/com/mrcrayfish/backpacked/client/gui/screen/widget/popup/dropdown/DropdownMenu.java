@@ -41,8 +41,7 @@ public class DropdownMenu extends PopupMenu
 
     protected void addItem(MenuItem item)
     {
-        item.parent = this;
-        item.visitChildMenus(this::adoptChild);
+        item.owner = this;
         this.layout.addChild(item);
         this.invalidateWidgets();
     }

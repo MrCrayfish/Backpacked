@@ -57,7 +57,7 @@ public class ClientBootstrap
                 layout.addChild(CustomButton.builder().setSize(16, 16).setMessage(Component.literal("1")).setAction(customButton -> {
                     GiantAugment augment = supplier.get();
                     updater.accept(augment.setSize(1));
-                    menu.hide();
+                    menu.close();
                 }).build());
                 return layout;
             });

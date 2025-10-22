@@ -5,29 +5,27 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public abstract class PopupMenu implements Renderable, ContainerEventHandler, LayoutElement
 {
-    private final PopupMenuHandler handler;
+    final PopupMenuController controller;
+    @Nullable PopupMenu parent;
+    @Nullable PopupMenu child;
+
     private int x;
     private int y;
     private int width;
@@ -37,13 +35,10 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable ResourceLocation background;
-    private @Nullable PopupMenu parent;
-    private @Nullable PopupMenu child;
-    private boolean closing;
-    
-    public PopupMenu(PopupMenuHandler handler)
+
+    protected PopupMenu(PopupMenuHandler handler)
     {
-        this.handler = handler;
+        this.controller = handler.getPopupMenuController();
     }
 
     protected abstract Layout layout();
@@ -167,8 +162,11 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
             // of the stack, and the child will be popped off.
             if(this.getRectangle().containsPoint((int) mouseX, (int) mouseY))
             {
-                this.child.hide();
-                this.child = null;
+                // Need to recheck
+                if(this.child != null)
+                {
+                    this.child.close();
+                }
                 return true;
             }
         }
@@ -201,7 +199,7 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     {
         if(keyCode == GLFW.GLFW_KEY_ESCAPE)
         {
-            this.hide();
+            this.close();
             return true;
         }
         return ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
@@ -250,7 +248,7 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     }
 
     @Override
-    public void setDragging(boolean dragging)
+    public final void setDragging(boolean dragging)
     {
         if(this.parent != null)
         {
@@ -261,7 +259,7 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     }
 
     @Override
-    public boolean isDragging()
+    public final boolean isDragging()
     {
         if(this.parent != null)
         {
@@ -278,35 +276,17 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     public void show(ScreenRectangle rect)
     {
         this.updatePosition(rect);
-        if(this.parent == null)
-        {
-            this.handler.setPopupMenu(this);
-            return;
-        }
-        if(this.parent.child != null)
-        {
-            this.parent.child.hide();
-        }
-        this.parent.child = this;
+        this.controller.open(this);
     }
 
-    public void hide()
+    public void close()
     {
-        if(this.closing)
-            return;
+        this.controller.close(this);
+    }
 
-        this.closing = true;
-        if(this.child != null)
-        {
-            this.child.hide();
-            this.child = null;
-        }
-        this.setFocused(null);
-        if(this.parent == null)
-        {
-            this.handler.setPopupMenu(null);
-        }
-        this.closing = false;
+    public void deepClose()
+    {
+        this.controller.closeAll();
     }
 
     private void updatePosition(ScreenRectangle rect)
@@ -320,18 +300,8 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
         layout.setY(this.getY());
     }
 
-    public void deepClose()
+    public boolean hasChild()
     {
-        this.handler.setPopupMenu(null);
-    }
-
-    protected void adoptChild(PopupMenu menu)
-    {
-        menu.parent = this;
-    }
-
-    public boolean isActiveChildMenu(PopupMenu child)
-    {
-        return this.child == child;
+        return this.child != null;
     }
 }

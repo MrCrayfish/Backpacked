@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,11 +9,8 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.function.Consumer;
 
 public abstract class MenuItem extends AbstractWidget
 {
@@ -23,16 +19,16 @@ public abstract class MenuItem extends AbstractWidget
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item_hovered")
     );
 
-    DropdownMenu parent;
+    DropdownMenu owner;
 
     public MenuItem(Component label)
     {
         super(0, 0, 100, 20, label);
     }
 
-    protected DropdownMenu getParent()
+    protected DropdownMenu getPopupMenu()
     {
-        return this.parent;
+        return this.owner;
     }
 
     protected boolean selected()
@@ -40,15 +36,11 @@ public abstract class MenuItem extends AbstractWidget
         return false;
     }
 
-    protected void visitChildMenus(Consumer<PopupMenu> consumer) {}
-
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
         RenderSystem.enableBlend();
-        PopupMenu parent = this.getParent();
-        boolean hovered = parent != null && parent.isActiveChildMenu(null) && this.isHovered();
-        graphics.blitSprite(SPRITES.get(this.active, hovered || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        graphics.blitSprite(SPRITES.get(this.active, this.isHovered() || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         RenderSystem.disableBlend();
 
         Font font = Minecraft.getInstance().font;

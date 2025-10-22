@@ -47,7 +47,7 @@ public class CheckboxItem extends MenuItem
         this.holder.setValue(newValue);
         if(this.callback.apply(newValue))
         {
-            this.getParent().deepClose();
+            this.getPopupMenu().deepClose();
         }
     }
 
