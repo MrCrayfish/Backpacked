@@ -17,6 +17,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     private @Nullable ResourceLocation background;
     private @Nullable PopupMenu parent;
     private @Nullable PopupMenu child;
+    private boolean closing;
     
     public PopupMenu(PopupMenuHandler handler)
     {
@@ -195,6 +197,17 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+    {
+        if(keyCode == GLFW.GLFW_KEY_ESCAPE)
+        {
+            this.hide();
+            return true;
+        }
+        return ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
     public ScreenRectangle getRectangle()
     {
         return new ScreenRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight());
@@ -279,12 +292,21 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
 
     public void hide()
     {
+        if(this.closing)
+            return;
+
+        this.closing = true;
         if(this.child != null)
         {
             this.child.hide();
             this.child = null;
         }
         this.setFocused(null);
+        if(this.parent == null)
+        {
+            this.handler.setPopupMenu(null);
+        }
+        this.closing = false;
     }
 
     private void updatePosition(ScreenRectangle rect)
