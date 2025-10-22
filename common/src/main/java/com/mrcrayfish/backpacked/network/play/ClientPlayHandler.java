@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
+import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
@@ -12,6 +13,9 @@ import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ItemPickupParticle;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -127,5 +131,9 @@ public class ClientPlayHandler
         Vec3 pos = message.pos();
         ItemEntity entity = new ItemEntity(minecraft.level, pos.x, pos.y, pos.z, stack);
         minecraft.particleEngine.add(new ItemPickupParticle(minecraft.getEntityRenderDispatcher(), minecraft.renderBuffers(), minecraft.level, entity, minecraft.player));
+
+        float pitch = 0.7F + 0.3F * minecraft.level.random.nextFloat();
+        SimpleSoundInstance sound = new SimpleSoundInstance(ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.BLOCKS, 1F, pitch, SoundInstance.createUnseededRandom(), pos.x, pos.y, pos.z);
+        minecraft.getSoundManager().play(sound);
     }
 }

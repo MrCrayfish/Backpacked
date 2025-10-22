@@ -13,4 +13,5 @@ import net.minecraft.sounds.SoundEvent;
 public class ModSounds
 {
     public static final RegistryEntry<SoundEvent> ITEM_BACKPACK_PLACE = RegistryEntry.soundEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item.backpack.place"), id -> () -> SoundEvent.createVariableRangeEvent(id));
+    public static final RegistryEntry<SoundEvent> AUGMENT_LOOTBOUND_TAKE_ITEM = RegistryEntry.soundEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "augment.backpacked.lootbound.take_item"), id -> () -> SoundEvent.createVariableRangeEvent(id));
 }
