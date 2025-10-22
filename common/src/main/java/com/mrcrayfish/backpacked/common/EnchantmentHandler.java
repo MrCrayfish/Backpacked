@@ -72,40 +72,6 @@ public class EnchantmentHandler
         return false;
     }
 
-    public static boolean onDropLoot(Collection<ItemEntity> drops, DamageSource source)
-    {
-        Entity entity = source.getEntity();
-        if(!(entity instanceof ServerPlayer player))
-            return false;
-
-        BackpackedInventoryAccess access = (BackpackedInventoryAccess) player;
-        for(int i = 0; i < access.backpacked$GetBackpackInventoryCount(); i++)
-        {
-            BackpackInventory inventory = access.backpacked$GetBackpackInventory(i);
-            if(inventory == null)
-                continue;
-
-            ItemStack backpack = inventory.getBackpackStack();
-            HolderLookup<Enchantment> lookup = entity.level().holderLookup(Registries.ENCHANTMENT);
-            if(EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(ModEnchantments.LOOTED), backpack) <= 0)
-                continue;
-
-            drops.removeIf(drop -> {
-                ItemStack stack = drop.getItem();
-                ItemStack remaining = inventory.addItem(stack);
-                if(remaining.isEmpty()) {
-                    return true;
-                }
-                drop.setItem(remaining);
-                return false;
-            });
-        }
-
-        drops.forEach(player.level()::addFreshEntity);
-
-        return true;
-    }
-
     public static boolean onPickupExperience(Player player, ExperienceOrb orb)
     {
         if(!(player instanceof ServerPlayer serverPlayer))

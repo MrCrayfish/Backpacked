@@ -34,10 +34,10 @@ public class LivingEntityMixin
         if(drops != null)
         {
             //TODO move to an event
-            if(!EnchantmentHandler.onDropLoot(drops, damageSource))
+            /*if(!EnchantmentHandler.onDropLoot(drops, damageSource))
             {
                 drops.forEach(e -> entity.level().addFreshEntity(e));
-            }
+            }*/
             ((ILootCapture) this).backpacked$EndCapturingDrop();
         }
     }

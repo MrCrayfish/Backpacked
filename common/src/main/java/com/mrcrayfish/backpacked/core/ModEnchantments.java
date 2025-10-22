@@ -14,7 +14,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 public class ModEnchantments
 {
     public static final ResourceKey<Enchantment> REPAIRMAN = create("repairman");
-    public static final ResourceKey<Enchantment> LOOTED = create("looted");
 
     private static ResourceKey<Enchantment> create(String name)
     {
