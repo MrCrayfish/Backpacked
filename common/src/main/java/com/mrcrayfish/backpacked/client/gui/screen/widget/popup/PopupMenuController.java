@@ -10,7 +10,7 @@ public final class PopupMenuController implements GuiEventListener
     @Nullable PopupMenu base;
     @Nullable GuiEventListener focused;
 
-    public void open(PopupMenu menu)
+    void open(PopupMenu menu)
     {
         if(menu.controller != this || this.contains(menu))
             return;
@@ -32,7 +32,7 @@ public final class PopupMenuController implements GuiEventListener
         top.child = menu;
     }
 
-    public void close(PopupMenu menu)
+    void close(PopupMenu menu)
     {
         if(menu.controller != this || this.base == null)
             return;
