@@ -6,4 +6,9 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 public interface PopupMenuHandler
 {
     PopupMenuController getPopupMenuController();
+
+    default boolean hasPopupMenu()
+    {
+        return this.getPopupMenuController().isOpened();
+    }
 }

@@ -21,11 +21,6 @@ public abstract class CustomContainerScreen<T extends AbstractContainerMenu> ext
         return this.controller;
     }
 
-    public boolean hasPopupMenu()
-    {
-        return this.controller.isOpened();
-    }
-
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
