@@ -30,7 +30,6 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     private int y;
     private int width;
     private int height;
-    private boolean dragging;
     private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable ResourceLocation background;
@@ -231,22 +230,13 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     @Override
     public final void setDragging(boolean dragging)
     {
-        if(this.parent != null)
-        {
-            this.parent.setDragging(dragging);
-            return;
-        }
-        this.dragging = dragging;
+        this.controller.setDragging(dragging);
     }
 
     @Override
     public final boolean isDragging()
     {
-        if(this.parent != null)
-        {
-            return this.parent.isDragging();
-        }
-        return this.dragging;
+        return this.controller.isDragging();
     }
 
     public void show(AbstractWidget widget)

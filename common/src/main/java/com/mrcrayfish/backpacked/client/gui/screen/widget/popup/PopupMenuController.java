@@ -9,6 +9,7 @@ public final class PopupMenuController implements GuiEventListener
 {
     @Nullable PopupMenu base;
     @Nullable GuiEventListener focused;
+    boolean dragging;
 
     void open(PopupMenu menu)
     {
@@ -205,5 +206,15 @@ public final class PopupMenuController implements GuiEventListener
             listener.setFocused(true);
         }
         this.focused = listener;
+    }
+
+    public boolean isDragging()
+    {
+        return this.dragging;
+    }
+
+    public void setDragging(boolean dragging)
+    {
+        this.dragging = dragging;
     }
 }
