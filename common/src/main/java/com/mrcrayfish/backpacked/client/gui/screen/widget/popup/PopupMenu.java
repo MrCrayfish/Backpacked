@@ -31,7 +31,6 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     private int width;
     private int height;
     private boolean dragging;
-    private @Nullable GuiEventListener focused;
     private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable ResourceLocation background;
@@ -220,31 +219,13 @@ public abstract class PopupMenu implements Renderable, ContainerEventHandler, La
     @Override
     public @Nullable GuiEventListener getFocused()
     {
-        if(this.parent != null)
-        {
-            return this.parent.getFocused();
-        }
-        return this.focused;
+        return this.controller.getFocused();
     }
 
     @Override
     public void setFocused(@Nullable GuiEventListener listener)
     {
-        // The root popup should be the controller
-        if(this.parent != null)
-        {
-            this.parent.setFocused(listener);
-            return;
-        }
-        if(this.focused != null)
-        {
-            this.focused.setFocused(false);
-        }
-        if(listener != null)
-        {
-            listener.setFocused(true);
-        }
-        this.focused = listener;
+        this.controller.setFocused(listener);
     }
 
     @Override

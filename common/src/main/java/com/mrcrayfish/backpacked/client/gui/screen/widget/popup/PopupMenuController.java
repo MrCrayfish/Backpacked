@@ -8,11 +8,14 @@ import org.jetbrains.annotations.Nullable;
 public final class PopupMenuController implements GuiEventListener
 {
     @Nullable PopupMenu base;
+    @Nullable GuiEventListener focused;
 
     public void open(PopupMenu menu)
     {
         if(menu.controller != this || this.contains(menu))
             return;
+
+        this.setFocused(null);
 
         if(this.base == null)
         {
@@ -27,7 +30,6 @@ public final class PopupMenuController implements GuiEventListener
         }
         menu.parent = top;
         top.child = menu;
-        this.base.setFocused(null);
     }
 
     public void close(PopupMenu menu)
@@ -43,7 +45,7 @@ public final class PopupMenuController implements GuiEventListener
             }
         }
 
-        this.base.setFocused(null);
+        this.setFocused(null);
 
         if(menu.parent != null)
         {
@@ -184,5 +186,24 @@ public final class PopupMenuController implements GuiEventListener
     public boolean isFocused()
     {
         return false;
+    }
+
+    @Nullable
+    public GuiEventListener getFocused()
+    {
+        return this.focused;
+    }
+
+    public void setFocused(@Nullable GuiEventListener listener)
+    {
+        if(this.focused != null)
+        {
+            this.focused.setFocused(false);
+        }
+        if(listener != null)
+        {
+            listener.setFocused(true);
+        }
+        this.focused = listener;
     }
 }
