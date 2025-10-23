@@ -6,6 +6,9 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.ButtonItem;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.PopupItem;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
@@ -200,11 +203,18 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setSize(20, 20)
             .setIcon(btn -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
             .setAction(btn -> {
-                new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
+                DropdownMenu.builder(this).addItem(PopupItem.create(Component.literal("Test"),
+                    DropdownMenu.builder(this).addItem(PopupItem.create(Component.literal("Test"),
+                        DropdownMenu.builder(this).addItem(ButtonItem.create(Component.literal("Test"),
+                                () -> {}
+                        )).build()
+                    )).build()
+                )).build().show(btn);
+                /*new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
                     btn.rebuildTooltip();
-                }).show(btn);
+                }).show(btn);*/
             }).setTooltip(btn -> {
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 List<Component> lines = new ArrayList<>();

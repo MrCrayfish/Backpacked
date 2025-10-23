@@ -2,10 +2,14 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
-public final class PopupMenuController implements GuiEventListener
+import java.util.List;
+
+public final class PopupMenuController implements ContainerEventHandler
 {
     @Nullable PopupMenu base;
     @Nullable GuiEventListener focused;
@@ -94,6 +98,17 @@ public final class PopupMenuController implements GuiEventListener
         return false;
     }
 
+    @Nullable
+    PopupMenu top()
+    {
+        PopupMenu top = this.base;
+        while(top != null && top.child != null)
+        {
+            top = top.child;
+        }
+        return top;
+    }
+
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         if(this.base != null)
@@ -107,94 +122,67 @@ public final class PopupMenuController implements GuiEventListener
     }
 
     @Override
+    public List<? extends GuiEventListener> children()
+    {
+        PopupMenu top = this.top();
+        return top != null ? top.getWidgets() : List.of();
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(this.base != null)
-        {
-            if(!this.base.mouseClicked(mouseX, mouseY, button))
-            {
-                this.closeAll();
-            }
+        // Send the mouse clicked event to the top level popup menu
+        if(ContainerEventHandler.super.mouseClicked(mouseX, mouseY, button))
             return true;
-        }
-        return false;
-    }
 
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
-    {
-        if(this.base != null)
+        // Otherwise cascade down from the top popup. If the click occurred within the popup menu,
+        // bounds, reset focused and set event as handled. If the popup is not the top popup menu,
+        // close child menus.
+        PopupMenu current = this.top();
+        while(current != null)
         {
-            return this.base.mouseReleased(mouseX, mouseY, button);
+            if(current.getRectangle().containsPoint((int) mouseX, (int) mouseY))
+            {
+                this.setFocused(null);
+                if(current.child != null)
+                {
+                    current.child.close();
+                }
+                return true;
+            }
+            current = current.parent;
         }
-        return false;
-    }
 
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
-    {
-        if(this.base != null)
-        {
-            return this.base.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-        }
-        return false;
-    }
+        // If nothing was clicked at all, close all popups
+        this.closeAll();
 
-    @Override
-    public boolean mouseScrolled(double x, double y, double dx, double dy)
-    {
-        if(this.base != null)
-        {
-            return this.base.mouseScrolled(x, y, dx, dy);
-        }
-        return false;
+        return true;
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
     {
-        if(this.base != null)
+        // Allows the user to press escape to close the top popup
+        if(keyCode == GLFW.GLFW_KEY_ESCAPE)
         {
-            return this.base.keyPressed(keyCode, scanCode, modifiers);
+            PopupMenu top = this.top();
+            if(top != null)
+            {
+                this.close(top);
+                return true;
+            }
         }
-        return false;
+        return ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers)
-    {
-        if(this.base != null)
-        {
-            return this.base.keyReleased(keyCode, scanCode, modifiers);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean charTyped(char c, int modifiers)
-    {
-        if(this.base != null)
-        {
-            return this.base.charTyped(c, modifiers);
-        }
-        return false;
-    }
-
-    @Override
-    public void setFocused(boolean focused) {}
-
-    @Override
-    public boolean isFocused()
-    {
-        return false;
-    }
-
     @Nullable
     public GuiEventListener getFocused()
     {
         return this.focused;
     }
 
+    @Override
     public void setFocused(@Nullable GuiEventListener listener)
     {
         if(this.focused != null)
@@ -208,11 +196,13 @@ public final class PopupMenuController implements GuiEventListener
         this.focused = listener;
     }
 
+    @Override
     public boolean isDragging()
     {
         return this.dragging;
     }
 
+    @Override
     public void setDragging(boolean dragging)
     {
         this.dragging = dragging;
