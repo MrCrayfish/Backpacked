@@ -8,17 +8,17 @@ import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record LootboundAugment(boolean blocks, boolean entities) implements Augment<LootboundAugment>
+public record LootboundAugment(boolean blocks, boolean mobs) implements Augment<LootboundAugment>
 {
     public static final AugmentType<LootboundAugment> TYPE = new AugmentType<>(
         Utils.rl("lootbound"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("blocks").orElse(true).forGetter(LootboundAugment::blocks),
-            Codec.BOOL.fieldOf("entities").orElse(true).forGetter(LootboundAugment::entities)
+            Codec.BOOL.fieldOf("mobs").orElse(true).forGetter(LootboundAugment::mobs)
         ).apply(instance, LootboundAugment::new)),
         StreamCodec.composite(
             ByteBufCodecs.BOOL, LootboundAugment::blocks,
-            ByteBufCodecs.BOOL, LootboundAugment::entities,
+            ByteBufCodecs.BOOL, LootboundAugment::mobs,
             LootboundAugment::new
         ),
         () -> new LootboundAugment(true, true)
@@ -28,5 +28,15 @@ public record LootboundAugment(boolean blocks, boolean entities) implements Augm
     public AugmentType<LootboundAugment> type()
     {
         return TYPE;
+    }
+
+    public LootboundAugment setBlocks(boolean blocks)
+    {
+        return new LootboundAugment(blocks, this.mobs);
+    }
+
+    public LootboundAugment setMobs(boolean mobs)
+    {
+        return new LootboundAugment(this.blocks, mobs);
     }
 }

@@ -181,7 +181,7 @@ public class AugmentHandler
         for(var snapshot : snapshots)
         {
             LootboundAugment augment = snapshot.secondAugment();
-            if(!augment.entities())
+            if(!augment.mobs())
                 break;
 
             drops.removeIf(drop -> {
