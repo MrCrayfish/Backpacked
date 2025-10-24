@@ -286,9 +286,10 @@ public class CustomButton extends AbstractButton
             return this;
         }
 
-        public void setContentRenderer(@Nullable ContentRenderer renderer)
+        public Builder setContentRenderer(@Nullable ContentRenderer renderer)
         {
             this.contentRenderer = renderer;
+            return this;
         }
     }
 
