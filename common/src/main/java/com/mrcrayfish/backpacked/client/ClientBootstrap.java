@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.augment.widget.FunnellingMenu;
+import com.mrcrayfish.backpacked.client.augment.widget.LootboundMenu;
 import com.mrcrayfish.backpacked.client.augment.widget.QuiverlinkMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
@@ -14,6 +15,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.GiantAugment;
+import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.framework.api.event.InputEvents;
 import net.minecraft.network.chat.Component;
@@ -64,5 +66,6 @@ public class ClientBootstrap
         });
         AugmentSettingsFactories.registerFactory(FunnellingAugment.TYPE, FunnellingMenu::new);
         AugmentSettingsFactories.registerFactory(QuiverlinkAugment.TYPE, QuiverlinkMenu::new);
+        AugmentSettingsFactories.registerFactory(LootboundAugment.TYPE, LootboundMenu::new);
     }
 }

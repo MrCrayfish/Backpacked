@@ -77,6 +77,7 @@
     "backpacked.gui.configure": "Configure",
     "backpacked.gui.swap_augment": "Swap Augment",
     "backpacked.gui.press_button_to_expand": "Press %s to Expand",
+    "backpacked.gui.options": "Options",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
@@ -125,5 +126,7 @@
     "augment.backpacked.imbued_hide": "Imbued Hide",
     "augment.backpacked.imbued_hide.desc": "Strengthens the material of the backpack to make it immune to fire damage",
     "augment.backpacked.lootbound": "Lootbound",
-    "augment.backpacked.lootbound.desc": "A companion augment for Funnelling that enhances item harvesting.\nItems dropped by mining blocks and killing mobs will pulled into the backpack from a distance.\nFilters from Funnelling determine if an item will be pulled."
+    "augment.backpacked.lootbound.desc": "A companion augment for Funnelling that enhances item harvesting.\nItems dropped by mining blocks and killing mobs will pulled into the backpack from a distance.\nFilters from Funnelling determine if an item will be pulled.",
+    "augment.backpacked.lootbound.blocks": "Blocks",
+    "augment.backpacked.lootbound.mobs": "Mobs"
 }
