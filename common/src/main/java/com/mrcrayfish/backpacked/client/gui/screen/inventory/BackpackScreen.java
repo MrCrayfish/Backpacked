@@ -203,18 +203,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setSize(20, 20)
             .setIcon(btn -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
             .setAction(btn -> {
-                DropdownMenu.builder(this).addItem(PopupItem.create(Component.literal("Test"),
-                    DropdownMenu.builder(this).addItem(PopupItem.create(Component.literal("Test"),
-                        DropdownMenu.builder(this).addItem(ButtonItem.create(Component.literal("Test"),
-                                () -> {}
-                        )).build()
-                    )).build()
-                )).build().show(btn);
-                /*new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
+                new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
                     btn.rebuildTooltip();
-                }).show(btn);*/
+                }).show(btn);
             }).setTooltip(btn -> {
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 List<Component> lines = new ArrayList<>();
