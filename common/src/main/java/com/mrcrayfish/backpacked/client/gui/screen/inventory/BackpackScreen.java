@@ -216,16 +216,14 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 // Empty type should not add a description
                 if(type != ModAugmentTypes.EMPTY.get()) {
                     String rawDescription = type.description().getString();
-                    if(!Screen.hasShiftDown()) {
-                        int firstBreak = rawDescription.indexOf("\n");
-                        if(firstBreak != -1) {
-                            rawDescription = "• " + rawDescription.substring(0, firstBreak);
-                        }
+                    int firstBreak = rawDescription.indexOf("\n");
+                    if(!Screen.hasShiftDown() && firstBreak != -1) {
+                        rawDescription = "• " + rawDescription.substring(0, firstBreak);
                     } else {
                         rawDescription = "• " + rawDescription.replace("\n", "\n• ");
                     }
                     lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
-                    if(!Screen.hasShiftDown()) {
+                    if(!Screen.hasShiftDown() && firstBreak != -1) {
                         lines.add(ScreenUtil.join(" ",
                             Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
                             PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
