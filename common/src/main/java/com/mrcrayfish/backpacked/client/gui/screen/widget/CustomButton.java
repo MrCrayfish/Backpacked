@@ -419,4 +419,57 @@ public class CustomButton extends AbstractButton
             }
         }
     }
+
+    public static class ToggleContentRenderer implements ContentRenderer
+    {
+        public static final ToggleContentRenderer INSTANCE = new ToggleContentRenderer();
+
+        private static final int TOGGLE_SIZE = 6;
+        private static final WidgetSprites TOGGLE_SPRITES = new WidgetSprites(
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/toggle_on"),
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/toggle_off"),
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/toggle_on")
+        );
+
+        private ToggleContentRenderer() {}
+
+        @Override
+        public void draw(CustomButton button, GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+        {
+            if(button.texture != null)
+            {
+                RenderSystem.enableBlend();
+                RenderSystem.enableDepthTest();
+                graphics.setColor(1, 1, 1, button.active ? 1.0F : 0.5F);
+                graphics.blitSprite(button.texture.get(button.active, button.isHovered() && button.active), button.getX(), button.getY(), button.getWidth(), button.getHeight());
+                graphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
+
+            Component message = button.getMessage();
+            Font font = Minecraft.getInstance().font;
+            int contentLeft = button.getX() + 6;
+            int textX = contentLeft + (button.icon != null ? button.gap + button.icon.width() : 0);
+            int textY = button.getY() + (button.getHeight() - font.lineHeight) / 2 + 1;
+            int textColour = button.active ? 0xFFFFFFFF : 0xFF8C7E6D;
+            graphics.drawString(font, message, textX, textY, textColour, button.active);
+
+            if(button.icon != null)
+            {
+                int iconX = contentLeft;
+                int iconY = button.getY() + (button.getHeight() - button.icon.height()) / 2;
+                RenderSystem.enableBlend();
+                graphics.setColor(1, 1, 1, button.active ? 1.0F : 0.5F);
+                graphics.blitSprite(button.icon.sprite(button), iconX, iconY, button.icon.width(), button.icon.height());
+                graphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
+
+            int yOffset = (button.getHeight() - TOGGLE_SIZE) / 2;
+            int stateIconY = button.getY() + yOffset;
+            int stateIconX = button.getX() + button.getWidth() - TOGGLE_SIZE - yOffset;
+            boolean value = button.controller instanceof StateController state ? state.getter.get() : false;
+            graphics.blitSprite(TOGGLE_SPRITES.get(value, button.isHovered()), stateIconX, stateIconY, TOGGLE_SIZE, TOGGLE_SIZE);
+        }
+    }
 }
