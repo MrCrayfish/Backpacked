@@ -59,7 +59,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 .setSize(filterButtonWidth, 18)
                 .setGap(4)
                 .setMessage(ACTIVE_LABEL)
-                .setIcon(btn -> list.isActivatedOnly() ? FilterList.FilterItem.TOGGLE_ON : FilterList.FilterItem.TOGGLE_OFF, 6, 6)
+                .setContentRenderer(CustomButton.ToggleContentRenderer.INSTANCE)
                 .setTexture(new WidgetSprites(
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
