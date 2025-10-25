@@ -17,12 +17,14 @@ import java.util.function.Supplier;
 
 public class QuiverlinkMenu extends AugmentSettingsMenu
 {
+    private static final int MIN_CONTENT_WIDTH = 120;
+
     public QuiverlinkMenu(PopupMenuHandler handler, Supplier<QuiverlinkAugment> supplier, Consumer<QuiverlinkAugment> updater)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
             TitleWidget title = layout.addChild(new TitleWidget(Component.literal("Options"), Minecraft.getInstance().font));
-            Divider divider = layout.addChild(Divider.horizontal(Math.max(120, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
+            Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
             layout.addChild(CustomButton.values(() -> supplier.get().priority(), priority -> updater.accept(supplier.get().setPriority(priority)))
                 .setSize(divider.getWidth(), 18)
