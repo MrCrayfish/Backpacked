@@ -48,8 +48,9 @@ public class AugmentPopupMenu extends PopupMenu
             grid.addChild(augmentBtn, index / MAX_COLUMNS, index % MAX_COLUMNS);
         });
         grid.arrangeElements(); // Do this so the divider can match the width
-        TextWidget title = this.layout.addChild(new TextWidget(Component.literal("Augments"), Minecraft.getInstance().font).setColour(0xFF61503D), layoutSettings -> layoutSettings.paddingHorizontal(10));
-        this.layout.addChild(Divider.horizontal(Math.max(grid.getWidth(), 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
+        TitleWidget title = this.layout.addChild(new TitleWidget(Component.literal("Augments"), Minecraft.getInstance().font));
+        Divider divider = this.layout.addChild(Divider.horizontal(Math.max(grid.getWidth(), title.getWidth())).colour(0xFFE0CDB7));
+        title.setWidth(divider.getWidth());
         this.layout.addChild(grid, LayoutSettings::alignHorizontallyLeft);
     }
 

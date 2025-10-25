@@ -32,7 +32,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
 {
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
-    
+
     private static final int MIN_CONTENT_WIDTH = 170;
 
     private static String lastQuery = "";
