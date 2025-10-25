@@ -56,6 +56,7 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
     @Override
     public int compareTo(@NotNull AugmentType<?> other)
     {
+        if (this.isEmpty()) return -1;
         return BY_NAME.compare(this, other);
     }
 
