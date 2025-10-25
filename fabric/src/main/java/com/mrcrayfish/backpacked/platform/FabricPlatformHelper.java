@@ -4,15 +4,10 @@ import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import net.fabricmc.fabric.impl.resource.loader.BuiltinModResourcePackSource;
 import net.fabricmc.fabric.impl.resource.loader.ModResourcePackCreator;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Holder;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 import java.util.function.Predicate;
 
@@ -21,12 +16,6 @@ import java.util.function.Predicate;
  */
 public class FabricPlatformHelper implements IPlatformHelper
 {
-    @Override
-    public void addEnchantedBookToCreativeTab(CreativeModeTab.Output output, Holder.Reference<Enchantment> enchantment)
-    {
-        output.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment, enchantment.value().getMaxLevel())), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
-    }
-
     @Override
     public boolean isModLoaded(String modId)
     {
@@ -53,5 +42,11 @@ public class FabricPlatformHelper implements IPlatformHelper
             return item.getAllSupportedProjectiles();
         }
         return stack -> false;
+    }
+
+    @Override
+    public boolean isRepairable(ItemStack stack)
+    {
+        return true;
     }
 }

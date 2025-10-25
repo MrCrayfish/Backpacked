@@ -129,5 +129,7 @@
     "augment.backpacked.lootbound": "Lootbound",
     "augment.backpacked.lootbound.desc": "A companion augment for Funnelling that enhances item harvesting.\nItems dropped by mining blocks and killing mobs will pulled into the backpack from a distance.\nFilters from Funnelling determine if an item will be pulled.",
     "augment.backpacked.lootbound.blocks": "Blocks",
-    "augment.backpacked.lootbound.mobs": "Mobs"
+    "augment.backpacked.lootbound.mobs": "Mobs",
+    "augment.backpacked.reforge": "Reforge",
+    "augment.backpacked.reforge.desc": "Damaged "
 }

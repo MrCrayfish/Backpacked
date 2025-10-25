@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.mixin;
 
-import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.entity.ILootCapture;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,7 +32,7 @@ public class LivingEntityMixin
         List<ItemEntity> drops = ((ILootCapture) this).backpacked$GetCapturedDrops();
         if(drops != null)
         {
-            //TODO move to an event
+            //TODO reimplement
             /*if(!EnchantmentHandler.onDropLoot(drops, damageSource))
             {
                 drops.forEach(e -> entity.level().addFreshEntity(e));

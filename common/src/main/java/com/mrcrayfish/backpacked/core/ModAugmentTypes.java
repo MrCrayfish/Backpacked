@@ -15,4 +15,5 @@ public class ModAugmentTypes
     public static final RegistryEntry<AugmentType<QuiverlinkAugment>> QUIVERLINK = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("quiverlink"), () -> QuiverlinkAugment.TYPE);
     public static final RegistryEntry<AugmentType<ImbuedHideAugment>> IMBUED_HIDE = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("imbued_hide"), () -> ImbuedHideAugment.TYPE);
     public static final RegistryEntry<AugmentType<LootboundAugment>> LOOTBOUND = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("lootbound"), () -> LootboundAugment.TYPE);
+    public static final RegistryEntry<AugmentType<ReforgeAugment>> REFORGE = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("reforge"), () -> ReforgeAugment.TYPE);
 }

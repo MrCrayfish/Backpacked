@@ -10,15 +10,18 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
+import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +33,14 @@ import java.util.function.Predicate;
 
 public class AugmentHandler
 {
+    public static void init()
+    {
+        PlayerEvents.PICKUP_EXPERIENCE.register((player, orb) -> {
+            AugmentHandler.onPlayerPickupExperienceOrb(player, orb);
+            return false;
+        });
+    }
+
     /**
      * Handles the Funnelling augment. When a player picks up an item entity, before adding the item
      * to the players inventory, any backpack that has the Funnelling augment will first attempt to
@@ -212,9 +223,7 @@ public class AugmentHandler
                     ItemStack stack = drop.getItem().copyWithCount(result.funnelCount());
                     consumed.add(Pair.of(stack, drop.position()));
                 }
-                if(result.hasRemaining()) {
-                    drop.setItem(copy);
-                }
+                drop.setItem(copy); // Update the drop even if empty
                 return copy.isEmpty();
             });
 
@@ -225,7 +234,24 @@ public class AugmentHandler
                     Network.getPlay().sendToNearbyPlayers(() -> location, new MessageLootboundTakeItem(pair.getFirst(), pair.getSecond()));
                 });
             }
+        }
+    }
 
+    public static void onPlayerPickupExperienceOrb(Player player, ExperienceOrb orb)
+    {
+        if(orb.isRemoved())
+            return;
+
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.REFORGE.get());
+        for(var snapshot : snapshots)
+        {
+            InventoryHelper.streamFor(snapshot.inventory()).filter(stack -> {
+                return stack.isDamageableItem() && stack.isDamaged() && stack.getCount() == 1 && stack.getMaxStackSize() == 1 && Services.PLATFORM.isRepairable(stack);
+            }).forEach(stack -> {
+                int repairableAmount = EnchantmentHelper.modifyDurabilityToRepairFromXp((ServerLevel) player.level(), stack, orb.getValue());
+                int maxRepairableDamage = Math.min(repairableAmount, stack.getDamageValue());
+                stack.setDamageValue(stack.getDamageValue() - maxRepairableDamage);
+            });
         }
     }
 }

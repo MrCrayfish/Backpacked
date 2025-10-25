@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked;
 
 import com.mrcrayfish.backpacked.common.BackpackEvents;
-import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
+import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.impl.UniqueCraftingProgressTracker;
@@ -30,10 +30,10 @@ public class Bootstrap
         Network.init();
         UnlockManager.instance();
         BackpackEvents.init();
-        EnchantmentHandler.init();
         WanderingTraderEvents.init();
         Config.init();
         ModCommands.init();
+        AugmentHandler.init();
 
         // Register progress trackers
         ExploreBiomeChallenge.Tracker.registerEvent();
