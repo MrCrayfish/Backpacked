@@ -124,7 +124,7 @@
     "augment.backpacked.quiverlink.priority.inventory": "Inventory",
     "augment.backpacked.quiverlink.priority.inventory.tooltip": "When locating ammunition, the players inventory will be searched first",
     "augment.backpacked.imbued_hide": "Imbued Hide",
-    "augment.backpacked.imbued_hide.desc": "Strengthens the material of the backpack to make it immune to fire damage",
+    "augment.backpacked.imbued_hide.desc": "Strengthens the material of the backpack and makes it immune to fire damage",
     "augment.backpacked.lootbound": "Lootbound",
     "augment.backpacked.lootbound.desc": "A companion augment for Funnelling that enhances item harvesting.\nItems dropped by mining blocks and killing mobs will pulled into the backpack from a distance.\nFilters from Funnelling determine if an item will be pulled.",
     "augment.backpacked.lootbound.blocks": "Blocks",
