@@ -86,6 +86,11 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
         return null;
     }
 
+    public <T extends Augment<T>> boolean has(AugmentType<T> type)
+    {
+        return this.firstAugment.type() == type || this.secondAugment.type() == type || this.thirdAugment.type() == type;
+    }
+
     public enum Position
     {
         FIRST, SECOND, THIRD;

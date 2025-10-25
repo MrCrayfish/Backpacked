@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.common.augment.SavedAugments;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
@@ -244,13 +245,15 @@ public class ServerPlayHandler
         Augments currentAugments = Augments.get(stack);
         SavedAugments savedAugments = SavedAugments.get(stack);
 
+        // Augments must be unique except for empty type
+        if(type != ModAugmentTypes.EMPTY.get() && currentAugments.has(type))
+            return;
+
         // Don't update if the augment is the same
         Augment<?> updatedAugment = savedAugments.getSavedOrCreateDefault(type);
         Augment<?> currentAugment = currentAugments.getAugment(message.position());
         if(updatedAugment.equals(currentAugment))
             return;
-
-        // TODO check for unique augments
 
         // If the current augment has settings, save them so it can be restored later
         if(currentAugment.type() != updatedAugment.type())
@@ -326,5 +329,6 @@ public class ServerPlayHandler
 
         currentAugments = currentAugments.setAugment(message.position(), updatedAugment);
         Augments.set(stack, currentAugments);
+        menu.setAugments(currentAugments);
     }
 }
