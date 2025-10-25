@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,7 +22,8 @@ public record LootboundAugment(boolean blocks, boolean mobs) implements Augment<
             ByteBufCodecs.BOOL, LootboundAugment::mobs,
             LootboundAugment::new
         ),
-        () -> new LootboundAugment(true, true)
+        () -> new LootboundAugment(true, true),
+        ModAugmentTypes.FUNNELLING::get
     );
 
     @Override

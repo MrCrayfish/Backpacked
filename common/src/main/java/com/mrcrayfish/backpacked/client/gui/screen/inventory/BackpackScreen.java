@@ -207,6 +207,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 List<Component> lines = new ArrayList<>();
                 lines.add(SWAP_AUGMENT);
                 lines.add(type.name().plainCopy().withStyle(ChatFormatting.BLUE));
+                AugmentType<?> depends = type.requires().get();
+                if(depends != null) {
+                    lines.add(Component.translatable("backpacked.gui.requires_augment", depends.name()).withStyle(ChatFormatting.LIGHT_PURPLE));
+                }
                 // Empty type should not add a description
                 if(!type.isEmpty()) {
                     String rawDescription = type.description().getString();

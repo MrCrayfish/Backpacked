@@ -52,6 +52,10 @@ public class AugmentPopupMenu extends PopupMenu
                 .setTooltip(btn -> {
                     List<Component> lines = new ArrayList<>();
                     lines.add(type.name().plainCopy().withStyle(ChatFormatting.BLUE));
+                    AugmentType<?> depends = type.requires().get();
+                    if(depends != null) {
+                        lines.add(Component.translatable("backpacked.gui.requires_augment", depends.name()).withStyle(ChatFormatting.LIGHT_PURPLE));
+                    }
                     if(!type.isEmpty()) {
                         String rawDescription = type.description().getString();
                         int firstBreak = rawDescription.indexOf("\n");
