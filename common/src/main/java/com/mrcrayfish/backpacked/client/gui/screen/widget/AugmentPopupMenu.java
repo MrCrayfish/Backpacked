@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
@@ -7,15 +8,20 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,7 +48,28 @@ public class AugmentPopupMenu extends PopupMenu
                         updater.accept(type.defaultSupplier().get());
                         this.deepClose();
                     }
-                }).build();
+                })
+                .setTooltip(btn -> {
+                    List<Component> lines = new ArrayList<>();
+                    lines.add(type.name().plainCopy().withStyle(ChatFormatting.BLUE));
+                    if(!type.isEmpty()) {
+                        String rawDescription = type.description().getString();
+                        int firstBreak = rawDescription.indexOf("\n");
+                        if(!Screen.hasShiftDown() && firstBreak != -1) {
+                            rawDescription = "• " + rawDescription.substring(0, firstBreak);
+                        } else {
+                            rawDescription = "• " + rawDescription.replace("\n", "\n• ");
+                        }
+                        lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
+                        if(!Screen.hasShiftDown() && firstBreak != -1) {
+                            lines.add(ScreenUtil.join(" ",
+                                Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
+                                BackpackScreen.PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
+                            ));
+                        }
+                    }
+                    return ScreenUtil.createMultilineTooltip(lines);
+                }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build();
             augmentBtn.setTooltip(Tooltip.create(type.name()));
             int index = count.getAndIncrement();
             grid.addChild(augmentBtn, index / MAX_COLUMNS, index % MAX_COLUMNS);
