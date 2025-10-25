@@ -131,5 +131,5 @@
     "augment.backpacked.lootbound.blocks": "Blocks",
     "augment.backpacked.lootbound.mobs": "Mobs",
     "augment.backpacked.reforge": "Reforge",
-    "augment.backpacked.reforge.desc": "Damaged "
+    "augment.backpacked.reforge.desc": "Repairs damaged items inside the backpack upon picking up experience orbs.\nItems are repaired collectively, rather than one at a time."
 }
