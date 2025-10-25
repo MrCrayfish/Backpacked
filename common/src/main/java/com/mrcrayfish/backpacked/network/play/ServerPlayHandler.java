@@ -246,7 +246,7 @@ public class ServerPlayHandler
         SavedAugments savedAugments = SavedAugments.get(stack);
 
         // Augments must be unique except for empty type
-        if(type != ModAugmentTypes.EMPTY.get() && currentAugments.has(type))
+        if(!type.isEmpty() && currentAugments.has(type))
             return;
 
         // Don't update if the augment is the same

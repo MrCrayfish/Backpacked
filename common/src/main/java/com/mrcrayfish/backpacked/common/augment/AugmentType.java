@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.augment;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -56,5 +57,10 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
     public int compareTo(@NotNull AugmentType<?> other)
     {
         return BY_NAME.compare(this, other);
+    }
+
+    public boolean isEmpty()
+    {
+        return this == ModAugmentTypes.EMPTY.get();
     }
 }

@@ -203,7 +203,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setSize(20, 20)
             .setIcon(btn -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
             .setAction(btn -> {
-                new AugmentPopupMenu(this, this.menu.getAugments().getAugment(position), augment -> {
+                new AugmentPopupMenu(this, this.menu::getAugments, augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, augment));
                     btn.rebuildTooltip();
@@ -214,7 +214,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 lines.add(SWAP_AUGMENT);
                 lines.add(type.name().plainCopy().withStyle(ChatFormatting.BLUE));
                 // Empty type should not add a description
-                if(type != ModAugmentTypes.EMPTY.get()) {
+                if(!type.isEmpty()) {
                     String rawDescription = type.description().getString();
                     int firstBreak = rawDescription.indexOf("\n");
                     if(!Screen.hasShiftDown() && firstBreak != -1) {
