@@ -10,7 +10,6 @@ import com.mrcrayfish.backpacked.common.augment.SavedAugments;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
-import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;

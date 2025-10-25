@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.packs;
 
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;

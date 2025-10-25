@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.network.message;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;

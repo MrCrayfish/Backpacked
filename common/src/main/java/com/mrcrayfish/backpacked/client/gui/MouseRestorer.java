@@ -1,11 +1,9 @@
 package com.mrcrayfish.backpacked.client.gui;
 
-import com.mojang.blaze3d.platform.Window;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * A simple utility that restores the position of the mouse when transferring between

@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client;
 
-import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;

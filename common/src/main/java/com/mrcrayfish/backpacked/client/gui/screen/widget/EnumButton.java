@@ -4,12 +4,9 @@ import com.mrcrayfish.backpacked.client.SpriteProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class EnumButton<T extends Enum<T> & SpriteProvider> extends Button
 {

@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 
-import java.util.Locale;
 import java.util.function.BiFunction;
 
 public enum Operator implements StringRepresentable

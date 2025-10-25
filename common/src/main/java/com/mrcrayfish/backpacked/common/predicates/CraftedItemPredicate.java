@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.common.predicates;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.BackpackedCodecs;
-import com.mrcrayfish.backpacked.common.challenge.impl.CraftItemChallenge;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.block;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.BlockPos;

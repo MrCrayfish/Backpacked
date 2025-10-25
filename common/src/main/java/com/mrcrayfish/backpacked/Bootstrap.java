@@ -3,10 +3,6 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.common.BackpackEvents;
 import com.mrcrayfish.backpacked.common.EnchantmentHandler;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
-import com.mrcrayfish.backpacked.common.augment.Augment;
-import com.mrcrayfish.backpacked.common.augment.AugmentType;
-import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
-import com.mrcrayfish.backpacked.common.augment.impl.GiantAugment;
 import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.impl.UniqueCraftingProgressTracker;
@@ -14,7 +10,6 @@ import com.mrcrayfish.backpacked.core.ModCommands;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 
 /**
