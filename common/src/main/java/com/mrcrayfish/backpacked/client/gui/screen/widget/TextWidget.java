@@ -38,4 +38,10 @@ public class TextWidget extends AbstractWidget
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput output) {}
+
+    @Override
+    protected boolean isValidClickButton(int button)
+    {
+        return false; // Prevents clicking
+    }
 }

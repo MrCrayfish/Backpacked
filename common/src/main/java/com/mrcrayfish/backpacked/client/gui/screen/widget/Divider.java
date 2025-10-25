@@ -27,7 +27,13 @@ public class Divider extends AbstractWidget
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {}
+    protected void updateWidgetNarration(NarrationElementOutput output) {}
+
+    @Override
+    protected boolean isValidClickButton(int button)
+    {
+        return false; // Prevents clicking
+    }
 
     public enum Orientation
     {
