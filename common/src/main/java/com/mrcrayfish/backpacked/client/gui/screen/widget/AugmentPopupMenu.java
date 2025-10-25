@@ -28,15 +28,15 @@ import java.util.function.Supplier;
 
 public class AugmentPopupMenu extends PopupMenu
 {
-    private static final int MAX_COLUMNS = 5;
+    private static final int MAX_COLUMNS = 6;
 
-    private final PaddedLinearLayout layout = (PaddedLinearLayout) new PaddedLinearLayout(LinearLayout.Orientation.VERTICAL).padding(6).spacing(2);
+    private final PaddedLinearLayout layout = (PaddedLinearLayout) new PaddedLinearLayout(LinearLayout.Orientation.VERTICAL).padding(8).spacing(2);
 
     public AugmentPopupMenu(PopupMenuHandler handler, Supplier<Augments> selectedAugments, Consumer<Augment<?>> updater)
     {
         super(handler);
         this.setAlignment(Alignment.END_TOP);
-        this.setBackground(Utils.rl("backpack/label"));
+        this.setBackground(Utils.rl("augment/menu_background"));
         GridLayout grid = new GridLayout().rowSpacing(2).columnSpacing(2);
         AtomicInteger count = new AtomicInteger();
         AugmentType.stream().sorted().forEach(type -> {
@@ -75,7 +75,7 @@ public class AugmentPopupMenu extends PopupMenu
             grid.addChild(augmentBtn, index / MAX_COLUMNS, index % MAX_COLUMNS);
         });
         grid.arrangeElements(); // Do this so the divider can match the width
-        TitleWidget title = this.layout.addChild(new TitleWidget(Component.literal("Augments"), Minecraft.getInstance().font));
+        TitleWidget title = this.layout.addChild(new TitleWidget(Component.translatable("backpacked.gui.pick_an_augment"), Minecraft.getInstance().font));
         Divider divider = this.layout.addChild(Divider.horizontal(Math.max(grid.getWidth(), title.getWidth())).colour(0xFFE0CDB7));
         title.setWidth(divider.getWidth());
         this.layout.addChild(grid, LayoutSettings::alignHorizontallyLeft);

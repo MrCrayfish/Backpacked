@@ -78,6 +78,7 @@
     "backpacked.gui.swap_augment": "Swap Augment",
     "backpacked.gui.press_button_to_expand": "Press %s to Expand",
     "backpacked.gui.options": "Options",
+    "backpacked.gui.pick_an_augment": "Pick an Augment",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
