@@ -40,8 +40,9 @@ public class FunnellingMenu extends AugmentSettingsMenu
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
-            TextWidget title = layout.addChild(new TextWidget(Component.literal("Filters"), Minecraft.getInstance().font).setColour(0xFF61503D));
-            Divider divider = layout.addChild(Divider.horizontal(Math.max(170, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
+            TitleWidget title = layout.addChild(new TitleWidget(Component.literal("Filters"), Minecraft.getInstance().font));
+            Divider divider = layout.addChild(Divider.horizontal(Math.max(170, title.getWidth())).colour(0xFFE0CDB7));
+            title.setWidth(divider.getWidth());
 
             FilterList list = new FilterList(supplier, updater, divider.getWidth(), lastQuery, lastFilter);
 

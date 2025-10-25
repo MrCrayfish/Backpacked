@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TextWidget;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
@@ -30,8 +31,9 @@ public class LootboundMenu extends AugmentSettingsMenu
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
-            TextWidget title = layout.addChild(new TextWidget(OPTIONS_LABEL, Minecraft.getInstance().font).setColour(0xFF61503D));
+            TitleWidget title = layout.addChild(new TitleWidget(OPTIONS_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(70, 10 + title.getWidth() + 10)).colour(0xFFE0CDB7));
+            title.setWidth(divider.getWidth());
             layout.addChild(CustomButton.state(() -> supplier.get().blocks(), value -> updater.accept(supplier.get().setBlocks(value)))
                 .setSize(divider.getWidth(), 18)
                 .setMessage(BLOCKS_LABEL)
