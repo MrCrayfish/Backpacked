@@ -267,7 +267,8 @@ public class ServerPlayHandler
         Augments.set(stack, currentAugments);
         menu.setAugments(currentAugments);
 
-        // TODO sync back to client. RIght now the client assumes the packet to the server is sucessful
+        // Sync the change to the client
+        Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageSyncAugmentChange(message.position(), updatedAugment));
     }
 
     public static void handleSetAugmentState(MessageSetAugmentState message, MessageContext context)

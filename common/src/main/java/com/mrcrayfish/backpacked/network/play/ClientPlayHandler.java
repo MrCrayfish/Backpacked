@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.network.play;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.core.ModSounds;
@@ -135,5 +136,14 @@ public class ClientPlayHandler
         float pitch = 0.7F + 0.3F * minecraft.level.random.nextFloat();
         SimpleSoundInstance sound = new SimpleSoundInstance(ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.BLOCKS, 1F, pitch, SoundInstance.createUnseededRandom(), pos.x, pos.y, pos.z);
         minecraft.getSoundManager().play(sound);
+    }
+
+    public static void handleSyncAugmentChange(MessageSyncAugmentChange message)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.screen instanceof BackpackScreen screen)
+        {
+            screen.updateAugment(message.position(), message.augment());
+        }
     }
 }

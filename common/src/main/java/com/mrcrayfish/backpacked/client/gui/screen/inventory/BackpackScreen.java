@@ -40,6 +40,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -98,6 +99,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private int timer;
     private LinearLayout augmentsLayout;
     private LinearLayout quickActionsLayout;
+    private EnumMap<Augments.Position, CustomButton> augmentsButtons;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -112,6 +114,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         this.titleLabelY = 0;
         this.inventoryLabelX = this.imageWidth / 2 - 80;
         this.inventoryLabelY = this.imageHeight - 94;
+        this.augmentsButtons = new EnumMap<>(Augments.Position.class);
     }
 
     @Override
@@ -193,14 +196,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private LinearLayout createAugmentLayout(Augments.Position position)
     {
         LinearLayout layout = LinearLayout.horizontal().spacing(1);
-        layout.addChild(CustomButton.builder()
+        CustomButton augmentBtn = layout.addChild(CustomButton.builder()
             .setSize(20, 20)
             .setIcon(btn -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
             .setAction(btn -> {
                 new AugmentPopupMenu(this, this.menu::getAugments, augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
-                    this.updateAugments(this.menu.getAugments().setAugment(position, augment));
-                    btn.rebuildTooltip();
                 }).show(btn);
             }).setTooltip(btn -> {
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
@@ -230,6 +231,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 }
                 return ScreenUtil.createMultilineTooltip(lines);
             }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build(), LayoutSettings::alignHorizontallyCenter);
+        this.augmentsButtons.put(position, augmentBtn);
 
         // Adds a toggle and settings button for the augment
         GridLayout options = new GridLayout().spacing(0);
@@ -270,6 +272,16 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private void updateAugments(Augments augments)
     {
         this.menu.setAugments(augments);
+    }
+
+    public void updateAugment(Augments.Position position, Augment<?> augment)
+    {
+        this.menu.setAugments(this.menu.getAugments().setAugment(position, augment));
+        CustomButton augmentBtn = this.augmentsButtons.get(position);
+        if(augmentBtn != null)
+        {
+            augmentBtn.rebuildTooltip();
+        }
     }
 
     private LinearLayout createQuickActionsPanel()
