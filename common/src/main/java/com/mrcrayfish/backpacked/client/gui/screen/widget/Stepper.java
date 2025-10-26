@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,9 +16,9 @@ import java.util.function.Consumer;
 public class Stepper extends AbstractWidget
 {
     private static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_button"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_button_focused")
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
     );
     private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_background");
     private static final ResourceLocation INCREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_increment");
@@ -42,7 +41,7 @@ public class Stepper extends AbstractWidget
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        graphics.blitSprite(BACKGROUND_SPRITE, this.getX() + 5, this.getY(), this.getWidth() - 10, this.getHeight());
+        graphics.blitSprite(BACKGROUND_SPRITE, this.getX() + this.getHeight(), this.getY() + 1, this.getWidth() - this.getHeight() * 2, this.getHeight() - 2);
 
         boolean leftHovered = this.isDecrementHovered(mouseX, mouseY);
         graphics.blitSprite(BUTTON_SPRITES.get(true, leftHovered), this.getX(), this.getY(), this.getHeight(), this.getHeight());
