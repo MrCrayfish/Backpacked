@@ -300,7 +300,10 @@ public class AugmentHandler
                 {
                     SoundType sound = state.getSoundType();
                     level.setBlock(pos, state, Block.UPDATE_ALL);
-                    level.playSound(null, player.xo, player.yo, player.zo, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 6.0F, sound.getPitch() * 0.8F);
+                    if(augment.sound())
+                    {
+                        level.playSound(null, player.xo, player.yo, player.zo, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 6.0F, sound.getPitch() * 0.8F);
+                    }
                     torch.shrink(1);
                 }
                 break;

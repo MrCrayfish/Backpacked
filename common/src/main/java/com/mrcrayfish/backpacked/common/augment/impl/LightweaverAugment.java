@@ -10,23 +10,26 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 
-public record LightweaverAugment(int minimumLight) implements Augment<LightweaverAugment>
+public record LightweaverAugment(int minimumLight, boolean sound) implements Augment<LightweaverAugment>
 {
     public static final AugmentType<LightweaverAugment> TYPE = new AugmentType<>(
         Utils.rl("lightweaver"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.INT.fieldOf("minimum_light").forGetter(LightweaverAugment::minimumLight)
+            Codec.INT.fieldOf("minimum_light").orElse(8).forGetter(LightweaverAugment::minimumLight),
+            Codec.BOOL.fieldOf("sound").orElse(true).forGetter(LightweaverAugment::sound)
         ).apply(instance, LightweaverAugment::new)),
         StreamCodec.composite(
             ByteBufCodecs.INT, LightweaverAugment::minimumLight,
+            ByteBufCodecs.BOOL, LightweaverAugment::sound,
             LightweaverAugment::new
         ),
-        () -> new LightweaverAugment(8)
+        () -> new LightweaverAugment(8, true)
     );
 
-    public LightweaverAugment(int minimumLight)
+    public LightweaverAugment(int minimumLight, boolean sound)
     {
         this.minimumLight = Mth.clamp(minimumLight, 0, 15);
+        this.sound = sound;
     }
 
     @Override
@@ -37,6 +40,11 @@ public record LightweaverAugment(int minimumLight) implements Augment<Lightweave
 
     public LightweaverAugment setMinimumLight(int minimumLight)
     {
-        return new LightweaverAugment(minimumLight);
+        return new LightweaverAugment(minimumLight, this.sound);
+    }
+
+    public LightweaverAugment setSound(boolean sound)
+    {
+        return new LightweaverAugment(this.minimumLight, sound);
     }
 }
