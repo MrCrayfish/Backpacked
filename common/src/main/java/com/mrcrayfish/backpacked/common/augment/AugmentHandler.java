@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
@@ -12,17 +13,18 @@ import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -272,5 +274,27 @@ public class AugmentHandler
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    public static void onPlayerChangedBlockPos(Player player, ServerLevel level, BlockPos pos, int brightness)
+    {
+        if(!level.isEmptyBlock(pos))
+            return;
+
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.LIGHTWEAVER.get());
+        for(var snapshot : snapshots)
+        {
+            LightweaverAugment augment = snapshot.augment();
+            if(brightness > augment.minimumLight())
+                return;
+
+            ItemStack torch = snapshot.inventory().findFirst(stack -> stack.is(Items.TORCH));
+            if(!torch.isEmpty())
+            {
+                level.setBlock(pos, Blocks.TORCH.defaultBlockState(), Block.UPDATE_ALL);
+                torch.shrink(1);
+                break;
+            }
+        }
     }
 }

@@ -13,11 +13,14 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Author: MrCrayfish
@@ -156,5 +159,18 @@ public class BackpackInventory extends UnlockableContainer
             return false;
 
         return stack.getItem().canFitInsideContainerItems();
+    }
+
+    public ItemStack findFirst(Predicate<ItemStack> predicate)
+    {
+        for(int i = 0; i < this.getContainerSize(); i++)
+        {
+            ItemStack stack = this.getItem(i);
+            if(predicate.test(stack))
+            {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 }

@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.MovementType;
+import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -104,5 +107,15 @@ public abstract class ServerPlayerMixin implements BackpackedInteractAccess
     private void backpacked$MovementVehicle(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.VEHICLE);
+    }
+
+    @Inject(method = "onChangedBlock", at = @At(value = "TAIL"))
+    private void backpacked$TryAndPlaceTorch(ServerLevel level, BlockPos pos, CallbackInfo ci)
+    {
+        Player player = (Player) (Object) this;
+        if(player.isSpectator() || !player.onGround())
+            return;
+        int brightness = level.getRawBrightness(pos, 0);
+        AugmentHandler.onPlayerChangedBlockPos(player, level, pos, brightness);
     }
 }
