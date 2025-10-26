@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
@@ -253,5 +254,23 @@ public class AugmentHandler
                 stack.setDamageValue(stack.getDamageValue() - maxRepairableDamage);
             });
         }
+    }
+
+    public static ItemStack locateTotemOfUndying(Player player)
+    {
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.IMMORTAL.get());
+        for(var snapshot : snapshots)
+        {
+            BackpackInventory inventory = snapshot.inventory();
+            for(int i = 0; i < inventory.getContainerSize(); i++)
+            {
+                ItemStack stack = inventory.getItem(i);
+                if(stack.is(Items.TOTEM_OF_UNDYING))
+                {
+                    return stack;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
     }
 }
