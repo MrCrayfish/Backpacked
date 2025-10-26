@@ -15,7 +15,7 @@ public record LightweaverAugment(int minimumLight, boolean sound) implements Aug
     public static final AugmentType<LightweaverAugment> TYPE = new AugmentType<>(
         Utils.rl("lightweaver"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.INT.fieldOf("minimum_light").orElse(8).forGetter(LightweaverAugment::minimumLight),
+            Codec.INT.fieldOf("minimum_light").orElse(6).forGetter(LightweaverAugment::minimumLight),
             Codec.BOOL.fieldOf("sound").orElse(true).forGetter(LightweaverAugment::sound)
         ).apply(instance, LightweaverAugment::new)),
         StreamCodec.composite(
@@ -23,7 +23,7 @@ public record LightweaverAugment(int minimumLight, boolean sound) implements Aug
             ByteBufCodecs.BOOL, LightweaverAugment::sound,
             LightweaverAugment::new
         ),
-        () -> new LightweaverAugment(8, true)
+        () -> new LightweaverAugment(6, true)
     );
 
     public LightweaverAugment(int minimumLight, boolean sound)
