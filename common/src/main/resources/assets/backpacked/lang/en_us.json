@@ -60,7 +60,7 @@
     "backpacked.gui.back_to_inventory": "Back to Inventory",
     "backpacked.gui.open_backpack_inventory": "Open Backpack Inventory",
     "backpacked.gui.unsaved_changes": "Unsaved changes will be lost!",
-    "backpacked.gui.cosmetic_warning": "Only the customizations of the first equipped backpack will be shown on the player",
+    "backpacked.gui.cosmetic_warning": "Only the first equipped backpack's customizations are shown on the player",
     "backpacked.gui.experience_cost": "%s Exp Level",
     "backpacked.gui.experience_cost.plural": "%s Exp Levels",
     "backpacked.gui.hold_to_unlock": "Hold to Unlock",
