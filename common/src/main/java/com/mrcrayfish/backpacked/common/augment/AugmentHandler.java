@@ -16,6 +16,7 @@ import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -296,7 +298,9 @@ public class AugmentHandler
                 BlockState state = Block.updateFromNeighbourShapes(Blocks.TORCH.defaultBlockState(), level, pos);
                 if(!state.isAir())
                 {
-                    level.setBlock(pos, Blocks.TORCH.defaultBlockState(), Block.UPDATE_ALL);
+                    SoundType sound = state.getSoundType();
+                    level.setBlock(pos, state, Block.UPDATE_ALL);
+                    level.playSound(null, player.xo, player.yo, player.zo, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 6.0F, sound.getPitch() * 0.8F);
                     torch.shrink(1);
                 }
                 break;
