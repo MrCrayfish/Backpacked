@@ -14,6 +14,7 @@ import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TorchBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -291,8 +293,12 @@ public class AugmentHandler
             ItemStack torch = snapshot.inventory().findFirst(stack -> stack.is(Items.TORCH));
             if(!torch.isEmpty())
             {
-                level.setBlock(pos, Blocks.TORCH.defaultBlockState(), Block.UPDATE_ALL);
-                torch.shrink(1);
+                BlockState state = Block.updateFromNeighbourShapes(Blocks.TORCH.defaultBlockState(), level, pos);
+                if(!state.isAir())
+                {
+                    level.setBlock(pos, Blocks.TORCH.defaultBlockState(), Block.UPDATE_ALL);
+                    torch.shrink(1);
+                }
                 break;
             }
         }

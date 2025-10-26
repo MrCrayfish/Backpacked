@@ -136,5 +136,6 @@
     "augment.backpacked.immortal": "Immortal",
     "augment.backpacked.immortal.desc": "Totems of Undying stored in the backpack will be activated on death.\nTotems held in the main and offhand will be used before ones located in the backpack.",
     "augment.backpacked.lightweaver": "Lightweaver",
-    "augment.backpacked.lightweaver.desc": "Automatically places torches from the backpack at the players feet.\nA minimum light level can be configured to prevent over placing.\nAny type of torch will be placed, but can be toggled."
+    "augment.backpacked.lightweaver.desc": "Automatically places torches from the backpack at the players feet.\nA minimum light level can be configured to prevent over placing.\nAny type of torch will be placed, but can be toggled.",
+    "augment.backpacked.lightweaver.light_level": "Light Level"
 }
