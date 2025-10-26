@@ -26,9 +26,15 @@ public class LightweaverMenu extends AugmentSettingsMenu
             TitleWidget title = layout.addChild(new TitleWidget(LIGHT_LEVEL_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
-            layout.addChild(new Stepper(divider.getWidth(), 16, supplier.get().minimumLight(), newValue -> {
-                updater.accept(supplier.get().setMinimumLight(newValue));
-            }).setMin(0).setMax(15));
+            Stepper lightLevelStepper = Stepper.builder()
+                .setSize(divider.getWidth(), 16)
+                .setInitialValue(supplier.get().minimumLight()) 
+                .setMin(0)
+                .setMax(15)
+                .setOnChange(newValue -> {
+                    updater.accept(supplier.get().setMinimumLight(newValue));
+                }).build();
+            layout.addChild(lightLevelStepper);
             return layout;
         });
     }

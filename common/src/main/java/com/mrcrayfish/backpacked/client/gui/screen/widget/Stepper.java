@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,28 +25,18 @@ public class Stepper extends AbstractWidget
     private static final ResourceLocation INCREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_increment");
     private static final ResourceLocation DECREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_decrement");
 
+    private final @Nullable Integer min;
+    private final @Nullable Integer max;
+    private final @Nullable Consumer<Integer> callback;
     private int value;
-    private final Consumer<Integer> callback;
-    private @Nullable Integer min;
-    private @Nullable Integer max;
 
-    public Stepper(int width, int height, int initialValue, Consumer<Integer> callback)
+    private Stepper(int x, int y, int width, int height, @Nullable Integer min, @Nullable Integer max, @Nullable Consumer<Integer> callback, int initialValue)
     {
-        super(0, 0, width, height, CommonComponents.EMPTY);
-        this.value = initialValue;
-        this.callback = callback;
-    }
-
-    public Stepper setMin(int min)
-    {
+        super(x, y, width, height, CommonComponents.EMPTY);
         this.min = min;
-        return this;
-    }
-
-    public Stepper setMax(int max)
-    {
         this.max = max;
-        return this;
+        this.callback = callback;
+        this.value = initialValue;
     }
 
     @Override
@@ -105,5 +96,67 @@ public class Stepper extends AbstractWidget
     private boolean isIncrementHovered(int mouseX, int mouseY)
     {
         return ScreenUtil.isPointInArea(mouseX, mouseY, this.getX() + this.getWidth() - this.getHeight(), this.getY(), this.getHeight(), this.getHeight());
+    }
+
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private int x;
+        private int y;
+        private int width = 100;
+        private int height = 20;
+        private int initialValue;
+        private @Nullable Integer min;
+        private @Nullable Integer max;
+        private @Nullable Consumer<Integer> callback;
+
+        private Builder() {}
+
+        public Builder setPosition(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+            return this;
+        }
+
+        public Builder setSize(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+            return this;
+        }
+
+        public Builder setInitialValue(int initialValue)
+        {
+            this.initialValue = initialValue;
+            return this;
+        }
+
+        public Builder setMin(Integer min)
+        {
+            this.min = min;
+            return this;
+        }
+
+        public Builder setMax(Integer max)
+        {
+            this.max = max;
+            return this;
+        }
+
+        public Builder setOnChange(Consumer<Integer> callback)
+        {
+            this.callback = callback;
+            return this;
+        }
+
+        public Stepper build()
+        {
+            return new Stepper(this.x, this.y, this.width, this.height, this.min, this.max, this.callback, this.initialValue);
+        }
     }
 }
