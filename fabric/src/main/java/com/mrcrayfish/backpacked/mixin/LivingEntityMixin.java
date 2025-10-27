@@ -1,16 +1,14 @@
 package com.mrcrayfish.backpacked.mixin;
 
-import com.mrcrayfish.backpacked.entity.ILootCapture;
+import com.mrcrayfish.backpacked.entity.LootCapture;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -19,25 +17,24 @@ import java.util.List;
 public class LivingEntityMixin
 {
     @Inject(method = "dropAllDeathLoot", at = @At(value = "HEAD"))
-    private void backpacked$OnDropLootPre(ServerLevel serverLevel, DamageSource damageSource, CallbackInfo ci)
+    private void backpacked$OnDropLootPre(ServerLevel level, DamageSource source, CallbackInfo ci)
     {
-        ((ILootCapture) this).backpacked$StartCapturingDrop();
+        if(source.getEntity() instanceof ServerPlayer player)
+        {
+            ((LootCapture) this).backpacked$StartCapturingDrop(player);
+        }
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Inject(method = "dropAllDeathLoot", at = @At(value = "TAIL"))
-    private void backpacked$OnDropLootPost(ServerLevel serverLevel, DamageSource damageSource, CallbackInfo ci)
+    private void backpacked$OnDropLootPost(ServerLevel level, DamageSource source, CallbackInfo ci)
     {
-        LivingEntity entity = (LivingEntity) (Object) this;
-        List<ItemEntity> drops = ((ILootCapture) this).backpacked$GetCapturedDrops();
-        if(drops != null)
-        {
-            //TODO reimplement
-            /*if(!EnchantmentHandler.onDropLoot(drops, damageSource))
-            {
-                drops.forEach(e -> entity.level().addFreshEntity(e));
-            }*/
-            ((ILootCapture) this).backpacked$EndCapturingDrop();
-        }
+        ((LootCapture) this).backpacked$EndCapturingDrop();
+    }
+
+    @Inject(method = "die", at = @At(value = "TAIL"))
+    private void backpacked$OnDropLootPost(DamageSource source, CallbackInfo ci)
+    {
+        // Back up just in-case other mods somehow cancel dropAllDeathLoot
+        ((LootCapture) this).backpacked$EndCapturingDrop();
     }
 }
