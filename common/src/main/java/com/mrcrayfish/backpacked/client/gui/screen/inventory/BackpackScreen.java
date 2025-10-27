@@ -289,10 +289,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
 
-        MiniButton manageButton = layout.addChild(new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
-            Network.getPlay().sendToServer(new MessageRequestManagement());
-        }));
-        manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
+        if(this.owner)
+        {
+            MiniButton manageButton = layout.addChild(new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
+                Network.getPlay().sendToServer(new MessageRequestManagement());
+            }));
+            manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
+        }
 
         boolean canCustomise = this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get();
         if(canCustomise)
