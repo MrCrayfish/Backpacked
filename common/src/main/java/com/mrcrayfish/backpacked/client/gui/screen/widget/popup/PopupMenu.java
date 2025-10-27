@@ -12,6 +12,7 @@ import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -183,6 +184,17 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         this.width = layout.getWidth();
         this.height = layout.getHeight();
         this.alignment.aligner().accept(this, rect);
+        layout.setX(this.getX());
+        layout.setY(this.getY());
+        this.clampToWindow();
+    }
+
+    private void clampToWindow()
+    {
+        Window window = Minecraft.getInstance().getWindow();
+        this.setX(Mth.clamp(this.getX(), 0, window.getGuiScaledWidth() - this.getWidth()));
+        this.setY(Mth.clamp(this.getY(), 0, window.getGuiScaledHeight() - this.getHeight())); 
+        Layout layout = this.layout();
         layout.setX(this.getX());
         layout.setY(this.getY());
     }
