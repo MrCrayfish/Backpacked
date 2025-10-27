@@ -38,6 +38,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -97,7 +98,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private final boolean owner;
     private boolean opened;
     private int timer;
-    private LinearLayout augmentsLayout;
+    private @Nullable LinearLayout augmentsLayout;
     private LinearLayout quickActionsLayout;
     private EnumMap<Augments.Position, CustomButton> augmentsButtons;
 
@@ -420,7 +421,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
         // Draw the background labels for the quick action buttons and augment
         graphics.blitSprite(LABEL_BACKGROUND, this.quickActionsLayout.getX() - LABEL_PADDING, this.quickActionsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.quickActionsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.quickActionsLayout.getHeight() + LABEL_PADDING);
-        graphics.blitSprite(LABEL_BACKGROUND, this.augmentsLayout.getX() - LABEL_PADDING, this.augmentsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getHeight() + LABEL_PADDING);
+        if(this.augmentsLayout != null)
+        {
+            graphics.blitSprite(LABEL_BACKGROUND, this.augmentsLayout.getX() - LABEL_PADDING, this.augmentsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getHeight() + LABEL_PADDING);
+        }
 
         // Backpack Inventory
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
