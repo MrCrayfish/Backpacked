@@ -202,14 +202,7 @@ public class AugmentHandler
             if(!augment.mobs())
                 break;
 
-            drops.removeIf(drop -> {
-                ItemStack stack = drop.getItem().copy();
-                FunnelResult result = funnelItemStackIntoBackpack(player, stack);
-                if(result.hasRemaining()) {
-                    drop.setItem(stack);
-                }
-                return stack.isEmpty();
-            });
+            funnelDropsIntoBackpack(drops, player);
         }
     }
 
@@ -222,25 +215,30 @@ public class AugmentHandler
             if(!augment.blocks())
                 break;
 
-            List<Pair<ItemStack, Vec3>> consumed = new ArrayList<>();
-            drops.removeIf(drop -> {
-                ItemStack copy = drop.getItem().copy();
-                FunnelResult result = funnelItemStackIntoBackpack(player, copy);
-                if(result.funnelCount() > 0) {
-                    ItemStack stack = drop.getItem().copyWithCount(result.funnelCount());
-                    consumed.add(Pair.of(stack, drop.position()));
-                }
-                drop.setItem(copy); // Update the drop even if empty
-                return copy.isEmpty();
-            });
+            funnelDropsIntoBackpack(drops, player);
+        }
+    }
 
-            if(player.level() instanceof ServerLevel level)
-            {
-                consumed.forEach(pair -> {
-                    LevelLocation location = LevelLocation.create(level, pair.getSecond(), 32);
-                    Network.getPlay().sendToNearbyPlayers(() -> location, new MessageLootboundTakeItem(pair.getFirst(), pair.getSecond()));
-                });
+    private static void funnelDropsIntoBackpack(Collection<ItemEntity> drops, Player player)
+    {
+        List<Pair<ItemStack, Vec3>> consumed = new ArrayList<>();
+        drops.removeIf(drop -> {
+            ItemStack copy = drop.getItem().copy();
+            FunnelResult result = funnelItemStackIntoBackpack(player, copy);
+            if(result.funnelCount() > 0) {
+                ItemStack stack = drop.getItem().copyWithCount(result.funnelCount());
+                consumed.add(Pair.of(stack, drop.position()));
             }
+            drop.setItem(copy);
+            return copy.isEmpty();
+        });
+
+        if(player.level() instanceof ServerLevel level)
+        {
+            consumed.forEach(pair -> {
+                LevelLocation location = LevelLocation.create(level, pair.getSecond(), 32);
+                Network.getPlay().sendToNearbyPlayers(() -> location, new MessageLootboundTakeItem(pair.getFirst(), pair.getSecond()));
+            });
         }
     }
 
