@@ -287,55 +287,45 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private LinearLayout createQuickActionsPanel()
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
-        this.gatherQuickButtons().forEach(layout::addChild);
-        return layout;
-    }
 
-    private List<AbstractButton> gatherQuickButtons()
-    {
-        List<AbstractButton> buttons = new ArrayList<>();
-
-        MiniButton manageButton = new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
+        MiniButton manageButton = layout.addChild(new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
             Network.getPlay().sendToServer(new MessageRequestManagement());
-        });
+        }));
         manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
-        buttons.add(manageButton);
 
         boolean canCustomise = this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get();
         if(canCustomise)
         {
-            MiniButton customiseButton = new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
+            MiniButton customiseButton = layout.addChild(new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
                 Player player = Minecraft.getInstance().player;
                 if(player != null) {
                     int backpackIndex = ModSyncedDataKeys.SELECTED_BACKPACK.getValue(player);
                     Network.getPlay().sendToServer(new MessageRequestCustomisation(backpackIndex));
                 }
-            });
+            }));
             customiseButton.setTooltip(Tooltip.create(CUSTOMISE_TOOLTIP));
-            buttons.add(customiseButton);
         }
 
         if(!Config.BACKPACK.inventory.slots.unlockAllSlots.get())
         {
-            EnumButton<UnlockableSlotMode> lockButton = new EnumButton<>(0, 0, 10, 10, Config.CLIENT.unlockableSlotMode.get(), (btn, value) -> {
+            EnumButton<UnlockableSlotMode> lockButton = layout.addChild(new EnumButton<>(0, 0, 10, 10, Config.CLIENT.unlockableSlotMode.get(), (btn, value) -> {
                 if(Config.CLIENT.unlockableSlotMode.get() != value) {
                     Config.CLIENT.unlockableSlotMode.set(value);
                     btn.setTooltip(this.createLockTooltip(value));
                 }
                 this.updateUnlockableSlots();
-            });
+            }));
             lockButton.setTooltip(this.createLockTooltip(Config.CLIENT.unlockableSlotMode.get()));
-            buttons.add(lockButton);
         }
 
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            MiniButton configButton = new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen());
+            layout.addChild(Divider.horizontal(10).colour(0xFFE0CDB7));
+            MiniButton configButton = layout.addChild(new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen()));
             configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
-            buttons.add(configButton);
         }
 
-        return buttons;
+        return layout;
     }
 
     private Tooltip createLockTooltip(UnlockableSlotMode mode)
