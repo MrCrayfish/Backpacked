@@ -69,12 +69,18 @@ public class Stepper extends AbstractWidget
         if(this.isDecrementHovered((int) mouseX, (int) mouseY))
         {
             this.adjustValue(-1);
-            this.callback.accept(this.value);
+            if(this.callback != null)
+            {
+                this.callback.accept(this.value);
+            }
         }
         else if(this.isIncrementHovered((int) mouseX, (int) mouseY))
         {
             this.adjustValue(1);
-            this.callback.accept(this.value);
+            if(this.callback != null)
+            {
+                this.callback.accept(this.value);
+            }
         }
     }
 
