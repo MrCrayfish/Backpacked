@@ -32,6 +32,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
 {
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
+    private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.filters");
 
     private static final int MIN_CONTENT_WIDTH = 170;
 
@@ -42,7 +43,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
-            TitleWidget title = layout.addChild(new TitleWidget(Component.literal("Filters"), Minecraft.getInstance().font));
+            TitleWidget title = layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
 

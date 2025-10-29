@@ -19,6 +19,7 @@ public class LightweaverMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component LIGHT_LEVEL_LABEL = Component.translatable("augment.backpacked.lightweaver.light_level");
+    private static final Component PLACE_SOUND_LABEL = Component.translatable("augment.backpacked.lightweaver.place_sound");
 
     private static final int MIN_CONTENT_WIDTH = 130;
 
@@ -37,7 +38,7 @@ public class LightweaverMenu extends AugmentSettingsMenu
                 .setOnChange(newValue -> {
                     updater.accept(supplier.get().setMinimumLight(newValue));
                 }).build(), divider.getWidth()));
-            layout.addChild(createOption(Component.literal("Place Sound"), CustomButton.state(() -> {
+            layout.addChild(createOption(PLACE_SOUND_LABEL, CustomButton.state(() -> {
                     return supplier.get().sound();
                 }, newValue -> {
                     updater.accept(supplier.get().setSound(newValue));

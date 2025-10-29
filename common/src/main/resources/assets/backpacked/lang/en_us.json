@@ -78,6 +78,7 @@
     "backpacked.gui.swap_augment": "Swap Augment",
     "backpacked.gui.press_button_to_expand": "Press %s to Expand",
     "backpacked.gui.options": "Options",
+    "backpacked.gui.filters": "Filters",
     "backpacked.gui.pick_an_augment": "Pick an Augment",
     "backpacked.gui.requires_augment": "Requires %s",
     "backpacked.title.customise_backpack": "Customize Backpack",
@@ -137,5 +138,6 @@
     "augment.backpacked.immortal.desc": "Totems of Undying stored in the backpack will be activated on death.\nTotems held in the main and offhand will be used before ones located in the backpack.",
     "augment.backpacked.lightweaver": "Lightweaver",
     "augment.backpacked.lightweaver.desc": "Automatically places torches from the backpack at the players feet.\nA minimum light level can be configured to prevent over placing.\nAny type of torch will be placed, but can be toggled.",
-    "augment.backpacked.lightweaver.light_level": "Light Level"
+    "augment.backpacked.lightweaver.light_level": "Light Level",
+    "augment.backpacked.lightweaver.place_sound": "Place Sound"
 }
