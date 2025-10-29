@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -23,18 +24,19 @@ public class Stepper extends AbstractWidget
     private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_background");
     private static final ResourceLocation INCREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_increment");
     private static final ResourceLocation DECREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_decrement");
+    private static final IntRange DEFAULT_RANGE = new IntRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
 
-    private final @Nullable Integer min;
-    private final @Nullable Integer max;
+    private final IntRange range;
     private final @Nullable Consumer<Integer> callback;
+    private final boolean wrap;
     private int value;
 
-    private Stepper(int x, int y, int width, int height, @Nullable Integer min, @Nullable Integer max, @Nullable Consumer<Integer> callback, int initialValue)
+    private Stepper(int x, int y, int width, int height, IntRange range, @Nullable Consumer<Integer> callback, boolean wrap, int initialValue)
     {
         super(x, y, width, height, CommonComponents.EMPTY);
-        this.min = min;
-        this.max = max;
+        this.range = range;
         this.callback = callback;
+        this.wrap = wrap;
         this.value = initialValue;
     }
 
@@ -86,11 +88,19 @@ public class Stepper extends AbstractWidget
 
     private void adjustValue(int step)
     {
-        long min = this.min != null ? this.min : Integer.MIN_VALUE;
-        long max = this.max != null ? this.max : Integer.MAX_VALUE;
-        long length = max - min + 1;
-        long newValue = min + Math.floorMod(((long) this.value - min) + (long) step, length);
-        this.value = (int) newValue;
+        long min = this.range.min();
+        long max = this.range.max();
+        if(this.wrap)
+        {
+            long length = max - min + 1;
+            long newValue = min + Math.floorMod(((long) this.value - min) + (long) step, length);
+            this.value = (int) newValue;
+        }
+        else
+        {
+            long newValue = (long) this.value + step;
+            this.value = (int) Mth.clamp(newValue, min, max);
+        }
     }
 
     private boolean isDecrementHovered(int mouseX, int mouseY)
@@ -115,8 +125,8 @@ public class Stepper extends AbstractWidget
         private int width = 100;
         private int height = 20;
         private int initialValue;
-        private @Nullable Integer min;
-        private @Nullable Integer max;
+        private IntRange range = DEFAULT_RANGE;
+        private boolean wrap = false;
         private @Nullable Consumer<Integer> callback;
 
         private Builder() {}
@@ -141,15 +151,15 @@ public class Stepper extends AbstractWidget
             return this;
         }
 
-        public Builder setMin(Integer min)
+        public Builder setRange(int min, int max)
         {
-            this.min = min;
+            this.range = new IntRange(min, max);
             return this;
         }
 
-        public Builder setMax(Integer max)
+        public Builder setWrap(boolean wrap)
         {
-            this.max = max;
+            this.wrap = wrap;
             return this;
         }
 
@@ -161,7 +171,9 @@ public class Stepper extends AbstractWidget
 
         public Stepper build()
         {
-            return new Stepper(this.x, this.y, this.width, this.height, this.min, this.max, this.callback, this.initialValue);
+            return new Stepper(this.x, this.y, this.width, this.height, this.range, this.callback, this.wrap, this.initialValue);
         }
     }
+
+    private record IntRange(int min, int max) {}
 }

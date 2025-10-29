@@ -32,8 +32,8 @@ public class LightweaverMenu extends AugmentSettingsMenu
             layout.addChild(createOption(LIGHT_LEVEL_LABEL, Stepper.builder()
                 .setSize(60, 18)
                 .setInitialValue(supplier.get().minimumLight())
-                .setMin(0)
-                .setMax(15)
+                .setRange(0, 15)
+                .setWrap(true)
                 .setOnChange(newValue -> {
                     updater.accept(supplier.get().setMinimumLight(newValue));
                 }).build(), divider.getWidth()));
