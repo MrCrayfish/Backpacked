@@ -200,7 +200,7 @@ public class AugmentHandler
         {
             LootboundAugment augment = snapshot.secondAugment();
             if(!augment.mobs())
-                break;
+                continue;
 
             funnelDropsIntoBackpack(drops, player);
         }
@@ -213,7 +213,7 @@ public class AugmentHandler
         {
             LootboundAugment augment = snapshot.secondAugment();
             if(!augment.blocks())
-                break;
+                continue;
 
             funnelDropsIntoBackpack(drops, player);
         }
