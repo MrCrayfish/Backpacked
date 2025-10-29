@@ -71,41 +71,84 @@ public class ServerPlayHandler
     public static void handleOpenBackpack(MessageOpenBackpack message, MessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
-        if(player instanceof ServerPlayer serverPlayer)
+        if(!(player instanceof ServerPlayer opener))
+            return;
+
+        int backpackIndex = message.backpackIndex();
+        if(backpackIndex == -1)
         {
-            BackpackItem.openBackpack(serverPlayer, serverPlayer);
+            backpackIndex = BackpackHelper.getSelectedBackpackIndex(opener);
+        }
+
+        BackpackItem.openBackpack(opener, opener, backpackIndex);
+    }
+
+    public static void handlePickpocketBackpack(MessagePickpocketBackpack message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer opener))
+            return;
+
+        // Otherwise opener is trying to open another entity's backpack
+        Entity entity = opener.level().getEntity(message.entityId());
+        if(!(entity instanceof LivingEntity target))
+            return;
+
+        // TODO make pickpocketing a backpack setting, not a config option
+        if(!Config.PICKPOCKETING.enabled.get() && target instanceof ServerPlayer)
+            return;
+
+        // The opener should not be able to open to backpack if not in proximity and reach range
+        if(!PickpocketUtil.canSeeBackpack(target, opener))
+            return;
+
+        if(target instanceof ServerPlayer targetPlayer)
+        {
+            int backpackIndex = BackpackHelper.firstAvailableBackpackIndex(targetPlayer);
+            if(BackpackItem.openBackpack(targetPlayer, opener, backpackIndex))
+            {
+                targetPlayer.displayClientMessage(Component.translatable("message.backpacked.player_opened"), true);
+                player.level().playSound(player, targetPlayer.getX(), targetPlayer.getY() + 1.0, targetPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.75F, 1.0F);
+            }
+        }
+        else if(target instanceof WanderingTrader trader)
+        {
+            WanderingTraderEvents.openBackpack(trader, opener);
         }
     }
 
-    public static void handleEntityBackpack(MessageEntityBackpack message, MessageContext context)
+    public static void handleNavigateBackpack(MessageNavigateBackpack message, MessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
-        if(player == null)
+        if(!(player instanceof ServerPlayer opener))
             return;
 
-        Entity entity = player.level().getEntity(message.entityId());
-        if(!(entity instanceof LivingEntity otherEntity))
+        if(!(opener.containerMenu instanceof BackpackContainerMenu menu))
             return;
 
-        if(otherEntity instanceof ServerPlayer && !Config.PICKPOCKETING.enabled.get())
+        // Navigation is only available if backpack is equipped on a player
+        int ownerId = menu.getOwnerId();
+        if(ownerId < 0 || !(opener.level().getEntity(ownerId) instanceof ServerPlayer target))
             return;
 
-        if(!PickpocketUtil.canSeeBackpack(otherEntity, player))
+        // Don't navigate if the backpack index is invalid
+        int backpackIndex = menu.getBackpackIndex();
+        if(backpackIndex < 0 || backpackIndex >= Config.BACKPACK.equipable.maxEquipable.get())
             return;
 
-        //TODO eventually open to all living entities
-        if(otherEntity instanceof ServerPlayer otherPlayer)
+        // If opener and target are different, revalidate that they can see the backpack
+        if(!Objects.equals(opener, target) && !PickpocketUtil.canSeeBackpack(target, opener))
         {
-            if(BackpackItem.openBackpack(otherPlayer, (ServerPlayer) player))
-            {
-                otherPlayer.displayClientMessage(Component.translatable("message.backpacked.player_opened"), true);
-                player.level().playSound(player, otherPlayer.getX(), otherPlayer.getY() + 1.0, otherPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.75F, 1.0F);
-            }
+            opener.closeContainer();
+            return;
         }
-        else if(otherEntity instanceof WanderingTrader trader)
-        {
-            WanderingTraderEvents.openBackpack(trader, (ServerPlayer) player);
-        }
+
+        // Only navigate if the next backpack index is different
+        backpackIndex = BackpackHelper.navigateBackpackIndex(target, backpackIndex, message.navigate());
+        if(menu.getBackpackIndex() == backpackIndex)
+            return;
+
+        BackpackItem.openBackpack(target, opener, backpackIndex);
     }
 
     public static void handleRequestCustomisation(MessageRequestCustomisation message, MessageContext context)
@@ -193,28 +236,6 @@ public class ServerPlayHandler
         });
     }
 
-    public static void handleNavigateBackpackIndex(MessageNavigateBackpackIndex message, MessageContext context)
-    {
-        Player player = context.getPlayer().orElse(null);
-        if(!(player instanceof ServerPlayer serverPlayer))
-            return;
-
-        // Player must be in a backpack container
-        if(!(player.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
-            return;
-
-        // Only works if in an equipped backpack, not a shelf
-        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
-            return;
-
-        int selected = BackpackHelper.getSelectedBackpackIndex(player);
-        int newSelected = BackpackHelper.navigateSelectedBackpackIndex(player, message.forward() ? 1 : -1);
-        if(selected != newSelected)
-        {
-            BackpackItem.openBackpack(serverPlayer, serverPlayer);
-        }
-    }
-
     public static void handleChangeAugment(MessageChangeAugment message, MessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
@@ -229,6 +250,7 @@ public class ServerPlayHandler
         if(!(menu.getBackpackInventory() instanceof BackpackInventory))
             return;
 
+        // Check if valid stack at the given backpack index
         int backpackIndex = menu.getBackpackIndex();
         ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
         if(stack.isEmpty())
@@ -285,6 +307,7 @@ public class ServerPlayHandler
         if(!(menu.getBackpackInventory() instanceof BackpackInventory))
             return;
 
+        // Check if valid stack at the given backpack index
         int backpackIndex = menu.getBackpackIndex();
         ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
         if(stack.isEmpty())
@@ -307,12 +330,12 @@ public class ServerPlayHandler
         if(!(menu.getBackpackInventory() instanceof BackpackInventory))
             return;
 
+        // Check if valid stack at the given backpack index
         int backpackIndex = menu.getBackpackIndex();
         ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
         if(stack.isEmpty())
             return;
 
-        // TODO check for unique augments
         Augments currentAugments = Augments.get(stack);
 
         // The updating augment must match the augment type of the position it is trying to update
@@ -324,8 +347,6 @@ public class ServerPlayHandler
         // Don't need to update if the augments are the same
         if(Objects.equals(currentAugment, updatedAugment))
             return;
-
-        // TODO perform validation
 
         currentAugments = currentAugments.setAugment(message.position(), updatedAugment);
         Augments.set(stack, currentAugments);

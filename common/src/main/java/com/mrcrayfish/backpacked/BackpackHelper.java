@@ -1,10 +1,11 @@
 package com.mrcrayfish.backpacked;
 
-import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.common.InventoryAugmentSnapshot;
+import com.mrcrayfish.backpacked.common.Navigate;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -14,7 +15,6 @@ import com.mrcrayfish.backpacked.util.InventoryHelper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -64,22 +64,35 @@ public class BackpackHelper
         }
     }
 
-    public static int navigateSelectedBackpackIndex(Player player, int direction)
+    public static int navigateBackpackIndex(Player player, int currentIndex, Navigate navigate)
     {
-        int selected = getSelectedBackpackIndex(player);
-        direction = Mth.sign(direction);
-        int newSelected = selected + direction;
-        while(newSelected >= 0 && newSelected < ManagementInventory.getMaxEquipable())
+        int newSelected = currentIndex + navigate.step();
+        if(newSelected != currentIndex)
         {
-            ItemStack stack = getBackpackStack(player, newSelected);
+            while(newSelected >= 0 && newSelected < ManagementInventory.getMaxEquipable())
+            {
+                ItemStack stack = getBackpackStack(player, newSelected);
+                if(!stack.isEmpty())
+                {
+                    return newSelected;
+                }
+                newSelected += navigate.step();
+            }
+        }
+        return currentIndex;
+    }
+
+    public static int firstAvailableBackpackIndex(Player player)
+    {
+        for(int i = 0; i < ManagementInventory.getMaxEquipable(); i++)
+        {
+            ItemStack stack = getBackpackStack(player, i);
             if(!stack.isEmpty())
             {
-                ModSyncedDataKeys.SELECTED_BACKPACK.setValue(player, newSelected);
-                return newSelected;
+                return i;
             }
-            newSelected += direction;
         }
-        return selected;
+        return -1;
     }
 
     public static ItemStack getBackpackStack(Player player, int index)
@@ -256,19 +269,19 @@ public class BackpackHelper
      * Creates pagination information used for displaying in the backpack inventory GUI. Due to the
      * underlying structure of how backpacks are stored in memory, extra logic is needed to determine
      * the "current page" and "total pages". The "total pages" is the count of equipped backpacks.
-     * To get the "current page", the backpackIndex of each equipped backpack needs to be stored in an ordered
-     * list, then it is simply the backpackIndex of the backpackIndex in the list. This method will return a pair, the
+     * To get the "current page", the index of each equipped backpack needs to be stored in an ordered
+     * list, then it is simply the index of the index in the list. This method will return a pair, the
      * first being the "current page", the second being the "total pages". If no backpacks are
      * equipped, this method will always return pair of 0 and 0.
      *
-     * @param player the player with the equipped backpacks
+     * @param owner the player with the equipped backpacks
      * @return A pair with the current page (first) and total pages (second)
      */
-    public static Pair<Integer, Integer> createPaginationInfo(Player player)
+    public static Pagination createPaginationInfo(Player owner, int backpackIndex)
     {
         IntList list = new IntArrayList();
-        UnlockableSlots slots = getBackpackUnlockableSlots(player);
-        NonNullList<ItemStack> backpacks = getBackpacks(player);
+        UnlockableSlots slots = getBackpackUnlockableSlots(owner);
+        NonNullList<ItemStack> backpacks = getBackpacks(owner);
         for(int i = 0; i < backpacks.size(); i++)
         {
             if(slots.isUnlocked(i) && !backpacks.get(i).isEmpty())
@@ -276,12 +289,9 @@ public class BackpackHelper
                 list.add(i);
             }
         }
-        if(list.isEmpty())
-        {
-            return Pair.of(0, 0);
-        }
-        int selected = getSelectedBackpackIndex(player);
-        return Pair.of(list.indexOf(selected), list.size());
+        int currentPage = !list.isEmpty() ? list.indexOf(backpackIndex) : 0;
+        int totalPages = list.size();
+        return new Pagination(currentPage + 1, totalPages);
     }
 
     public static <T extends Augment<T>> List<InventoryAugmentSnapshot.One<T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)

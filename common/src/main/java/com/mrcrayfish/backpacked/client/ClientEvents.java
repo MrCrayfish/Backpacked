@@ -2,13 +2,14 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
+import com.mrcrayfish.backpacked.common.Navigate;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.network.message.MessagePickpocketBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.event.ClientConnectionEvents;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -52,7 +53,6 @@ public class ClientEvents
         Minecraft mc = Minecraft.getInstance();
         if(mc.player != null && mc.screen == null)
         {
-            LocalPlayer player = mc.player;
             if(Keys.KEY_BACKPACK.isDown() && Keys.KEY_BACKPACK.consumeClick())
             {
                 Network.getPlay().sendToServer(new MessageOpenBackpack());
@@ -118,7 +118,7 @@ public class ClientEvents
         {
             if(PickpocketUtil.canSeeBackpack(hitEntity, mc.player))
             {
-                Network.getPlay().sendToServer(new MessageEntityBackpack(hitEntity.getId()));
+                Network.getPlay().sendToServer(new MessagePickpocketBackpack(hitEntity.getId()));
                 mc.player.swing(hand);
             }
             return true;

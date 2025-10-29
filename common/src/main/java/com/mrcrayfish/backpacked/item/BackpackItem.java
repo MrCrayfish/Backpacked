@@ -1,12 +1,13 @@
 package com.mrcrayfish.backpacked.item;
 
-import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
@@ -27,6 +28,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Author: MrCrayfish
@@ -76,27 +79,35 @@ public class BackpackItem extends Item
         return false;
     }
 
-    public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer)
+    public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer, int backpackIndex)
     {
-        int selected = BackpackHelper.getSelectedBackpackIndex(ownerPlayer);
-        BackpackInventory inventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory(selected);
+        BackpackInventory inventory = ((BackpackedInventoryAccess) ownerPlayer).backpacked$GetBackpackInventory(backpackIndex);
         if(inventory != null)
         {
             ItemStack backpack = inventory.getBackpackStack();
             if(!(backpack.getItem() instanceof BackpackItem item))
                 return false;
 
+            // Remember last opened backpack index
+            if(Objects.equals(ownerPlayer, openingPlayer))
+            {
+                ModSyncedDataKeys.SELECTED_BACKPACK.setValue(ownerPlayer, backpackIndex);
+            }
+
             Component title = backpack.has(DataComponents.CUSTOM_NAME) ? backpack.getHoverName() : BACKPACK_TRANSLATION;
             int cols = item.getColumnCount();
             int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
             UnlockableSlots slots = item.getUnlockableSlots(backpack);
-            Pair<Integer, Integer> data = BackpackHelper.createPaginationInfo(ownerPlayer);
+            Pagination pagination = BackpackHelper.createPaginationInfo(ownerPlayer, backpackIndex);
             Augments augments = backpack.get(ModDataComponents.AUGMENTS.get());
-            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, cols, rows, owner, slots, data.getFirst(), data.getSecond(), augments, title);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, ownerPlayer.getId(), backpackIndex, cols, rows, owner, slots, pagination, augments, title);
             return true;
         }
-        openBackpackManagement(ownerPlayer, false);
+        if(Objects.equals(ownerPlayer, openingPlayer))
+        {
+            openBackpackManagement(ownerPlayer, false);
+        }
         return false;
     }
 

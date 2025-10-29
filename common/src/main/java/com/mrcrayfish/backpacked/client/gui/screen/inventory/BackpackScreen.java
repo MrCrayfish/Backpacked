@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
+import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
@@ -21,7 +22,6 @@ import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -145,30 +145,32 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         quickActions.setPosition(buttonLeft, buttonTop);
         this.quickActionsLayout = quickActions;
 
-        if(this.owner)
+        Pagination pagination = this.menu.getPagination();
+        if(pagination.totalPages() > 1)
         {
-            int backpackIndex = this.menu.getBackpackIndex();
-            int totalBackpacks = this.menu.getTotalBackpacks();
             Tooltip navigateTooltip = Tooltip.create(
-                    Component.literal(Integer.toString(backpackIndex + 1))
-                            .append(Component.literal(" / ").withStyle(ChatFormatting.BOLD, ChatFormatting.GRAY))
-                            .append(Integer.toString(totalBackpacks))
+                Component.literal(Integer.toString(pagination.currentPage()))
+                    .append(Component.literal(" / ").withStyle(ChatFormatting.BOLD, ChatFormatting.GRAY))
+                    .append(Integer.toString(pagination.totalPages()))
             );
 
             int imageCenter = this.imageWidth / 2;
             int navBtnOffset = TITLE_LABEL_WIDTH / 2 + 2;
             MiniButton navPrevious = this.addRenderableWidget(new MiniButton(this.leftPos + imageCenter - navBtnOffset - 12, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
-                Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(false));
+                pagination.previousPage();
             }));
             navPrevious.setTooltip(navigateTooltip);
-            navPrevious.active = backpackIndex > 0;
+            navPrevious.active = pagination.currentPage() > 1;
 
             MiniButton navNext = this.addRenderableWidget(new MiniButton(this.leftPos + imageCenter + navBtnOffset, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
-                Network.getPlay().sendToServer(new MessageNavigateBackpackIndex(true));
+                pagination.nextPage();
             }));
             navNext.setTooltip(navigateTooltip);
-            navNext.active = backpackIndex < totalBackpacks - 1;
+            navNext.active = pagination.currentPage() < pagination.totalPages();
+        }
 
+        if(this.owner)
+        {
             LinearLayout augments = this.createAugmentsPanel();
             augments.arrangeElements();
             augments.visitWidgets(this::addRenderableWidget);
@@ -297,8 +299,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
         }
 
-        boolean canCustomise = this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get();
-        if(canCustomise)
+        if(this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get())
         {
             MiniButton customiseButton = layout.addChild(new MiniButton(0, 0, ICON_CUSTOMISE, onPress -> {
                 Player player = Minecraft.getInstance().player;
