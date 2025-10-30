@@ -1,11 +1,13 @@
 package com.mrcrayfish.backpacked.client.augment.widget;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,7 +23,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Comparator;
 import java.util.Locale;
@@ -43,7 +47,12 @@ public class FunnellingMenu extends AugmentSettingsMenu
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
-            TitleWidget title = layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font));
+            TitleWidget title = layout.addChild(new TitleWidget(() -> {
+                int filterCount = supplier.get().filters().size();
+                int maxFilters = Config.AUGMENTS.funnelling.maxFilters.get();
+                Component amount = Component.translatable("backpacked.gui.x_of_y", filterCount, maxFilters);
+                return ScreenUtil.join(" ", FILTERS_LABEL, amount);
+            }, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
 
@@ -121,12 +130,12 @@ public class FunnellingMenu extends AugmentSettingsMenu
             String search = this.searchQuery.toLowerCase();
             boolean empty = search.trim().isBlank();
             this.clearEntries();
-            FunnellingAugment augment = this.supplier.get();
             BuiltInRegistries.ITEM.forEach(item -> {
+                if(item == Items.AIR)
+                    return;
                 if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
-                    boolean toggled = augment.isFilter(item);
-                    if(!this.activatedOnly || toggled) {
-                        this.addEntry(new FilterItem(item, toggled));
+                    if(!this.activatedOnly || this.supplier.get().isFilter(item)) {
+                        this.addEntry(new FilterItem(item, this.supplier));
                     }
                 }
             });
@@ -138,17 +147,20 @@ public class FunnellingMenu extends AugmentSettingsMenu
         {
             if(item != null)
             {
-                item.toggled = !item.toggled;
                 FunnellingAugment augment = this.supplier.get();
-                if(item.toggled)
+                if(!item.isToggled())
                 {
-                    this.updater.accept(augment.addFilter(item.id));
+                    if(!augment.isFilterLimit())
+                    {
+                        this.updater.accept(augment.addFilter(item.id));
+                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                    }
                 }
                 else
                 {
                     this.updater.accept(augment.removeFilter(item.id));
+                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 }
-                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             }
         }
 
@@ -180,14 +192,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
             private final ResourceLocation id;
             private final ItemStack display;
             private final Component label;
-            private boolean toggled;
+            private final Supplier<FunnellingAugment> augment;
 
-            public FilterItem(Item item, boolean toggled)
+            public FilterItem(Item item, Supplier<FunnellingAugment> augment)
             {
                 this.id = BuiltInRegistries.ITEM.getKey(item);
                 this.display = new ItemStack(item);
                 this.label = this.trimName(this.display.getItem().getDescription());
-                this.toggled = toggled;
+                this.augment = augment;
             }
 
             private Component trimName(Component name)
@@ -205,15 +217,35 @@ public class FunnellingMenu extends AugmentSettingsMenu
             @Override
             public void render(GuiGraphics graphics, int index, int top, int left, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float partialTicks)
             {
-                graphics.drawString(Minecraft.getInstance().font, this.label, left + 20, top + 5, 0xFFFFFFFF);
+                boolean showToggle = this.isToggled() || !this.augment.get().isFilterLimit();
+                int labelColour = showToggle ? 0xFFFFFFFF : 0x88FFFFFF;
+                graphics.drawString(Minecraft.getInstance().font, this.label, left + 20, top + 5, labelColour);
                 graphics.renderFakeItem(this.display, left + 2, top + 1);
-                graphics.blitSprite(this.toggled ? TOGGLE_ON : TOGGLE_OFF, left + rowWidth - 6 - 6, top + 6, 6, 6);
+                if(showToggle)
+                {
+                    graphics.blitSprite(this.isToggled() ? TOGGLE_ON : TOGGLE_OFF, left + rowWidth - 6 - 6, top + 6, 6, 6);
+                }
             }
 
             @Override
             public Component getNarration()
             {
-                return Component.literal(this.id.toString());
+                return this.display.getDisplayName();
+            }
+
+            @Override
+            public boolean mouseClicked(double mouseX, double mouseY, int button)
+            {
+                if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+                {
+                    return this.isToggled() || !this.augment.get().isFilterLimit();
+                }
+                return false;
+            }
+
+            public boolean isToggled()
+            {
+                return this.augment.get().isFilter(this.display.getItem());
             }
         }
     }

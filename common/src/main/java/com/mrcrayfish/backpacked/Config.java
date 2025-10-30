@@ -32,6 +32,9 @@ public class Config
     @FrameworkConfig(id = Constants.MOD_ID, name = "wandering_trader", type = ConfigType.SERVER)
     public static final WanderingTrader WANDERING_TRADER = new WanderingTrader();
 
+    @FrameworkConfig(id = Constants.MOD_ID, name = "augments", type = ConfigType.SERVER_SYNC)
+    public static final Augments AUGMENTS = new Augments();
+
     public static class Backpack
     {
         @ConfigProperty(name = "equipable", comment = "Equipable related properties")
@@ -407,6 +410,19 @@ public class Config
         @ConfigProperty(name = "hideAddonsCallToAction", comment = """
                 If enabled, hides the call to action at the bottom of the customisation menu which links out to community addons and a guide.""")
         public final BoolProperty hideAddonsCallToAction = BoolProperty.create(false);
+    }
+
+    public static class Augments
+    {
+        @ConfigProperty(name = "funnelling", comment = "Funnelling related properties")
+        public final Funnelling funnelling = new Funnelling();
+
+        public static class Funnelling
+        {
+            @ConfigProperty(name = "maxFilters", comment = """
+                    The maximum amount of filters that can be configured""")
+            public final IntProperty maxFilters = IntProperty.create(32, 1, 256);
+        }
     }
 
     public static class ResourceLocationValidator implements Validator<String>

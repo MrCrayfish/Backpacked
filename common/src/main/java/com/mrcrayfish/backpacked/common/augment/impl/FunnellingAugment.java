@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.augment.impl;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
@@ -27,7 +28,7 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
     public static final AugmentType<FunnellingAugment> TYPE = new AugmentType<>(
             Utils.rl("funnelling"),
             RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ItemFilter.CODEC.listOf().fieldOf("filters").orElse(List.of()).forGetter(FunnellingAugment::filters),
+                ItemFilter.CODEC.sizeLimitedListOf(256).fieldOf("filters").orElse(List.of()).forGetter(FunnellingAugment::filters),
                 Mode.CODEC.fieldOf("mode").orElse(Mode.ALLOW).forGetter(FunnellingAugment::mode)
             ).apply(instance, FunnellingAugment::new)),
             StreamCodec.composite(
@@ -48,7 +49,7 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
     {
         this.filters = filters.stream().filter(filter -> {
             return BuiltInRegistries.ITEM.containsKey(filter.id) && !filter.id.equals(AIR);
-        }).collect(Collectors.toList());
+        }).limit(Config.AUGMENTS.funnelling.maxFilters.get()).collect(Collectors.toList());
         this.mode = mode;
     }
 
@@ -127,6 +128,11 @@ public final class FunnellingAugment implements Augment<FunnellingAugment>
             this.lookup = builder.build();
         }
         return this.lookup;
+    }
+
+    public boolean isFilterLimit()
+    {
+        return this.filters.size() >= Config.AUGMENTS.funnelling.maxFilters.get();
     }
 
     @Override
