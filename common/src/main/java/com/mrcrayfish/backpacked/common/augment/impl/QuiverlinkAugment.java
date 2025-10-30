@@ -59,7 +59,7 @@ public record QuiverlinkAugment(Priority priority) implements Augment<Quiverlink
         @Override
         public Component label()
         {
-            return Component.translatable(LANGUAGE_KEY, this.name);
+            return this.name;
         }
 
         @Override

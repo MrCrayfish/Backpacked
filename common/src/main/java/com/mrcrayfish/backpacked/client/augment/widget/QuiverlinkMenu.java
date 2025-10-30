@@ -16,6 +16,8 @@ import java.util.function.Supplier;
 public class QuiverlinkMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
+    private static final Component PRIORITY_LABEL = Component.translatable("augment.backpacked.quiverlink.priority");
+    private static final Component PRIORITY_TOOLTIP = Component.translatable("augment.backpacked.quiverlink.priority.tooltip");
 
     private static final int MIN_CONTENT_WIDTH = 120;
 
@@ -26,10 +28,13 @@ public class QuiverlinkMenu extends AugmentSettingsMenu
             TitleWidget title = layout.addChild(new TitleWidget(OPTIONS_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
-            layout.addChild(CustomButton.values(() -> supplier.get().priority(), priority -> updater.accept(supplier.get().setPriority(priority)))
-                .setSize(divider.getWidth(), 18)
-                .build()
-            );
+            layout.addChild(createOption(
+                PRIORITY_LABEL,
+                PRIORITY_TOOLTIP,
+                CustomButton.values(() -> supplier.get().priority(), priority -> updater.accept(supplier.get().setPriority(priority)))
+                    .setSize(60, 18).build(),
+                divider.getWidth()
+            ));
             return layout;
         });
     }
