@@ -79,6 +79,8 @@
     "backpacked.gui.press_button_to_expand": "Press %s to Expand",
     "backpacked.gui.options": "Options",
     "backpacked.gui.filters": "Filters",
+    "backpacked.gui.show_all": "Showing All",
+    "backpacked.gui.activated_only": "Showing Activated Only",
     "backpacked.gui.pick_an_augment": "Pick an Augment",
     "backpacked.gui.requires_augment": "Requires %s",
     "backpacked.gui.x_of_y": "(%s/%s)",

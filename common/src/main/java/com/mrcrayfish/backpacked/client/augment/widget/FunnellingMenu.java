@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -37,6 +38,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
     private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.filters");
+    private static final Component SHOW_ALL_LABEL = Component.translatable("backpacked.gui.show_all");
+    private static final Component ACTIVATED_ONLY_LABEL = Component.translatable("backpacked.gui.activated_only");
 
     private static final int MIN_CONTENT_WIDTH = 170;
 
@@ -73,6 +76,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 .setGap(4)
                 .setMessage(ACTIVE_LABEL)
                 .setContentRenderer(CustomButton.ToggleContentRenderer.INSTANCE)
+                .setTooltip(btn -> Tooltip.create(list.isActivatedOnly() ? ACTIVATED_ONLY_LABEL : SHOW_ALL_LABEL))
                 .setTexture(new WidgetSprites(
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
