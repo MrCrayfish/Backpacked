@@ -43,7 +43,7 @@ public class AugmentSettingsMenu extends PopupMenu
         text.setWidth(width - widget.getWidth() - 5);
         text.setColour(0xFF61503D);
         text.setTooltip(Tooltip.create(tooltip));
-        text.setTooltipDelay(Duration.ofMillis(100));
+        text.setTooltipDelay(Duration.ofMillis(50));
         option.addChild(text, LayoutSettings::alignVerticallyMiddle);
         option.addChild(widget);
         return option;
