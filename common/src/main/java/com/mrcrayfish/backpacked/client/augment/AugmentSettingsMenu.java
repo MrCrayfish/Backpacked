@@ -7,12 +7,14 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.network.chat.Component;
 
+import java.time.Duration;
 import java.util.function.Function;
 
 public class AugmentSettingsMenu extends PopupMenu
@@ -34,12 +36,14 @@ public class AugmentSettingsMenu extends PopupMenu
         return this.layout;
     }
 
-    protected static Layout createOption(Component label, AbstractWidget widget, int width)
+    protected static Layout createOption(Component label, Component tooltip, AbstractWidget widget, int width)
     {
         LinearLayout option = LinearLayout.horizontal().spacing(5);
         TextWidget text = new TextWidget(label, Minecraft.getInstance().font);
         text.setWidth(width - widget.getWidth() - 5);
         text.setColour(0xFF61503D);
+        text.setTooltip(Tooltip.create(tooltip));
+        text.setTooltipDelay(Duration.ofMillis(100));
         option.addChild(text, LayoutSettings::alignVerticallyMiddle);
         option.addChild(widget);
         return option;

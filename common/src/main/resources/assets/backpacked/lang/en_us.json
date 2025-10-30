@@ -134,7 +134,9 @@
     "augment.backpacked.lootbound": "Lootbound",
     "augment.backpacked.lootbound.desc": "A companion augment for Funnelling that enhances item harvesting.\nItems dropped by mining blocks and killing mobs will pulled into the backpack from a distance.\nFilters from Funnelling determine if an item will be pulled.",
     "augment.backpacked.lootbound.blocks": "Blocks",
+    "augment.backpacked.lootbound.blocks.tooltip": "When enabled, drops from blocks will be pulled into the backpack",
     "augment.backpacked.lootbound.mobs": "Mobs",
+    "augment.backpacked.lootbound.mobs.tooltip": "When enabled, drops from mobs will be pulled into the backpack",
     "augment.backpacked.reforge": "Reforge",
     "augment.backpacked.reforge.desc": "Repairs damaged items inside the backpack upon picking up experience orbs.\nItems are repaired collectively, rather than one at a time.",
     "augment.backpacked.immortal": "Immortal",
@@ -142,5 +144,7 @@
     "augment.backpacked.lightweaver": "Lightweaver",
     "augment.backpacked.lightweaver.desc": "Automatically places torches from the backpack at the players feet.\nA minimum light level can be configured to prevent over placing.\nAny type of torch will be placed, but can be toggled.",
     "augment.backpacked.lightweaver.light_level": "Light Level",
-    "augment.backpacked.lightweaver.place_sound": "Place Sound"
+    "augment.backpacked.lightweaver.light_level.tooltip": "The light level that must be reached before placing a torch. The higher the number, the more frequent a torch will be placed.",
+    "augment.backpacked.lightweaver.place_sound": "Place Sound",
+    "augment.backpacked.lightweaver.place_sound.tooltip": "Determines whether a sound should play when placing a torch"
 }
