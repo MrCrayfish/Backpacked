@@ -137,7 +137,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
         int buttonsHeight = LABEL_PADDING + quickActions.getHeight() + LABEL_PADDING;
         int buttonLeft = this.leftPos + this.imageWidth + 2;
-        if(buttonsHeight > backpackHeight - LABEL_PADDING * 2)
+        if(buttonsHeight > backpackHeight - LABEL_PADDING * 2 || true) // TODO temporary
         {
             buttonLeft += 6;
         }
@@ -175,7 +175,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             augments.arrangeElements();
             augments.visitWidgets(this::addRenderableWidget);
             int augmentsX = this.leftPos - augments.getWidth() - 2;
-            if(backpackHeight < 5 + augments.getHeight() + 5)
+            if(backpackHeight < 5 + augments.getHeight() + 5 || true) // TODO temporary
                 augmentsX = this.leftPos - augments.getWidth() - 8;
             augments.setX(augmentsX);
             augments.setY(this.topPos + BACKPACK_TOP + (backpackHeight - augments.getHeight()) / 2);
