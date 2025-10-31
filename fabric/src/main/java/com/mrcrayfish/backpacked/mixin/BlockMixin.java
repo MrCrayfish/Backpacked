@@ -63,7 +63,6 @@ public class BlockMixin
     {
         if(backpacked$breaker != null && backpacked$breaker.get() instanceof ServerPlayer player)
         {
-            // TODO test fabric
             List<ItemEntity> drops = new ArrayList<>(1);
             drops.add(entity);
             AugmentHandler.onLootDroppedByBlock(drops, player);
