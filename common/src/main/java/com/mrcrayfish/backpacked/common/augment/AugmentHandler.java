@@ -86,7 +86,7 @@ public class AugmentHandler
         }
 
         // If the entire stack was funnelled, cancel further handling and discard the item entity
-        if(!result.hasRemaining())
+        if(!result.hasRemaining() && result.funnelCount() > 0)
         {
             entity.discard();
             return true;

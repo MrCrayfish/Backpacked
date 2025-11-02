@@ -18,6 +18,6 @@ public class AugmentEvents
             return;
 
         if(AugmentHandler.beforeItemPickup(event.getPlayer(), event.getItemEntity(), event.getItemEntity().getTarget()))
-            event.setCanPickup(TriState.TRUE);
+            event.setCanPickup(TriState.FALSE);
     }
 }
