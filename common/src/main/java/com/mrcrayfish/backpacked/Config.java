@@ -78,7 +78,7 @@ public class Config
             @ConfigProperty(name = "defaultCosmetic", comment = """
                     The default cosmetic (model) of the backpack. This should generally be a backpack
                     that is unlocked by default""")
-            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:standard", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
+            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:vintage", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
 
             @ConfigProperty(name = "disableCustomisation", comment = """
                     If enabled, prevents backpacks from being customised. This will remove the

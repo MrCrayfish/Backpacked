@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public final class BackpackManager
 {
-    private static final ResourceLocation FALLBACK_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "standard");
+    private static final ResourceLocation FALLBACK_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "vintage");
     private static ResourceLocation defaultCosmetic;
     private static BackpackManager instance;
 
