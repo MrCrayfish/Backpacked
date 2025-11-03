@@ -24,9 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.layouts.GridLayout;
-import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
@@ -38,7 +36,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -98,8 +95,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private final boolean owner;
     private boolean opened;
     private int timer;
-    private @Nullable LinearLayout augmentsLayout;
-    private LinearLayout quickActionsLayout;
+    private final List<Layout> layouts = new ArrayList<>();
     private EnumMap<Augments.Position, CustomButton> augmentsButtons;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
@@ -131,19 +127,27 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             this.opened = true;
         }
 
-        LinearLayout quickActions = this.createQuickActionsPanel();
-        quickActions.arrangeElements();
-        quickActions.visitWidgets(this::addRenderableWidget);
+        this.layouts.clear();
+
+        Layout titleLayout = this.createTitleLayout();
+        titleLayout.arrangeElements();
+        titleLayout.setPosition(this.leftPos + (this.imageWidth - titleLayout.getWidth()) / 2, this.topPos + LABEL_PADDING);
+        titleLayout.visitWidgets(this::addRenderableWidget);
+        this.layouts.add(titleLayout);
+
+        LinearLayout actionsLayout = this.createActionsLayout();
+        actionsLayout.arrangeElements();
+        actionsLayout.visitWidgets(this::addRenderableWidget);
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
-        int buttonsHeight = LABEL_PADDING + quickActions.getHeight() + LABEL_PADDING;
+        int buttonsHeight = LABEL_PADDING + actionsLayout.getHeight() + LABEL_PADDING;
         int buttonLeft = this.leftPos + this.imageWidth + 2;
-        if(buttonsHeight > backpackHeight - LABEL_PADDING * 2 || true) // TODO temporary
+        if(buttonsHeight > backpackHeight - LABEL_PADDING * 2) // TODO temporary
         {
             buttonLeft += 6;
         }
         int buttonTop = this.topPos + BACKPACK_TOP + (backpackHeight - buttonsHeight) / 2 + LABEL_PADDING;
-        quickActions.setPosition(buttonLeft, buttonTop);
-        this.quickActionsLayout = quickActions;
+        actionsLayout.setPosition(buttonLeft, buttonTop);
+        this.layouts.add(actionsLayout);
 
         Pagination pagination = this.menu.getPagination();
         if(pagination.totalPages() > 1)
@@ -154,15 +158,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                     .append(Integer.toString(pagination.totalPages()))
             );
 
-            int imageCenter = this.imageWidth / 2;
-            int navBtnOffset = TITLE_LABEL_WIDTH / 2 + 2;
-            MiniButton navPrevious = this.addRenderableWidget(new MiniButton(this.leftPos + imageCenter - navBtnOffset - 12, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
+            MiniButton navPrevious = this.addRenderableWidget(new MiniButton(titleLayout.getX() - 12 - LABEL_PADDING - 2, this.topPos + 3, 12, 12, ICON_PREVIOUS, onPress -> {
                 pagination.previousPage();
             }));
             navPrevious.setTooltip(navigateTooltip);
             navPrevious.active = pagination.currentPage() > 1;
 
-            MiniButton navNext = this.addRenderableWidget(new MiniButton(this.leftPos + imageCenter + navBtnOffset, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
+            MiniButton navNext = this.addRenderableWidget(new MiniButton(titleLayout.getX() + titleLayout.getWidth() + LABEL_PADDING + 2, this.topPos + 3, 12, 12, ICON_NEXT, onPress -> {
                 pagination.nextPage();
             }));
             navNext.setTooltip(navigateTooltip);
@@ -171,15 +173,15 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
         if(this.owner)
         {
-            LinearLayout augments = this.createAugmentsPanel();
-            augments.arrangeElements();
-            augments.visitWidgets(this::addRenderableWidget);
-            int augmentsX = this.leftPos - augments.getWidth() - 2;
-            if(backpackHeight < 5 + augments.getHeight() + 5 || true) // TODO temporary
-                augmentsX = this.leftPos - augments.getWidth() - 8;
-            augments.setX(augmentsX);
-            augments.setY(this.topPos + BACKPACK_TOP + (backpackHeight - augments.getHeight()) / 2);
-            this.augmentsLayout = augments;
+            LinearLayout augmentsLayout = this.createAugmentsPanel();
+            augmentsLayout.arrangeElements();
+            augmentsLayout.visitWidgets(this::addRenderableWidget);
+            int augmentsX = this.leftPos - augmentsLayout.getWidth() - 2;
+            if(backpackHeight < 5 + augmentsLayout.getHeight() + 5) // TODO temporary
+                augmentsX = this.leftPos - augmentsLayout.getWidth() - 8;
+            augmentsLayout.setX(augmentsX);
+            augmentsLayout.setY(this.topPos + BACKPACK_TOP + (backpackHeight - augmentsLayout.getHeight()) / 2);
+            this.layouts.add(augmentsLayout);
         }
 
         this.updateUnlockableSlots();
@@ -287,7 +289,16 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
     }
 
-    private LinearLayout createQuickActionsPanel()
+    private Layout createTitleLayout()
+    {
+        LinearLayout layout = LinearLayout.horizontal().spacing(1);
+        TitleWidget title = new TitleWidget(this.getTrimmedTitle(), this.title, Minecraft.getInstance().font);
+        title.setWidth(TITLE_LABEL_WIDTH);
+        layout.addChild(title);
+        return layout;
+    }
+
+    private LinearLayout createActionsLayout()
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
 
@@ -383,9 +394,6 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
-        int titleWidth = this.font.width(trimmedTitle);
-        graphics.drawString(this.font, trimmedTitle, (this.imageWidth - titleWidth) / 2, 6, 0xFF61503D, false);
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }
 
@@ -409,26 +417,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         //graphics.fill(this.leftPos, this.topPos, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xFFFFFFFF);
 
-        FormattedCharSequence trimmedTitle = this.getTrimmedTitle();
-        int titleWidth = this.font.width(trimmedTitle);
-        int labelX = x + (width - TITLE_LABEL_WIDTH) / 2;
-        graphics.blitSprite(LABEL_BACKGROUND, labelX, y, TITLE_LABEL_WIDTH, 21);
-
-        int titleX = x + (width - titleWidth) / 2;
-        int checkersX = labelX + 5;
-        int checkersWidth = titleX - checkersX - 2;
-        if(checkersWidth > 0)
-        {
-            graphics.blitSprite(CHECKERS, checkersX, y + 7, checkersWidth, 5);
-            graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
-        }
-
         // Draw the background labels for the quick action buttons and augment
-        graphics.blitSprite(LABEL_BACKGROUND, this.quickActionsLayout.getX() - LABEL_PADDING, this.quickActionsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.quickActionsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.quickActionsLayout.getHeight() + LABEL_PADDING);
-        if(this.augmentsLayout != null)
-        {
-            graphics.blitSprite(LABEL_BACKGROUND, this.augmentsLayout.getX() - LABEL_PADDING, this.augmentsLayout.getY() - LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getWidth() + LABEL_PADDING, LABEL_PADDING + this.augmentsLayout.getHeight() + LABEL_PADDING);
-        }
+        this.layouts.forEach(layout -> {
+            graphics.blitSprite(LABEL_BACKGROUND, layout.getX() - LABEL_PADDING, layout.getY() - LABEL_PADDING, LABEL_PADDING + layout.getWidth() + LABEL_PADDING, LABEL_PADDING + layout.getHeight() + LABEL_PADDING);
+        });
 
         // Backpack Inventory
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
