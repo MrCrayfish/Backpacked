@@ -54,6 +54,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component CONFIG_TOOLTIP = Component.translatable("backpacked.button.config.tooltip");
     private static final Component CONFIGURE = Component.translatable("backpacked.gui.configure");
     private static final Component SWAP_AUGMENT = Component.translatable("backpacked.gui.swap_augment");
+    private static final Component RENAME = Component.translatable("backpacked.gui.rename");
     public static final Function<Component, MutableComponent> PRESS_TO_EXPAND = component -> Component.translatable("backpacked.gui.press_button_to_expand", component);
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
@@ -302,7 +303,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         {
             layout.addChild(new MiniButton(0, 0, ICON_RENAME, onPress -> {
                 new TextInputMenu(this, this.title.getString()).show(this.getRectangle());
-            }));
+            })).setTooltip(Tooltip.create(RENAME));
         }
         return layout;
     }
