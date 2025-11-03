@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.network.chat.CommonComponents;
+import org.jetbrains.annotations.Nullable;
 
 public class Divider extends AbstractWidget
 {
@@ -33,6 +36,12 @@ public class Divider extends AbstractWidget
     protected boolean isValidClickButton(int button)
     {
         return false; // Prevents clicking
+    }
+
+    @Nullable
+    public ComponentPath nextFocusPath(FocusNavigationEvent event)
+    {
+        return null;
     }
 
     public enum Orientation
