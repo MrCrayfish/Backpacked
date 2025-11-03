@@ -145,7 +145,8 @@ public class CustomEditBox extends AbstractContainerWidget
                 if(this.background != null)
                 {
                     ResourceLocation background = this.background.get(this.isActive(), this.isFocused());
-                    graphics.blitSprite(background, this.getX() - this.parent.getIconOffset(), this.getY(), this.getWidth() + this.parent.getIconOffset(), this.getHeight());
+                    int iconOffset = this.icon != null ? this.parent.getIconOffset() : 0;
+                    graphics.blitSprite(background, this.getX() - iconOffset, this.getY(), this.getWidth() + iconOffset, this.getHeight());
                 }
                 if(this.icon != null)
                 {

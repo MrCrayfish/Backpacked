@@ -22,6 +22,8 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,6 +36,7 @@ import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -351,5 +354,33 @@ public class ServerPlayHandler
         currentAugments = currentAugments.setAugment(message.position(), updatedAugment);
         Augments.set(stack, currentAugments);
         menu.setAugments(currentAugments);
+    }
+
+    public static void handleRenameBackpack(MessageRenameBackpack message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container and must be the wearer
+        if(!(serverPlayer.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+            return;
+
+        // Only works if in an equipped backpack, not a shelf
+        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
+            return;
+
+        int backpackIndex = menu.getBackpackIndex();
+        ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
+        if(stack.isEmpty())
+            return;
+
+        String value = message.value();
+        value = ChatFormatting.stripFormatting(value);
+        value = StringUtils.truncate(value, 50);
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(value));
+
+        // Reopen backpack just to update the name
+        BackpackItem.openBackpack(serverPlayer, serverPlayer, backpackIndex);
     }
 }

@@ -6,6 +6,8 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.TextInputMenu;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
@@ -64,6 +66,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
     private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
     private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
+    private static final ResourceLocation ICON_RENAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
@@ -291,10 +294,16 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     private Layout createTitleLayout()
     {
-        LinearLayout layout = LinearLayout.horizontal().spacing(1);
+        LinearLayout layout = LinearLayout.horizontal().spacing(2);
         TitleWidget title = new TitleWidget(this.getTrimmedTitle(), this.title, Minecraft.getInstance().font);
         title.setWidth(TITLE_LABEL_WIDTH);
         layout.addChild(title);
+        if(this.owner)
+        {
+            layout.addChild(new MiniButton(0, 0, ICON_RENAME, onPress -> {
+                new TextInputMenu(this, this.title.getString()).show(this.getRectangle());
+            }));
+        }
         return layout;
     }
 

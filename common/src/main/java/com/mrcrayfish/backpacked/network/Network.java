@@ -35,6 +35,7 @@ public class Network
         .registerPlayMessage("update_augment", MessageUpdateAugment.class, MessageUpdateAugment.STREAM_CODEC, MessageUpdateAugment::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("lootbound_take_item", MessageLootboundTakeItem.class, MessageLootboundTakeItem.STREAM_CODEC, MessageLootboundTakeItem::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("sync_augment_change", MessageSyncAugmentChange.class, MessageSyncAugmentChange.STREAM_CODEC, MessageSyncAugmentChange::handle, PacketFlow.CLIENTBOUND)
+        .registerPlayMessage("rename_backpack", MessageRenameBackpack.class, MessageRenameBackpack.STREAM_CODEC, MessageRenameBackpack::handle, PacketFlow.SERVERBOUND)
         .build();
 
     public static void init() {}
