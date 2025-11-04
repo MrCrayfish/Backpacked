@@ -17,6 +17,7 @@ public class TitleWidget extends AbstractWidget
 
     private final Supplier<FormattedCharSequence> display;
     private final Font font;
+    private int shift;
 
     public TitleWidget(FormattedCharSequence text, Component narration, Font font)
     {
@@ -44,7 +45,7 @@ public class TitleWidget extends AbstractWidget
     {
         FormattedCharSequence displayText = this.display.get();
         int titleWidth = this.font.width(displayText);
-        int titleX = this.getX() + (this.getWidth() - titleWidth) / 2;
+        int titleX = this.getX() + (this.getWidth() - titleWidth) / 2 + this.shift;
         if(this.getWidth() > titleWidth)
         {
             graphics.blitSprite(CHECKERS, this.getX(), this.getY(), titleX - this.getX() - 3, this.font.lineHeight);
@@ -60,5 +61,11 @@ public class TitleWidget extends AbstractWidget
     protected boolean isValidClickButton(int button)
     {
         return false; // Prevents clicking
+    }
+
+    public TitleWidget setShift(int shift)
+    {
+        this.shift = shift;
+        return this;
     }
 }
