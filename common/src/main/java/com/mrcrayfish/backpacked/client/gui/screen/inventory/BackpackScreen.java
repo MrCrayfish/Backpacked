@@ -302,7 +302,9 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         if(this.owner)
         {
             layout.addChild(new MiniButton(0, 0, ICON_RENAME, onPress -> {
-                new TextInputMenu(this, this.title.getString()).show(this.getRectangle());
+                new TextInputMenu(this, this.title.getString(), 50, s -> {
+                    Network.PLAY.sendToServer(new MessageRenameBackpack(s));
+                }).show(this.getRectangle());
             })).setTooltip(Tooltip.create(RENAME));
         }
         return layout;

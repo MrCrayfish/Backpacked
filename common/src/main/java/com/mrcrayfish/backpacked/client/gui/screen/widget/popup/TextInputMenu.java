@@ -5,8 +5,6 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomEditBox;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
-import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageRenameBackpack;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -15,7 +13,8 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.network.chat.Component;
-import org.apache.commons.lang3.StringUtils;
+
+import java.util.function.Consumer;
 
 public class TextInputMenu extends PopupMenu
 {
@@ -23,7 +22,7 @@ public class TextInputMenu extends PopupMenu
 
     private final PaddedLinearLayout layout = (PaddedLinearLayout) PaddedLinearLayout.vertical().padding(8).spacing(2);
 
-    public TextInputMenu(PopupMenuHandler handler, String initialInput)
+    public TextInputMenu(PopupMenuHandler handler, String initialInput, int maxLength, Consumer<String> onSave)
     {
         super(handler);
         this.setAlignment(Alignment.CENTERED);
@@ -36,13 +35,13 @@ public class TextInputMenu extends PopupMenu
             Utils.rl("backpack/editbox/background"),
             Utils.rl("backpack/editbox/background_focused")
         ))).getEditBox();
-        editBox.setValue(ChatFormatting.stripFormatting(initialInput));
-        editBox.setMaxLength(50);
+        editBox.setValue(initialInput);
+        editBox.setMaxLength(maxLength);
         this.layout.addChild(CustomButton.builder()
             .setSize(WIDTH / 3, 18)
             .setMessage(Component.literal("Save"))
             .setAction(btn -> {
-                Network.PLAY.sendToServer(new MessageRenameBackpack(editBox.getValue()));
+                onSave.accept(editBox.getValue());
             }).build(), LayoutSettings::alignHorizontallyRight);
     }
 
