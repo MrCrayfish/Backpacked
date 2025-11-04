@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomEditBox;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageRenameBackpack;
@@ -30,6 +31,7 @@ public class TextInputMenu extends PopupMenu
         TitleWidget title = new TitleWidget(Component.literal("Rename"), Minecraft.getInstance().font);
         title.setWidth(WIDTH);
         this.layout.addChild(title);
+        this.layout.addChild(Divider.horizontal(WIDTH).colour(0xFFE0CDB7));
         EditBox editBox = this.layout.addChild(CustomEditBox.create(WIDTH, 16, null, new WidgetSprites(
             Utils.rl("backpack/editbox/background"),
             Utils.rl("backpack/editbox/background_focused")
@@ -37,7 +39,7 @@ public class TextInputMenu extends PopupMenu
         editBox.setValue(ChatFormatting.stripFormatting(initialInput));
         editBox.setMaxLength(50);
         this.layout.addChild(CustomButton.builder()
-            .setSize(WIDTH / 3, 16)
+            .setSize(WIDTH / 3, 18)
             .setMessage(Component.literal("Save"))
             .setAction(btn -> {
                 Network.PLAY.sendToServer(new MessageRenameBackpack(editBox.getValue()));
