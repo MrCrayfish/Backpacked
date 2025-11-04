@@ -29,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -375,12 +376,20 @@ public class ServerPlayHandler
         if(stack.isEmpty())
             return;
 
-        String value = message.value();
-        value = ChatFormatting.stripFormatting(value);
-        value = StringUtils.truncate(value, 50);
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(value));
+        String value = StringUtil.filterText(message.value());
+        if(value.length() <= 50)
+        {
+            if(StringUtil.isBlank(value))
+            {
+                stack.remove(DataComponents.CUSTOM_NAME);
+            }
+            else
+            {
+                stack.set(DataComponents.CUSTOM_NAME, Component.literal(value));
+            }
 
-        // Reopen backpack just to update the name
-        BackpackItem.openBackpack(serverPlayer, serverPlayer, backpackIndex);
+            // Reopen backpack just to update the name
+            BackpackItem.openBackpack(serverPlayer, serverPlayer, backpackIndex);
+        }
     }
 }
