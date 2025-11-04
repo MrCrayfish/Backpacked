@@ -29,13 +29,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
@@ -391,5 +397,63 @@ public class ServerPlayHandler
             // Reopen backpack just to update the name
             BackpackItem.openBackpack(serverPlayer, serverPlayer, backpackIndex);
         }
+    }
+
+    public static void handleSortBackpack(MessageSortBackpack message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container and must be the wearer
+        if(!(serverPlayer.containerMenu instanceof BackpackContainerMenu menu))
+            return;
+
+        List<ItemStack> stacks = new ArrayList<>();
+        Container container = menu.getBackpackInventory();
+        for(int i = 0; i < container.getContainerSize(); i++)
+        {
+            ItemStack stack = container.getItem(i);
+            if(!stack.isEmpty() && container.canTakeItem(container, i, stack) && container.canPlaceItem(i, stack))
+            {
+                stacks.add(stack);
+                container.setItem(i, ItemStack.EMPTY);
+            }
+        }
+
+        for(int i = 0; i < stacks.size(); i++)
+        {
+            ItemStack stack = stacks.get(i);
+            if(stack.isEmpty() || stack.getCount() >= stack.getMaxStackSize())
+                continue;
+
+            for(int j = i + 1; j < stacks.size(); j++)
+            {
+                ItemStack other = stacks.get(j);
+                if(ItemStack.isSameItemSameComponents(stack, other))
+                {
+                    int grow = Math.min(stack.getMaxStackSize() - stack.getCount(), other.getCount());
+                    stack.grow(grow);
+                    other.shrink(grow);
+                }
+            }
+        }
+        stacks.removeIf(ItemStack::isEmpty);
+
+        stacks.sort(Comparator.<ItemStack, Boolean>comparing(stack -> stack.getItem() instanceof BlockItem)
+                .thenComparing(stack -> stack.getItem().getName(stack).getString()));
+
+        for(ItemStack stack : stacks)
+        {
+            for(int i = 0; i < container.getContainerSize(); i++)
+            {
+                if(container.getItem(i).isEmpty() && container.canPlaceItem(i, stack))
+                {
+                    container.setItem(i, stack);
+                    break;
+                }
+            }
+        }
+        container.setChanged();
     }
 }

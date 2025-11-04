@@ -86,6 +86,7 @@
     "backpacked.gui.requires_augment": "Requires %s",
     "backpacked.gui.x_of_y": "(%s/%s)",
     "backpacked.gui.rename": "Rename",
+    "backpacked.gui.sort": "Sort",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",

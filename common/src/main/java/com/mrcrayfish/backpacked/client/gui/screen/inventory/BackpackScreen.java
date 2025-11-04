@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.TextInputMenu;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
@@ -55,6 +54,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component CONFIGURE = Component.translatable("backpacked.gui.configure");
     private static final Component SWAP_AUGMENT = Component.translatable("backpacked.gui.swap_augment");
     private static final Component RENAME = Component.translatable("backpacked.gui.rename");
+    private static final Component SORT = Component.translatable("backpacked.gui.sort");
     public static final Function<Component, MutableComponent> PRESS_TO_EXPAND = component -> Component.translatable("backpacked.gui.press_button_to_expand", component);
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
@@ -68,6 +68,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
     private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
     private static final ResourceLocation ICON_RENAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
+    private static final ResourceLocation ICON_SORT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
@@ -315,13 +316,9 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
 
-        if(this.owner)
-        {
-            MiniButton manageButton = layout.addChild(new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
-                Network.getPlay().sendToServer(new MessageRequestManagement());
-            }));
-            manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
-        }
+        layout.addChild(new MiniButton(0, 0, ICON_SORT, button -> {
+            Network.getPlay().sendToServer(new MessageSortBackpack());
+        })).setTooltip(Tooltip.create(SORT));
 
         if(this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get())
         {
@@ -347,9 +344,19 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             lockButton.setTooltip(this.createLockTooltip(Config.CLIENT.unlockableSlotMode.get()));
         }
 
+        if(this.owner || !Config.CLIENT.hideConfigButton.get())
+            layout.addChild(Divider.horizontal(10).colour(0xFFE0CDB7));
+
+        if(this.owner)
+        {
+            MiniButton manageButton = layout.addChild(new MiniButton(0, 0, ICON_MANAGEMENT, button -> {
+                Network.getPlay().sendToServer(new MessageRequestManagement());
+            }));
+            manageButton.setTooltip(Tooltip.create(MANAGEMENT_TOOLTIP));
+        }
+
         if(!Config.CLIENT.hideConfigButton.get())
         {
-            layout.addChild(Divider.horizontal(10).colour(0xFFE0CDB7));
             MiniButton configButton = layout.addChild(new MiniButton(0, 0, ICON_CONFIG, onPress -> this.openConfigScreen()));
             configButton.setTooltip(Tooltip.create(CONFIG_TOOLTIP));
         }
