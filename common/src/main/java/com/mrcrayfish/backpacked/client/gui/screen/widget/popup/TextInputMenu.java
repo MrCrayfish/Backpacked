@@ -40,8 +40,7 @@ public class TextInputMenu extends PopupMenu
             .setSize(WIDTH / 3, 16)
             .setMessage(Component.literal("Save"))
             .setAction(btn -> {
-                String value = StringUtils.truncate(editBox.getValue(), 50);
-                Network.PLAY.sendToServer(new MessageRenameBackpack(value));
+                Network.PLAY.sendToServer(new MessageRenameBackpack(editBox.getValue()));
             }).build(), LayoutSettings::alignHorizontallyRight);
     }
 
