@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.Icons;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
@@ -325,8 +326,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setIcon(ICON_SORT, 10, 10)
             .setTooltipDelay(0)
             .setTooltip(btn -> ScreenUtil.createMultilineTooltip(List.of(
-                SORT, sorting.label().plainCopy().withStyle(ChatFormatting.BLUE)
-                , Component.literal("MIDDLE CLICK to Change").withStyle(ChatFormatting.DARK_GRAY)
+                SORT, sorting.label().plainCopy().withStyle(ChatFormatting.BLUE),
+                Component.translatable("backpacked.gui.cycle_sort_mode", ScreenUtil.getIconComponent(Icons.MIDDLE_MOUSE)).withStyle(ChatFormatting.DARK_GRAY)
             )))
             .setPrimaryAction(btn -> {
                 Network.getPlay().sendToServer(new MessageSortBackpack(sorting));

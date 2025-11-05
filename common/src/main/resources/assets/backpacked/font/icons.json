@@ -1,0 +1,19 @@
+{
+    "providers": [
+        {
+            "type": "space",
+            "advances": {
+                " ": 4
+            }
+        },
+        {
+            "type": "bitmap",
+            "file": "backpacked:gui/icons.png",
+            "height": 10,
+            "ascent": 8,
+            "chars": [
+                "\u0021"
+            ]
+        }
+    ]
+}

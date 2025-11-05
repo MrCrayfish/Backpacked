@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked.util;
 
+import com.mrcrayfish.backpacked.client.Icons;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.List;
  */
 public class ScreenUtil
 {
+    public static final ResourceLocation ICON_FONT = Utils.rl("icons");
+
     public static boolean isPointInArea(int px, int py, int x, int y, int width, int height)
     {
         return px >= x && px < x + width && py >= y && py < y + height;
@@ -47,5 +52,17 @@ public class ScreenUtil
             builder = builder.append(components[i]);
         }
         return builder;
+    }
+
+    public static MutableComponent getIconComponent(Icons icon)
+    {
+        MutableComponent component = Component.literal(String.valueOf((char) (33 + icon.ordinal())));
+        component.setStyle(component.getStyle().withColor(ChatFormatting.WHITE).withFont(ICON_FONT));
+        return component;
+    }
+
+    public static MutableComponent join(Icons icon, Component text)
+    {
+        return Component.empty().append(getIconComponent(icon)).append(" ").append(text);
     }
 }

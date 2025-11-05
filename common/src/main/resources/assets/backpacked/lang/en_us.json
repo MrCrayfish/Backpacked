@@ -93,6 +93,7 @@
     "backpacked.gui.sort.stack_size": "Stack Size",
     "backpacked.gui.sort.most_damaged": "Most Damaged",
     "backpacked.gui.sort.shuffle": "Shuffle",
+    "backpacked.gui.cycle_sort_mode": "%s to Cycle Mode",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
