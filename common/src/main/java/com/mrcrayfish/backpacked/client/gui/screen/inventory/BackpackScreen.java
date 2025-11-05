@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.TextInputMenu;
+import com.mrcrayfish.backpacked.common.ItemSorting;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
@@ -28,6 +29,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -93,6 +95,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final int INVENTORY_WIDTH = 176;
     private static final int INVENTORY_HEIGHT = 101;
     private static final int LABEL_PADDING = 5;
+
+    private static ItemSorting sorting = ItemSorting.ALPHABETICAL;
 
     private final Player player;
     private final int cols;
@@ -316,9 +320,31 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
 
-        layout.addChild(new MiniButton(0, 0, ICON_SORT, button -> {
-            Network.getPlay().sendToServer(new MessageSortBackpack());
-        })).setTooltip(Tooltip.create(SORT));
+        layout.addChild(CustomButton.builder()
+            .setSize(10, 10)
+            .setIcon(ICON_SORT, 10, 10)
+            .setTooltipDelay(0)
+            .setTooltip(btn -> ScreenUtil.createMultilineTooltip(List.of(
+                SORT, sorting.label().plainCopy().withStyle(ChatFormatting.BLUE)
+                , Component.literal("MIDDLE CLICK to Change").withStyle(ChatFormatting.DARK_GRAY)
+            )))
+            .setPrimaryAction(btn -> {
+                Network.getPlay().sendToServer(new MessageSortBackpack(sorting));
+            })
+            .setTertiaryAction(Action.create(btn -> {
+                ItemSorting[] values = ItemSorting.values();
+                sorting = values[(sorting.ordinal() + 1) % values.length];
+            }, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.WOODEN_BUTTON_CLICK_ON)))
+            .setContentRenderer((btn, graphics, mouseX, mouseY, partialTick) -> {
+                CustomButton.Icon icon = btn.getIcon();
+                if(icon != null) {
+                    graphics.blitSprite(icon.sprite(btn), btn.getX(), btn.getY(), icon.width(), icon.height());
+                }
+                if(btn.isHovered() && btn.isActive()) {
+                    graphics.fillGradient(btn.getX(), btn.getY(), btn.getX() + btn.getWidth(), btn.getY() + btn.getHeight(), -2130706433, -2130706433);
+                }
+            }).build()
+        );
 
         if(this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get())
         {

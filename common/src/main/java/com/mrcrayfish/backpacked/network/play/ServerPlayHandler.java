@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.ItemSorting;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
@@ -39,10 +40,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -440,8 +438,16 @@ public class ServerPlayHandler
         }
         stacks.removeIf(ItemStack::isEmpty);
 
-        stacks.sort(Comparator.<ItemStack, Boolean>comparing(stack -> stack.getItem() instanceof BlockItem)
-                .thenComparing(stack -> stack.getItem().getName(stack).getString()));
+        // Perform sorting
+        ItemSorting sorting = message.sorting();
+        if(sorting.secondarySort())
+        {
+            stacks.sort(sorting.comparator().thenComparing(ItemSorting.ALPHABETICAL.comparator()));
+        }
+        else
+        {
+            stacks.sort(sorting.comparator());
+        }
 
         for(ItemStack stack : stacks)
         {
