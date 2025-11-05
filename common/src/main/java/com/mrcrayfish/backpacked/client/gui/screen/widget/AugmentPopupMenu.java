@@ -66,10 +66,7 @@ public class AugmentPopupMenu extends PopupMenu
                         }
                         lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
                         if(!Screen.hasShiftDown() && firstBreak != -1) {
-                            lines.add(ScreenUtil.join(" ",
-                                Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
-                                BackpackScreen.PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
-                            ));
+                            lines.add(BackpackScreen.HOLD_TO_EXPAND.apply(ScreenUtil.getShiftIcon()).withStyle(ChatFormatting.DARK_GRAY));
                         }
                     }
                     return ScreenUtil.createMultilineTooltip(lines);

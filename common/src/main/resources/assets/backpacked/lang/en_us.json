@@ -77,7 +77,7 @@
     "backpacked.gui.active": "Active",
     "backpacked.gui.configure": "Configure",
     "backpacked.gui.swap_augment": "Swap Augment",
-    "backpacked.gui.press_button_to_expand": "Press %s to Expand",
+    "backpacked.gui.hold_button_to_expand": "Hold %s to Expand",
     "backpacked.gui.options": "Options",
     "backpacked.gui.filters": "Filters",
     "backpacked.gui.show_all": "Showing All",

@@ -58,7 +58,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component SWAP_AUGMENT = Component.translatable("backpacked.gui.swap_augment");
     private static final Component RENAME = Component.translatable("backpacked.gui.rename");
     private static final Component SORT = Component.translatable("backpacked.gui.sort");
-    public static final Function<Component, MutableComponent> PRESS_TO_EXPAND = component -> Component.translatable("backpacked.gui.press_button_to_expand", component);
+    public static final Function<Component, MutableComponent> HOLD_TO_EXPAND = component -> Component.translatable("backpacked.gui.hold_button_to_expand", component);
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -238,10 +238,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                     }
                     lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
                     if(!Screen.hasShiftDown() && firstBreak != -1) {
-                        lines.add(ScreenUtil.join(" ",
-                            Component.literal(">").withStyle(ChatFormatting.DARK_GRAY),
-                            PRESS_TO_EXPAND.apply(Component.literal("SHIFT")).withStyle(ChatFormatting.DARK_GRAY)
-                        ));
+                        lines.add(HOLD_TO_EXPAND.apply(ScreenUtil.getShiftIcon()).withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
                 return ScreenUtil.createMultilineTooltip(lines);
