@@ -11,12 +11,19 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,7 +40,7 @@ public class CustomButton extends AbstractButton
     private final Message message;
     private final @Nullable Icon icon;
     private final int gap;
-    private final Consumer<CustomButton> action;
+    private final @Nullable Map<Integer, Action<CustomButton>> actions;
     private final @Nullable WidgetSprites texture;
     private final @Nullable Controller controller;
     private final @Nullable Supplier<Boolean> activeSupplier;
@@ -43,13 +50,13 @@ public class CustomButton extends AbstractButton
     private boolean shiftWasDown;
     private final @Nullable ContentRenderer contentRenderer;
 
-    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, Consumer<CustomButton> action, @Nullable WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions, @Nullable ContentRenderer contentRenderer)
+    private CustomButton(int x, int y, int width, int height, Message message, @Nullable Icon icon, int gap, @Nullable Map<Integer, Action<CustomButton>> actions, @Nullable WidgetSprites texture, @Nullable Controller controller, @Nullable Supplier<Boolean> activeSupplier, @Nullable Function<CustomButton, Tooltip> tooltip, int tooltipDelay, int tooltipOptions, @Nullable ContentRenderer contentRenderer)
     {
         super(x, y, width, height, message.component());
         this.message = message;
         this.icon = icon;
         this.gap = gap;
-        this.action = action;
+        this.actions = actions;
         this.texture = texture;
         this.controller = controller;
         this.activeSupplier = activeSupplier;
@@ -84,14 +91,23 @@ public class CustomButton extends AbstractButton
         return this.gap;
     }
 
-    @Override
-    public void onPress()
+    private void onAction(int button)
     {
-        if(this.controller != null)
+        if(button == 0)
         {
-            this.controller.run();
+            if(this.controller != null)
+            {
+                this.controller.run();
+            }
         }
-        this.action.accept(this);
+        Holder<SoundEvent> sound = SoundEvents.UI_BUTTON_CLICK;
+        Action<CustomButton> action = this.actions != null ? this.actions.get(button) : null;
+        if(action != null)
+        {
+            action.handler().accept(this);
+            sound = action.sound();
+        }
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0F));
         this.rebuildTooltip();
     }
 
@@ -137,6 +153,15 @@ public class CustomButton extends AbstractButton
     }
 
     @Override
+    public void onPress()
+    {
+        this.onAction(0);
+    }
+
+    @Override
+    public void playDownSound(SoundManager manager) {}
+
+    @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.updateActiveState();
@@ -151,6 +176,22 @@ public class CustomButton extends AbstractButton
     protected void updateWidgetNarration(NarrationElementOutput output)
     {
         this.defaultButtonNarrationText(output);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    {
+        if(this.active && this.visible && this.isValidClickButton(button) && this.clicked(mouseX, mouseY))
+        {
+            this.onAction(button);
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button)
+    {
+        return button == 0 || this.actions != null && this.actions.containsKey(button);
     }
 
     public static Builder builder()
@@ -179,7 +220,7 @@ public class CustomButton extends AbstractButton
         private Message message = new ConstantMessage(CommonComponents.EMPTY);
         private @Nullable Icon icon;
         private int gap = 2;
-        private Consumer<CustomButton> action = btn -> {};
+        private @Nullable Map<Integer, Action<CustomButton>> actions;
         private @Nullable WidgetSprites texture = DEFAULT_SPRITES;
         private @Nullable Controller controller;
         private @Nullable Supplier<Boolean> active;
@@ -197,7 +238,16 @@ public class CustomButton extends AbstractButton
 
         public CustomButton build()
         {
-            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.action, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipOptions, this.contentRenderer);
+            return new CustomButton(this.x, this.y, this.width, this.height, this.message, this.icon, this.gap, this.actions, this.texture, this.controller, this.active, this.tooltip, this.tooltipDelay, this.tooltipOptions, this.contentRenderer);
+        }
+
+        private Map<Integer, Action<CustomButton>> actions()
+        {
+            if(this.actions == null)
+            {
+                this.actions = new HashMap<>();
+            }
+            return this.actions;
         }
 
         public Builder setPosition(int x, int y)
@@ -246,7 +296,43 @@ public class CustomButton extends AbstractButton
 
         public Builder setAction(Consumer<CustomButton> action)
         {
-            this.action = action;
+            this.actions().put(0, Action.create(action));
+            return this;
+        }
+
+        public Builder setPrimaryAction(Consumer<CustomButton> action)
+        {
+            this.actions().put(0, Action.create(action));
+            return this;
+        }
+
+        public Builder setPrimaryAction(Action<CustomButton> action)
+        {
+            this.actions().put(0, action);
+            return this;
+        }
+
+        public Builder setSecondaryAction(Consumer<CustomButton> action)
+        {
+            this.actions().put(1, Action.create(action));
+            return this;
+        }
+
+        public Builder setSecondaryAction(Action<CustomButton> action)
+        {
+            this.actions().put(1, action);
+            return this;
+        }
+
+        public Builder setTertiaryAction(Consumer<CustomButton> action)
+        {
+            this.actions().put(2, Action.create(action));
+            return this;
+        }
+
+        public Builder setTertiaryAction(Action<CustomButton> action)
+        {
+            this.actions().put(2, action);
             return this;
         }
 
