@@ -61,8 +61,13 @@ public class ScreenUtil
         return component;
     }
 
-    public static MutableComponent join(Icons icon, Component text)
+    public static Component getShiftIcon()
     {
-        return Component.empty().append(getIconComponent(icon)).append(" ").append(text);
+        MutableComponent component = Component.literal(String.valueOf(new char[]{
+            (char) (33 + Icons.SHIFT_1.ordinal()),
+            (char) (33 + Icons.SHIFT_2.ordinal())
+        }));
+        component.setStyle(component.getStyle().withColor(ChatFormatting.WHITE).withFont(ICON_FONT));
+        return component;
     }
 }

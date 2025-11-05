@@ -21,7 +21,8 @@
         "common.ServerPlayerMixin"
     ],
     "client": [
-        "client.AbstractSelectionListMixin"
+        "client.AbstractSelectionListMixin",
+        "client.BitmapProviderDefinitionMixin"
     ],
     "injectors": {
         "defaultRequire": 1,
