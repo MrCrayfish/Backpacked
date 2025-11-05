@@ -11,24 +11,22 @@ import java.util.Comparator;
 
 public enum ItemSorting
 {
-    ALPHABETICAL("alphabetical", Comparator.comparing(stack -> stack.getItem().getName(stack).getString()), false),
-    ITEMS_FIRST("items_first", Comparator.comparing(stack -> stack.getItem() instanceof BlockItem), true),
-    BLOCKS_FIRST("blocks_first", Comparator.comparing(stack -> !(stack.getItem() instanceof BlockItem)), true),
-    STACK_SIZE("stack_size", Comparator.comparingInt(ItemStack::getCount).reversed(), true),
-    MOST_DAMAGED("most_damaged", Comparator.<ItemStack>comparingInt(stack -> stack.isDamageableItem() ? (stack.getDamageValue() * 1000 / stack.getMaxDamage()) : -1).reversed(), true),
-    SHUFFLE("shuffle", Comparator.comparingInt(stack -> Utils.RANDOM.nextInt()), false);
+    ALPHABETICAL("alphabetical", Comparator.comparing(stack -> stack.getItem().getName(stack).getString())),
+    ITEMS_FIRST("items_first", Comparator.comparing(stack -> stack.getItem() instanceof BlockItem)),
+    BLOCKS_FIRST("blocks_first", Comparator.comparing(stack -> !(stack.getItem() instanceof BlockItem))),
+    STACK_SIZE("stack_size", Comparator.comparingInt(ItemStack::getCount).reversed()),
+    MOST_DAMAGED("most_damaged", Comparator.<ItemStack>comparingInt(stack -> stack.isDamageableItem() ? (stack.getDamageValue() * 1000 / stack.getMaxDamage()) : -1).reversed()),
+    SHUFFLE("shuffle", Comparator.comparingInt(stack -> Utils.RANDOM.nextInt()));
 
     public static final StreamCodec<FriendlyByteBuf, ItemSorting> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(ItemSorting.class));
 
     private final Component label;
     private final Comparator<ItemStack> comparator;
-    private final boolean secondarySort;
 
-    ItemSorting(String key, Comparator<ItemStack> comparator, boolean secondarySort)
+    ItemSorting(String key, Comparator<ItemStack> comparator)
     {
         this.label = Component.translatable("backpacked.gui.sort.%s".formatted(key));
         this.comparator = comparator;
-        this.secondarySort = secondarySort;
     }
 
     public Component label()
@@ -39,10 +37,5 @@ public enum ItemSorting
     public Comparator<ItemStack> comparator()
     {
         return this.comparator;
-    }
-
-    public boolean secondarySort()
-    {
-        return this.secondarySort;
     }
 }

@@ -440,13 +440,14 @@ public class ServerPlayHandler
 
         // Perform sorting
         ItemSorting sorting = message.sorting();
-        if(sorting.secondarySort())
+        switch(sorting)
         {
-            stacks.sort(sorting.comparator().thenComparing(ItemSorting.ALPHABETICAL.comparator()));
-        }
-        else
-        {
-            stacks.sort(sorting.comparator());
+            case SHUFFLE -> stacks.sort(sorting.comparator());
+            case ALPHABETICAL -> stacks.sort(sorting.comparator().thenComparing(ItemSorting.MOST_DAMAGED.comparator().reversed()));
+            case MOST_DAMAGED -> stacks.sort(sorting.comparator().thenComparing(ItemSorting.ALPHABETICAL.comparator()));
+            default -> {
+                stacks.sort(sorting.comparator().thenComparing(ItemSorting.ALPHABETICAL.comparator()).thenComparing(ItemSorting.MOST_DAMAGED.comparator().reversed()));
+            }
         }
 
         for(ItemStack stack : stacks)
