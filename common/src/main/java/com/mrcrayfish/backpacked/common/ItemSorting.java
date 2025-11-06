@@ -16,6 +16,7 @@ public enum ItemSorting
     BLOCKS_FIRST("blocks_first", Comparator.comparing(stack -> !(stack.getItem() instanceof BlockItem))),
     STACK_SIZE("stack_size", Comparator.comparingInt(ItemStack::getCount).reversed()),
     MOST_DAMAGED("most_damaged", Comparator.<ItemStack>comparingInt(stack -> stack.isDamageableItem() ? (stack.getDamageValue() * 1000 / stack.getMaxDamage()) : -1).reversed()),
+    CREATIVE_CATEGORY("creative_category", Comparator.comparingInt(stack -> CreativeCategorySort.getSortIndex(stack.getItem()))),
     SHUFFLE("shuffle", Comparator.comparingInt(stack -> Utils.RANDOM.nextInt()));
 
     public static final StreamCodec<FriendlyByteBuf, ItemSorting> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(ItemSorting.class));

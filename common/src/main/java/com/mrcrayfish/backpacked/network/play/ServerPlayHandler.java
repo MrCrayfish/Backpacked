@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.CreativeCategorySort;
 import com.mrcrayfish.backpacked.common.ItemSorting;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.Augment;
@@ -22,6 +23,7 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -440,6 +442,10 @@ public class ServerPlayHandler
 
         // Perform sorting
         ItemSorting sorting = message.sorting();
+        if(sorting == ItemSorting.CREATIVE_CATEGORY)
+        {
+            CreativeCategorySort.buildSortIndex(player.level().registryAccess());
+        }
         switch(sorting)
         {
             case SHUFFLE -> stacks.sort(sorting.comparator());

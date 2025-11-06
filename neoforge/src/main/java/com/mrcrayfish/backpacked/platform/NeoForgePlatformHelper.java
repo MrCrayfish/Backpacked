@@ -3,10 +3,12 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.neoforged.fml.ModList;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -14,7 +16,6 @@ import java.util.function.Predicate;
  */
 public class NeoForgePlatformHelper implements IPlatformHelper
 {
-
     @Override
     public boolean isModLoaded(String modId)
     {
@@ -45,5 +46,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper
     public boolean isRepairable(ItemStack stack)
     {
         return stack.isRepairable();
+    }
+
+    @Override
+    public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
+    {
+        return (stack, visibility) -> consumer.accept(stack);
     }
 }

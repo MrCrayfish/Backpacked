@@ -92,6 +92,7 @@
     "backpacked.gui.sort.blocks_first": "Blocks First",
     "backpacked.gui.sort.stack_size": "Stack Size",
     "backpacked.gui.sort.most_damaged": "Most Damaged",
+    "backpacked.gui.sort.creative_category": "Creative Category",
     "backpacked.gui.sort.shuffle": "Shuffle",
     "backpacked.gui.cycle_sort_mode": "%s to Cycle Mode",
     "backpacked.title.customise_backpack": "Customize Backpack",
