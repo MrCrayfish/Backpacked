@@ -166,7 +166,7 @@ public class BackpackInventory extends UnlockableContainer
         for(int i = 0; i < this.getContainerSize(); i++)
         {
             ItemStack stack = this.getItem(i);
-            if(predicate.test(stack))
+            if(!stack.isEmpty() && predicate.test(stack))
             {
                 return stack;
             }
