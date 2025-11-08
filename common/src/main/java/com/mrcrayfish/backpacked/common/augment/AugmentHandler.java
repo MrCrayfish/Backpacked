@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
 import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
@@ -18,6 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,16 +28,13 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class AugmentHandler
@@ -280,6 +279,8 @@ public class AugmentHandler
 
     public static void onPlayerChangedBlockPos(Player player, ServerLevel level, BlockPos pos, int brightness)
     {
+        onPlayerWalkOnCrops(player, level);
+
         if(!level.isEmptyBlock(pos))
             return;
 
@@ -306,6 +307,64 @@ public class AugmentHandler
                 }
                 break;
             }
+        }
+    }
+
+    private static void onPlayerWalkOnCrops(Player player, ServerLevel level)
+    {
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FARMHAND.get());
+        if(snapshots.isEmpty())
+            return;
+
+        Vec3 position = player.position();
+        List<BlockPos> placePositions = new ArrayList<>();
+        placePositions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
+        placePositions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z - 0.5));
+        placePositions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z + 0.5));
+        placePositions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z + 0.5));
+
+        // Remove positions that are not possible to place a block
+        placePositions.removeIf(pos -> {
+            return !level.getBlockState(pos).canBeReplaced();
+        });
+
+        for(var snapshot : snapshots)
+        {
+            boolean changed = false;
+            BackpackInventory inventory = snapshot.inventory();
+            for(int i = 0; i < inventory.getContainerSize() && !placePositions.isEmpty(); i++)
+            {
+                ItemStack stack = inventory.getItem(i);
+                if(stack.isEmpty())
+                    continue;
+
+                if(!(stack.getItem() instanceof BlockItem item))
+                    continue;
+
+                if(!(item.getBlock() instanceof BushBlock))
+                    continue;
+
+                Iterator<BlockPos> it = placePositions.iterator();
+                while(it.hasNext() && !stack.isEmpty())
+                {
+                    BlockPos pos = it.next();
+                    InteractionResult result = item.useOn(UseItemOnBlockFaceContext.create(level, stack, pos, Direction.UP));
+                    if(!result.consumesAction())
+                        continue;
+                    it.remove();
+                    changed = true;
+                }
+            }
+
+            // Send event to inventory if something changed
+            if(changed)
+            {
+                inventory.setChanged();
+            }
+
+            // Can no longer play any more crops if there are no more available positions
+            if(placePositions.isEmpty())
+                break;
         }
     }
 }

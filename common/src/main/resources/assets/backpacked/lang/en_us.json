@@ -158,5 +158,7 @@
     "augment.backpacked.lightweaver.light_level": "Light Level",
     "augment.backpacked.lightweaver.light_level.tooltip": "The light level that must be reached before placing a torch. The higher the number, the more frequent a torch will be placed.",
     "augment.backpacked.lightweaver.place_sound": "Place Sound",
-    "augment.backpacked.lightweaver.place_sound.tooltip": "Determines whether a sound should play when placing a torch"
+    "augment.backpacked.lightweaver.place_sound.tooltip": "Determines whether a sound should play when placing a torch",
+    "augment.backpacked.farmhand": "Farmhand",
+    "augment.backpacked.farmhand.desc": "Sprinkles crop seeds onto available farmland around the player."
 }
