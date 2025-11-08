@@ -2,17 +2,20 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.Farmhand;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
 import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.mixin.common.BlockItemMixin;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
+import com.mrcrayfish.framework.api.event.TickEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +28,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -348,9 +352,21 @@ public class AugmentHandler
                 while(it.hasNext() && !stack.isEmpty())
                 {
                     BlockPos pos = it.next();
-                    InteractionResult result = item.useOn(UseItemOnBlockFaceContext.create(level, stack, pos, Direction.UP));
-                    if(!result.consumesAction())
+                    if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                         continue;
+
+                    Farmhand farmhand = ((Farmhand.Access) level).backpacked$getFarmhand();
+                    if(farmhand.isPlanting(pos)) {
+                        it.remove();
+                        continue;
+                    }
+
+                    if(!farmhand.plant(stack.copyWithCount(1), pos))
+                        continue;
+
+                    // TODO send particle
+
+                    stack.shrink(1);
                     it.remove();
                     changed = true;
                 }
@@ -366,5 +382,24 @@ public class AugmentHandler
             if(placePositions.isEmpty())
                 break;
         }
+    }
+
+    private static boolean canUseBlockItemOnBlockPos(ServerLevel level, ItemStack stack, BlockPos pos, Direction face)
+    {
+        BlockItem item = (BlockItem) stack.getItem();
+        Block block = item.getBlock();
+        if(!block.isEnabled(level.enabledFeatures()))
+            return false;
+
+        var context = new BlockPlaceContext(UseItemOnBlockFaceContext.create(level, stack, pos, face));
+        if(!context.canPlace())
+            return false;
+
+        context = item.updatePlacementContext(context);
+        if(context == null)
+            return false;
+
+        BlockState state = ((BlockItemMixin) item).backpacked$getPlacementState(context);
+        return state != null;
     }
 }
