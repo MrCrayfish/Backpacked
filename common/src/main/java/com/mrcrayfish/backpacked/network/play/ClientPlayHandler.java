@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
+import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticle;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
@@ -16,7 +17,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -145,5 +148,27 @@ public class ClientPlayHandler
         {
             screen.updateAugment(message.position(), message.augment());
         }
+    }
+
+    public static void handleFarmhandPlant(MessageFarmhandPlant message, MessageContext context)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.level == null || minecraft.player == null)
+            return;
+
+        ItemStack stack = message.stack();
+        if(stack.isEmpty())
+            return;
+
+        var level = minecraft.level;
+        if(!(level.getEntity(message.entityId()) instanceof Player player))
+            return;
+
+        var dispatcher = minecraft.getEntityRenderDispatcher();
+        var renderBuffers = minecraft.renderBuffers();
+        var start = new Vec3(player.getX(), player.getY(0.65), player.getZ()).add(Vec3.directionFromRotation(0, player.yBodyRot + 180).scale(0.25));
+        var end = message.pos().getBottomCenter();
+        minecraft.particleEngine.add(new FarmhandPlantParticle(dispatcher, renderBuffers, level, stack, start, end));
+        minecraft.level.playSound(null, start.x, start.y, start.z, ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.PLAYERS, 1F, 0.5F);
     }
 }
