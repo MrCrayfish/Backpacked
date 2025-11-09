@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
@@ -16,6 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 
@@ -117,7 +120,12 @@ public final class Farmhand extends SavedData
             {
                 InteractionResult result = item.useOn(UseItemOnBlockFaceContext.create(level, this.stack, this.pos, Direction.UP));
                 if(result.consumesAction())
+                {
+                    BlockState state = level.getBlockState(this.pos.below());
+                    Vec3 particle = this.pos.getBottomCenter();
+                    level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), particle.x, particle.y, particle.z, 10, 0.3F, 0.3F, 0.3F, 0.15F);
                     return;
+                }
             }
             // Fallback if fails
             Vec3 spawn = this.pos.getBottomCenter().add(0, 1, 0);
