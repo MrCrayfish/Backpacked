@@ -8,9 +8,11 @@ import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.mixin.common.BlockItemMixin;
 import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageFarmhandPlant;
 import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
@@ -20,9 +22,9 @@ import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -40,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class AugmentHandler
 {
@@ -48,6 +51,13 @@ public class AugmentHandler
         PlayerEvents.PICKUP_EXPERIENCE.register((player, orb) -> {
             AugmentHandler.onPlayerPickupExperienceOrb(player, orb);
             return false;
+        });
+        BackpackedEvents.MINED_BLOCK.register((snapshot, stack, player) -> {
+            AugmentHandler.activateFarmhand(player, () -> {
+                List<BlockPos> positions = new ArrayList<>();
+                positions.add(snapshot.pos());
+                return positions;
+            });
         });
     }
 
@@ -283,7 +293,7 @@ public class AugmentHandler
 
     public static void onPlayerChangedBlockPos(Player player, ServerLevel level, BlockPos pos, int brightness)
     {
-        onPlayerWalkOnCrops(player, level);
+        onPlayerWalkOnCrops((ServerPlayer) player);
 
         if(!level.isEmptyBlock(pos))
             return;
@@ -314,29 +324,37 @@ public class AugmentHandler
         }
     }
 
-    private static void onPlayerWalkOnCrops(Player player, ServerLevel level)
+    private static void onPlayerWalkOnCrops(ServerPlayer player)
+    {
+        activateFarmhand(player, () -> {
+            List<BlockPos> positions = new ArrayList<>();
+            Vec3 position = player.position().add(player.getForward().multiply(1, 0, 1).normalize());
+            positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
+            positions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z - 0.5));
+            positions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z + 0.5));
+            positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z + 0.5));
+            return positions;
+        });
+    }
+
+    private static void activateFarmhand(ServerPlayer player, Supplier<List<BlockPos>> supplier)
     {
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FARMHAND.get());
         if(snapshots.isEmpty())
             return;
 
-        Vec3 position = player.position();
-        List<BlockPos> placePositions = new ArrayList<>();
-        placePositions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
-        placePositions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z - 0.5));
-        placePositions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z + 0.5));
-        placePositions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z + 0.5));
+        List<BlockPos> positions = supplier.get();
 
         // Remove positions that are not possible to place a block
-        placePositions.removeIf(pos -> {
-            return !level.getBlockState(pos).canBeReplaced();
-        });
+        ServerLevel level = player.serverLevel();
+        Farmhand farmhand = ((Farmhand.Access) level).backpacked$getFarmhand();
+        positions.removeIf(pos -> !level.getBlockState(pos).canBeReplaced() || farmhand.isPlanting(pos));
 
         for(var snapshot : snapshots)
         {
             boolean changed = false;
             BackpackInventory inventory = snapshot.inventory();
-            for(int i = 0; i < inventory.getContainerSize() && !placePositions.isEmpty(); i++)
+            for(int i = 0; i < inventory.getContainerSize() && !positions.isEmpty(); i++)
             {
                 ItemStack stack = inventory.getItem(i);
                 if(stack.isEmpty())
@@ -348,23 +366,20 @@ public class AugmentHandler
                 if(!(item.getBlock() instanceof BushBlock))
                     continue;
 
-                Iterator<BlockPos> it = placePositions.iterator();
+                Iterator<BlockPos> it = positions.iterator();
                 while(it.hasNext() && !stack.isEmpty())
                 {
                     BlockPos pos = it.next();
                     if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                         continue;
 
-                    Farmhand farmhand = ((Farmhand.Access) level).backpacked$getFarmhand();
-                    if(farmhand.isPlanting(pos)) {
-                        it.remove();
-                        continue;
-                    }
-
-                    if(!farmhand.plant(stack.copyWithCount(1), pos))
+                    ItemStack copy = stack.copyWithCount(1);
+                    if(!farmhand.plant(copy, pos))
                         continue;
 
-                    // TODO send particle
+                    var message = new MessageFarmhandPlant(copy, player.getId(), pos);
+                    Network.getPlay().sendToTrackingEntity(() -> player, message);
+                    Network.getPlay().sendToPlayer(() -> player, message);
 
                     stack.shrink(1);
                     it.remove();
@@ -379,7 +394,7 @@ public class AugmentHandler
             }
 
             // Can no longer play any more crops if there are no more available positions
-            if(placePositions.isEmpty())
+            if(positions.isEmpty())
                 break;
         }
     }
