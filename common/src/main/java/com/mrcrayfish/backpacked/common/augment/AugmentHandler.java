@@ -17,7 +17,6 @@ import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
-import com.mrcrayfish.framework.api.event.TickEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +52,7 @@ public class AugmentHandler
             return false;
         });
         BackpackedEvents.MINED_BLOCK.register((snapshot, stack, player) -> {
-            AugmentHandler.activateFarmhand(player, () -> {
+            AugmentHandler.plantSeedsOnBlockPositions(player, () -> {
                 List<BlockPos> positions = new ArrayList<>();
                 positions.add(snapshot.pos());
                 return positions;
@@ -326,7 +325,7 @@ public class AugmentHandler
 
     private static void onPlayerWalkOnCrops(ServerPlayer player)
     {
-        activateFarmhand(player, () -> {
+        plantSeedsOnBlockPositions(player, () -> {
             List<BlockPos> positions = new ArrayList<>();
             Vec3 position = player.position().add(player.getForward().multiply(1, 0, 1).normalize());
             positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
@@ -337,7 +336,7 @@ public class AugmentHandler
         });
     }
 
-    private static void activateFarmhand(ServerPlayer player, Supplier<List<BlockPos>> supplier)
+    private static void plantSeedsOnBlockPositions(ServerPlayer player, Supplier<List<BlockPos>> supplier)
     {
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FARMHAND.get());
         if(snapshots.isEmpty())
