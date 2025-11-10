@@ -51,6 +51,7 @@ public final class Farmhand extends SavedData
         if(!this.tasks.containsKey(pos))
         {
             this.tasks.put(pos, new DelayedPlantTask(stack, pos));
+            this.setDirty();
             return true;
         }
         return false;
@@ -67,6 +68,7 @@ public final class Farmhand extends SavedData
             DelayedPlantTask task = entry.getValue();
             if(--task.delay <= 0) {
                 task.run(this.level);
+                this.setDirty();
                 return true;
             }
             return false;
