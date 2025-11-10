@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.network.chat.Component;
 
 import java.time.Duration;
@@ -25,6 +24,7 @@ public class AugmentSettingsMenu extends PopupMenu
     {
         super(handler);
         this.setBackground(Utils.rl("augment/menu_background"));
+        this.setScreenClampPadding(10);
         PaddedLinearLayout layout = PaddedLinearLayout.vertical().padding(8);
         layout.addChild(layoutSupplier.apply(this));
         this.layout = layout;
