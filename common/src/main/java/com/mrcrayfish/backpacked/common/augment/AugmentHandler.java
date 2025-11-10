@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.Farmhand;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
+import com.mrcrayfish.backpacked.common.augment.impl.FarmhandAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
@@ -11,6 +12,9 @@ import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.mixin.common.BlockItemMixin;
+import com.mrcrayfish.backpacked.mixin.common.BushBlockMixin;
+import com.mrcrayfish.backpacked.mixin.common.CropBlockMixin;
+import com.mrcrayfish.backpacked.mixin.common.IntegerPropertyMixin;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageFarmhandPlant;
 import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
@@ -31,11 +35,12 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BushBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,11 +57,7 @@ public class AugmentHandler
             return false;
         });
         BackpackedEvents.MINED_BLOCK.register((snapshot, stack, player) -> {
-            AugmentHandler.plantSeedsOnBlockPositions(player, () -> {
-                List<BlockPos> positions = new ArrayList<>();
-                positions.add(snapshot.pos());
-                return positions;
-            });
+           replantCrop(snapshot.state(), player, snapshot.pos());
         });
     }
 
@@ -323,9 +324,25 @@ public class AugmentHandler
         }
     }
 
+    private static void replantCrop(BlockState state, ServerPlayer player, BlockPos pos)
+    {
+        if(!isFullyGrownCrop(state))
+            return;
+
+        Item seed = getCropSeed(player.level(), pos, state);
+        if(seed == null)
+            return;
+
+        AugmentHandler.plantSeedsOnBlockPositions(player, seed, () -> {
+            List<BlockPos> positions = new ArrayList<>();
+            positions.add(pos);
+            return positions;
+        });
+    }
+
     private static void onPlayerWalkOnCrops(ServerPlayer player)
     {
-        plantSeedsOnBlockPositions(player, () -> {
+        plantSeedsOnBlockPositions(player, null, () -> {
             List<BlockPos> positions = new ArrayList<>();
             Vec3 position = player.position().add(player.getForward().multiply(1, 0, 1).normalize());
             positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
@@ -336,7 +353,7 @@ public class AugmentHandler
         });
     }
 
-    private static void plantSeedsOnBlockPositions(ServerPlayer player, Supplier<List<BlockPos>> supplier)
+    private static void plantSeedsOnBlockPositions(ServerPlayer player, @Nullable Item seed, Supplier<List<BlockPos>> supplier)
     {
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FARMHAND.get());
         if(snapshots.isEmpty())
@@ -351,6 +368,13 @@ public class AugmentHandler
 
         for(var snapshot : snapshots)
         {
+            FarmhandAugment augment = snapshot.augment();
+            if(seed != null && !augment.replantHarvested())
+                continue;
+
+            if(seed == null && !augment.plantNearby())
+                continue;
+
             boolean changed = false;
             BackpackInventory inventory = snapshot.inventory();
             for(int i = 0; i < inventory.getContainerSize() && !positions.isEmpty(); i++)
@@ -359,10 +383,13 @@ public class AugmentHandler
                 if(stack.isEmpty())
                     continue;
 
-                if(!(stack.getItem() instanceof BlockItem item))
+                if(seed != null && stack.getItem() != seed)
                     continue;
 
-                if(!(item.getBlock() instanceof BushBlock))
+                if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
+                    continue;
+
+                if(!augment.isFilter(stack.getItem()))
                     continue;
 
                 Iterator<BlockPos> it = positions.iterator();
@@ -416,4 +443,45 @@ public class AugmentHandler
         BlockState state = ((BlockItemMixin) item).backpacked$getPlacementState(context);
         return state != null;
     }
+
+    private static boolean isFullyGrownCrop(BlockState state)
+    {
+        if(state.getBlock() instanceof BushBlock)
+        {
+            if(state.getBlock() instanceof CropBlock crop)
+            {
+                return crop.isMaxAge(state);
+            }
+            for(IntegerProperty property : FarmhandAugment.AGE_PROPERTIES)
+            {
+                if(state.hasProperty(property))
+                {
+                    return state.getValue(property) == ((IntegerPropertyMixin) property).backpacked$getMax();
+                }
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    private static Item getCropSeed(LevelReader reader, BlockPos pos, BlockState state)
+    {
+        if(state.getBlock() instanceof BushBlock bush)
+        {
+            if(bush instanceof CropBlock crop)
+            {
+                return ((CropBlockMixin) crop).backpacked$getBaseSeedId().asItem();
+            }
+            return bush.getCloneItemStack(reader, pos, state).getItem();
+        }
+        return null;
+    }
+
+    /*private static boolean isFarmland()
+    {
+        // Only allow blocks that can be planted on farmland
+        BlockState farmlandState = Blocks.FARMLAND.defaultBlockState();
+        if(!((BushBlockMixin) bush).backpacked$mayPlaceOn(farmlandState, EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
+            return false;
+    }*/
 }

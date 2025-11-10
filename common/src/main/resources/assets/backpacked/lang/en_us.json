@@ -95,6 +95,7 @@
     "backpacked.gui.sort.creative_category": "Creative Category",
     "backpacked.gui.sort.shuffle": "Shuffle",
     "backpacked.gui.cycle_sort_mode": "%s to Cycle Mode",
+    "backpacked.gui.seeds": "Crops & Seeds",
     "backpacked.title.customise_backpack": "Customize Backpack",
     "backpacked.toast.unlocked_backpack": "Unlocked Backpack",
     "backpacked.tooltip.remove_items": "You must empty the backpack before you can remove it or you can instead place it on a shelf",
@@ -160,5 +161,9 @@
     "augment.backpacked.lightweaver.place_sound": "Place Sound",
     "augment.backpacked.lightweaver.place_sound.tooltip": "Determines whether a sound should play when placing a torch",
     "augment.backpacked.farmhand": "Farmhand",
-    "augment.backpacked.farmhand.desc": "Sprinkles crop seeds onto available farmland around the player."
+    "augment.backpacked.farmhand.desc": "Sprinkles crop seeds onto available farmland around the player.",
+    "augment.backpacked.farmhand.plant_nearby": "Plant Nearby",
+    "augment.backpacked.farmhand.plant_nearby.tooltip": "When near blocks crops can grow on, like farmland, seeds will automatically be planted if the spot is free",
+    "augment.backpacked.farmhand.replant_harvested": "Replant Harvested",
+    "augment.backpacked.farmhand.replant_harvested.tooltip": "After harvesting a fully-grown crop, a matching seed will automatically be replanted in its spot"
 }

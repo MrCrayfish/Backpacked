@@ -2,10 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.augment.widget.FunnellingMenu;
-import com.mrcrayfish.backpacked.client.augment.widget.LightweaverMenu;
-import com.mrcrayfish.backpacked.client.augment.widget.LootboundMenu;
-import com.mrcrayfish.backpacked.client.augment.widget.QuiverlinkMenu;
+import com.mrcrayfish.backpacked.client.augment.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
@@ -55,5 +52,6 @@ public class ClientBootstrap
         AugmentSettingsFactories.registerFactory(QuiverlinkAugment.TYPE, QuiverlinkMenu::new);
         AugmentSettingsFactories.registerFactory(LootboundAugment.TYPE, LootboundMenu::new);
         AugmentSettingsFactories.registerFactory(LightweaverAugment.TYPE, LightweaverMenu::new);
+        AugmentSettingsFactories.registerFactory(FarmhandAugment.TYPE, FarmhandMenu::new);
     }
 }
