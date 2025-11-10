@@ -32,6 +32,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable ResourceLocation background;
+    private int screenClampPadding = 0;
 
     protected PopupMenu(PopupMenuHandler handler)
     {
@@ -192,8 +193,8 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     private void clampToWindow()
     {
         Window window = Minecraft.getInstance().getWindow();
-        this.setX(Mth.clamp(this.getX(), 0, window.getGuiScaledWidth() - this.getWidth()));
-        this.setY(Mth.clamp(this.getY(), 0, window.getGuiScaledHeight() - this.getHeight())); 
+        this.setX(Mth.clamp(this.getX(), this.screenClampPadding, window.getGuiScaledWidth() - this.getWidth() - this.screenClampPadding));
+        this.setY(Mth.clamp(this.getY(), this.screenClampPadding, window.getGuiScaledHeight() - this.getHeight() - this.screenClampPadding));
         Layout layout = this.layout();
         layout.setX(this.getX());
         layout.setY(this.getY());
@@ -202,5 +203,10 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     public boolean hasChild()
     {
         return this.child != null;
+    }
+
+    public void setScreenClampPadding(int screenClampPadding)
+    {
+        this.screenClampPadding = screenClampPadding;
     }
 }
