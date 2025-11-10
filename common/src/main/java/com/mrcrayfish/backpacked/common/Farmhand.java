@@ -18,6 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
@@ -118,7 +119,7 @@ public final class Farmhand extends SavedData
         {
             if(this.stack.getItem() instanceof BlockItem item)
             {
-                InteractionResult result = item.useOn(UseItemOnBlockFaceContext.create(level, this.stack, this.pos, Direction.UP));
+                InteractionResult result = item.place(new BlockPlaceContext(UseItemOnBlockFaceContext.create(level, this.stack, this.pos, Direction.UP)));
                 if(result.consumesAction())
                 {
                     BlockState state = level.getBlockState(this.pos.below());
