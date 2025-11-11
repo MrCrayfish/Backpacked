@@ -19,6 +19,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected int scrollBarWidth = 6;
     protected int itemSpacing = 2;
     protected boolean scrolling;
+    protected boolean scrollBarAlwaysVisible;
     protected @Nullable ResourceLocation listBackground;
     protected @Nullable StateSprites itemSprites;
     protected @Nullable StateSprites scrollBarSprites;
@@ -77,6 +78,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         this.scrollBarStyle = scrollBarStyle;
     }
 
+    public void setScrollBarAlwaysVisible(boolean scrollBarAlwaysVisible)
+    {
+        this.scrollBarAlwaysVisible = scrollBarAlwaysVisible;
+    }
+
     @Override
     public boolean isMouseOver(double mouseX, double mouseY)
     {
@@ -98,7 +104,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     @Override
     public int getRowRight()
     {
-        if(this.getMaxScroll() > 0)
+        if(this.getMaxScroll() > 0 || this.scrollBarAlwaysVisible)
         {
             int scrollBarArea = switch(this.scrollBarStyle) {
                 case DETACHED -> this.contentPadding + OUTLINE_SIZE + SCROLL_BAR_GAP + OUTLINE_SIZE + this.contentPadding + this.scrollBarWidth + this.contentPadding + OUTLINE_SIZE;
@@ -175,7 +181,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
 
         // Only draw scroll bar if enough items
         int maxScroll = this.getMaxScroll();
-        if(maxScroll > 0)
+        if(maxScroll > 0 || this.scrollBarAlwaysVisible)
         {
             // Draw a background behind the scroll bar
             if(this.scrollBarStyle == ScrollBarStyle.DETACHED && this.listBackground != null)
@@ -187,11 +193,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
             int scrollBarStart = this.getScrollbarPosition();
             int scrollBarEnd = scrollBarStart + this.scrollBarWidth;
             int scrollBarHeight = this.getScrollbarHeight();
-            int scrollBarTop = (int) (this.getScrollAreaTop() + (this.getScrollAreaHeight() - this.getScrollbarHeight()) * (this.getScrollAmount() / maxScroll));
+            int scrollBarTop = (int) (this.getScrollAreaTop() + (this.getScrollAreaHeight() - this.getScrollbarHeight()) * (this.getScrollAmount() / Math.max(maxScroll, 1)));
             boolean scrollBarHovered = ScreenUtil.isPointInArea(mouseX, mouseY, scrollBarStart, scrollBarTop, this.scrollBarWidth, scrollBarHeight);
             if(this.scrollBarSprites != null)
             {
-                graphics.blitSprite(this.scrollBarSprites.get(false, scrollBarHovered || this.scrolling), scrollBarStart, scrollBarTop, scrollBarEnd - scrollBarStart, scrollBarHeight);
+                graphics.blitSprite(this.scrollBarSprites.get(false, (scrollBarHovered || this.scrolling) && maxScroll > 0), scrollBarStart, scrollBarTop, scrollBarEnd - scrollBarStart, scrollBarHeight);
             }
             else
             {
@@ -257,7 +263,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
             }
             if(this.scrolling)
             {
-                double unitsPerScroll = (double) this.getMaxScroll() / (this.getScrollAreaHeight() - this.getScrollbarHeight());
+                double unitsPerScroll = (double) this.getMaxScroll() / Math.max(1, this.getScrollAreaHeight() - this.getScrollbarHeight());
                 this.setScrollAmount(this.getScrollAmount() + deltaY * unitsPerScroll);
                 return true;
             }
