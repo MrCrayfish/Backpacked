@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
@@ -210,7 +211,12 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
             boolean scrollBarHovered = ScreenUtil.isPointInArea(mouseX, mouseY, scrollBarStart, scrollBarTop, this.scrollBarWidth, scrollBarHeight);
             if(this.scrollBarSprites != null)
             {
+                RenderSystem.enableBlend();
+                RenderSystem.enableDepthTest();
+                graphics.setColor(1, 1, 1, this.active ? 1.0F : 0.5F);
                 graphics.blitSprite(this.scrollBarSprites.get(false, (scrollBarHovered || this.scrolling) && maxScroll > 0), scrollBarStart, scrollBarTop, scrollBarEnd - scrollBarStart, scrollBarHeight);
+                graphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
             }
             else
             {
