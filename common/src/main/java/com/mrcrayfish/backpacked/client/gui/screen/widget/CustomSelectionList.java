@@ -10,6 +10,8 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.function.Supplier;
+
 public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E>
 {
     private static final int OUTLINE_SIZE = 1;
@@ -25,6 +27,7 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected @Nullable StateSprites scrollBarSprites;
     protected @Nullable ResourceLocation scrollBarBackground;
     protected ScrollBarStyle scrollBarStyle = ScrollBarStyle.DETACHED;
+    protected @Nullable Supplier<Boolean> activeSupplier;
 
     public CustomSelectionList(int width, int height, int x, int y, int itemHeight)
     {
@@ -81,6 +84,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     public void setScrollBarAlwaysVisible(boolean scrollBarAlwaysVisible)
     {
         this.scrollBarAlwaysVisible = scrollBarAlwaysVisible;
+    }
+
+    public void setActive(@Nullable Supplier<Boolean> activeSupplier)
+    {
+        this.activeSupplier = activeSupplier;
     }
 
     @Override
@@ -164,6 +172,11 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
+        if(this.activeSupplier != null)
+        {
+            this.active = this.activeSupplier.get();
+        }
+
         // Draw outlines and background
         if(this.listBackground != null)
         {
