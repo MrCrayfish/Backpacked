@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -156,9 +157,14 @@ public class CustomEditBox extends AbstractContainerWidget
             {
                 if(this.background != null)
                 {
+                    RenderSystem.enableBlend();
+                    RenderSystem.enableDepthTest();
+                    graphics.setColor(1, 1, 1, this.isActive() ? 1.0F : 0.5F);
                     ResourceLocation background = this.background.get(this.isActive(), this.isFocused());
                     int iconOffset = this.icon != null ? this.parent.getIconOffset() : 0;
                     graphics.blitSprite(background, this.getX() - iconOffset, this.getY(), this.getWidth() + iconOffset, this.getHeight());
+                    graphics.setColor(1, 1, 1, 1);
+                    RenderSystem.disableBlend();
                 }
                 if(this.icon != null)
                 {
