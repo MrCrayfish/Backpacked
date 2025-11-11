@@ -86,6 +86,7 @@ public class FarmhandMenu extends AugmentSettingsMenu
             LinearLayout header = LinearLayout.horizontal().spacing(3);
             CustomEditBox searchField = CustomEditBox.create(divider1.getWidth() - 3 - filterButtonWidth, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
+                Utils.rl("backpack/editbox/background_disabled"),
                 Utils.rl("backpack/editbox/background_focused")
             ));
             searchField.getEditBox().setValue(lastQuery);
