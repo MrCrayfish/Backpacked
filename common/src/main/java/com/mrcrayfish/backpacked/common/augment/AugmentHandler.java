@@ -12,7 +12,6 @@ import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.mixin.common.BlockItemMixin;
-import com.mrcrayfish.backpacked.mixin.common.BushBlockMixin;
 import com.mrcrayfish.backpacked.mixin.common.CropBlockMixin;
 import com.mrcrayfish.backpacked.mixin.common.IntegerPropertyMixin;
 import com.mrcrayfish.backpacked.network.Network;
@@ -35,8 +34,6 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.EmptyBlockGetter;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,6 +42,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -366,6 +364,10 @@ public class AugmentHandler
         Farmhand farmhand = ((Farmhand.Access) level).backpacked$getFarmhand();
         positions.removeIf(pos -> !level.getBlockState(pos).canBeReplaced() || farmhand.isPlanting(pos));
 
+        // Leave early if no available block positions
+        if(positions.isEmpty())
+            return;
+
         for(var snapshot : snapshots)
         {
             FarmhandAugment augment = snapshot.augment();
@@ -376,41 +378,33 @@ public class AugmentHandler
                 continue;
 
             boolean changed = false;
+            boolean random = seed == null && augment.randomizeSeeds();
             BackpackInventory inventory = snapshot.inventory();
-            for(int i = 0; i < inventory.getContainerSize() && !positions.isEmpty(); i++)
+            Function<BlockPos, ItemStack> seedSupplier = random
+                    ? nextRandomizedPlantableSeed(level, augment, inventory)
+                    : nextPlantableSeed(level, augment, inventory, seed);
+            ItemStack stack = null;
+            Iterator<BlockPos> it = positions.iterator();
+            while(it.hasNext())
             {
-                ItemStack stack = inventory.getItem(i);
+                BlockPos pos = it.next();
+                if(stack == null || random)
+                    stack = seedSupplier.apply(pos);
+
                 if(stack.isEmpty())
+                    break;
+
+                ItemStack copy = stack.copyWithCount(1);
+                if(!farmhand.plant(copy, pos))
                     continue;
 
-                if(seed != null && stack.getItem() != seed)
-                    continue;
+                var message = new MessageFarmhandPlant(copy, player.getId(), pos);
+                Network.getPlay().sendToTrackingEntity(() -> player, message);
+                Network.getPlay().sendToPlayer(() -> player, message);
 
-                if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
-                    continue;
-
-                if(seed == null && augment.useFilters() && !augment.isFilter(stack.getItem()))
-                    continue;
-
-                Iterator<BlockPos> it = positions.iterator();
-                while(it.hasNext() && !stack.isEmpty())
-                {
-                    BlockPos pos = it.next();
-                    if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
-                        continue;
-
-                    ItemStack copy = stack.copyWithCount(1);
-                    if(!farmhand.plant(copy, pos))
-                        continue;
-
-                    var message = new MessageFarmhandPlant(copy, player.getId(), pos);
-                    Network.getPlay().sendToTrackingEntity(() -> player, message);
-                    Network.getPlay().sendToPlayer(() -> player, message);
-
-                    stack.shrink(1);
-                    it.remove();
-                    changed = true;
-                }
+                stack.shrink(1);
+                it.remove();
+                changed = true;
             }
 
             // Send event to inventory if something changed
@@ -475,6 +469,54 @@ public class AugmentHandler
             return bush.getCloneItemStack(reader, pos, state).getItem();
         }
         return null;
+    }
+
+    private static Function<BlockPos, ItemStack> nextPlantableSeed(ServerLevel level, FarmhandAugment augment, BackpackInventory inventory, @Nullable Item match)
+    {
+        int[] currentIndex = {0};
+        return pos -> {
+            if(currentIndex[0] >= inventory.getContainerSize())
+                return ItemStack.EMPTY;
+            while(currentIndex[0] < inventory.getContainerSize()) {
+                ItemStack stack = inventory.getItem(currentIndex[0]++);
+                if(stack.isEmpty())
+                    continue;
+                if(match != null && stack.getItem() != match)
+                    continue;
+                if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
+                    continue;
+                if(match == null && augment.useFilters() && !augment.isFilter(stack.getItem()))
+                    continue;
+                if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
+                    continue;
+                return stack;
+            }
+            return ItemStack.EMPTY;
+        };
+    }
+
+    private static Function<BlockPos, ItemStack> nextRandomizedPlantableSeed(ServerLevel level, FarmhandAugment augment, BackpackInventory inventory)
+    {
+        return pos -> {
+            List<ItemStack> plantableSeeds = new ArrayList<>();
+            for(int i = 0; i < inventory.getContainerSize(); i++) {
+                ItemStack stack = inventory.getItem(i);
+                if(stack.isEmpty())
+                    continue;
+                if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
+                    continue;
+                if(augment.useFilters() && !augment.isFilter(stack.getItem()))
+                    continue;
+                if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
+                    continue;
+                plantableSeeds.add(stack);
+            }
+            if(!plantableSeeds.isEmpty()) {
+                int index = level.random.nextInt(plantableSeeds.size());
+                return plantableSeeds.get(index);
+            }
+            return ItemStack.EMPTY;
+        };
     }
 
     /*private static boolean isFarmland()

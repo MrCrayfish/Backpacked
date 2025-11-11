@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+// TODO split into two different augments (one for replanting, and one for seeding)
 public final class FarmhandAugment implements Augment<FarmhandAugment>
 {
     public static final AugmentType<FarmhandAugment> TYPE = new AugmentType<>(
@@ -38,17 +39,19 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("plant_nearby").orElse(true).forGetter(FarmhandAugment::plantNearby),
             Codec.BOOL.fieldOf("replant_harvested").orElse(true).forGetter(FarmhandAugment::replantHarvested),
+            Codec.BOOL.fieldOf("randomize_seeds").orElse(true).forGetter(FarmhandAugment::randomizeSeeds),
             Codec.BOOL.fieldOf("use_filters").orElse(true).forGetter(FarmhandAugment::useFilters),
             ItemFilter.CODEC.sizeLimitedListOf(64).fieldOf("filters").orElse(List.of()).forGetter(FarmhandAugment::filters)
         ).apply(instance, FarmhandAugment::new)),
         StreamCodec.composite(
             ByteBufCodecs.BOOL, FarmhandAugment::plantNearby,
             ByteBufCodecs.BOOL, FarmhandAugment::replantHarvested,
+            ByteBufCodecs.BOOL, FarmhandAugment::randomizeSeeds,
             ByteBufCodecs.BOOL, FarmhandAugment::useFilters,
             ItemFilter.STREAM_CODEC.apply(ByteBufCodecs.list()), FarmhandAugment::filters,
             FarmhandAugment::new
         ),
-        () -> new FarmhandAugment(true, true, true, List.of())
+        () -> new FarmhandAugment(true, true, false, true, List.of())
     );
     public static final Predicate<Item> ITEM_PLACES_AGEABLE_CROP = item -> {
         return item instanceof BlockItem blockItem && isAgeableCrop(blockItem.getBlock());
@@ -66,14 +69,16 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
 
     private final boolean plantNearby;
     private final boolean replantHarvested;
+    private final boolean randomizeSeeds;
     private final boolean useFilters;
     private final List<ItemFilter> filters;
     private @Nullable Map<Item, List<ItemFilter>> lookup;
 
-    public FarmhandAugment(boolean plantNearby, boolean replantHarvested, boolean useFilters, List<ItemFilter> filters)
+    public FarmhandAugment(boolean plantNearby, boolean replantHarvested, boolean randomizeSeeds, boolean useFilters, List<ItemFilter> filters)
     {
         this.plantNearby = plantNearby;
         this.replantHarvested = replantHarvested;
+        this.randomizeSeeds = randomizeSeeds;
         this.useFilters = useFilters;
         this.filters = filters.stream().filter(filter -> {
             Item item = filter.item();
@@ -89,31 +94,36 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
 
     public FarmhandAugment setPlantNearby(boolean plantNearby)
     {
-        return new FarmhandAugment(plantNearby, this.replantHarvested, this.useFilters, this.filters);
+        return new FarmhandAugment(plantNearby, this.replantHarvested, this.randomizeSeeds, this.useFilters, this.filters);
     }
 
     public FarmhandAugment setReplantHarvested(boolean replantHarvested)
     {
-        return new FarmhandAugment(this.plantNearby, replantHarvested, this.useFilters, this.filters);
+        return new FarmhandAugment(this.plantNearby, replantHarvested, this.randomizeSeeds, this.useFilters, this.filters);
+    }
+
+    public FarmhandAugment setRandomizeSeeds(boolean randomizeSeeds)
+    {
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, randomizeSeeds, this.useFilters, this.filters);
     }
 
     public FarmhandAugment setUseFilters(boolean useFilters)
     {
-        return new FarmhandAugment(this.plantNearby, this.replantHarvested, useFilters, this.filters);
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.randomizeSeeds, useFilters, this.filters);
     }
 
     public FarmhandAugment addFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
         filters.add(new ItemFilter(id));
-        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.useFilters, filters);
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.randomizeSeeds, this.useFilters, filters);
     }
 
     public FarmhandAugment removeFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
         filters.removeIf(filter -> filter.id.equals(id));
-        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.useFilters, filters);
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.randomizeSeeds, this.useFilters, filters);
     }
 
     public boolean isFilter(Item item)
@@ -148,6 +158,11 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
     public boolean replantHarvested()
     {
         return this.replantHarvested;
+    }
+
+    public boolean randomizeSeeds()
+    {
+        return this.randomizeSeeds;
     }
 
     public boolean useFilters()

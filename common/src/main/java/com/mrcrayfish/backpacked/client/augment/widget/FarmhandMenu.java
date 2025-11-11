@@ -80,6 +80,15 @@ public class FarmhandMenu extends AugmentSettingsMenu
                 .setSize(60, 18).build();
             layout.addChild(createOption(PLANT_NEARBY_LABEL, PLANT_NEARBY_TOOLTIP, autoPlantBtn, divider1.getWidth()));
 
+            CustomButton randomizeBtn = CustomButton.state(() -> {
+                    return supplier.get().randomizeSeeds();
+                }, newValue -> {
+                    updater.accept(supplier.get().setRandomizeSeeds(newValue));
+                })
+                .setMessage(() -> CommonComponents.optionStatus(supplier.get().randomizeSeeds()))
+                .setSize(60, 18).setActive(() -> supplier.get().plantNearby()).build();
+            layout.addChild(createOption(Component.literal("Randomize Seeds"), PLANT_NEARBY_TOOLTIP, randomizeBtn, divider1.getWidth()));
+
             CustomButton useFiltersBtn = CustomButton.state(() -> {
                     return supplier.get().useFilters();
                 }, newValue -> {
