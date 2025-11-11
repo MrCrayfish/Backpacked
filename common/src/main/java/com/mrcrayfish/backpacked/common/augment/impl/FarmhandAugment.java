@@ -38,15 +38,17 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("plant_nearby").orElse(true).forGetter(FarmhandAugment::plantNearby),
             Codec.BOOL.fieldOf("replant_harvested").orElse(true).forGetter(FarmhandAugment::replantHarvested),
+            Codec.BOOL.fieldOf("use_filters").orElse(true).forGetter(FarmhandAugment::useFilters),
             ItemFilter.CODEC.sizeLimitedListOf(64).fieldOf("filters").orElse(List.of()).forGetter(FarmhandAugment::filters)
         ).apply(instance, FarmhandAugment::new)),
         StreamCodec.composite(
             ByteBufCodecs.BOOL, FarmhandAugment::plantNearby,
             ByteBufCodecs.BOOL, FarmhandAugment::replantHarvested,
+            ByteBufCodecs.BOOL, FarmhandAugment::useFilters,
             ItemFilter.STREAM_CODEC.apply(ByteBufCodecs.list()), FarmhandAugment::filters,
             FarmhandAugment::new
         ),
-        () -> new FarmhandAugment(true, true, List.of())
+        () -> new FarmhandAugment(true, true, true, List.of())
     );
     public static final Predicate<Item> ITEM_PLACES_AGEABLE_CROP = item -> {
         return item instanceof BlockItem blockItem && isAgeableCrop(blockItem.getBlock());
@@ -64,13 +66,15 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
 
     private final boolean plantNearby;
     private final boolean replantHarvested;
+    private final boolean useFilters;
     private final List<ItemFilter> filters;
     private @Nullable Map<Item, List<ItemFilter>> lookup;
 
-    public FarmhandAugment(boolean plantNearby, boolean replantHarvested, List<ItemFilter> filters)
+    public FarmhandAugment(boolean plantNearby, boolean replantHarvested, boolean useFilters, List<ItemFilter> filters)
     {
         this.plantNearby = plantNearby;
         this.replantHarvested = replantHarvested;
+        this.useFilters = useFilters;
         this.filters = filters.stream().filter(filter -> {
             Item item = filter.item();
             return item != null && ITEM_PLACES_AGEABLE_CROP.test(item);
@@ -85,26 +89,31 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
 
     public FarmhandAugment setPlantNearby(boolean plantNearby)
     {
-        return new FarmhandAugment(plantNearby, this.replantHarvested, this.filters);
+        return new FarmhandAugment(plantNearby, this.replantHarvested, this.useFilters, this.filters);
     }
 
     public FarmhandAugment setReplantHarvested(boolean replantHarvested)
     {
-        return new FarmhandAugment(this.plantNearby, replantHarvested, this.filters);
+        return new FarmhandAugment(this.plantNearby, replantHarvested, this.useFilters, this.filters);
+    }
+
+    public FarmhandAugment setUseFilters(boolean useFilters)
+    {
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, useFilters, this.filters);
     }
 
     public FarmhandAugment addFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
         filters.add(new ItemFilter(id));
-        return new FarmhandAugment(this.plantNearby, this.replantHarvested, filters);
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.useFilters, filters);
     }
 
     public FarmhandAugment removeFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
         filters.removeIf(filter -> filter.id.equals(id));
-        return new FarmhandAugment(this.plantNearby, this.replantHarvested, filters);
+        return new FarmhandAugment(this.plantNearby, this.replantHarvested, this.useFilters, filters);
     }
 
     public boolean isFilter(Item item)
@@ -139,6 +148,11 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
     public boolean replantHarvested()
     {
         return this.replantHarvested;
+    }
+
+    public boolean useFilters()
+    {
+        return this.useFilters;
     }
 
     public List<ItemFilter> filters()

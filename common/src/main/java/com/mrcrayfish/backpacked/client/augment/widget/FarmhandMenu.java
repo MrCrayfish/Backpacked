@@ -1,19 +1,19 @@
 package com.mrcrayfish.backpacked.client.augment.widget;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.FarmhandAugment;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,15 +21,15 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.BlockItem;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.BushBlock;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -37,20 +37,18 @@ import java.util.function.Supplier;
 public class FarmhandMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
-    private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.seeds");
+    private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.auto_planting");
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
-    private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
-    private static final Component SHOW_ALL_LABEL = Component.translatable("backpacked.gui.show_all");
-    private static final Component ACTIVATED_ONLY_LABEL = Component.translatable("backpacked.gui.activated_only");
     private static final Component PLANT_NEARBY_LABEL = Component.translatable("augment.backpacked.farmhand.plant_nearby");
     private static final Component PLANT_NEARBY_TOOLTIP = Component.translatable("augment.backpacked.farmhand.plant_nearby.tooltip");
     private static final Component REPLANT_HARVESTED_LABEL = Component.translatable("augment.backpacked.farmhand.replant_harvested");
     private static final Component REPLANT_HARVESTED_TOOLTIP = Component.translatable("augment.backpacked.farmhand.replant_harvested.tooltip");
+    private static final Component USE_FILTERS_LABEL = Component.translatable("augment.backpacked.farmhand.use_filters");
+    private static final Component USE_FILTERS_TOOLTIP = Component.translatable("augment.backpacked.farmhand.use_filters.tooltip");
 
-    private static final int MIN_CONTENT_WIDTH = 160;
+    private static final int MIN_CONTENT_WIDTH = 162;
 
     private static String lastQuery = "";
-    private static boolean lastFilter = false;
 
     public FarmhandMenu(PopupMenuHandler handler, Supplier<FarmhandAugment> supplier, Consumer<FarmhandAugment> updater)
     {
@@ -60,14 +58,6 @@ public class FarmhandMenu extends AugmentSettingsMenu
 
             Divider divider1 = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, optionsTitle.getWidth())).colour(0xFFE0CDB7));
             optionsTitle.setWidth(divider1.getWidth());
-
-            layout.addChild(createOption(PLANT_NEARBY_LABEL, PLANT_NEARBY_TOOLTIP, CustomButton.state(() -> {
-                    return supplier.get().plantNearby();
-                }, newValue -> {
-                    updater.accept(supplier.get().setPlantNearby(newValue));
-                })
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().plantNearby()))
-                .setSize(60, 18).build(), divider1.getWidth()));
 
             layout.addChild(createOption(REPLANT_HARVESTED_LABEL, REPLANT_HARVESTED_TOOLTIP, CustomButton.state(() -> {
                     return supplier.get().replantHarvested();
@@ -81,40 +71,56 @@ public class FarmhandMenu extends AugmentSettingsMenu
             layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
 
-            int filterButtonWidth = 55;
-            FilterList list = new FilterList(supplier, updater, divider1.getWidth(), lastQuery, lastFilter);
-            LinearLayout header = LinearLayout.horizontal().spacing(3);
-            CustomEditBox searchField = CustomEditBox.create(divider1.getWidth() - 3 - filterButtonWidth, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
+            CustomButton autoPlantBtn = CustomButton.state(() -> {
+                    return supplier.get().plantNearby();
+                }, newValue -> {
+                    updater.accept(supplier.get().setPlantNearby(newValue));
+                })
+                .setMessage(() -> CommonComponents.optionStatus(supplier.get().plantNearby()))
+                .setSize(60, 18).build();
+            layout.addChild(createOption(PLANT_NEARBY_LABEL, PLANT_NEARBY_TOOLTIP, autoPlantBtn, divider1.getWidth()));
+
+            CustomButton useFiltersBtn = CustomButton.state(() -> {
+                    return supplier.get().useFilters();
+                }, newValue -> {
+                    updater.accept(supplier.get().setUseFilters(newValue));
+                })
+                .setMessage(() -> CommonComponents.optionStatus(supplier.get().useFilters()))
+                .setSize(60, 18).setActive(() -> supplier.get().plantNearby()).build();
+            layout.addChild(createOption(USE_FILTERS_LABEL, USE_FILTERS_TOOLTIP, useFiltersBtn, divider1.getWidth()));
+
+            layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
+
+            FilterList list = new FilterList(supplier, updater, divider1.getWidth(), lastQuery);
+            list.setActive(() -> {
+                FarmhandAugment augment = supplier.get();
+                return augment.plantNearby() && augment.useFilters();
+            });
+            CustomEditBox searchField = layout.addChild(CustomEditBox.create(divider1.getWidth(), 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
                 Utils.rl("backpack/editbox/background_disabled"),
                 Utils.rl("backpack/editbox/background_focused")
-            ));
+            ))).setActive(() -> {
+                FarmhandAugment augment = supplier.get();
+                return augment.plantNearby() && augment.useFilters();
+            });
             searchField.getEditBox().setValue(lastQuery);
             searchField.getEditBox().setHint(SEARCH_HINT);
             searchField.getEditBox().setResponder(list::setSearchQuery);
-            header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
-            header.addChild(CustomButton.state(list::isActivatedOnly, list::setActivatedOnly)
-                .setSize(filterButtonWidth, 18)
-                .setGap(4)
-                .setMessage(ACTIVE_LABEL)
-                .setContentRenderer(CustomButton.ToggleContentRenderer.INSTANCE)
-                .setTooltip(btn -> Tooltip.create(list.isActivatedOnly() ? ACTIVATED_ONLY_LABEL : SHOW_ALL_LABEL))
-                .setTexture(new WidgetSprites(
-                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
-                )).build());
-            layout.addChild(header);
+
             layout.addChild(list);
+
             return layout;
         });
     }
 
-    private static final class FilterList extends CustomSelectionList<FilterList.FilterItem>
+    private static final class FilterList extends CustomSelectionList<FilterList.ItemsRow>
     {
         private static final ResourceLocation LIST_BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/background");
         private static final StateSprites ITEM_SPRITES = new StateSprites(
                 ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item"),
                 ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_hovered"),
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected"),
                 ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected")
         );
         private static final StateSprites SCROLL_BAR_SPRITES = new StateSprites(
@@ -122,27 +128,28 @@ public class FarmhandMenu extends AugmentSettingsMenu
                 ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_hovered"),
                 ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_selected")
         );
+        private static final int ITEM_SPACING = 2;
 
         private final Supplier<FarmhandAugment> supplier;
         private final Consumer<FarmhandAugment> updater;
-        private String searchQuery = "";
-        private boolean activatedOnly = false;
+        private final List<Item> items;
+        private String searchQuery;
 
-        public FilterList(Supplier<FarmhandAugment> supplier, Consumer<FarmhandAugment> updater, int width, String lastQuery, boolean lastFilter)
+        public FilterList(Supplier<FarmhandAugment> supplier, Consumer<FarmhandAugment> updater, int width, String lastQuery)
         {
-            super(width, 64, 0, 0, 18);
+            super(width, 44, 0, 0, 18);
             this.supplier = supplier;
             this.updater = updater;
+            this.items = BuiltInRegistries.ITEM.stream().filter(FarmhandAugment.ITEM_PLACES_AGEABLE_CROP).collect(ImmutableList.toImmutableList());
             this.setRenderHeader(false, 0);
             this.setListBackground(LIST_BACKGROUND_SPRITE);
-            this.setItemSprites(ITEM_SPRITES);
             this.setScrollBarSprites(SCROLL_BAR_SPRITES);
             this.setContentPadding(2);
-            this.setItemSpacing(2);
+            this.setItemSpacing(ITEM_SPACING);
             this.setScrollBarWidth(10);
             this.setScrollBarStyle(ScrollBarStyle.DETACHED);
+            this.setScrollBarAlwaysVisible(true);
             this.searchQuery = lastQuery;
-            this.activatedOnly = lastFilter;
             this.updateList();
         }
 
@@ -151,39 +158,30 @@ public class FarmhandMenu extends AugmentSettingsMenu
             String search = this.searchQuery.toLowerCase();
             boolean empty = search.trim().isBlank();
             this.clearEntries();
-            BuiltInRegistries.ITEM.forEach(item -> {
-                if(FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(item)) {
-                    if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
-                        if(!this.activatedOnly || this.supplier.get().isFilter(item)) {
-                            this.addEntry(new FilterItem(item, this.supplier));
-                        }
-                    }
+
+            // Gather the items that should be visible
+            List<Item> visibleItems = new ArrayList<>();
+            this.items.forEach(item -> {
+                if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
+                    visibleItems.add(item);
                 }
             });
-            this.children().sort(Comparator.comparing(item -> item.label.getString()));
+
+            // Sorts all items based on name
+            visibleItems.sort(Comparator.comparing(item -> item.getDescription().getString()));
+
+            // Pull chunks of items from the list and distribute them into a row item
+            int chunkSize = (this.getRowWidth() + ITEM_SPACING) / 20;
+            for(int i = 0; i < Mth.positiveCeilDiv(visibleItems.size(), chunkSize); i++)
+            {
+                int start = i * chunkSize;
+                int end = Math.min(start + chunkSize, visibleItems.size());
+                this.addEntry(new ItemsRow(visibleItems.subList(start, end), this.supplier, this.updater));
+            }
         }
 
         @Override
-        public void setSelected(@Nullable FilterItem item)
-        {
-            if(item != null)
-            {
-                FarmhandAugment augment = this.supplier.get();
-                if(!item.isToggled())
-                {
-                    if(!augment.isFilterLimit())
-                    {
-                        this.updater.accept(augment.addFilter(item.id));
-                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                    }
-                }
-                else
-                {
-                    this.updater.accept(augment.removeFilter(item.id));
-                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                }
-            }
-        }
+        public void setSelected(@Nullable FarmhandMenu.FilterList.ItemsRow item) {}
 
         private void setSearchQuery(String searchQuery)
         {
@@ -192,66 +190,47 @@ public class FarmhandMenu extends AugmentSettingsMenu
             this.updateList();
         }
 
-        private void setActivatedOnly(boolean activatedOnly)
+        public final class ItemsRow extends ObjectSelectionList.Entry<ItemsRow>
         {
-            lastFilter = activatedOnly;
-            this.activatedOnly = activatedOnly;
-            this.updateList();
-            this.setScrollAmount(0);
-        }
+            private final List<ItemStack> display;
+            private final Supplier<FarmhandAugment> supplier;
+            private final Consumer<FarmhandAugment> updater;
+            private int top, left;
 
-        public boolean isActivatedOnly()
-        {
-            return this.activatedOnly;
-        }
-
-        public final class FilterItem extends ObjectSelectionList.Entry<FilterItem>
-        {
-            private static final ResourceLocation TOGGLE_OFF = Utils.rl("backpack/toggle_off");
-            private static final ResourceLocation TOGGLE_ON = Utils.rl("backpack/toggle_on");
-
-            private final ResourceLocation id;
-            private final ItemStack display;
-            private final Component label;
-            private final Supplier<FarmhandAugment> augment;
-
-            public FilterItem(Item item, Supplier<FarmhandAugment> augment)
+            public ItemsRow(List<Item> items, Supplier<FarmhandAugment> augment, Consumer<FarmhandAugment> updater)
             {
-                this.id = BuiltInRegistries.ITEM.getKey(item);
-                this.display = new ItemStack(item);
-                this.label = this.trimName(this.display.getItem().getDescription());
-                this.augment = augment;
-            }
-
-            private Component trimName(Component name)
-            {
-                Font font = Minecraft.getInstance().font;
-                String rawName = name.getString();
-                int maxWidth = FilterList.this.getRowWidth() - 20 - 15;
-                if(font.width(rawName) > maxWidth)
-                {
-                    rawName = font.plainSubstrByWidth(rawName, maxWidth - font.width("...")).trim() + "...";
-                }
-                return Component.literal(rawName);
+                this.display = items.stream().map(ItemStack::new).collect(ImmutableList.toImmutableList());
+                this.supplier = augment;
+                this.updater = updater;
             }
 
             @Override
             public void render(GuiGraphics graphics, int index, int top, int left, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float partialTicks)
             {
-                boolean showToggle = this.isToggled() || !this.augment.get().isFilterLimit();
-                int labelColour = showToggle ? 0xFFFFFFFF : 0x88FFFFFF;
-                graphics.drawString(Minecraft.getInstance().font, this.label, left + 20, top + 5, labelColour);
-                graphics.renderFakeItem(this.display, left + 2, top + 1);
-                if(showToggle)
+                // This will change in 1.21.8
+                this.top = top;
+                this.left = left;
+                boolean active = FilterList.super.isActive();
+                for(int i = 0; i < this.display.size(); i++)
                 {
-                    graphics.blitSprite(this.isToggled() ? TOGGLE_ON : TOGGLE_OFF, left + rowWidth - 6 - 6, top + 6, 6, 6);
+                    ItemStack stack = this.display.get(i);
+                    int offset = i * (18 + ITEM_SPACING);
+                    boolean itemSelected = this.supplier.get().isFilter(stack.getItem());
+                    boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, left + offset, top, 18, 18);
+                    RenderSystem.enableBlend();
+                    RenderSystem.enableDepthTest();
+                    graphics.setColor(1, 1, 1, active ? 1.0F : 0.5F);
+                    graphics.blitSprite(ITEM_SPRITES.get(itemSelected, itemHovered), left + offset, top, 18, 18);
+                    graphics.setColor(1, 1, 1, 1);
+                    RenderSystem.disableBlend();
+                    graphics.renderFakeItem(stack, left + offset + 1, top + 1);
                 }
             }
 
             @Override
             public Component getNarration()
             {
-                return this.display.getDisplayName();
+                return CommonComponents.EMPTY;
             }
 
             @Override
@@ -259,14 +238,32 @@ public class FarmhandMenu extends AugmentSettingsMenu
             {
                 if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    return this.isToggled() || !this.augment.get().isFilterLimit();
+                    FarmhandAugment augment = this.supplier.get();
+                    for(int i = 0; i < this.display.size(); i++)
+                    {
+                        int offset = i * (18 + ITEM_SPACING);
+                        if(!ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.left + offset, this.top, 18, 18))
+                            continue;
+
+                        ItemStack stack = this.display.get(i);
+                        if(!augment.isFilter(stack.getItem()))
+                        {
+                            if(!augment.isFilterLimit())
+                            {
+                                this.updater.accept(augment.addFilter(BuiltInRegistries.ITEM.getKey(stack.getItem())));
+                                Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            this.updater.accept(augment.removeFilter(BuiltInRegistries.ITEM.getKey(stack.getItem())));
+                            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                            return true;
+                        }
+                    }
                 }
                 return false;
-            }
-
-            public boolean isToggled()
-            {
-                return this.augment.get().isFilter(this.display.getItem());
             }
         }
     }

@@ -389,7 +389,7 @@ public class AugmentHandler
                 if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
                     continue;
 
-                if(!augment.isFilter(stack.getItem()))
+                if(seed == null && augment.useFilters() && !augment.isFilter(stack.getItem()))
                     continue;
 
                 Iterator<BlockPos> it = positions.iterator();
