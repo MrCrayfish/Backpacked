@@ -418,7 +418,7 @@ public class AugmentHandler
 
             // Can no longer play any more crops if there are no more available positions
             if(positions.isEmpty())
-                break;
+                return;
         }
     }
 
