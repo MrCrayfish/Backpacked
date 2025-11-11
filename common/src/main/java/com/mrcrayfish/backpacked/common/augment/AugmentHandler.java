@@ -498,7 +498,8 @@ public class AugmentHandler
     private static Function<BlockPos, ItemStack> nextRandomizedPlantableSeed(ServerLevel level, FarmhandAugment augment, BackpackInventory inventory)
     {
         return pos -> {
-            List<ItemStack> plantableSeeds = new ArrayList<>();
+            int count = 0;
+            ItemStack result = ItemStack.EMPTY;
             for(int i = 0; i < inventory.getContainerSize(); i++) {
                 ItemStack stack = inventory.getItem(i);
                 if(stack.isEmpty())
@@ -509,13 +510,12 @@ public class AugmentHandler
                     continue;
                 if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                     continue;
-                plantableSeeds.add(stack);
+                count++;
+                if(level.random.nextInt(count) == 0) {
+                    result = stack;
+                }
             }
-            if(!plantableSeeds.isEmpty()) {
-                int index = level.random.nextInt(plantableSeeds.size());
-                return plantableSeeds.get(index);
-            }
-            return ItemStack.EMPTY;
+            return result;
         };
     }
 
