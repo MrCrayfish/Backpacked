@@ -113,11 +113,8 @@ public final class PopupMenuController implements ContainerEventHandler
     {
         if(this.base != null)
         {
-            PoseStack poseStack = graphics.pose();
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 300);
+            graphics.pose().translate(0, 0, 350);
             this.base.render(graphics, mouseX, mouseY, partialTick);
-            poseStack.popPose();
         }
     }
 

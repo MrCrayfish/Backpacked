@@ -117,10 +117,6 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(0, 0, 10);
-
         Minecraft minecraft = Minecraft.getInstance();
         Window window = minecraft.getWindow();
         graphics.fill(0, 0, window.getWidth(), window.getHeight(), 0x50000000);
@@ -136,10 +132,9 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
 
         if(this.child != null)
         {
+            graphics.pose().translate(0, 0, 350);
             this.child.render(graphics, mouseX, mouseY, deltaTick);
         }
-
-        poseStack.popPose();
     }
 
     @Override
