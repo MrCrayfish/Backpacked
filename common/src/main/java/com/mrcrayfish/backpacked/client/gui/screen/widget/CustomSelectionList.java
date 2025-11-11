@@ -246,6 +246,12 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
     protected void renderSelection(GuiGraphics graphics, int top, int rowWidth, int rowHeight, int outlineColour, int innerColour) {}
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    {
+        return this.active && super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
         this.scrolling = false;
