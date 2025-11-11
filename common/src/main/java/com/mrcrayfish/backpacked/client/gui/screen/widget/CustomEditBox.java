@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 // Wrapped in a container to make it easier to add an icon
 public class CustomEditBox extends AbstractContainerWidget
@@ -21,12 +22,19 @@ public class CustomEditBox extends AbstractContainerWidget
     private static final int ICON_SIZE = 12;
 
     private final Impl editBox;
+    private @Nullable Supplier<Boolean> activeSupplier;
 
     private CustomEditBox(int width, int height, @Nullable ResourceLocation icon, @Nullable WidgetSprites background)
     {
         super(0, 0, width, height, CommonComponents.EMPTY);
         this.editBox = new Impl(this, icon, background);
         this.setSize(width, height);
+    }
+
+    public CustomEditBox setActive(@Nullable Supplier<Boolean> activeSupplier)
+    {
+        this.activeSupplier = activeSupplier;
+        return this;
     }
 
     @Override
@@ -73,6 +81,10 @@ public class CustomEditBox extends AbstractContainerWidget
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
+        if(this.activeSupplier != null)
+        {
+            this.editBox.active = this.activeSupplier.get();
+        }
         this.editBox.render(graphics, mouseX, mouseY, partialTick);
     }
 
