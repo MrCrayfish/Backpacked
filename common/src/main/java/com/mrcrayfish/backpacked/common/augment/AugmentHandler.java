@@ -383,14 +383,15 @@ public class AugmentHandler
             Function<BlockPos, ItemStack> seedSupplier = random
                     ? nextRandomizedPlantableSeed(level, augment, inventory)
                     : nextPlantableSeed(level, augment, inventory, seed);
-            ItemStack stack = null;
+            ItemStack stack = ItemStack.EMPTY;
             Iterator<BlockPos> it = positions.iterator();
             while(it.hasNext())
             {
                 BlockPos pos = it.next();
-                if(stack == null || random)
+                if(stack.isEmpty() || random)
                     stack = seedSupplier.apply(pos);
 
+                // If stack is still empty even after calling the supplier, there are no more seeds
                 if(stack.isEmpty())
                     break;
 
@@ -398,10 +399,12 @@ public class AugmentHandler
                 if(!farmhand.plant(copy, pos))
                     continue;
 
+                // Send particles to players
                 var message = new MessageFarmhandPlant(copy, player.getId(), pos);
                 Network.getPlay().sendToTrackingEntity(() -> player, message);
                 Network.getPlay().sendToPlayer(() -> player, message);
 
+                // Finally shrink the stack and remove the block position
                 stack.shrink(1);
                 it.remove();
                 changed = true;
