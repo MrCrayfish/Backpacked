@@ -29,7 +29,7 @@ import java.util.Map;
 public final class Farmhand extends SavedData
 {
     public static final String ID = "backpacked_farmhand";
-    public static final int PLANT_TIME = 10;
+    public static final int PLANT_TIME = 14;
 
     private final ServerLevel level;
     private final Map<BlockPos, DelayedPlantTask> tasks = new HashMap<>();
