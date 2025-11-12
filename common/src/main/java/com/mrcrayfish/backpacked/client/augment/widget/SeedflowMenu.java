@@ -7,7 +7,8 @@ import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
-import com.mrcrayfish.backpacked.common.augment.impl.FarmhandAugment;
+import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
+import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
@@ -34,42 +35,26 @@ import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class FarmhandMenu extends AugmentSettingsMenu
+public class SeedflowMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
-    private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.auto_planting");
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
-    private static final Component PLANT_NEARBY_LABEL = Component.translatable("augment.backpacked.farmhand.plant_nearby");
-    private static final Component PLANT_NEARBY_TOOLTIP = Component.translatable("augment.backpacked.farmhand.plant_nearby.tooltip");
-    private static final Component REPLANT_HARVESTED_LABEL = Component.translatable("augment.backpacked.farmhand.replant_harvested");
-    private static final Component REPLANT_HARVESTED_TOOLTIP = Component.translatable("augment.backpacked.farmhand.replant_harvested.tooltip");
-    private static final Component USE_FILTERS_LABEL = Component.translatable("augment.backpacked.farmhand.use_filters");
-    private static final Component USE_FILTERS_TOOLTIP = Component.translatable("augment.backpacked.farmhand.use_filters.tooltip");
+    private static final Component PLANT_NEARBY_LABEL = Component.translatable("augment.backpacked.seedflow.plant_nearby");
+    private static final Component PLANT_NEARBY_TOOLTIP = Component.translatable("augment.backpacked.seedflow.plant_nearby.tooltip");
+    private static final Component USE_FILTERS_LABEL = Component.translatable("augment.backpacked.seedflow.use_filters");
+    private static final Component USE_FILTERS_TOOLTIP = Component.translatable("augment.backpacked.seedflow.use_filters.tooltip");
 
     private static final int MIN_CONTENT_WIDTH = 162;
 
     private static String lastQuery = "";
 
-    public FarmhandMenu(PopupMenuHandler handler, Supplier<FarmhandAugment> supplier, Consumer<FarmhandAugment> updater)
+    public SeedflowMenu(PopupMenuHandler handler, Supplier<SeedflowAugment> supplier, Consumer<SeedflowAugment> updater)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
             TitleWidget optionsTitle = layout.addChild(new TitleWidget(OPTIONS_LABEL, Minecraft.getInstance().font));
-
             Divider divider1 = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, optionsTitle.getWidth())).colour(0xFFE0CDB7));
             optionsTitle.setWidth(divider1.getWidth());
-
-            layout.addChild(createOption(REPLANT_HARVESTED_LABEL, REPLANT_HARVESTED_TOOLTIP, CustomButton.state(() -> {
-                    return supplier.get().replantHarvested();
-                }, newValue -> {
-                    updater.accept(supplier.get().setReplantHarvested(newValue));
-                })
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().replantHarvested()))
-                .setSize(60, 18).build(), divider1.getWidth()));
-
-            layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
-            layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
-            layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
 
             CustomButton autoPlantBtn = CustomButton.state(() -> {
                     return supplier.get().plantNearby();
@@ -102,7 +87,7 @@ public class FarmhandMenu extends AugmentSettingsMenu
 
             FilterList list = new FilterList(supplier, updater, divider1.getWidth(), lastQuery);
             list.setActive(() -> {
-                FarmhandAugment augment = supplier.get();
+                SeedflowAugment augment = supplier.get();
                 return augment.plantNearby() && augment.useFilters();
             });
             CustomEditBox searchField = layout.addChild(CustomEditBox.create(divider1.getWidth(), 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
@@ -110,7 +95,7 @@ public class FarmhandMenu extends AugmentSettingsMenu
                 Utils.rl("backpack/editbox/background_disabled"),
                 Utils.rl("backpack/editbox/background_focused")
             ))).setActive(() -> {
-                FarmhandAugment augment = supplier.get();
+                SeedflowAugment augment = supplier.get();
                 return augment.plantNearby() && augment.useFilters();
             });
             searchField.getEditBox().setValue(lastQuery);
@@ -139,17 +124,17 @@ public class FarmhandMenu extends AugmentSettingsMenu
         );
         private static final int ITEM_SPACING = 2;
 
-        private final Supplier<FarmhandAugment> supplier;
-        private final Consumer<FarmhandAugment> updater;
+        private final Supplier<SeedflowAugment> supplier;
+        private final Consumer<SeedflowAugment> updater;
         private final List<Item> items;
         private String searchQuery;
 
-        public FilterList(Supplier<FarmhandAugment> supplier, Consumer<FarmhandAugment> updater, int width, String lastQuery)
+        public FilterList(Supplier<SeedflowAugment> supplier, Consumer<SeedflowAugment> updater, int width, String lastQuery)
         {
-            super(width, 44, 0, 0, 18);
+            super(width, 64, 0, 0, 18);
             this.supplier = supplier;
             this.updater = updater;
-            this.items = BuiltInRegistries.ITEM.stream().filter(FarmhandAugment.ITEM_PLACES_AGEABLE_CROP).collect(ImmutableList.toImmutableList());
+            this.items = BuiltInRegistries.ITEM.stream().filter(SeedflowAugment.ITEM_PLACES_AGEABLE_CROP).collect(ImmutableList.toImmutableList());
             this.setRenderHeader(false, 0);
             this.setListBackground(LIST_BACKGROUND_SPRITE);
             this.setScrollBarSprites(SCROLL_BAR_SPRITES);
@@ -190,7 +175,7 @@ public class FarmhandMenu extends AugmentSettingsMenu
         }
 
         @Override
-        public void setSelected(@Nullable FarmhandMenu.FilterList.ItemsRow item) {}
+        public void setSelected(@Nullable SeedflowMenu.FilterList.ItemsRow item) {}
 
         private void setSearchQuery(String searchQuery)
         {
@@ -202,11 +187,11 @@ public class FarmhandMenu extends AugmentSettingsMenu
         public final class ItemsRow extends ObjectSelectionList.Entry<ItemsRow>
         {
             private final List<ItemStack> display;
-            private final Supplier<FarmhandAugment> supplier;
-            private final Consumer<FarmhandAugment> updater;
+            private final Supplier<SeedflowAugment> supplier;
+            private final Consumer<SeedflowAugment> updater;
             private int top, left;
 
-            public ItemsRow(List<Item> items, Supplier<FarmhandAugment> augment, Consumer<FarmhandAugment> updater)
+            public ItemsRow(List<Item> items, Supplier<SeedflowAugment> augment, Consumer<SeedflowAugment> updater)
             {
                 this.display = items.stream().map(ItemStack::new).collect(ImmutableList.toImmutableList());
                 this.supplier = augment;
@@ -247,7 +232,7 @@ public class FarmhandMenu extends AugmentSettingsMenu
             {
                 if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    FarmhandAugment augment = this.supplier.get();
+                    SeedflowAugment augment = this.supplier.get();
                     for(int i = 0; i < this.display.size(); i++)
                     {
                         int offset = i * (18 + ITEM_SPACING);

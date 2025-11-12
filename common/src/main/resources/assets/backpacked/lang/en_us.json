@@ -161,13 +161,13 @@
     "augment.backpacked.lightweaver.place_sound": "Place Sound",
     "augment.backpacked.lightweaver.place_sound.tooltip": "Determines whether a sound should play when placing a torch",
     "augment.backpacked.farmhand": "Farmhand",
-    "augment.backpacked.farmhand.desc": "Sprinkles crop seeds onto available farmland around the player.",
-    "augment.backpacked.farmhand.plant_nearby": "Auto Plant",
-    "augment.backpacked.farmhand.plant_nearby.tooltip": "When near blocks that crops can grow on, seeds in your backpack will be automatically planted if the spot is free",
-    "augment.backpacked.farmhand.replant_harvested": "Replant Harvested",
-    "augment.backpacked.farmhand.replant_harvested.tooltip": "After harvesting a fully-grown crop, a matching seed from the backpack will automatically be replanted in its spot",
-    "augment.backpacked.farmhand.randomize_seeds": "Randomize Seeds",
-    "augment.backpacked.farmhand.randomize_seeds.tooltip": "When auto-planting, a random seed will be used instead of the first seed found in the backpack.",
-    "augment.backpacked.farmhand.use_filters": "Limit to Selected",
-    "augment.backpacked.farmhand.use_filters.tooltip": "When auto-planting, only the seeds that are selected in the grid below will be planted"
+    "augment.backpacked.farmhand.desc": "Harvesting a fully-grown crop replants a matching seed from the backpack.",
+    "augment.backpacked.seedflow": "Seedflow",
+    "augment.backpacked.seedflow.desc": "Sprinkles crop seeds onto empty farmland around the player.",
+    "augment.backpacked.seedflow.plant_nearby": "Auto Plant",
+    "augment.backpacked.seedflow.plant_nearby.tooltip": "When near blocks that crops can grow on, seeds in your backpack will be automatically planted if the spot is free",
+    "augment.backpacked.seedflow.randomize_seeds": "Randomize Seeds",
+    "augment.backpacked.seedflow.randomize_seeds.tooltip": "When auto-planting, a random seed will be used instead of the first seed found in the backpack.",
+    "augment.backpacked.seedflow.use_filters": "Limit to Selected",
+    "augment.backpacked.seedflow.use_filters.tooltip": "When auto-planting, only the seeds that are selected in the grid below will be planted"
 }

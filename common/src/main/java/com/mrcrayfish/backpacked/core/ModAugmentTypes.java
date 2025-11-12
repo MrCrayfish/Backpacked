@@ -18,4 +18,5 @@ public class ModAugmentTypes
     public static final RegistryEntry<AugmentType<ImmortalAugment>> IMMORTAL = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("immortal"), () -> ImmortalAugment.TYPE);
     public static final RegistryEntry<AugmentType<LightweaverAugment>> LIGHTWEAVER = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("lightweaver"), () -> LightweaverAugment.TYPE);
     public static final RegistryEntry<AugmentType<FarmhandAugment>> FARMHAND = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("farmhand"), () -> FarmhandAugment.TYPE);
+    public static final RegistryEntry<AugmentType<SeedflowAugment>> SEEDFLOW = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("seedflow"), () -> SeedflowAugment.TYPE);
 }

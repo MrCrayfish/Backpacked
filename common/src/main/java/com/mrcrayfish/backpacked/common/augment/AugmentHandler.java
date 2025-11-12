@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.Farmhand;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
-import com.mrcrayfish.backpacked.common.augment.impl.FarmhandAugment;
+import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.LootboundAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class AugmentHandler
 {
@@ -327,37 +326,58 @@ public class AugmentHandler
         if(!isFullyGrownCrop(state))
             return;
 
-        Item seed = getCropSeed(player.level(), pos, state);
-        if(seed == null)
+        Item seedItem = getCropSeed(player.level(), pos, state);
+        if(seedItem == null)
             return;
 
-        AugmentHandler.plantSeedsOnBlockPositions(player, seed, () -> {
-            List<BlockPos> positions = new ArrayList<>();
-            positions.add(pos);
-            return positions;
-        });
-    }
-
-    private static void onPlayerWalkOnCrops(ServerPlayer player)
-    {
-        plantSeedsOnBlockPositions(player, null, () -> {
-            List<BlockPos> positions = new ArrayList<>();
-            Vec3 position = player.position().add(player.getForward().multiply(1, 0, 1).normalize());
-            positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
-            positions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z - 0.5));
-            positions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z + 0.5));
-            positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z + 0.5));
-            return positions;
-        });
-    }
-
-    private static void plantSeedsOnBlockPositions(ServerPlayer player, @Nullable Item seed, Supplier<List<BlockPos>> supplier)
-    {
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.FARMHAND.get());
         if(snapshots.isEmpty())
             return;
 
-        List<BlockPos> positions = supplier.get();
+        ServerLevel level = player.serverLevel();
+        if(!level.getBlockState(pos).canBeReplaced())
+            return;
+
+        Farmhand farmhand = ((Farmhand.Access) level).backpacked$getFarmhand();
+        if(farmhand.isPlanting(pos))
+            return;
+
+        for(var snapshot : snapshots)
+        {
+            BackpackInventory inventory = snapshot.inventory();
+            ItemStack seed = inventory.findFirst(stack -> stack.is(seedItem));
+            if(seed.isEmpty())
+                continue;
+
+            ItemStack copy = seed.copyWithCount(1);
+            if(!farmhand.plant(copy, pos))
+                continue;
+
+            // Send particles to players
+            var message = new MessageFarmhandPlant(copy, player.getId(), pos);
+            Network.getPlay().sendToTrackingEntity(() -> player, message);
+            Network.getPlay().sendToPlayer(() -> player, message);
+
+            // Finally shrink the stack and remove the block position
+            seed.shrink(1);
+            inventory.setChanged();
+            break;
+        }
+    }
+
+    private static void onPlayerWalkOnCrops(ServerPlayer player)
+    {
+        var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.SEEDFLOW.get());
+        if(snapshots.isEmpty())
+            return;
+
+        // Create a list of possible block positions to place seeds
+        List<BlockPos> positions = new ArrayList<>();
+        Vec3 position = player.position().add(player.getForward().multiply(1, 0, 1).normalize());
+        positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z - 0.5));
+        positions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z - 0.5));
+        positions.add(BlockPos.containing(position.x + 0.5, position.y + 0.5, position.z + 0.5));
+        positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z + 0.5));
 
         // Remove positions that are not possible to place a block
         ServerLevel level = player.serverLevel();
@@ -370,19 +390,19 @@ public class AugmentHandler
 
         for(var snapshot : snapshots)
         {
-            FarmhandAugment augment = snapshot.augment();
-            if(seed != null && !augment.replantHarvested())
-                continue;
-
-            if(seed == null && !augment.plantNearby())
+            SeedflowAugment augment = snapshot.augment();
+            if(!augment.plantNearby())
                 continue;
 
             boolean changed = false;
-            boolean random = seed == null && augment.randomizeSeeds();
+            boolean random = augment.randomizeSeeds();
             BackpackInventory inventory = snapshot.inventory();
+
+            // This function supplies an itemstack of plantable seed from the backpack inventory
             Function<BlockPos, ItemStack> seedSupplier = random
                     ? nextRandomizedPlantableSeed(level, augment, inventory)
-                    : nextPlantableSeed(level, augment, inventory, seed);
+                    : nextPlantableSeed(level, augment, inventory);
+
             ItemStack stack = ItemStack.EMPTY;
             Iterator<BlockPos> it = positions.iterator();
             while(it.hasNext())
@@ -449,7 +469,7 @@ public class AugmentHandler
             {
                 return crop.isMaxAge(state);
             }
-            for(IntegerProperty property : FarmhandAugment.AGE_PROPERTIES)
+            for(IntegerProperty property : SeedflowAugment.AGE_PROPERTIES)
             {
                 if(state.hasProperty(property))
                 {
@@ -474,7 +494,7 @@ public class AugmentHandler
         return null;
     }
 
-    private static Function<BlockPos, ItemStack> nextPlantableSeed(ServerLevel level, FarmhandAugment augment, BackpackInventory inventory, @Nullable Item match)
+    private static Function<BlockPos, ItemStack> nextPlantableSeed(ServerLevel level, SeedflowAugment augment, BackpackInventory inventory)
     {
         int[] currentIndex = {0};
         return pos -> {
@@ -484,11 +504,9 @@ public class AugmentHandler
                 ItemStack stack = inventory.getItem(currentIndex[0]++);
                 if(stack.isEmpty())
                     continue;
-                if(match != null && stack.getItem() != match)
+                if(!SeedflowAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
                     continue;
-                if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
-                    continue;
-                if(match == null && augment.useFilters() && !augment.isFilter(stack.getItem()))
+                if(augment.useFilters() && !augment.isFilter(stack.getItem()))
                     continue;
                 if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                     continue;
@@ -498,7 +516,7 @@ public class AugmentHandler
         };
     }
 
-    private static Function<BlockPos, ItemStack> nextRandomizedPlantableSeed(ServerLevel level, FarmhandAugment augment, BackpackInventory inventory)
+    private static Function<BlockPos, ItemStack> nextRandomizedPlantableSeed(ServerLevel level, SeedflowAugment augment, BackpackInventory inventory)
     {
         return pos -> {
             int count = 0;
@@ -507,7 +525,7 @@ public class AugmentHandler
                 ItemStack stack = inventory.getItem(i);
                 if(stack.isEmpty())
                     continue;
-                if(!FarmhandAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
+                if(!SeedflowAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
                     continue;
                 if(augment.useFilters() && !augment.isFilter(stack.getItem()))
                     continue;
