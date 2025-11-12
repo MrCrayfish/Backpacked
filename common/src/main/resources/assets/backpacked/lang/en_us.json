@@ -163,7 +163,7 @@
     "augment.backpacked.farmhand": "Farmhand",
     "augment.backpacked.farmhand.desc": "Harvesting a fully-grown crop replants a matching seed from the backpack.",
     "augment.backpacked.seedflow": "Seedflow",
-    "augment.backpacked.seedflow.desc": "Sprinkles crop seeds onto empty farmland around the player.",
+    "augment.backpacked.seedflow.desc": "Sprinkles crop seeds from the backpack onto empty farmland around the player.\nA filter be configured to plant only specific seeds.\nMay also be set up to plant random seeds.",
     "augment.backpacked.seedflow.plant_nearby": "Auto Plant",
     "augment.backpacked.seedflow.plant_nearby.tooltip": "When near blocks that crops can grow on, seeds in your backpack will be automatically planted if the spot is free",
     "augment.backpacked.seedflow.randomize_seeds": "Randomize Seeds",
