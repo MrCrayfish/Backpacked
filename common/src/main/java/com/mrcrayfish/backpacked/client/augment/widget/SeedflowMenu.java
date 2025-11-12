@@ -41,6 +41,8 @@ public class SeedflowMenu extends AugmentSettingsMenu
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component PLANT_NEARBY_LABEL = Component.translatable("augment.backpacked.seedflow.plant_nearby");
     private static final Component PLANT_NEARBY_TOOLTIP = Component.translatable("augment.backpacked.seedflow.plant_nearby.tooltip");
+    private static final Component RANDOMISE_SEEDS_LABEL = Component.translatable("augment.backpacked.seedflow.randomize_seeds");
+    private static final Component RANDOMISE_SEEDS_TOOLTIP = Component.translatable("augment.backpacked.seedflow.randomize_seeds.tooltip");
     private static final Component USE_FILTERS_LABEL = Component.translatable("augment.backpacked.seedflow.use_filters");
     private static final Component USE_FILTERS_TOOLTIP = Component.translatable("augment.backpacked.seedflow.use_filters.tooltip");
 
@@ -72,7 +74,7 @@ public class SeedflowMenu extends AugmentSettingsMenu
                 })
                 .setMessage(() -> CommonComponents.optionStatus(supplier.get().randomizeSeeds()))
                 .setSize(60, 18).setActive(() -> supplier.get().plantNearby()).build();
-            layout.addChild(createOption(Component.literal("Randomize Seeds"), PLANT_NEARBY_TOOLTIP, randomizeBtn, divider1.getWidth()));
+            layout.addChild(createOption(RANDOMISE_SEEDS_LABEL, RANDOMISE_SEEDS_TOOLTIP, randomizeBtn, divider1.getWidth()));
 
             CustomButton useFiltersBtn = CustomButton.state(() -> {
                     return supplier.get().useFilters();

@@ -167,7 +167,7 @@
     "augment.backpacked.seedflow.plant_nearby": "Auto Plant",
     "augment.backpacked.seedflow.plant_nearby.tooltip": "When near blocks that crops can grow on, seeds in your backpack will be automatically planted if the spot is free",
     "augment.backpacked.seedflow.randomize_seeds": "Randomize Seeds",
-    "augment.backpacked.seedflow.randomize_seeds.tooltip": "When auto-planting, a random seed will be used instead of the first seed found in the backpack.",
-    "augment.backpacked.seedflow.use_filters": "Limit to Selected",
-    "augment.backpacked.seedflow.use_filters.tooltip": "When auto-planting, only the seeds that are selected in the grid below will be planted"
+    "augment.backpacked.seedflow.randomize_seeds.tooltip": "When enabled, a random seed from the backpack will be planted instead of the first available. Handpicked Mode will affect the random selection.",
+    "augment.backpacked.seedflow.use_filters": "Handpicked Mode",
+    "augment.backpacked.seedflow.use_filters.tooltip": "When enabled, only allows the selected seeds to be planted."
 }
