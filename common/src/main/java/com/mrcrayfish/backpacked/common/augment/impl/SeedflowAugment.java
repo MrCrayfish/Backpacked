@@ -16,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -161,7 +162,13 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
         // Use BushBlock to include nether warts
         if(block instanceof BushBlock && !(block instanceof SaplingBlock))
         {
-            // Check if the crop has an age property
+            // If a crop, we know it has an age property
+            if(block instanceof CropBlock)
+            {
+                return true;
+            }
+
+            // Check if the block state has a vanilla age property
             BlockState cropState = block.defaultBlockState();
             for(IntegerProperty property : AGE_PROPERTIES)
             {
@@ -170,6 +177,11 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
                     return true;
                 }
             }
+
+            // Should make compatible with farmers delight
+            return cropState.getProperties().stream().anyMatch(p -> {
+                return p instanceof IntegerProperty && p.getName().equals("age");
+            });
         }
         return false;
     }

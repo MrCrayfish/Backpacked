@@ -38,6 +38,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -465,15 +466,27 @@ public class AugmentHandler
     {
         if(state.getBlock() instanceof BushBlock)
         {
+            // Use max age method from crop blocks
             if(state.getBlock() instanceof CropBlock crop)
             {
                 return crop.isMaxAge(state);
             }
+
+            // Otherwise try checking if the age property is max value
             for(IntegerProperty property : SeedflowAugment.AGE_PROPERTIES)
             {
                 if(state.hasProperty(property))
                 {
                     return state.getValue(property) == ((IntegerPropertyMixin) property).backpacked$getMax();
+                }
+            }
+
+            // Sometimes mods create their own age property (e.g. farmers delight)
+            for(Property<?> property : state.getProperties())
+            {
+                if(property instanceof IntegerProperty integerProperty && property.getName().equals("age"))
+                {
+                    return state.getValue(integerProperty) == ((IntegerPropertyMixin) property).backpacked$getMax();
                 }
             }
         }
