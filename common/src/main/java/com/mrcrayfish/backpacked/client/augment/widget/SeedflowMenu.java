@@ -60,22 +60,13 @@ public class SeedflowMenu extends AugmentSettingsMenu
             Divider divider1 = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, optionsTitle.getWidth())).colour(0xFFE0CDB7));
             optionsTitle.setWidth(divider1.getWidth());
 
-            CustomButton autoPlantBtn = CustomButton.state(() -> {
-                    return supplier.get().plantNearby();
-                }, newValue -> {
-                    updater.accept(supplier.get().setPlantNearby(newValue));
-                })
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().plantNearby()))
-                .setSize(60, 18).build();
-            layout.addChild(createOption(PLANT_NEARBY_LABEL, PLANT_NEARBY_TOOLTIP, autoPlantBtn, divider1.getWidth()));
-
             CustomButton randomizeBtn = CustomButton.state(() -> {
                     return supplier.get().randomizeSeeds();
                 }, newValue -> {
                     updater.accept(supplier.get().setRandomizeSeeds(newValue));
                 })
                 .setMessage(() -> CommonComponents.optionStatus(supplier.get().randomizeSeeds()))
-                .setSize(60, 18).setActive(() -> supplier.get().plantNearby()).build();
+                .setSize(60, 18).build();
             layout.addChild(createOption(RANDOMISE_SEEDS_LABEL, RANDOMISE_SEEDS_TOOLTIP, randomizeBtn, divider1.getWidth()));
 
             CustomButton useFiltersBtn = CustomButton.state(() -> {
@@ -84,24 +75,18 @@ public class SeedflowMenu extends AugmentSettingsMenu
                     updater.accept(supplier.get().setUseFilters(newValue));
                 })
                 .setMessage(() -> CommonComponents.optionStatus(supplier.get().useFilters()))
-                .setSize(60, 18).setActive(() -> supplier.get().plantNearby()).build();
+                .setSize(60, 18).build();
             layout.addChild(createOption(USE_FILTERS_LABEL, USE_FILTERS_TOOLTIP, useFiltersBtn, divider1.getWidth()));
 
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
 
             FilterList list = new FilterList(supplier, updater, divider1.getWidth(), lastQuery);
-            list.setActive(() -> {
-                SeedflowAugment augment = supplier.get();
-                return augment.plantNearby() && augment.useFilters();
-            });
+            list.setActive(() -> supplier.get().useFilters());
             CustomEditBox searchField = layout.addChild(CustomEditBox.create(divider1.getWidth(), 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
                 Utils.rl("backpack/editbox/background_disabled"),
                 Utils.rl("backpack/editbox/background_focused")
-            ))).setActive(() -> {
-                SeedflowAugment augment = supplier.get();
-                return augment.plantNearby() && augment.useFilters();
-            });
+            ))).setActive(() -> supplier.get().useFilters());
             searchField.getEditBox().setValue(lastQuery);
             searchField.getEditBox().setHint(SEARCH_HINT);
             searchField.getEditBox().setResponder(list::setSearchQuery);

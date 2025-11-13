@@ -392,18 +392,15 @@ public class AugmentHandler
         for(var snapshot : snapshots)
         {
             SeedflowAugment augment = snapshot.augment();
-            if(!augment.plantNearby())
-                continue;
-
-            boolean changed = false;
-            boolean random = augment.randomizeSeeds();
             BackpackInventory inventory = snapshot.inventory();
 
             // This function supplies an itemstack of plantable seed from the backpack inventory
+            boolean random = augment.randomizeSeeds();
             Function<BlockPos, ItemStack> seedSupplier = random
                     ? nextRandomizedPlantableSeed(level, augment, inventory)
                     : nextPlantableSeed(level, augment, inventory);
 
+            boolean changed = false;
             ItemStack stack = ItemStack.EMPTY;
             Iterator<BlockPos> it = positions.iterator();
             while(it.hasNext())

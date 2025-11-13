@@ -27,25 +27,22 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-// TODO split into two different augments (one for replanting, and one for seeding)
 public final class SeedflowAugment implements Augment<SeedflowAugment>
 {
     public static final AugmentType<SeedflowAugment> TYPE = new AugmentType<>(
         Utils.rl("seedflow"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.BOOL.fieldOf("plant_nearby").orElse(true).forGetter(SeedflowAugment::plantNearby),
             Codec.BOOL.fieldOf("randomize_seeds").orElse(true).forGetter(SeedflowAugment::randomizeSeeds),
             Codec.BOOL.fieldOf("use_filters").orElse(true).forGetter(SeedflowAugment::useFilters),
             ItemFilter.CODEC.sizeLimitedListOf(64).fieldOf("filters").orElse(List.of()).forGetter(SeedflowAugment::filters)
         ).apply(instance, SeedflowAugment::new)),
         StreamCodec.composite(
-            ByteBufCodecs.BOOL, SeedflowAugment::plantNearby,
             ByteBufCodecs.BOOL, SeedflowAugment::randomizeSeeds,
             ByteBufCodecs.BOOL, SeedflowAugment::useFilters,
             ItemFilter.STREAM_CODEC.apply(ByteBufCodecs.list()), SeedflowAugment::filters,
             SeedflowAugment::new
         ),
-        () -> new SeedflowAugment(true, false, true, List.of())
+        () -> new SeedflowAugment(false, true, List.of())
     );
     public static final Predicate<Item> ITEM_PLACES_AGEABLE_CROP = item -> {
         return item instanceof BlockItem blockItem && isAgeableCrop(blockItem.getBlock());
@@ -61,15 +58,13 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
         BlockStateProperties.AGE_25
     };
 
-    private final boolean plantNearby;
     private final boolean randomizeSeeds;
     private final boolean useFilters;
     private final List<ItemFilter> filters;
     private @Nullable Map<Item, List<ItemFilter>> lookup;
 
-    public SeedflowAugment(boolean plantNearby, boolean randomizeSeeds, boolean useFilters, List<ItemFilter> filters)
+    public SeedflowAugment(boolean randomizeSeeds, boolean useFilters, List<ItemFilter> filters)
     {
-        this.plantNearby = plantNearby;
         this.randomizeSeeds = randomizeSeeds;
         this.useFilters = useFilters;
         this.filters = filters.stream().filter(filter -> {
@@ -84,33 +79,28 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
         return TYPE;
     }
 
-    public SeedflowAugment setPlantNearby(boolean plantNearby)
-    {
-        return new SeedflowAugment(plantNearby, this.randomizeSeeds, this.useFilters, this.filters);
-    }
-
     public SeedflowAugment setRandomizeSeeds(boolean randomizeSeeds)
     {
-        return new SeedflowAugment(this.plantNearby, randomizeSeeds, this.useFilters, this.filters);
+        return new SeedflowAugment(randomizeSeeds, this.useFilters, this.filters);
     }
 
     public SeedflowAugment setUseFilters(boolean useFilters)
     {
-        return new SeedflowAugment(this.plantNearby, this.randomizeSeeds, useFilters, this.filters);
+        return new SeedflowAugment(this.randomizeSeeds, useFilters, this.filters);
     }
 
     public SeedflowAugment addFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
         filters.add(new ItemFilter(id));
-        return new SeedflowAugment(this.plantNearby, this.randomizeSeeds, this.useFilters, filters);
+        return new SeedflowAugment(this.randomizeSeeds, this.useFilters, filters);
     }
 
     public SeedflowAugment removeFilter(ResourceLocation id)
     {
         List<ItemFilter> filters = new ArrayList<>(this.filters);
         filters.removeIf(filter -> filter.id.equals(id));
-        return new SeedflowAugment(this.plantNearby, this.randomizeSeeds, this.useFilters, filters);
+        return new SeedflowAugment(this.randomizeSeeds, this.useFilters, filters);
     }
 
     public boolean isFilter(Item item)
@@ -135,11 +125,6 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
             this.lookup = builder.build();
         }
         return this.lookup;
-    }
-
-    public boolean plantNearby()
-    {
-        return this.plantNearby;
     }
 
     public boolean randomizeSeeds()
