@@ -41,8 +41,6 @@ public class SeedflowMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
-    private static final Component PLANT_NEARBY_LABEL = Component.translatable("augment.backpacked.seedflow.plant_nearby");
-    private static final Component PLANT_NEARBY_TOOLTIP = Component.translatable("augment.backpacked.seedflow.plant_nearby.tooltip");
     private static final Component RANDOMISE_SEEDS_LABEL = Component.translatable("augment.backpacked.seedflow.randomize_seeds");
     private static final Component RANDOMISE_SEEDS_TOOLTIP = Component.translatable("augment.backpacked.seedflow.randomize_seeds.tooltip");
     private static final Component USE_FILTERS_LABEL = Component.translatable("augment.backpacked.seedflow.use_filters");
