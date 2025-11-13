@@ -2,8 +2,11 @@ package com.mrcrayfish.backpacked.inventory;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
@@ -12,11 +15,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.entity.Hopper;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -100,6 +106,21 @@ public class BackpackInventory extends UnlockableContainer
     public boolean canPlaceItem(int slot, ItemStack stack)
     {
         return super.canPlaceItem(slot, stack) && isAllowedItem(stack);
+    }
+
+    @Override
+    public boolean canTakeItem(Container container, int slot, ItemStack stack)
+    {
+        if(container instanceof Hopper)
+        {
+            Augments augments = Augments.get(this.stack);
+            HopperBridgeAugment augment = augments.findEnabledAndCast(ModAugmentTypes.HOPPER_BRIDGE.get());
+            if(augment != null && !augment.extract())
+            {
+                return false;
+            }
+        }
+        return super.canTakeItem(container, slot, stack);
     }
 
     @Override

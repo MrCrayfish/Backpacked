@@ -49,5 +49,6 @@ public class ClientBootstrap
         AugmentSettingsFactories.registerFactory(LootboundAugment.TYPE, LootboundMenu::new);
         AugmentSettingsFactories.registerFactory(LightweaverAugment.TYPE, LightweaverMenu::new);
         AugmentSettingsFactories.registerFactory(SeedflowAugment.TYPE, SeedflowMenu::new);
+        AugmentSettingsFactories.registerFactory(HopperBridgeAugment.TYPE, HopperBridgeMenu::new);
     }
 }

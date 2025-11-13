@@ -167,5 +167,11 @@
     "augment.backpacked.seedflow.randomize_seeds": "Randomize Seeds",
     "augment.backpacked.seedflow.randomize_seeds.tooltip": "When enabled, a random seed from the backpack will be planted instead of the first available. Handpicked Mode will affect the random selection.",
     "augment.backpacked.seedflow.use_filters": "Handpicked Mode",
-    "augment.backpacked.seedflow.use_filters.tooltip": "When enabled, only allows the selected seeds to be planted."
+    "augment.backpacked.seedflow.use_filters.tooltip": "When enabled, only allows the selected seeds to be planted.",
+    "augment.backpacked.hopper_bridge": "Hopper Bridge",
+    "augment.backpacked.hopper_bridge.desc": "Allows hoppers to insert and extract items from the players worn backpack.\nIncludes options to limit insertion and extraction",
+    "augment.backpacked.hopper_bridge.insert": "Insert Items",
+    "augment.backpacked.hopper_bridge.insert.tooltip": "When enabled, allows hoppers to insert items into the backpack.",
+    "augment.backpacked.hopper_bridge.extract": "Extract Items",
+    "augment.backpacked.hopper_bridge.extract.tooltip": "When enabled, allows hoppers to extract items from the backpack."
 }

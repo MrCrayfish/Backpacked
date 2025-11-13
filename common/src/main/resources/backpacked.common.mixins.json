@@ -12,6 +12,7 @@
         "common.CreativeModeTabMixin",
         "common.CropBlockMixin",
         "common.EntityMixin",
+        "common.HopperBlockEntityMixin",
         "common.IntegerPropertyMixin",
         "common.ItemEntityMixin",
         "common.LivingEntityMixin",
