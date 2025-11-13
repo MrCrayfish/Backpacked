@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
-import com.mrcrayfish.backpacked.client.augment.widget.*;
+import com.mrcrayfish.backpacked.client.augment.menu.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.DefaultRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RendererTypes;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.AdvancedRenderer;

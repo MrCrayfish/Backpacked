@@ -1,19 +1,16 @@
 package com.mrcrayfish.backpacked.common.augment.impl;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.common.FilterableItems;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.common.ItemCollection;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.CropBlock;
@@ -21,56 +18,45 @@ import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-public final class SeedflowAugment implements Augment<SeedflowAugment>
+public record SeedflowAugment(boolean randomizeSeeds, boolean useFilters, ItemCollection filters) implements Augment<SeedflowAugment>, FilterableItems<SeedflowAugment>
 {
     public static final AugmentType<SeedflowAugment> TYPE = new AugmentType<>(
         Utils.rl("seedflow"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("randomize_seeds").orElse(true).forGetter(SeedflowAugment::randomizeSeeds),
             Codec.BOOL.fieldOf("use_filters").orElse(true).forGetter(SeedflowAugment::useFilters),
-            ItemFilter.CODEC.sizeLimitedListOf(64).fieldOf("filters").orElse(List.of()).forGetter(SeedflowAugment::filters)
+            ItemCollection.CODEC.fieldOf("filters").orElse(ItemCollection.EMPTY).forGetter(SeedflowAugment::filters)
         ).apply(instance, SeedflowAugment::new)),
         StreamCodec.composite(
             ByteBufCodecs.BOOL, SeedflowAugment::randomizeSeeds,
             ByteBufCodecs.BOOL, SeedflowAugment::useFilters,
-            ItemFilter.STREAM_CODEC.apply(ByteBufCodecs.list()), SeedflowAugment::filters,
+            ItemCollection.STREAM_CODEC, SeedflowAugment::filters,
             SeedflowAugment::new
         ),
-        () -> new SeedflowAugment(false, true, List.of())
+        () -> new SeedflowAugment(false, true, ItemCollection.EMPTY)
     );
     public static final Predicate<Item> ITEM_PLACES_AGEABLE_CROP = item -> {
         return item instanceof BlockItem blockItem && isAgeableCrop(blockItem.getBlock());
     };
     public static final IntegerProperty[] AGE_PROPERTIES = {
-        BlockStateProperties.AGE_1,
-        BlockStateProperties.AGE_2,
-        BlockStateProperties.AGE_3,
-        BlockStateProperties.AGE_4,
-        BlockStateProperties.AGE_5,
-        BlockStateProperties.AGE_7,
-        BlockStateProperties.AGE_15,
-        BlockStateProperties.AGE_25
+            BlockStateProperties.AGE_1,
+            BlockStateProperties.AGE_2,
+            BlockStateProperties.AGE_3,
+            BlockStateProperties.AGE_4,
+            BlockStateProperties.AGE_5,
+            BlockStateProperties.AGE_7,
+            BlockStateProperties.AGE_15,
+            BlockStateProperties.AGE_25
     };
 
-    private final boolean randomizeSeeds;
-    private final boolean useFilters;
-    private final List<ItemFilter> filters;
-    private @Nullable Map<Item, List<ItemFilter>> lookup;
-
-    public SeedflowAugment(boolean randomizeSeeds, boolean useFilters, List<ItemFilter> filters)
+    public SeedflowAugment(boolean randomizeSeeds, boolean useFilters, ItemCollection filters)
     {
         this.randomizeSeeds = randomizeSeeds;
         this.useFilters = useFilters;
-        this.filters = filters.stream().filter(filter -> {
-            Item item = filter.item();
-            return item != null && ITEM_PLACES_AGEABLE_CROP.test(item);
-        }).limit(64).collect(Collectors.toList());
+        this.filters = filters.filter(ITEM_PLACES_AGEABLE_CROP);
     }
 
     @Override
@@ -89,57 +75,27 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
         return new SeedflowAugment(this.randomizeSeeds, useFilters, this.filters);
     }
 
-    public SeedflowAugment addFilter(ResourceLocation id)
+    @Override
+    public SeedflowAugment addItemFilter(Item item)
     {
-        List<ItemFilter> filters = new ArrayList<>(this.filters);
-        filters.add(new ItemFilter(id));
-        return new SeedflowAugment(this.randomizeSeeds, this.useFilters, filters);
+        return new SeedflowAugment(this.randomizeSeeds, this.useFilters, this.filters.add(item));
     }
 
-    public SeedflowAugment removeFilter(ResourceLocation id)
+    @Override
+    public SeedflowAugment removeItemFilter(Item item)
     {
-        List<ItemFilter> filters = new ArrayList<>(this.filters);
-        filters.removeIf(filter -> filter.id.equals(id));
-        return new SeedflowAugment(this.randomizeSeeds, this.useFilters, filters);
+        return new SeedflowAugment(this.randomizeSeeds, this.useFilters, this.filters.remove(item));
     }
 
-    public boolean isFilter(Item item)
+    @Override
+    public boolean isFilteringItem(Item item)
     {
-         Map<Item, List<ItemFilter>> lookup = this.buildLookup();
-        return lookup.containsKey(item);
+        return this.filters.has(item);
     }
 
-    public boolean isFilterLimit()
+    public boolean isFilterFull()
     {
         return false;
-    }
-
-    private Map<Item, List<ItemFilter>> buildLookup()
-    {
-        if(this.lookup == null)
-        {
-            Map<Item, List<ItemFilter>> map = new HashMap<>();
-            this.filters.forEach(filter -> map.computeIfAbsent(filter.item(), k -> new ArrayList<>()).add(filter));
-            ImmutableMap.Builder<Item, List<ItemFilter>> builder = ImmutableMap.builder();
-            map.forEach((item, filters) -> builder.put(item, Collections.unmodifiableList(filters)));
-            this.lookup = builder.build();
-        }
-        return this.lookup;
-    }
-
-    public boolean randomizeSeeds()
-    {
-        return this.randomizeSeeds;
-    }
-
-    public boolean useFilters()
-    {
-        return this.useFilters;
-    }
-
-    public List<ItemFilter> filters()
-    {
-        return this.filters;
     }
 
     private static boolean isAgeableCrop(Block block)
@@ -169,59 +125,5 @@ public final class SeedflowAugment implements Augment<SeedflowAugment>
             });
         }
         return false;
-    }
-
-    public static final class ItemFilter
-    {
-        private static final Codec<ItemFilter> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-            ResourceLocation.CODEC.fieldOf("item").forGetter(ItemFilter::id)
-        ).apply(instance, ItemFilter::new));
-
-        private static final StreamCodec<RegistryFriendlyByteBuf, ItemFilter> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, ItemFilter::id,
-            ItemFilter::new
-        );
-
-        private final ResourceLocation id;
-        private Item item;
-
-        public ItemFilter(ResourceLocation id)
-        {
-            this.id = id;
-        }
-
-        public ResourceLocation id()
-        {
-            return this.id;
-        }
-
-        public Item item()
-        {
-            if(this.item == null)
-            {
-                this.item = BuiltInRegistries.ITEM.get(this.id);
-            }
-            return this.item;
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if(obj == this) return true;
-            if(obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (ItemFilter) obj;
-            return Objects.equals(this.id, that.id);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return this.id.hashCode();
-        }
-
-        public boolean match(ItemStack stack)
-        {
-            return stack.is(this.item());
-        }
     }
 }

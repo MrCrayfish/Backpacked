@@ -516,7 +516,7 @@ public class AugmentHandler
                     continue;
                 if(!SeedflowAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
                     continue;
-                if(augment.useFilters() && !augment.isFilter(stack.getItem()))
+                if(augment.useFilters() && !augment.isFilteringItem(stack.getItem()))
                     continue;
                 if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                     continue;
@@ -537,7 +537,7 @@ public class AugmentHandler
                     continue;
                 if(!SeedflowAugment.ITEM_PLACES_AGEABLE_CROP.test(stack.getItem()))
                     continue;
-                if(augment.useFilters() && !augment.isFilter(stack.getItem()))
+                if(augment.useFilters() && !augment.isFilteringItem(stack.getItem()))
                     continue;
                 if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                     continue;

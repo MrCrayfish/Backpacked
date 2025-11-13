@@ -1,4 +1,4 @@
-package com.mrcrayfish.backpacked.client.augment.widget;
+package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
