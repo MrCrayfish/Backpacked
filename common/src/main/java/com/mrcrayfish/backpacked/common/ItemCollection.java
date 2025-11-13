@@ -18,7 +18,7 @@ public record ItemCollection(HashSet<ResourceLocation> ids)
     public static final ItemCollection EMPTY = new ItemCollection(new HashSet<>());
 
     public static final Codec<ItemCollection> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-        ResourceLocation.CODEC.sizeLimitedListOf(64).xmap(HashSet::new, ArrayList::new).fieldOf("filters").orElse(new HashSet<>()).forGetter(f -> f.ids)
+        ResourceLocation.CODEC.sizeLimitedListOf(64).xmap(HashSet::new, ArrayList::new).fieldOf("ids").orElse(new HashSet<>()).forGetter(f -> f.ids)
     ).apply(instance, ItemCollection::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemCollection> STREAM_CODEC = StreamCodec.composite(
