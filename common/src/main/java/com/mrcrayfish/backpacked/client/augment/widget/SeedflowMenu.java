@@ -14,8 +14,10 @@ import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
@@ -130,6 +132,7 @@ public class SeedflowMenu extends AugmentSettingsMenu
         private final Consumer<SeedflowAugment> updater;
         private final List<Item> items;
         private String searchQuery;
+        private @Nullable ItemStack hoveredStack;
 
         public FilterList(Supplier<SeedflowAugment> supplier, Consumer<SeedflowAugment> updater, int width, String lastQuery)
         {
@@ -177,6 +180,17 @@ public class SeedflowMenu extends AugmentSettingsMenu
         }
 
         @Override
+        public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+        {
+            this.hoveredStack = null;
+            super.renderWidget(graphics, mouseX, mouseY, partialTick);
+            if(this.hoveredStack != null)
+            {
+                graphics.renderTooltip(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
+            }
+        }
+
+        @Override
         public void setSelected(@Nullable SeedflowMenu.FilterList.ItemsRow item) {}
 
         private void setSearchQuery(String searchQuery)
@@ -212,7 +226,7 @@ public class SeedflowMenu extends AugmentSettingsMenu
                     ItemStack stack = this.display.get(i);
                     int offset = i * (18 + ITEM_SPACING);
                     boolean itemSelected = this.supplier.get().isFilter(stack.getItem());
-                    boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, left + offset, top, 18, 18);
+                    boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, left + offset - 1, top - 1, 20, 20);
                     RenderSystem.enableBlend();
                     RenderSystem.enableDepthTest();
                     graphics.setColor(1, 1, 1, active ? 1.0F : 0.5F);
@@ -220,6 +234,10 @@ public class SeedflowMenu extends AugmentSettingsMenu
                     graphics.setColor(1, 1, 1, 1);
                     RenderSystem.disableBlend();
                     graphics.renderFakeItem(stack, left + offset + 1, top + 1);
+                    if(itemHovered)
+                    {
+                        FilterList.this.hoveredStack = stack;
+                    }
                 }
             }
 
@@ -238,7 +256,7 @@ public class SeedflowMenu extends AugmentSettingsMenu
                     for(int i = 0; i < this.display.size(); i++)
                     {
                         int offset = i * (18 + ITEM_SPACING);
-                        if(!ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.left + offset, this.top, 18, 18))
+                        if(!ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.left + offset - 1, this.top - 1, 20, 20))
                             continue;
 
                         ItemStack stack = this.display.get(i);
