@@ -81,8 +81,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         // Gather the items that should be visible
         List<Item> visibleItems = new ArrayList<>();
         this.items.forEach(item -> {
-            if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search))
-            {
+            if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
                 visibleItems.add(item);
             }
         });
@@ -124,7 +123,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         }
     }
 
-    public static final class Row<R extends FilterableItems<R>> extends Entry<Row<R>>
+    protected static final class Row<R extends FilterableItems<R>> extends Entry<Row<R>>
     {
         private final ItemGrid<R> parent;
         private final List<ItemStack> display;
@@ -132,7 +131,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         private final Consumer<R> updater;
         private int top, left;
 
-        public Row(ItemGrid<R> parent, List<Item> items, Supplier<R> augment, Consumer<R> updater)
+        private Row(ItemGrid<R> parent, List<Item> items, Supplier<R> augment, Consumer<R> updater)
         {
             this.parent = parent;
             this.display = items.stream().map(ItemStack::new).collect(ImmutableList.toImmutableList());
