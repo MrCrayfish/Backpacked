@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 public class HopperBridgeMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
+    private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.filters");
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component INSERT_LABEL = Component.translatable("augment.backpacked.hopper_bridge.insert");
     private static final Component INSERT_TOOLTIP = Component.translatable("augment.backpacked.hopper_bridge.insert.tooltip");
@@ -32,6 +33,8 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
     private static final Component EXTRACT_TOOLTIP = Component.translatable("augment.backpacked.hopper_bridge.extract.tooltip");
     private static final Component SHOW_ALL_LABEL = Component.translatable("backpacked.gui.show_all");
     private static final Component SELECTED_ONLY_LABEL = Component.translatable("backpacked.gui.selected_only");
+    private static final Component FILTER_MODE_LABEL = Component.translatable("augment.backpacked.hopper_bridge.filter_mode");
+    private static final Component FILTER_MODE_TOOLTIP = Component.translatable("augment.backpacked.hopper_bridge.filter_mode.tooltip");
 
     private static final ResourceLocation TOGGLE_OFF = Utils.rl("backpack/toggle_off");
     private static final ResourceLocation TOGGLE_ON = Utils.rl("backpack/toggle_on");
@@ -57,14 +60,21 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                 .build(), divider.getWidth()));
 
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
+            layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
+            layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
+
+            layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, CustomButton.values(() -> supplier.get().filterMode(), value -> updater.accept(supplier.get().setFilterMode(value)))
+                    .setSize(60, 18).build(), divider.getWidth()));
 
             ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(supplier, updater).setWidth(divider.getWidth()).setHeight(64).build();
+            list.setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
             LinearLayout header = LinearLayout.horizontal().spacing(2);
             CustomEditBox searchField = header.addChild(CustomEditBox.create(divider.getWidth() - 18 - 2, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),
                 Utils.rl("backpack/editbox/background_disabled"),
                 Utils.rl("backpack/editbox/background_focused")
             )), LayoutSettings::alignVerticallyMiddle);
+            searchField.setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
             searchField.getEditBox().setValue(lastQuery);
             searchField.getEditBox().setHint(SEARCH_HINT);
             searchField.getEditBox().setResponder(s -> {
@@ -76,6 +86,7 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                 .setIcon(btn -> selectedOnly ? TOGGLE_ON : TOGGLE_OFF, 6, 6)
                 .setTooltip(btn -> Tooltip.create(selectedOnly ? SELECTED_ONLY_LABEL : SHOW_ALL_LABEL))
                 .setAction(btn -> list.setSelectedOnly(selectedOnly))
+                .setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
                 .build());
             layout.addChild(header);
             layout.addChild(list);

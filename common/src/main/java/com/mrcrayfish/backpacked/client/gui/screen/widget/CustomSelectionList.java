@@ -296,6 +296,12 @@ public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         return false;
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY)
+    {
+        return this.active && super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
+    }
+
     public E getEntry(double mouseX, double mouseY)
     {
         if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.getX(), this.getY(), this.getWidth(), this.getHeight()))

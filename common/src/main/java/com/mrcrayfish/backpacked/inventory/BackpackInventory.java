@@ -17,15 +17,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.Hopper;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -115,9 +112,13 @@ public class BackpackInventory extends UnlockableContainer
         {
             Augments augments = Augments.get(this.stack);
             HopperBridgeAugment augment = augments.findEnabledAndCast(ModAugmentTypes.HOPPER_BRIDGE.get());
-            if(augment != null && (!augment.extract() || !augment.isFilteringItem(stack.getItem())))
+            if(augment != null)
             {
-                return false;
+                if(!augment.extract())
+                    return false;
+
+                if(augment.filterMode().checkExtract() && !augment.isFilteringItem(stack.getItem()))
+                    return false;
             }
         }
         return super.canTakeItem(container, slot, stack);

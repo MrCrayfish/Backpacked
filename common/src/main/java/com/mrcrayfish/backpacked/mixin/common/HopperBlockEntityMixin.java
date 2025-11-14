@@ -7,9 +7,6 @@ import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -61,7 +58,10 @@ public class HopperBlockEntityMixin
             HopperBridgeAugment augment = augments.findEnabledAndCast(ModAugmentTypes.HOPPER_BRIDGE.get());
             if(augment != null && (!augment.insert() || !augment.isFilteringItem(stack.getItem())))
             {
-                cir.setReturnValue(stack);
+                if(!augment.insert() || augment.filterMode().checkInsert() && !augment.isFilteringItem(stack.getItem()))
+                {
+                    cir.setReturnValue(stack);
+                }
             }
         }
     }

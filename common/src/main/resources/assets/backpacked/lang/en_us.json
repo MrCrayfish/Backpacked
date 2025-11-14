@@ -170,9 +170,19 @@
     "augment.backpacked.seedflow.use_filters": "Handpicked Mode",
     "augment.backpacked.seedflow.use_filters.tooltip": "When enabled, only allows the selected seeds to be planted.",
     "augment.backpacked.hopper_bridge": "Hopper Bridge",
-    "augment.backpacked.hopper_bridge.desc": "Allows hoppers to insert and extract items from the players worn backpack.\nIncludes options to limit insertion and extraction",
+    "augment.backpacked.hopper_bridge.desc": "Allows hoppers to insert and extract items from the players worn backpack.\nThe player must stand either on top or in front the exit of the hopper.\nFilters can be applied to limit insertable and extractable items",
     "augment.backpacked.hopper_bridge.insert": "Insert Items",
     "augment.backpacked.hopper_bridge.insert.tooltip": "When enabled, allows hoppers to insert items into the backpack.",
     "augment.backpacked.hopper_bridge.extract": "Extract Items",
-    "augment.backpacked.hopper_bridge.extract.tooltip": "When enabled, allows hoppers to extract items from the backpack."
+    "augment.backpacked.hopper_bridge.extract.tooltip": "When enabled, allows hoppers to extract items from the backpack.",
+    "augment.backpacked.hopper_bridge.filter_mode": "Filter Mode",
+    "augment.backpacked.hopper_bridge.filter_mode.tooltip": "The filter mode determines when to check selected items",
+    "augment.backpacked.hopper_bridge.filter_mode.off": "None",
+    "augment.backpacked.hopper_bridge.filter_mode.off.tooltip": "All items may be both inserted and extracted",
+    "augment.backpacked.hopper_bridge.filter_mode.both": "Both",
+    "augment.backpacked.hopper_bridge.filter_mode.both.tooltip": "Only selected items can be inserted and extracted",
+    "augment.backpacked.hopper_bridge.filter_mode.insert": "Insert",
+    "augment.backpacked.hopper_bridge.filter_mode.insert.tooltip": "Only selected items can be inserted, however any item can be extracted",
+    "augment.backpacked.hopper_bridge.filter_mode.extract": "Extract",
+    "augment.backpacked.hopper_bridge.filter_mode.extract.tooltip": "Only selected items can be extracted, however any item can be inserted"
 }
