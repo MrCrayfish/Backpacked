@@ -56,7 +56,7 @@ public class HopperBlockEntityMixin
 
             Augments augments = Augments.get(inventory.getBackpackStack());
             HopperBridgeAugment augment = augments.findEnabledAndCast(ModAugmentTypes.HOPPER_BRIDGE.get());
-            if(augment != null && (!augment.insert() || !augment.isFilteringItem(stack.getItem())))
+            if(augment != null)
             {
                 if(!augment.insert() || augment.filterMode().checkInsert() && !augment.isFilteringItem(stack.getItem()))
                 {
