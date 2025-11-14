@@ -18,6 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -82,6 +83,8 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         // Gather the items that should be visible
         List<Item> visibleItems = new ArrayList<>();
         this.items.forEach(item -> {
+            if(item == Items.AIR)
+                return;
             if(!this.selectedOnly || this.supplier.get().isFilteringItem(item)) {
                 if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
                     visibleItems.add(item);
@@ -162,7 +165,6 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
             {
                 ItemStack stack = this.display.get(i);
                 int offset = i * (itemSize + spacing);
-
                 boolean itemSelected = this.supplier.get().isFilteringItem(stack.getItem());
                 boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, left + offset - halfSpacing, top - halfSpacing, itemSize + spacing, itemSize + spacing);
                 RenderSystem.enableBlend();
