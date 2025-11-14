@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.item;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.Augments;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
@@ -42,7 +42,7 @@ public class BackpackItem extends Item
     public BackpackItem(Properties properties)
     {
         super(properties
-            .component(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT)
+            .component(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT)
             .component(ModDataComponents.UNLOCKABLE_SLOTS.get(), new UnlockableSlots(0))
             .component(ModDataComponents.AUGMENTS.get(), Augments.EMPTY)
         );

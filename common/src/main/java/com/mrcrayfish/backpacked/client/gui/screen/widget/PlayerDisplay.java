@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,7 +25,7 @@ public class PlayerDisplay extends AbstractWidget
     private static final int FRAME_OFFSET = 4;
 
     private final Player player;
-    private final Supplier<BackpackProperties> propertiesSupplier;
+    private final Supplier<CosmeticProperties> propertiesSupplier;
 
     private float rotationX = 35;
     private float rotationY = 10;
@@ -41,9 +41,9 @@ public class PlayerDisplay extends AbstractWidget
     private float origPitchOld;
     private float origHeadYaw;
     private float origHeadYawOld;
-    private BackpackProperties origProperties;
+    private CosmeticProperties origProperties;
 
-    public PlayerDisplay(Player player, int x, int y, int width, int height, Supplier<BackpackProperties> propertiesSupplier)
+    public PlayerDisplay(Player player, int x, int y, int width, int height, Supplier<CosmeticProperties> propertiesSupplier)
     {
         super(x, y, width, height, CommonComponents.EMPTY);
         this.player = player;
@@ -137,7 +137,7 @@ public class PlayerDisplay extends AbstractWidget
         this.origPitchOld = this.player.xRotO;
         this.origHeadYaw = this.player.yHeadRot;
         this.origHeadYawOld = this.player.yHeadRotO;
-        this.origProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.player).orElse(BackpackProperties.DEFAULT);
+        this.origProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(this.player).orElse(CosmeticProperties.DEFAULT);
     }
 
     private void overrideValues()

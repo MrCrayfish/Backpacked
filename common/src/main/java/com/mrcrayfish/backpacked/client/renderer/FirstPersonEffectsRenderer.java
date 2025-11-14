@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -105,11 +105,11 @@ public class FirstPersonEffectsRenderer
 
     private static void renderBackpack(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, int light, float partialTick)
     {
-        Optional<BackpackProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
+        Optional<CosmeticProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
         if(propertiesOptional.isEmpty())
             return;
 
-        BackpackProperties properties = propertiesOptional.get();
+        CosmeticProperties properties = propertiesOptional.get();
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if(chestStack.getItem() == Items.ELYTRA && !properties.showWithElytra())
             return;

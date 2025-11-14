@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -24,11 +24,11 @@ public class BackpackEvents
         if(player.level().isClientSide())
             return;
 
-        Optional<BackpackProperties> cosmeticProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
+        Optional<CosmeticProperties> cosmeticProperties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
         ItemStack realStack = BackpackHelper.getFirstBackpackStack(player);
         if(realStack.is(ModItems.BACKPACK.get()))
         {
-            BackpackProperties realProperties = realStack.get(ModDataComponents.BACKPACK_PROPERTIES.get());
+            CosmeticProperties realProperties = realStack.get(ModDataComponents.COSMETIC_PROPERTIES.get());
             if(realProperties == null)
             {
                 throw new RuntimeException("BackpackProperties is null. This should not happen!");

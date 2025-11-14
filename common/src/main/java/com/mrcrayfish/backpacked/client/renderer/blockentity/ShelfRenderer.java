@@ -12,7 +12,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -46,7 +46,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         if(!stack.is(ModItems.BACKPACK.get()))
             return;
 
-        BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        CosmeticProperties properties = stack.getOrDefault(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT);
         ResourceLocation modelId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
         ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(modelId);
         if(backpack == null)

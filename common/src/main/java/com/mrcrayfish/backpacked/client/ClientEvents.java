@@ -2,8 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
-import com.mrcrayfish.backpacked.common.Navigate;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
@@ -67,7 +66,7 @@ public class ClientEvents
 
     public static boolean canShowBackpackEffects(ItemStack stack)
     {
-        return stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT).showEffects();
+        return stack.getOrDefault(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT).showEffects();
     }
 
     private static boolean onInteraction(boolean attack, boolean use, boolean pick, InteractionHand hand)
@@ -83,7 +82,7 @@ public class ClientEvents
         List<LivingEntity> entities = new ArrayList<>();
         if(Config.PICKPOCKETING.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-                Optional<BackpackProperties> optional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player); // Just use properties to determine if backpack is equipped on client
+                Optional<CosmeticProperties> optional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player); // Just use properties to determine if backpack is equipped on client
                 return !player.equals(mc.player) && optional.isPresent() && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }

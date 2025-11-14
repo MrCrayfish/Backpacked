@@ -11,7 +11,7 @@ import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.SavedAugments;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
@@ -23,27 +23,21 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.network.MessageContext;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.WanderingTrader;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -62,7 +56,7 @@ public class ServerPlayHandler
         if(stack.isEmpty())
             return;
 
-        BackpackProperties properties = message.properties();
+        CosmeticProperties properties = message.properties();
         Optional<ResourceLocation> cosmeticOptional = properties.cosmetic();
         if(cosmeticOptional.isPresent())
         {
@@ -75,7 +69,7 @@ public class ServerPlayHandler
                 return;
         }
 
-        stack.set(ModDataComponents.BACKPACK_PROPERTIES.get(), properties);
+        stack.set(ModDataComponents.COSMETIC_PROPERTIES.get(), properties);
     }
 
     public static void handleOpenBackpack(MessageOpenBackpack message, MessageContext context)
@@ -187,7 +181,7 @@ public class ServerPlayHandler
                 }
             }
         });
-        BackpackProperties properties = stack.getOrDefault(ModDataComponents.BACKPACK_PROPERTIES.get(), BackpackProperties.DEFAULT);
+        CosmeticProperties properties = stack.getOrDefault(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT);
         serverPlayer.closeContainer();
         Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(message.backpackIndex(), labelMap, properties, showCosmeticWarning, completionMap));
     }

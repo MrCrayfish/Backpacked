@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.CustomDataSerializers;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
@@ -43,7 +43,7 @@ public class ModSyncedDataKeys
             .saveToFile()
             .build();
 
-    public static final SyncedDataKey<Player, Optional<BackpackProperties>> COSMETIC_PROPERTIES = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.OPTIONAL_BACKPACK_PROPERTIES)
+    public static final SyncedDataKey<Player, Optional<CosmeticProperties>> COSMETIC_PROPERTIES = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.OPTIONAL_COSMETIC_PROPERTIES)
             .id(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_backpack"))
             .defaultValueSupplier(Optional::empty)
             .syncMode(SyncedDataKey.SyncMode.ALL)

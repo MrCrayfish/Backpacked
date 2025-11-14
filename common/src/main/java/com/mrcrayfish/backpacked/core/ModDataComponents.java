@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.core;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.SavedAugments;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
@@ -17,8 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 @RegistryContainer
 public class ModDataComponents
 {
-    public static final RegistryEntry<DataComponentType<BackpackProperties>> BACKPACK_PROPERTIES = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_properties"), builder -> {
-        return builder.persistent(BackpackProperties.CODEC).networkSynchronized(BackpackProperties.STREAM_CODEC);
+    public static final RegistryEntry<DataComponentType<CosmeticProperties>> COSMETIC_PROPERTIES = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_properties"), builder -> {
+        return builder.persistent(CosmeticProperties.CODEC).networkSynchronized(CosmeticProperties.STREAM_CODEC);
     });
 
     public static final RegistryEntry<DataComponentType<UnlockableSlots>> UNLOCKABLE_SLOTS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_slots"), builder -> {

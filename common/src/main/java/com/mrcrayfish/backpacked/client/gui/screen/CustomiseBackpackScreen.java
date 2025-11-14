@@ -20,7 +20,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.BackpackProperties;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
@@ -103,14 +103,14 @@ public class CustomiseBackpackScreen extends CustomScreen
     private CustomButton saveButton;
     private CustomButton settingsButton;
     private CustomButton backButton;
-    private BackpackProperties currentProperties;
-    private BackpackProperties displayBackpack = null;
+    private CosmeticProperties currentProperties;
+    private CosmeticProperties displayBackpack = null;
     private final List<CosmeticItem> items;
     private PlayerDisplay playerDisplay;
     private final MutableInt scroll = new MutableInt();
     private ScrollBar scrollBar;
 
-    public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, BackpackProperties properties, boolean showCosmeticWarning, Map<ResourceLocation, Double> completionMap)
+    public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, CosmeticProperties properties, boolean showCosmeticWarning, Map<ResourceLocation, Double> completionMap)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
         this.backpackIndex = backpackIndex;
