@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.util.Utils;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,6 +18,7 @@ public enum ItemSorting
     STACK_SIZE("stack_size", Comparator.comparingInt(ItemStack::getCount).reversed()),
     MOST_DAMAGED("most_damaged", Comparator.<ItemStack>comparingInt(stack -> stack.isDamageableItem() ? (stack.getDamageValue() * 1000 / stack.getMaxDamage()) : -1).reversed()),
     CREATIVE_CATEGORY("creative_category", Comparator.comparingInt(stack -> CreativeCategorySort.getSortIndex(stack.getItem()))),
+    MOD("mod", Comparator.comparing(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace())),
     SHUFFLE("shuffle", Comparator.comparingInt(stack -> Utils.RANDOM.nextInt()));
 
     public static final StreamCodec<FriendlyByteBuf, ItemSorting> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(ItemSorting.class));
