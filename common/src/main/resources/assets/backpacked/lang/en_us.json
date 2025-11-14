@@ -81,6 +81,7 @@
     "backpacked.gui.options": "Options",
     "backpacked.gui.filters": "Filters",
     "backpacked.gui.show_all": "Showing All",
+    "backpacked.gui.selected_only": "Selected Only",
     "backpacked.gui.activated_only": "Showing Activated Only",
     "backpacked.gui.pick_an_augment": "Pick an Augment",
     "backpacked.gui.requires_augment": "Requires %s",

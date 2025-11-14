@@ -50,6 +50,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
     private final int spacing;
     private final List<Item> items;
     private String searchQuery;
+    private boolean selectedOnly;
     private @Nullable ItemStack hoveredStack;
 
     private ItemGrid(Supplier<T> supplier, Consumer<T> updater, int width, int height, int itemSize, int spacing, String lastQuery, Predicate<Item> predicate)
@@ -81,8 +82,10 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         // Gather the items that should be visible
         List<Item> visibleItems = new ArrayList<>();
         this.items.forEach(item -> {
-            if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
-                visibleItems.add(item);
+            if(!this.selectedOnly || this.supplier.get().isFilteringItem(item)) {
+                if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
+                    visibleItems.add(item);
+                }
             }
         });
 
@@ -97,6 +100,12 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
             int end = Math.min(start + chunkSize, visibleItems.size());
             this.addEntry(new Row<>(this, visibleItems.subList(start, end), this.supplier, this.updater));
         }
+    }
+
+    public void setSelectedOnly(boolean selectedOnly)
+    {
+        this.selectedOnly = selectedOnly;
+        this.updateList();
     }
 
     @Override
