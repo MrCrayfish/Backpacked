@@ -31,17 +31,21 @@ public class TextInputMenu extends PopupMenu
         title.setWidth(WIDTH);
         this.layout.addChild(title);
         this.layout.addChild(Divider.horizontal(WIDTH).colour(0xFFE0CDB7));
-        EditBox editBox = this.layout.addChild(CustomEditBox.create(WIDTH, 16, null, new WidgetSprites(
-            Utils.rl("backpack/editbox/background"),
-            Utils.rl("backpack/editbox/background_focused")
-        ))).getEditBox();
-        editBox.setValue(initialInput);
-        editBox.setMaxLength(maxLength);
+
+        CustomEditBox editBox = this.layout.addChild(CustomEditBox.builder()
+            .setSize(WIDTH, 16)
+            .setText(initialInput)
+            .setMaxTextLength(maxLength)
+            .setBackground(new WidgetSprites(
+                Utils.rl("backpack/editbox/background"),
+                Utils.rl("backpack/editbox/background_focused")
+            )).build()
+        );
         this.layout.addChild(CustomButton.builder()
             .setSize(WIDTH / 3, 18)
             .setMessage(Component.literal("Save"))
             .setAction(btn -> {
-                onSave.accept(editBox.getValue());
+                onSave.accept(editBox.getText());
             }).build(), LayoutSettings::alignHorizontallyRight);
     }
 

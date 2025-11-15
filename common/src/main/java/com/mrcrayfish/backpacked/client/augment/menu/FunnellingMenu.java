@@ -63,13 +63,17 @@ public class FunnellingMenu extends AugmentSettingsMenu
 
             int filterButtonWidth = 55;
             LinearLayout header = LinearLayout.horizontal().spacing(3);
-            CustomEditBox searchField = CustomEditBox.create(divider.getWidth() - 3 - filterButtonWidth, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
-                Utils.rl("backpack/editbox/background"),
-                Utils.rl("backpack/editbox/background_focused")
-            ));
-            searchField.getEditBox().setValue(lastQuery);
-            searchField.getEditBox().setHint(SEARCH_HINT);
-            searchField.getEditBox().setResponder(list::setSearchQuery);
+            CustomEditBox searchField = CustomEditBox.builder()
+                .setWidth(divider.getWidth() - 3 - filterButtonWidth)
+                .setHeight(16)
+                .setIcon(Utils.rl("backpack/editbox/search"))
+                .setText(lastQuery)
+                .setHint(SEARCH_HINT)
+                .setCallback(list::setSearchQuery)
+                .setBackground(new WidgetSprites(
+                    Utils.rl("backpack/editbox/background"),
+                    Utils.rl("backpack/editbox/background_focused")
+                )).build();
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
             header.addChild(CustomButton.state(list::isActivatedOnly, list::setActivatedOnly)
                 .setSize(filterButtonWidth, 18)

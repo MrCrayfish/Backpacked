@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.ItemGrid;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
+import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
@@ -63,20 +64,24 @@ public class SeedflowMenu extends AugmentSettingsMenu
                 .setPredicate(SeedflowAugment.ITEM_PLACES_AGEABLE_CROP)
                 .build();
             list.setActive(() -> supplier.get().useFilters());
-            CustomEditBox searchField = layout.addChild(CustomEditBox.create(divider1.getWidth(), 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
-                Utils.rl("backpack/editbox/background"),
-                Utils.rl("backpack/editbox/background_disabled"),
-                Utils.rl("backpack/editbox/background_focused")
-            ))).setActive(() -> supplier.get().useFilters());
-            searchField.getEditBox().setValue(lastQuery);
-            searchField.getEditBox().setHint(SEARCH_HINT);
-            searchField.getEditBox().setResponder(s -> {
-                list.setSearchQuery(s);
-                lastQuery = s;
-            });
+
+            layout.addChild(CustomEditBox.builder()
+                .setSize(divider1.getWidth(), 16)
+                .setIcon(Utils.rl("backpack/editbox/search"))
+                .setText(lastQuery)
+                .setHint(SEARCH_HINT)
+                .setActive(() -> supplier.get().useFilters())
+                .setCallback(s -> {
+                    list.setSearchQuery(s);
+                    lastQuery = s;
+                })
+                .setBackground(new WidgetSprites(
+                        Utils.rl("backpack/editbox/background"),
+                        Utils.rl("backpack/editbox/background_disabled"),
+                        Utils.rl("backpack/editbox/background_focused")
+                )).build());
 
             layout.addChild(list);
-
             return layout;
         });
     }

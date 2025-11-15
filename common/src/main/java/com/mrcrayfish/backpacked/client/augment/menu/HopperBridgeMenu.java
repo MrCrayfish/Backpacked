@@ -68,18 +68,24 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
             ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(supplier, updater).setWidth(divider.getWidth()).setHeight(64).build();
             list.setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
             LinearLayout header = LinearLayout.horizontal().spacing(2);
-            CustomEditBox searchField = header.addChild(CustomEditBox.create(divider.getWidth() - 18 - 2, 16, Utils.rl("backpack/editbox/search"), new WidgetSprites(
-                Utils.rl("backpack/editbox/background"),
-                Utils.rl("backpack/editbox/background_disabled"),
-                Utils.rl("backpack/editbox/background_focused")
-            )), LayoutSettings::alignVerticallyMiddle);
-            searchField.setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
-            searchField.getEditBox().setValue(lastQuery);
-            searchField.getEditBox().setHint(SEARCH_HINT);
-            searchField.getEditBox().setResponder(s -> {
-                list.setSearchQuery(s);
-                lastQuery = s;
-            });
+
+            CustomEditBox searchField = CustomEditBox.builder()
+                .setWidth(divider.getWidth() - 18 - 2)
+                .setHeight(16)
+                .setIcon(Utils.rl("backpack/editbox/search"))
+                .setText(lastQuery)
+                .setHint(SEARCH_HINT)
+                .setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
+                .setCallback(s -> {
+                    list.setSearchQuery(s);
+                    lastQuery = s;
+                })
+                .setBackground(new WidgetSprites(
+                    Utils.rl("backpack/editbox/background"),
+                    Utils.rl("backpack/editbox/background_disabled"),
+                    Utils.rl("backpack/editbox/background_focused")
+                )).build();
+            header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
             header.addChild(CustomButton.state(() -> selectedOnly, newValue -> selectedOnly = newValue)
                 .setSize(18, 18)
                 .setIcon(btn -> selectedOnly ? TOGGLE_ON : TOGGLE_OFF, 6, 6)
