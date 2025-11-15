@@ -75,7 +75,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         pose.translate(0, -0.06, offset * 0.0625);
 
         pose.pushPose();
-        double animationScale = Mth.clamp(player.getDeltaMovement().horizontalDistance() * 3, 0, 1);
+        double animationScale = Mth.clamp(player.getDeltaMovement().horizontalDistance() * 5, 0, 1);
         double bob = (Mth.cos(player.walkAnimation.position(partialTick)) + 1) / 2 * 0.05;
         pose.translate(0, bob * animationScale, 0);
         double sway = Mth.cos(player.walkAnimation.position(partialTick) * 0.5F) * 3;
