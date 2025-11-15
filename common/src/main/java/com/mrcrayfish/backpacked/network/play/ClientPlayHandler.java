@@ -125,7 +125,11 @@ public class ClientPlayHandler
     public static void handleLootboundTakeItem(MessageLootboundTakeItem message, MessageContext context)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.level == null || minecraft.player == null)
+        if(minecraft.level == null)
+            return;
+
+        Entity player = minecraft.level.getEntity(message.entityId());
+        if(player == null)
             return;
 
         ItemStack stack = message.stack();
@@ -134,7 +138,7 @@ public class ClientPlayHandler
 
         Vec3 pos = message.pos();
         ItemEntity entity = new ItemEntity(minecraft.level, pos.x, pos.y, pos.z, stack);
-        minecraft.particleEngine.add(new ItemPickupParticle(minecraft.getEntityRenderDispatcher(), minecraft.renderBuffers(), minecraft.level, entity, minecraft.player));
+        minecraft.particleEngine.add(new ItemPickupParticle(minecraft.getEntityRenderDispatcher(), minecraft.renderBuffers(), minecraft.level, entity, player));
 
         float pitch = 0.7F + 0.3F * minecraft.level.random.nextFloat();
         SimpleSoundInstance sound = new SimpleSoundInstance(ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.BLOCKS, 1F, pitch, SoundInstance.createUnseededRandom(), pos.x, pos.y, pos.z);

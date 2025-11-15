@@ -248,7 +248,7 @@ public class AugmentHandler
         {
             consumed.forEach(pair -> {
                 LevelLocation location = LevelLocation.create(level, pair.getSecond(), 32);
-                Network.getPlay().sendToNearbyPlayers(() -> location, new MessageLootboundTakeItem(pair.getFirst(), pair.getSecond()));
+                Network.getPlay().sendToNearbyPlayers(() -> location, new MessageLootboundTakeItem(player.getId(), pair.getFirst(), pair.getSecond()));
             });
         }
     }
