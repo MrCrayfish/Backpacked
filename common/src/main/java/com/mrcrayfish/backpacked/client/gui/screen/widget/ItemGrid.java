@@ -1,10 +1,9 @@
-package com.mrcrayfish.backpacked.client.augment.widget;
+package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomSelectionList;
 import com.mrcrayfish.backpacked.common.FilterableItems;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;

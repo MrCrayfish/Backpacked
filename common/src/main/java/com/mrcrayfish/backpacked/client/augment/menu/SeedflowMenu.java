@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.augment.widget.ItemGrid;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.ItemGrid;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;

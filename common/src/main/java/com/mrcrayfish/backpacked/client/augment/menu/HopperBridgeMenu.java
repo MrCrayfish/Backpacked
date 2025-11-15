@@ -1,14 +1,13 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.augment.widget.ItemGrid;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.ItemGrid;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomEditBox;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
-import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
