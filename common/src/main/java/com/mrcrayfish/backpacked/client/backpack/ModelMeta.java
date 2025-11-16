@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay, Optional<BackpackRenderer> renderer)
+public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay, Optional<BackpackRenderer> renderer, boolean bobbing)
 {
     public static final Codec<ItemTransform> ITEM_TRANSFORM_CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(
@@ -24,11 +24,12 @@ public record ModelMeta(Vector3f shelfOffset, Optional<ItemTransform> guiDisplay
             ExtraCodecs.VECTOR3F.fieldOf("scale").orElseGet(() -> new Vector3f(1, 1, 1)).forGetter(o -> o.scale)
         ).apply(builder, ItemTransform::new);
     });
-    public static final ModelMeta DEFAULT = new ModelMeta(new Vector3f(), Optional.empty(), Optional.empty());
+    public static final ModelMeta DEFAULT = new ModelMeta(new Vector3f(), Optional.empty(), Optional.empty(), true);
     public static final Codec<ModelMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
         ExtraCodecs.VECTOR3F.optionalFieldOf("shelf_offset", new Vector3f()).forGetter(o -> o.shelfOffset),
         ITEM_TRANSFORM_CODEC.optionalFieldOf("gui_display").forGetter(o -> o.guiDisplay),
-        BackpackRenderer.CODEC.optionalFieldOf("renderer").forGetter(o -> o.renderer)
+        BackpackRenderer.CODEC.optionalFieldOf("renderer").forGetter(o -> o.renderer),
+        Codec.BOOL.optionalFieldOf("bobbing", true).forGetter(o -> o.bobbing)
     ).apply(builder, ModelMeta::new));
 
 }

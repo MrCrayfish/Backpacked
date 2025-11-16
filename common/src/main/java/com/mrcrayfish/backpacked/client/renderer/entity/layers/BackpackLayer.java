@@ -75,14 +75,20 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         pose.translate(0, -0.06, offset * 0.0625);
 
         pose.pushPose();
-        double animationScale = Mth.clamp(player.getDeltaMovement().horizontalDistance() * 5, 0, 1);
-        double bob = (Mth.cos(player.walkAnimation.position(partialTick)) + 1) / 2 * 0.05;
-        pose.translate(0, bob * animationScale, 0);
-        double sway = Mth.cos(player.walkAnimation.position(partialTick) * 0.5F) * 3;
-        pose.mulPose(Axis.ZP.rotationDegrees((float) (sway * animationScale)));
+
+        ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
+
+        // Applies a bobbing animation when the player is walking
+        if(meta.bobbing())
+        {
+            double animationScale = Mth.clamp(player.getDeltaMovement().horizontalDistance() * 5, 0, 1);
+            double bob = (Mth.cos(player.walkAnimation.position(partialTick)) + 1) / 2 * 0.05;
+            pose.translate(0, bob * animationScale, 0);
+            double sway = Mth.cos(player.walkAnimation.position(partialTick) * 0.5F) * 3;
+            pose.mulPose(Axis.ZP.rotationDegrees((float) (sway * animationScale)));
+        }
 
         // Draw the backpack model
-        ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresentOrElse(renderer -> {
             BackpackRenderContext context = new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.ALL, pose, source, light, backpack, player, player.level(), partialTick, model -> {
                 BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
@@ -94,6 +100,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             BakedModel model = this.getModel(backpack.getBaseModel());
             BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
         });
+
         pose.popPose();
 
         BakedModelRenderer.drawBakedModel(this.getModel(backpack.getStrapsModel()), pose, source, light, OverlayTexture.NO_OVERLAY);
