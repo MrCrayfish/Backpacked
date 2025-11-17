@@ -4,11 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -60,6 +63,23 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     protected MapCodec<ShelfBlock> codec()
     {
         return CODEC;
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
+    {
+        if(stack.getItem() instanceof BackpackItem)
+        {
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            {
+                if(shelfBlockEntity.getBackpack().isEmpty())
+                {
+                    shelfBlockEntity.setBackpack(stack.copyAndClear());
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                }
+            }
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

@@ -227,6 +227,11 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return this.container.getItem(0);
     }
 
+    public void setBackpack(ItemStack stack)
+    {
+        this.container.setItem(0, stack);
+    }
+
     public Direction getDirection()
     {
         return this.getBlockState().getValue(ShelfBlock.FACING);
