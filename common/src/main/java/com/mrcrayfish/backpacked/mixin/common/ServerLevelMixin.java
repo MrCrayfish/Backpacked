@@ -48,7 +48,7 @@ public abstract class ServerLevelMixin implements Farmhand.Access
     {
         ServerLevel level = (ServerLevel) (Object) this;
         ProfilerFiller profiler = level.getProfiler();
-        profiler.push("farmhand");
+        profiler.push("backpacked_farmhand");
         this.backpacked$farmhand.tick();
         profiler.pop();
     }
