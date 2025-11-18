@@ -8,8 +8,11 @@ import com.b1n_ry.yigd.events.YigdEvents;
 import com.b1n_ry.yigd.util.DropRule;
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +20,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class YoureInGraveDangerSupport
         event.addModCompat(new BackpackedCompat());
     }
 
-    private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, ItemStack>>>
+    private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, GraveItem>>>
     {
         @Override
         public String getModName()
@@ -52,9 +54,9 @@ public class YoureInGraveDangerSupport
         }
 
         @Override
-        public CompatComponent<List<Pair<Integer, ItemStack>>> readNbt(CompoundTag tag, HolderLookup.Provider provider)
+        public CompatComponent<List<Pair<Integer, GraveItem>>> readNbt(CompoundTag tag, HolderLookup.Provider provider)
         {
-            List<Pair<Integer, ItemStack>> backpacks = new ArrayList<>();
+            List<Pair<Integer, GraveItem>> backpacks = new ArrayList<>();
             if(tag.contains("Backpacks", Tag.TAG_LIST))
             {
                 ListTag list = tag.getList("Backpacks", Tag.TAG_COMPOUND);
@@ -62,7 +64,8 @@ public class YoureInGraveDangerSupport
                     if(nbt instanceof CompoundTag slotTag) {
                         int slot = slotTag.getInt("Slot");
                         ItemStack stack = ItemStack.parseOptional(provider, slotTag.getCompound("Item"));
-                        backpacks.add(Pair.of(slot, stack));
+                        DropRule dropRule = slotTag.getBoolean("Recalled") ? DropRule.DESTROY : DropRule.PUT_IN_GRAVE;
+                        backpacks.add(Pair.of(slot, new  GraveItem(stack, dropRule)));
                     }
                 });
             }
@@ -70,35 +73,35 @@ public class YoureInGraveDangerSupport
         }
 
         @Override
-        public CompatComponent<List<Pair<Integer, ItemStack>>> getNewComponent(ServerPlayer player)
+        public CompatComponent<List<Pair<Integer, GraveItem>>> getNewComponent(ServerPlayer player)
         {
             return new BackpackedCompatComponent(player);
         }
     }
 
-    private static class BackpackedCompatComponent extends CompatComponent<List<Pair<Integer, ItemStack>>>
+    private static class BackpackedCompatComponent extends CompatComponent<List<Pair<Integer, GraveItem>>>
     {
         public BackpackedCompatComponent(ServerPlayer player)
         {
             super(player);
         }
 
-        public BackpackedCompatComponent(List<Pair<Integer, ItemStack>> backpacks)
+        public BackpackedCompatComponent(List<Pair<Integer, GraveItem>> backpacks)
         {
             super(backpacks);
         }
 
         @Override
-        public List<Pair<Integer, ItemStack>> getInventory(ServerPlayer player)
+        public List<Pair<Integer, GraveItem>> getInventory(ServerPlayer player)
         {
-            List<Pair<Integer, ItemStack>> list = new ArrayList<>();
+            List<Pair<Integer, GraveItem>> list = new ArrayList<>();
             NonNullList<ItemStack> backpacks = BackpackHelper.getBackpacks(player);
             for(int i = 0; i < backpacks.size(); i++)
             {
                 ItemStack stack = backpacks.get(i);
                 if(!stack.isEmpty())
                 {
-                    list.add(new Pair<>(i, stack.copy()));
+                    list.add(new Pair<>(i, new GraveItem(stack.copy(), DropRule.PUT_IN_GRAVE)));
                 }
             }
             return list;
@@ -118,12 +121,13 @@ public class YoureInGraveDangerSupport
             NonNullList<ItemStack> extra = NonNullList.create();
             this.inventory.forEach(pair -> {
                 int index = pair.getFirst();
-                ItemStack stack = pair.getSecond();
+                GraveItem graveItem = pair.getSecond();
                 if(BackpackHelper.getBackpackStack(player, index).isEmpty()) {
-                    if(!BackpackHelper.setBackpackStack(player, stack, index)) {
-                        extra.add(stack);
+                    if(BackpackHelper.setBackpackStack(player, graveItem.stack.copyAndClear(), index)) {
+                        return;
                     }
                 }
+                extra.add(graveItem.stack);
             });
             return extra;
         }
@@ -131,7 +135,17 @@ public class YoureInGraveDangerSupport
         @Override
         public void handleDropRules(DeathContext context)
         {
-            // No implementation
+            this.inventory.forEach(pair -> {
+                GraveItem graveItem = pair.getSecond();
+                ItemStack stack = graveItem.stack;
+                if(this.hasRecallAugment(stack)) {
+                    ServerPlayer player = context.player();
+                    RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+                    if(augment != null && AugmentHandler.sendBackpackToShelf(player, stack, augment)) {
+                        graveItem.dropRule = DropRule.DESTROY;
+                    }
+                }
+            });
         }
 
         @Override
@@ -140,35 +154,30 @@ public class YoureInGraveDangerSupport
             NonNullList<GraveItem> drops = NonNullList.create();
             if(!this.inventory.isEmpty())
             {
-                DropRule rule = this.getDropRule();
-                this.inventory.forEach(pair -> {
-                    ItemStack stack = pair.getSecond();
-                    if(!stack.isEmpty()) {
-                        drops.add(new GraveItem(stack, rule));
-                    }
-                });
+                this.inventory.forEach(pair -> drops.add(pair.getSecond()));
             }
             return drops;
         }
 
         @Override
-        public CompatComponent<List<Pair<Integer, ItemStack>>> filterInv(Predicate<DropRule> predicate)
+        public CompatComponent<List<Pair<Integer, GraveItem>>> filterInv(Predicate<DropRule> predicate)
         {
-            List<Pair<Integer, ItemStack>> list = new ArrayList<>();
-            DropRule rule = this.getDropRule();
-            if(predicate.test(rule))
-            {
-                list.addAll(this.inventory);
-            }
+            List<Pair<Integer, GraveItem>> list = new ArrayList<>();
+            this.inventory.forEach(pair -> {
+                GraveItem graveItem = pair.getSecond();
+                if(predicate.test(graveItem.dropRule)) {
+                    list.add(pair);
+                }
+            });
             return new BackpackedCompatComponent(list);
         }
 
         @Override
         public boolean removeItem(Predicate<ItemStack> predicate, int count)
         {
-            for(Pair<Integer, ItemStack> pair : this.inventory)
+            for(Pair<Integer, GraveItem> pair : this.inventory)
             {
-                ItemStack stack = pair.getSecond();
+                ItemStack stack = pair.getSecond().stack;
                 if(predicate.test(stack))
                 {
                     stack.shrink(Math.min(stack.getCount(), count));
@@ -192,17 +201,19 @@ public class YoureInGraveDangerSupport
             this.inventory.forEach(pair -> {
                 CompoundTag slotTag = new CompoundTag();
                 slotTag.putInt("Slot", pair.getFirst());
-                slotTag.put("Item", pair.getSecond().saveOptional(provider));
+                GraveItem graveItem = pair.getSecond();
+                slotTag.put("Item", graveItem.stack.saveOptional(provider));
+                slotTag.putBoolean("Recalled", graveItem.dropRule == DropRule.DESTROY);
                 list.add(slotTag);
             });
             tag.put("Backpacks", list);
             return tag;
         }
 
-        private DropRule getDropRule()
+        private boolean hasRecallAugment(ItemStack stack)
         {
-            boolean keepOnDeath = Config.BACKPACK.equipable.keepOnDeath.get();
-            return keepOnDeath ? DropRule.KEEP : DropRule.PUT_IN_GRAVE;
+            RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+            return augment != null && augment.shelf().isPresent();
         }
     }
 }

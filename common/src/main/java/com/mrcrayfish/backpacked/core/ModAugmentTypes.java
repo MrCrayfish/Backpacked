@@ -20,4 +20,5 @@ public class ModAugmentTypes
     public static final RegistryEntry<AugmentType<FarmhandAugment>> FARMHAND = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("farmhand"), () -> FarmhandAugment.TYPE);
     public static final RegistryEntry<AugmentType<SeedflowAugment>> SEEDFLOW = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("seedflow"), () -> SeedflowAugment.TYPE);
     public static final RegistryEntry<AugmentType<HopperBridgeAugment>> HOPPER_BRIDGE = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("hopper_bridge"), () -> HopperBridgeAugment.TYPE);
+    public static final RegistryEntry<AugmentType<RecallAugment>> RECALL = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("recall"), () -> RecallAugment.TYPE);
 }

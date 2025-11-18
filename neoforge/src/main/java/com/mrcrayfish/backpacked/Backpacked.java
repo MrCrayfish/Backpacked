@@ -3,7 +3,10 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
@@ -139,11 +142,12 @@ public class Backpacked
             if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
                 return;
 
-            if(Config.BACKPACK.equipable.keepOnDeath.get())
-                return;
-
             BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
                 if(!stack.isEmpty()) {
+                    RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+                    if(augment != null && AugmentHandler.sendBackpackToShelf(player, stack, augment)) {
+                        return;
+                    }
                     event.getDrops().add(this.createDrop(player, stack));
                 }
             });

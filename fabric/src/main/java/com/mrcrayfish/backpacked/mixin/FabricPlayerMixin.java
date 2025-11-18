@@ -1,8 +1,11 @@
 package com.mrcrayfish.backpacked.mixin;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -33,14 +36,18 @@ public class FabricPlayerMixin
     private void backpacked$DropBackpack(CallbackInfo ci)
     {
         Player player = (Player) (Object) this;
-        if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+        if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        if(Config.BACKPACK.equipable.keepOnDeath.get())
+        if(serverPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
             return;
 
         BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
             if(!stack.isEmpty()) {
+                RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+                if(augment != null && AugmentHandler.sendBackpackToShelf(serverPlayer, stack, augment)) {
+                    return;
+                }
                 player.drop(stack, true, false);
             }
         });
