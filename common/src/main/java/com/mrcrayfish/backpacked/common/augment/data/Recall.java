@@ -31,6 +31,7 @@ public final class Recall extends SavedData
     private final Map<UUID, List<PlayerBackpack>> recalling = new HashMap<>();
     private int timer;
     private boolean runNow;
+    private boolean force;
 
     @SuppressWarnings("DataFlowIssue")
     public static Factory<Recall> factory(ServerLevel level)
@@ -77,7 +78,13 @@ public final class Recall extends SavedData
         return false;
     }
 
-    public int flush(MinecraftServer server)
+    public void forceNextRun()
+    {
+        this.force = true;
+        this.runNow = true;
+    }
+
+    public int flushQueues(MinecraftServer server)
     {
         int[] count = {0};
         this.recalling.forEach((id, playerBackpacks) -> {
@@ -115,7 +122,7 @@ public final class Recall extends SavedData
             assert blockPos != null; // BiMap doesn't allow null so this should be fine
 
             // If the area is not loaded, backpacks can not be returned, so we'll hold off
-            if(!this.level.isLoaded(blockPos))
+            if(!this.force && !this.level.isLoaded(blockPos))
                 continue;
 
             // If the block entity is not a shelf, unregistered and clear any existing queue
@@ -158,6 +165,7 @@ public final class Recall extends SavedData
         }
 
         this.runNow = false;
+        this.force = false;
     }
 
     private static Recall load(ServerLevel level, HolderLookup.Provider provider, CompoundTag tag)

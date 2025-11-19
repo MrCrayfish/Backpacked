@@ -10,19 +10,18 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Author: MrCrayfish
  */
-public class FlushRecallQueueCommand
+public class ForceRecallCommand
 {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
-        dispatcher.register(Commands.literal("backpacked:flush_recall_queue").requires(source -> {
+        dispatcher.register(Commands.literal("backpacked:force_recall").requires(source -> {
             return source.hasPermission(2);
         }).executes(context -> {
             MinecraftServer server = context.getSource().getServer();
-            int[] count = {0};
             server.getAllLevels().forEach(serverLevel -> {
-                count[0] += ((Recall.Access) serverLevel).backpacked$getRecall().flushQueues(server);
+                ((Recall.Access) serverLevel).backpacked$getRecall().forceNextRun();
             });
-            context.getSource().sendSuccess(() -> Component.literal("Flushed %s backpacks".formatted(count[0])), false);
+            context.getSource().sendSuccess(() -> Component.literal("Forcing Recall to deliver backpacks..."), false);
             return 1;
         }));
     }
