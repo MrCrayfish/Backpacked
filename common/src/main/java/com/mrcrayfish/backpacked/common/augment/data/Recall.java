@@ -57,6 +57,8 @@ public final class Recall extends SavedData
     {
         this.shelves.remove(shelf.id());
         this.shelves.inverse().remove(shelf.getBlockPos());
+        this.flushQueueById(shelf.id(), shelf.getBlockPos().getCenter());
+        this.recalling.remove(shelf.id());
         this.setDirty();
     }
 
@@ -84,27 +86,46 @@ public final class Recall extends SavedData
         this.runNow = true;
     }
 
-    public int flushQueues(MinecraftServer server)
+    public int flushAllQueues(MinecraftServer server)
     {
         int[] count = {0};
-        this.recalling.forEach((id, playerBackpacks) -> {
-            var it = playerBackpacks.iterator();
-            while(it.hasNext()) {
-                PlayerBackpack backpack = it.next();
-                ServerPlayer player = server.getPlayerList().getPlayer(backpack.owner);
-                if(player == null)
-                    continue;
-                Vec3 pos = player.position();
-                ItemEntity entity = new ItemEntity(this.level, pos.x, pos.y, pos.z, backpack.stack);
-                player.level().addFreshEntity(entity);
-                it.remove();
-                count[0]++;
-            }
-        });
-        this.recalling.entrySet().removeIf(entry -> {
-            return entry.getValue().isEmpty();
-        });
+        var it = this.recalling.entrySet().iterator();
+        while(it.hasNext())
+        {
+            List<PlayerBackpack> playerBackpacks = it.next().getValue();
+            count[0] += this.flushQueue(server, playerBackpacks, null);
+            it.remove();
+        }
         return count[0];
+    }
+
+    private int flushQueue(MinecraftServer server, List<PlayerBackpack> playerBackpacks, @Nullable Vec3 overridePos)
+    {
+        int[] count = {0};
+        var it = playerBackpacks.iterator();
+        while(it.hasNext()) {
+            PlayerBackpack backpack = it.next();
+            ServerPlayer player = server.getPlayerList().getPlayer(backpack.owner);
+            if(player == null)
+                continue;
+            Vec3 pos = overridePos != null ? overridePos : player.position();
+            ItemEntity entity = new ItemEntity(this.level, pos.x, pos.y, pos.z, backpack.stack);
+            entity.setDefaultPickUpDelay();
+            entity.setUnlimitedLifetime();
+            player.level().addFreshEntity(entity);
+            it.remove();
+            count[0]++;
+        }
+        return count[0];
+    }
+
+    private void flushQueueById(UUID shelfId, @Nullable Vec3 overridePos)
+    {
+        List<PlayerBackpack> playerBackpacks = this.recalling.remove(shelfId);
+        if(playerBackpacks != null)
+        {
+            this.flushQueue(this.level.getServer(), playerBackpacks, overridePos);
+        }
     }
 
     public void tick()
@@ -129,7 +150,7 @@ public final class Recall extends SavedData
             if(!(this.level.getBlockEntity(blockPos) instanceof ShelfBlockEntity shelf))
             {
                 it.remove();
-                this.recalling.remove(entry.getKey());
+                this.flushQueueById(entry.getKey(), blockPos.getCenter());
                 this.setDirty();
                 continue;
             }

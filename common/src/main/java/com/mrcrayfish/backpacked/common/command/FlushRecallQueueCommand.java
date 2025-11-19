@@ -20,7 +20,7 @@ public class FlushRecallQueueCommand
             MinecraftServer server = context.getSource().getServer();
             int[] count = {0};
             server.getAllLevels().forEach(serverLevel -> {
-                count[0] += ((Recall.Access) serverLevel).backpacked$getRecall().flushQueues(server);
+                count[0] += ((Recall.Access) serverLevel).backpacked$getRecall().flushAllQueues(server);
             });
             context.getSource().sendSuccess(() -> Component.literal("Flushed %s backpacks".formatted(count[0])), false);
             return 1;
