@@ -11,6 +11,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -74,6 +75,29 @@ public final class Recall extends SavedData
             return true;
         }
         return false;
+    }
+
+    public int flush(MinecraftServer server)
+    {
+        int[] count = {0};
+        this.recalling.forEach((id, playerBackpacks) -> {
+            var it = playerBackpacks.iterator();
+            while(it.hasNext()) {
+                PlayerBackpack backpack = it.next();
+                ServerPlayer player = server.getPlayerList().getPlayer(backpack.owner);
+                if(player == null)
+                    continue;
+                Vec3 pos = player.position();
+                ItemEntity entity = new ItemEntity(this.level, pos.x, pos.y, pos.z, backpack.stack);
+                player.level().addFreshEntity(entity);
+                it.remove();
+                count[0]++;
+            }
+        });
+        this.recalling.entrySet().removeIf(entry -> {
+            return entry.getValue().isEmpty();
+        });
+        return count[0];
     }
 
     public void tick()
