@@ -348,6 +348,9 @@ public class ServerPlayHandler
         if(currentAugment.type() != updatedAugment.type())
             return;
 
+        // Allows augments to perform a sort of sanitization before updating
+        updatedAugment = updatedAugment.beforeUpdate(serverPlayer, currentAugment);
+
         // Don't need to update if the augments are the same
         if(Objects.equals(currentAugment, updatedAugment))
             return;
@@ -355,6 +358,9 @@ public class ServerPlayHandler
         currentAugments = currentAugments.setAugment(message.position(), updatedAugment);
         Augments.set(stack, currentAugments);
         menu.setAugments(currentAugments);
+
+        // Sync change back to client
+        Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageSyncAugmentChange(message.position(), updatedAugment));
     }
 
     public static void handleRenameBackpack(MessageRenameBackpack message, MessageContext context)

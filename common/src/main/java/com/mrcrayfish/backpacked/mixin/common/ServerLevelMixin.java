@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.common.Farmhand;
+import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
+import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -23,15 +24,24 @@ import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin implements Farmhand.Access
+public abstract class ServerLevelMixin implements Farmhand.Access, Recall.Access
 {
     @Unique
     private Farmhand backpacked$farmhand;
+
+    @Unique
+    private Recall backpacked$recall;
 
     @Override
     public Farmhand backpacked$getFarmhand()
     {
         return this.backpacked$farmhand;
+    }
+
+    @Override
+    public Recall backpacked$getRecall()
+    {
+        return this.backpacked$recall;
     }
 
     @Shadow
@@ -40,7 +50,9 @@ public abstract class ServerLevelMixin implements Farmhand.Access
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void backpacked$init(MinecraftServer server, Executor executor, LevelStorageSource.LevelStorageAccess access, ServerLevelData data, ResourceKey key, LevelStem stem, ChunkProgressListener listener, boolean bool1, long long1, List list1, boolean bool2, RandomSequences sequences, CallbackInfo ci)
     {
-        this.backpacked$farmhand = this.getDataStorage().computeIfAbsent(Farmhand.factory((ServerLevel) (Object) this), Farmhand.ID);
+        ServerLevel level = (ServerLevel) (Object) this;
+        this.backpacked$farmhand = this.getDataStorage().computeIfAbsent(Farmhand.factory(level), Farmhand.ID);
+        this.backpacked$recall = this.getDataStorage().computeIfAbsent(Recall.factory(level), Recall.ID);
     }
 
     @Inject(method = "tick", at = @At(value = "TAIL"))
@@ -50,6 +62,8 @@ public abstract class ServerLevelMixin implements Farmhand.Access
         ProfilerFiller profiler = level.getProfiler();
         profiler.push("backpacked_farmhand");
         this.backpacked$farmhand.tick();
+        profiler.popPush("backpacked_recall");
+        this.backpacked$recall.tick();
         profiler.pop();
     }
 }

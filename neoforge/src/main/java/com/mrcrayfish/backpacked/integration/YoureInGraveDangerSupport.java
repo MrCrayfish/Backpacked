@@ -141,7 +141,7 @@ public class YoureInGraveDangerSupport
                 if(this.hasRecallAugment(stack)) {
                     ServerPlayer player = context.player();
                     RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-                    if(augment != null && AugmentHandler.sendBackpackToShelf(player, stack, augment)) {
+                    if(augment != null && AugmentHandler.recallBackpack(player, stack, augment)) {
                         graveItem.dropRule = DropRule.DESTROY;
                     }
                 }

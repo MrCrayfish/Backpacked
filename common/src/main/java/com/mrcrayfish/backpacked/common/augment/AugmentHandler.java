@@ -2,12 +2,12 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.common.Farmhand;
+import com.mrcrayfish.backpacked.common.Shelf;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
+import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
+import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import com.mrcrayfish.backpacked.common.augment.impl.*;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
-import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.mixin.common.BlockItemMixin;
@@ -22,7 +22,6 @@ import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,8 +39,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -553,9 +550,9 @@ public class AugmentHandler
         };
     }
 
-    public static boolean sendBackpackToShelf(ServerPlayer player, ItemStack stack, RecallAugment augment)
+    public static boolean recallBackpack(ServerPlayer player, ItemStack stack, RecallAugment augment)
     {
-        Optional<RecallAugment.ShelfPosition> optional = augment.shelf();
+        Optional<Shelf> optional = augment.shelf();
         if(optional.isEmpty())
             return false;
 
@@ -563,19 +560,13 @@ public class AugmentHandler
         if(server == null)
             return false;
 
-        RecallAugment.ShelfPosition shelfPosition = optional.get();
-        BlockPos pos = shelfPosition.pos();
-        SectionPos sectionPos = SectionPos.of(pos);
-        ServerLevel level = server.getLevel(shelfPosition.key());
-        if(level == null || !level.hasChunk(sectionPos.x(), sectionPos.z()))
+        Shelf shelf = optional.get();
+        ServerLevel level = server.getLevel(shelf.key());
+        if(level == null)
             return false;
 
-        // TODO validate on server when setting block pos that its a shelf
-        Optional<ShelfBlockEntity> optionalShelf = level.getBlockEntity(pos, ModBlockEntities.SHELF.get());
-        return optionalShelf.map(shelf -> {
-            shelf.setBackpack(stack.copy());
-            return true;
-        }).orElse(false);
+        Recall recall = ((Recall.Access) level).backpacked$getRecall();
+        return recall.sendToShelf(shelf.id(), stack);
     }
 
     /*private static boolean isFarmland()

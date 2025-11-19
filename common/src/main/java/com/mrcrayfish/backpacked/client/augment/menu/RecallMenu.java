@@ -3,7 +3,9 @@ package com.mrcrayfish.backpacked.client.augment.menu;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.TextWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
+import com.mrcrayfish.backpacked.common.Shelf;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -22,14 +24,19 @@ public class RecallMenu extends AugmentSettingsMenu
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.horizontal().spacing(2);
+            layout.addChild(new TextWidget(() -> {
+                return Component.literal(supplier.get().shelf().map(shelf -> shelf.id().toString()).orElse("Not Set"));
+            }, Minecraft.getInstance().font)).setWidth(200);
             layout.addChild(CustomButton.builder().setSize(20, 20).setAction(btn -> {
                 Minecraft mc = Minecraft.getInstance();
-                if(mc.level != null && mc.hitResult instanceof BlockHitResult result) {
+                if(mc.level != null && mc.player != null && mc.hitResult instanceof BlockHitResult result) {
                     BlockPos pos = result.getBlockPos();
-                    if(mc.level.getBlockEntity(pos) instanceof ShelfBlockEntity) {
+                    // This is checked server side too
+                    if(pos.distToCenterSqr(mc.player.position()) > RecallAugment.UPDATE_SHELF_RANGE_SQR)
+                        return;
+                    if(mc.level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf) {
                         ResourceKey<Level> key = mc.level.dimension();
-                        updater.accept(supplier.get().setShelfPosition(key, pos));
-                        mc.gui.getChat().addMessage(Component.literal("Recall has been saved to " + pos));
+                        updater.accept(supplier.get().setShelf(new Shelf(key, shelf.id())));
                     }
                 }
             }).build());

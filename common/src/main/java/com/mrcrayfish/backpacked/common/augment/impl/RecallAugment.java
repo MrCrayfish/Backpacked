@@ -1,33 +1,37 @@
 package com.mrcrayfish.backpacked.common.augment.impl;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.common.Shelf;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
+import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public record RecallAugment(Optional<ShelfPosition> shelf) implements Augment<RecallAugment>
+public record RecallAugment(Optional<Shelf> shelf) implements Augment<RecallAugment>
 {
+    public static final RecallAugment EMPTY = new RecallAugment(Optional.empty());
     public static final AugmentType<RecallAugment> TYPE = new AugmentType<>(
         Utils.rl("recall"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ShelfPosition.CODEC.optionalFieldOf("key").forGetter(RecallAugment::shelf)
+            Shelf.CODEC.optionalFieldOf("shelf").forGetter(RecallAugment::shelf)
         ).apply(instance, RecallAugment::new)),
         StreamCodec.composite(
-            ByteBufCodecs.optional(ShelfPosition.STREAM_CODEC), RecallAugment::shelf,
+            ByteBufCodecs.optional(Shelf.STREAM_CODEC), RecallAugment::shelf,
             RecallAugment::new
         ),
         () -> new RecallAugment(Optional.empty())
     );
+    public static final int UPDATE_SHELF_RANGE_SQR = 16 * 16;
 
     @Override
     public AugmentType<RecallAugment> type()
@@ -35,22 +39,42 @@ public record RecallAugment(Optional<ShelfPosition> shelf) implements Augment<Re
         return TYPE;
     }
 
-    public RecallAugment setShelfPosition(ResourceKey<Level> key, BlockPos pos)
+    @Override
+    public RecallAugment beforeUpdate(ServerPlayer player, Augment<?> current)
     {
-        return new RecallAugment(Optional.of(new ShelfPosition(key, pos)));
+        RecallAugment updated = this;
+        RecallAugment other = (current instanceof RecallAugment a) ? a : EMPTY;
+
+        // When updating the shelf, we need to check if the player is within distance
+        if(this.shelf.isPresent() && !Objects.equals(this.shelf, other.shelf))
+        {
+            Shelf shelf = this.shelf.get();
+
+            // Server should be present
+            MinecraftServer server = player.getServer();
+            assert server != null;
+
+            ServerLevel level = server.getLevel(shelf.key());
+            if(level != null)
+            {
+                Recall recall = ((Recall.Access) level).backpacked$getRecall();
+                BlockPos shelfPos = recall.getShelfBlockPos(shelf.id());
+                if(shelfPos == null || shelfPos.distToCenterSqr(player.position()) > UPDATE_SHELF_RANGE_SQR)
+                {
+                    updated = updated.setShelf(null);
+                }
+            }
+            else
+            {
+                updated = updated.setShelf(null);
+            }
+        }
+        return updated;
     }
 
-    public record ShelfPosition(ResourceKey<Level> key, BlockPos pos)
+    public RecallAugment setShelf(@Nullable Shelf shelf)
     {
-        private static final Codec<ShelfPosition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceKey.codec(Registries.DIMENSION).fieldOf("key").forGetter(ShelfPosition::key),
-            BlockPos.CODEC.fieldOf("pos").forGetter(ShelfPosition::pos)
-        ).apply(instance, ShelfPosition::new));
-
-        private static final StreamCodec<RegistryFriendlyByteBuf, ShelfPosition> STREAM_CODEC = StreamCodec.composite(
-            ResourceKey.streamCodec(Registries.DIMENSION), ShelfPosition::key,
-            BlockPos.STREAM_CODEC, ShelfPosition::pos,
-            ShelfPosition::new
-        );
+        return new RecallAugment(Optional.ofNullable(shelf));
     }
+
 }

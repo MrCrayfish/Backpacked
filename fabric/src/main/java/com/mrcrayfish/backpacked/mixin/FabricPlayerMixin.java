@@ -45,7 +45,7 @@ public class FabricPlayerMixin
         BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
             if(!stack.isEmpty()) {
                 RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-                if(augment != null && AugmentHandler.sendBackpackToShelf(serverPlayer, stack, augment)) {
+                if(augment != null && AugmentHandler.recallBackpack(serverPlayer, stack, augment)) {
                     return;
                 }
                 player.drop(stack, true, false);

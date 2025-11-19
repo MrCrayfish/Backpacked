@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.core.ModRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 @SuppressWarnings("unchecked")
 public interface Augment<T extends Augment<T>>
@@ -22,4 +23,9 @@ public interface Augment<T extends Augment<T>>
     });
 
     AugmentType<T> type();
+
+    default T beforeUpdate(ServerPlayer player, Augment<?> current)
+    {
+        return (T) this;
+    }
 }

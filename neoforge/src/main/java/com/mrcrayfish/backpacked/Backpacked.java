@@ -145,7 +145,7 @@ public class Backpacked
             BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
                 if(!stack.isEmpty()) {
                     RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-                    if(augment != null && AugmentHandler.sendBackpackToShelf(player, stack, augment)) {
+                    if(augment != null && AugmentHandler.recallBackpack(player, stack, augment)) {
                         return;
                     }
                     event.getDrops().add(this.createDrop(player, stack));

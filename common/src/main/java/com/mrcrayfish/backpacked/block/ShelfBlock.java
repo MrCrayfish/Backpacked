@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -160,9 +162,13 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     {
         if(!state.is(newState.getBlock()))
         {
-            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
             {
-                ItemStack stack = shelfBlockEntity.getBackpackWithContents();
+                if(level instanceof ServerLevel serverLevel)
+                {
+                    ((Recall.Access) serverLevel).backpacked$getRecall().unregisterShelf(shelf);
+                }
+                ItemStack stack = shelf.getBackpackWithContents();
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
                 level.updateNeighbourForOutputSignal(pos, this);
             }
