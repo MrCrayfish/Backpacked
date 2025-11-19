@@ -14,7 +14,7 @@ public class UnlockBackpackCommand
 {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
-        dispatcher.register(Commands.literal("unlockbackpack").requires(source -> {
+        dispatcher.register(Commands.literal("backpacked:unlock_backpack").requires(source -> {
             return source.hasPermission(2);
         }).then(Commands.argument("backpack", BackpackArgument.backpacks()).executes(context -> {
             Backpack backpack = context.getArgument("backpack", Backpack.class);

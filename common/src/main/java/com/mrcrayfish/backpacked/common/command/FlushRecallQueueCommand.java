@@ -18,7 +18,7 @@ public class FlushRecallQueueCommand
 {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
-        dispatcher.register(Commands.literal("flush_recall_queue").requires(source -> {
+        dispatcher.register(Commands.literal("backpacked:flush_recall_queue").requires(source -> {
             return source.hasPermission(2);
         }).executes(context -> {
             MinecraftServer server = context.getSource().getServer();
