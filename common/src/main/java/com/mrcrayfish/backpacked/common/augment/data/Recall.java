@@ -151,7 +151,7 @@ public final class Recall extends SavedData
         if(!this.runNow && this.timer % 5 != 0)
             return;
 
-        Map<UUID, Shelf> corrected = new HashMap<>();
+        Map<UUID, Shelf> corrected = null;
         var it = this.shelves.entrySet().iterator();
         while(it.hasNext())
         {
@@ -178,7 +178,10 @@ public final class Recall extends SavedData
             if(!id.equals(shelfBlockEntity.id()))
             {
                 it.remove();
+                if(corrected == null)
+                    corrected = new HashMap<>();
                 corrected.put(shelfBlockEntity.id(), shelf);
+                this.setDirty();
                 continue;
             }
 
@@ -213,7 +216,12 @@ public final class Recall extends SavedData
             this.setDirty();
         }
 
-        this.shelves.putAll(corrected);
+        if(corrected != null)
+        {
+            this.shelves.putAll(corrected);
+            this.setDirty();
+        }
+
         this.runNow = false;
         this.force = false;
     }
