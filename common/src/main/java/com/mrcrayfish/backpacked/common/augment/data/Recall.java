@@ -168,8 +168,10 @@ public final class Recall extends SavedData
             // If the block entity is not a shelf, unregistered and clear any existing queue
             if(!(this.level.getBlockEntity(blockPos) instanceof ShelfBlockEntity shelfBlockEntity))
             {
+                shelf.forEachQueue((owner, items) -> items.forEach(item -> {
+                    this.flushItem(this.level, shelf.pos.getCenter(), item.stack, false);
+                }));
                 it.remove();
-                // TODO determine what to do with undeliverable backpacks
                 this.setDirty();
                 continue;
             }
