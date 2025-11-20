@@ -25,7 +25,7 @@ import java.util.*;
 public final class Recall extends SavedData
 {
     public static final String ID = "backpacked_recall";
-    private static final int MAX_QUEUE_SIZE = 64;
+    private static final int MAX_QUEUE_SIZE = 16;
 
     private final ServerLevel level;
     private final BiMap<UUID, BlockPos> shelves = HashBiMap.create();
