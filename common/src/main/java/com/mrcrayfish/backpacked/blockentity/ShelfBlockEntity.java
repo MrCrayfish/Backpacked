@@ -311,7 +311,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         super.setLevel(level);
         if(level instanceof ServerLevel serverLevel)
         {
-            ((Recall.Access) serverLevel).backpacked$getRecall().registerShelf(this);
+            ((Recall.Access) serverLevel).backpacked$getRecall().onShelfLoaded(this);
         }
     }
 

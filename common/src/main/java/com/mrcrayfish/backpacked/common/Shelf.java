@@ -15,13 +15,13 @@ import java.util.UUID;
 public record Shelf(ResourceKey<Level> key, UUID id)
 {
     public static final Codec<Shelf> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceKey.codec(Registries.DIMENSION).fieldOf("key").forGetter(Shelf::key),
-            UUIDUtil.CODEC.fieldOf("id").forGetter(Shelf::id)
+        ResourceKey.codec(Registries.DIMENSION).fieldOf("key").forGetter(Shelf::key),
+        UUIDUtil.CODEC.fieldOf("id").forGetter(Shelf::id)
     ).apply(instance, Shelf::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Shelf> STREAM_CODEC = StreamCodec.composite(
-            ResourceKey.streamCodec(Registries.DIMENSION), Shelf::key,
-            UUIDUtil.STREAM_CODEC, Shelf::id,
-            Shelf::new
+        ResourceKey.streamCodec(Registries.DIMENSION), Shelf::key,
+        UUIDUtil.STREAM_CODEC, Shelf::id,
+        Shelf::new
     );
 }

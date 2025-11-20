@@ -166,7 +166,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
             {
                 if(level instanceof ServerLevel serverLevel)
                 {
-                    ((Recall.Access) serverLevel).backpacked$getRecall().unregisterShelf(shelf);
+                    ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(shelf);
                 }
                 ItemStack stack = shelf.getBackpackWithContents();
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
