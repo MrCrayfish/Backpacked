@@ -25,6 +25,7 @@ import java.util.*;
 public final class Recall extends SavedData
 {
     public static final String ID = "backpacked_recall";
+    private static final int MAX_QUEUE_SIZE = 64;
 
     private final ServerLevel level;
     private final BiMap<UUID, BlockPos> shelves = HashBiMap.create();
@@ -71,6 +72,8 @@ public final class Recall extends SavedData
         if(this.shelves.containsKey(shelfId))
         {
             List<OwnedItem> list = this.queue.computeIfAbsent(shelfId, k -> new ArrayList<>());
+            if(list.size() >= MAX_QUEUE_SIZE)
+                return false;
             list.add(new OwnedItem(player.getUUID(), backpack.copyAndClear()));
             this.runNow = true;
             this.setDirty();
