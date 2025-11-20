@@ -29,7 +29,7 @@ public final class Recall extends SavedData
 
     private final ServerLevel level;
     private final BiMap<UUID, BlockPos> shelves = HashBiMap.create();
-    private final Map<UUID, List<OwnedItem>> queue = new HashMap<>();
+    private final Map<UUID, Map<UUID, List<ItemStack>>> queues = new HashMap<>();
     private int timer;
     private boolean runNow;
     private boolean force;
@@ -71,10 +71,11 @@ public final class Recall extends SavedData
     {
         if(this.shelves.containsKey(shelfId))
         {
-            List<OwnedItem> list = this.queue.computeIfAbsent(shelfId, k -> new ArrayList<>());
-            if(list.size() >= MAX_QUEUE_SIZE)
+            Map<UUID, List<ItemStack>> playerToQueue = this.queues.computeIfAbsent(shelfId, k -> new HashMap<>());
+            List<ItemStack> items = playerToQueue.computeIfAbsent(player.getUUID(), k -> new ArrayList<>());
+            if(items.size() >= MAX_QUEUE_SIZE)
                 return false;
-            list.add(new OwnedItem(player.getUUID(), backpack.copyAndClear()));
+            items.add(backpack.copyAndClear());
             this.runNow = true;
             this.setDirty();
             return true;
@@ -91,31 +92,31 @@ public final class Recall extends SavedData
     public int flushAllQueues(MinecraftServer server)
     {
         int[] count = {0};
-        var it = this.queue.entrySet().iterator();
+        var it = this.queues.entrySet().iterator();
         while(it.hasNext())
         {
-            List<OwnedItem> ownedItems = it.next().getValue();
-            count[0] += this.flushQueue(server, ownedItems);
+            Map<UUID, List<ItemStack>> playerToQueue = it.next().getValue();
+            playerToQueue.forEach((owner, items) -> {
+                count[0] += this.flushQueue(server, owner, items);
+            });
             it.remove();
         }
         return count[0];
     }
 
-    private int flushQueue(MinecraftServer server, List<OwnedItem> ownedItems)
+    private int flushQueue(MinecraftServer server, UUID owner, List<ItemStack> items)
     {
+        ServerPlayer player = server.getPlayerList().getPlayer(owner);
+        if(player == null)
+            return 0;
         int[] count = {0};
-        var it = ownedItems.iterator();
-        while(it.hasNext()) {
-            OwnedItem backpack = it.next();
-            ServerPlayer player = server.getPlayerList().getPlayer(backpack.owner);
-            if(player == null)
-                continue;
+        for(ItemStack stack : items)
+        {
             Vec3 pos = player.position();
-            ItemEntity entity = new ItemEntity(player.level(), pos.x, pos.y, pos.z, backpack.stack);
+            ItemEntity entity = new ItemEntity(player.level(), pos.x, pos.y, pos.z, stack.copyAndClear());
             entity.setDefaultPickUpDelay();
             entity.setExtendedLifetime();
             player.level().addFreshEntity(entity);
-            it.remove();
             count[0]++;
         }
         return count[0];
@@ -135,14 +136,15 @@ public final class Recall extends SavedData
 
     private void removeAndFlushQueueToBlockPos(UUID shelfId, BlockPos pos)
     {
-        List<OwnedItem> ownedItems = this.queue.remove(shelfId);
-        if(ownedItems != null)
-        {
-            for(OwnedItem ownedItem : ownedItems)
-            {
-                this.flushItem(this.level, pos.getCenter(), ownedItem.stack, false);
-            }
-        }
+        Map<UUID, List<ItemStack>> playerToQueue = this.queues.remove(shelfId);
+        if(playerToQueue == null)
+            return;
+
+        playerToQueue.values().forEach(items -> {
+            items.forEach(stack -> {
+                this.flushItem(this.level, pos.getCenter(), stack, false);
+            });
+        });
     }
 
     public void tick()
@@ -167,7 +169,7 @@ public final class Recall extends SavedData
             if(!(this.level.getBlockEntity(blockPos) instanceof ShelfBlockEntity shelf))
             {
                 it.remove();
-                this.queue.remove(entry.getKey());
+                this.queues.remove(entry.getKey());
                 // TODO determine what to do with undeliverable backpacks
                 this.setDirty();
                 continue;
@@ -176,26 +178,20 @@ public final class Recall extends SavedData
             // Ensure the shelf is registered
             this.onShelfLoaded(shelf);
 
-            List<OwnedItem> items = this.queue.get(shelf.id());
-            if(items == null)
+            Map<UUID, List<ItemStack>> playerToQueue = this.queues.remove(shelf.id());
+            if(playerToQueue == null)
                 continue;
-
-            if(!items.isEmpty())
-            {
+            playerToQueue.forEach((owner, items) -> {
                 ItemStack existing = shelf.getBackpack();
-                OwnedItem last = items.removeLast();
-                shelf.setBackpack(last.stack.copyAndClear());
-                if(!existing.isEmpty())
-                {
-                    this.flushItem(this.level, shelf.getBlockPos().getCenter(), existing.copyAndClear(), true);
+                ItemStack last = items.removeLast();
+                shelf.setBackpack(last.copyAndClear());
+                if(!existing.isEmpty()) {
+                    this.flushItem(this.level, shelf.getBlockPos().getCenter(), existing, true);
                 }
-                for(OwnedItem item : items)
-                {
-                    this.flushItem(this.level, shelf.getBlockPos().getCenter(), item.stack.copyAndClear(), true);
+                for(ItemStack stack : items) {
+                    this.flushItem(this.level, shelf.getBlockPos().getCenter(), stack, true);
                 }
-            }
-
-            this.queue.remove(shelf.id());
+            });
             this.setDirty();
         }
 
@@ -206,95 +202,73 @@ public final class Recall extends SavedData
     private static Recall load(ServerLevel level, HolderLookup.Provider provider, CompoundTag tag)
     {
         Recall recall = new Recall(level);
+        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ListTag shelvesList = tag.getList("Shelves", Tag.TAG_COMPOUND);
         shelvesList.forEach(nbt -> {
-            if(nbt instanceof CompoundTag entry) {
+            if(nbt instanceof CompoundTag shelfTag) {
                 try {
-                    UUID id = entry.getUUID("ShelfId");
-                    BlockPos pos = BlockPos.of(entry.getLong("ShelfPos"));
+                    UUID id = shelfTag.getUUID("ShelfId");
+                    BlockPos pos = BlockPos.of(shelfTag.getLong("ShelfPos"));
                     if(level.isOutsideBuildHeight(pos))
                         throw new IllegalArgumentException("Shelf block position is outside the valid build height");
                     recall.shelves.forcePut(id, pos);
+                    ListTag playerQueuesList = shelfTag.getList("PlayerQueues", Tag.TAG_COMPOUND);
+                    playerQueuesList.forEach(nbt1 -> {
+                        if(nbt1 instanceof CompoundTag queueTag) {
+                            try {
+                                UUID owner = queueTag.getUUID("Owner");
+                                List<ItemStack> items = ItemStack.OPTIONAL_CODEC.listOf()
+                                    .parse(ops, queueTag.get("Items"))
+                                    .resultOrPartial(Constants.LOG::error)
+                                    .map(ArrayList::new).orElse(new ArrayList<>());
+                                if(!items.isEmpty()) {
+                                    Map<UUID, List<ItemStack>> playerToQueue = recall.queues.computeIfAbsent(id, k -> new HashMap<>());
+                                    playerToQueue.computeIfAbsent(owner, k -> new ArrayList<>()).addAll(items);
+                                }
+                            } catch (Exception e) {
+                                Constants.LOG.error("An error occurred while reading Recall queue entry", e);
+                            }
+                        }
+                    });
+
                 } catch (Exception e) {
                     Constants.LOG.error("An error occurred while reading Recall shelf entry", e);
                 }
             }
         });
-
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ListTag queueList = tag.getList("Queue", Tag.TAG_COMPOUND);
-        queueList.forEach(nbt -> {
-            if(nbt instanceof CompoundTag entryTag) {
-                UUID id;
-                try {
-                     id = entryTag.getUUID("ShelfId");
-                } catch(Exception e) {
-                    Constants.LOG.error("Missing ShelfId when reading Recall queue", e);
-                    return;
-                }
-                List<OwnedItem> list = new ArrayList<>();
-                ListTag ownedItemsList = entryTag.getList("OwnedItems", Tag.TAG_COMPOUND);
-                ownedItemsList.forEach(nbt1 -> {
-                    if(nbt1 instanceof CompoundTag ownedItemTag) {
-                        try {
-                            UUID owner = ownedItemTag.getUUID("Owner");
-                            ItemStack stack = ItemStack.OPTIONAL_CODEC.parse(ops, ownedItemTag.get("Item"))
-                                .resultOrPartial(Constants.LOG::error)
-                                .orElse(ItemStack.EMPTY);
-                            if(!stack.isEmpty()) {
-                                list.add(new OwnedItem(owner, stack));
-                            } else {
-                                Constants.LOG.warn("Skipping Recall queue entry since the stack is empty");
-                            }
-                        } catch(Exception e) {
-                            Constants.LOG.error("An error occurred while reading Recall queue entry", e);
-                        }
-                    }
-                });
-                recall.queue.put(id, list);
-            }
-        });
-
         return recall;
     }
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider)
     {
+        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ListTag shelves = new ListTag();
         this.shelves.forEach((id, pos) -> {
             if(id == null || pos == null)
                 return;
-            CompoundTag entry = new CompoundTag();
-            entry.putUUID("ShelfId", id);
-            entry.putLong("ShelfPos", pos.asLong());
-            shelves.add(entry);
+            CompoundTag shelfTag = new CompoundTag();
+            shelfTag.putUUID("ShelfId", id);
+            shelfTag.putLong("ShelfPos", pos.asLong());
+            Map<UUID, List<ItemStack>> playerQueues = this.queues.get(id);
+            if(playerQueues != null && !playerQueues.isEmpty()) {
+                ListTag playerQueuesList = new ListTag();
+                playerQueues.forEach((owner, items) -> {
+                    CompoundTag queueTag = new CompoundTag();
+                    queueTag.putUUID("Owner", owner);
+                    ItemStack.OPTIONAL_CODEC.listOf()
+                        .encodeStart(ops, items)
+                        .resultOrPartial(Constants.LOG::error)
+                        .ifPresent(t -> queueTag.put("Items", t));
+                    playerQueuesList.add(queueTag);
+                });
+                shelfTag.put("PlayerQueues", playerQueuesList);
+            }
+            shelves.add(shelfTag);
         });
         tag.put("Shelves", shelves);
-
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ListTag queueList = new ListTag();
-        this.queue.forEach((id, backpacks) -> {
-            CompoundTag entryTag = new CompoundTag();
-            entryTag.putUUID("ShelfId", id);
-            ListTag ownedItemsList = new ListTag();
-            backpacks.forEach(backpack -> {
-                CompoundTag ownedItemTag = new CompoundTag();
-                ownedItemTag.putUUID("Owner", backpack.owner);
-                ItemStack.OPTIONAL_CODEC.encodeStart(ops, backpack.stack)
-                    .resultOrPartial(Constants.LOG::error)
-                    .ifPresent(t -> ownedItemTag.put("Item", t));
-                ownedItemsList.add(ownedItemTag);
-            });
-            entryTag.put("OwnedItems", ownedItemsList);
-            queueList.add(entryTag);
-        });
-        tag.put("Queue", queueList);
-
         return tag;
     }
-
-    private record OwnedItem(UUID owner, ItemStack stack) {}
 
     public interface Access
     {
