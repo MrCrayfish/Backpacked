@@ -1,7 +1,5 @@
 package com.mrcrayfish.backpacked.common.augment.data;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -23,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public final class Recall extends SavedData
@@ -31,8 +30,7 @@ public final class Recall extends SavedData
     private static final int MAX_QUEUE_SIZE = 16;
 
     private final ServerLevel level;
-    private final BiMap<UUID, BlockPos> shelves = HashBiMap.create();
-    private final Map<UUID, Map<UUID, List<QueuedItem>>> queues = new HashMap<>();
+    private final Map<UUID, Shelf> shelves = new HashMap<>();
     private int timer;
     private boolean runNow;
     private boolean force;
@@ -52,7 +50,7 @@ public final class Recall extends SavedData
     {
         if(!this.shelves.containsKey(shelf.id()))
         {
-            this.shelves.forcePut(shelf.id(), shelf.getBlockPos());
+            this.shelves.put(shelf.id(), new Shelf(shelf.getBlockPos()));
             this.setDirty();
         }
     }
@@ -65,20 +63,19 @@ public final class Recall extends SavedData
     }
 
     @Nullable
-    public BlockPos getShelfBlockPos(UUID id)
+    public BlockPos getShelfBlockPos(UUID shelfId)
     {
-        return this.shelves.get(id);
+        Shelf shelf = this.shelves.get(shelfId);
+        return shelf != null ? shelf.pos : null;
     }
 
     public boolean recallToShelf(ServerPlayer player, UUID shelfId, ItemStack backpack)
     {
-        if(this.shelves.containsKey(shelfId))
+        Shelf shelf = this.shelves.get(shelfId);
+        if(shelf != null)
         {
-            Map<UUID, List<QueuedItem>> playerToQueue = this.queues.computeIfAbsent(shelfId, k -> new HashMap<>());
-            List<QueuedItem> items = playerToQueue.computeIfAbsent(player.getUUID(), k -> new ArrayList<>());
-            if(items.size() >= MAX_QUEUE_SIZE)
+            if(!shelf.queues(player, backpack, this.timer))
                 return false;
-            items.add(new QueuedItem(backpack.copyAndClear(), this.timer));
             this.runNow = true;
             this.setDirty();
             return true;
@@ -95,11 +92,11 @@ public final class Recall extends SavedData
     public int flushAllQueues(MinecraftServer server)
     {
         int[] count = {0};
-        var it = this.queues.entrySet().iterator();
+        var it = this.shelves.entrySet().iterator();
         while(it.hasNext())
         {
-            Map<UUID, List<QueuedItem>> playerToQueue = it.next().getValue();
-            playerToQueue.forEach((owner, items) -> {
+            Shelf shelf = it.next().getValue();
+            shelf.forEachQueue((owner, items) -> {
                 count[0] += this.flushQueue(server, owner, items);
             });
             it.remove();
@@ -139,10 +136,10 @@ public final class Recall extends SavedData
 
     private void removeAndFlushQueueToBlockPos(UUID shelfId, BlockPos pos)
     {
-        Map<UUID, List<QueuedItem>> playerToQueue = this.queues.remove(shelfId);
-        if(playerToQueue == null)
+        Shelf shelf = this.shelves.remove(shelfId);
+        if(shelf == null)
             return;
-        playerToQueue.values().forEach(items -> items.forEach(item -> {
+        shelf.forEachQueue((owner, items) -> items.forEach(item -> {
             this.flushItem(this.level, pos.getCenter(), item.stack, false);
         }));
     }
@@ -154,31 +151,38 @@ public final class Recall extends SavedData
         if(!this.runNow && this.timer % 5 != 0)
             return;
 
+        Map<UUID, Shelf> corrected = new HashMap<>();
         var it = this.shelves.entrySet().iterator();
         while(it.hasNext())
         {
             var entry = it.next();
-            BlockPos blockPos = entry.getValue();
-            assert blockPos != null; // BiMap doesn't allow null so this should be fine
+            UUID id = entry.getKey();
+            Shelf shelf = entry.getValue();
+            assert shelf != null;
 
             // If the area is not loaded, backpacks can not be returned, so we'll hold off
+            BlockPos blockPos = shelf.pos;
             if(!this.force && !this.level.isLoaded(blockPos))
                 continue;
 
             // If the block entity is not a shelf, unregistered and clear any existing queue
-            if(!(this.level.getBlockEntity(blockPos) instanceof ShelfBlockEntity shelf))
+            if(!(this.level.getBlockEntity(blockPos) instanceof ShelfBlockEntity shelfBlockEntity))
             {
                 it.remove();
-                this.queues.remove(entry.getKey());
                 // TODO determine what to do with undeliverable backpacks
                 this.setDirty();
                 continue;
             }
 
-            // Ensure the shelf is registered
-            this.onShelfLoaded(shelf);
+            // Verify that the shelf has the same id, otherwise perform correction
+            if(!id.equals(shelfBlockEntity.id()))
+            {
+                it.remove();
+                corrected.put(shelfBlockEntity.id(), shelf);
+                continue;
+            }
 
-            Map<UUID, List<QueuedItem>> playerToQueue = this.queues.remove(shelf.id());
+            Map<UUID, List<QueuedItem>> playerToQueue = shelf.queues();
             if(playerToQueue == null)
                 continue;
 
@@ -189,25 +193,27 @@ public final class Recall extends SavedData
                 .collect(Collectors.toCollection(ArrayList::new));
 
             // Put the latest queued item on the shelf
-            ItemStack existing = shelf.getBackpack();
+            ItemStack existing = shelfBlockEntity.getBackpack();
             if(!items.isEmpty()) {
                 QueuedItem last = items.removeLast();
-                shelf.setBackpack(last.stack.copyAndClear());
+                shelfBlockEntity.setBackpack(last.stack.copyAndClear());
             }
 
             // If shelf had an item, spawn into level at the shelf
             if(!existing.isEmpty()) {
-                this.flushItem(this.level, shelf.getBlockPos().getCenter(), existing, true);
+                this.flushItem(this.level, shelfBlockEntity.getBlockPos().getCenter(), existing, true);
             }
 
             // Finally, spawn all other queued items into the level at the shelf
             for(QueuedItem item : items) {
-                this.flushItem(this.level, shelf.getBlockPos().getCenter(), item.stack, true);
+                this.flushItem(this.level, shelfBlockEntity.getBlockPos().getCenter(), item.stack, true);
             }
 
+            shelf.resetQueue();
             this.setDirty();
         }
 
+        this.shelves.putAll(corrected);
         this.runNow = false;
         this.force = false;
     }
@@ -221,13 +227,13 @@ public final class Recall extends SavedData
         shelvesList.forEach(nbt -> {
             if(nbt instanceof CompoundTag shelfTag) {
                 try {
-                    UUID id = shelfTag.getUUID("ShelfId");
-                    BlockPos pos = BlockPos.of(shelfTag.getLong("ShelfPos"));
+                    UUID id = shelfTag.getUUID("Id");
+                    BlockPos pos = BlockPos.of(shelfTag.getLong("Pos"));
                     if(level.isOutsideBuildHeight(pos))
                         throw new IllegalArgumentException("Shelf block position is outside the valid build height");
-                    recall.shelves.forcePut(id, pos);
-                    ListTag playerQueuesList = shelfTag.getList("PlayerQueues", Tag.TAG_COMPOUND);
-                    playerQueuesList.forEach(nbt1 -> {
+                    Map<UUID, List<QueuedItem>> queues = new HashMap<>();
+                    ListTag queuesList = shelfTag.getList("Queues", Tag.TAG_COMPOUND);
+                    queuesList.forEach(nbt1 -> {
                         if(nbt1 instanceof CompoundTag queueTag) {
                             try {
                                 UUID owner = queueTag.getUUID("Owner");
@@ -237,15 +243,14 @@ public final class Recall extends SavedData
                                     .map(ArrayList::new).orElse(new ArrayList<>());
                                 items.removeIf(item -> item.stack.isEmpty());
                                 if(!items.isEmpty()) {
-                                    Map<UUID, List<QueuedItem>> playerToQueue = recall.queues.computeIfAbsent(id, k -> new HashMap<>());
-                                    playerToQueue.computeIfAbsent(owner, k -> new ArrayList<>()).addAll(items);
+                                    queues.put(owner, items);
                                 }
                             } catch (Exception e) {
                                 Constants.LOG.error("An error occurred while reading Recall queue entry", e);
                             }
                         }
                     });
-
+                    recall.shelves.put(id, new Shelf(pos, queues));
                 } catch (Exception e) {
                     Constants.LOG.error("An error occurred while reading Recall shelf entry", e);
                 }
@@ -260,30 +265,75 @@ public final class Recall extends SavedData
         tag.putInt("Timer", this.timer);
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ListTag shelves = new ListTag();
-        this.shelves.forEach((id, pos) -> {
-            if(id == null || pos == null)
-                return;
+        this.shelves.forEach((id, shelf) -> {
             CompoundTag shelfTag = new CompoundTag();
-            shelfTag.putUUID("ShelfId", id);
-            shelfTag.putLong("ShelfPos", pos.asLong());
-            Map<UUID, List<QueuedItem>> playerQueues = this.queues.get(id);
-            if(playerQueues != null && !playerQueues.isEmpty()) {
-                ListTag playerQueuesList = new ListTag();
-                playerQueues.forEach((owner, items) -> {
+            shelfTag.putUUID("Id", id);
+            shelfTag.putLong("Pos", shelf.pos.asLong());
+            Map<UUID, List<QueuedItem>> queue = shelf.queues();
+            if(queue != null && !queue.isEmpty()) {
+                ListTag queuesList = new ListTag();
+                queue.forEach((owner, items) -> {
                     CompoundTag queueTag = new CompoundTag();
                     queueTag.putUUID("Owner", owner);
                     QueuedItem.CODEC.listOf()
                         .encodeStart(ops, items)
                         .resultOrPartial(Constants.LOG::error)
                         .ifPresent(t -> queueTag.put("QueuedItems", t));
-                    playerQueuesList.add(queueTag);
+                    queuesList.add(queueTag);
                 });
-                shelfTag.put("PlayerQueues", playerQueuesList);
+                shelfTag.put("Queues", queuesList);
             }
             shelves.add(shelfTag);
         });
         tag.put("Shelves", shelves);
         return tag;
+    }
+
+    private static final class Shelf
+    {
+        private final BlockPos pos;
+        private @Nullable Map<UUID, List<QueuedItem>> queues;
+
+        private Shelf(BlockPos pos)
+        {
+            this.pos = pos;
+        }
+
+        private Shelf(BlockPos pos, @Nullable Map<UUID, List<QueuedItem>> queues)
+        {
+            this.pos = pos;
+            this.queues = queues != null && !queues.isEmpty() ? queues : null;
+        }
+
+        @Nullable
+        public Map<UUID, List<QueuedItem>> queues()
+        {
+            return this.queues;
+        }
+
+        public void forEachQueue(BiConsumer<UUID, List<QueuedItem>> consumer)
+        {
+            if(this.queues != null)
+            {
+                this.queues.forEach(consumer);
+            }
+        }
+
+        public boolean queues(ServerPlayer player, ItemStack backpack, int time)
+        {
+            if(this.queues == null)
+                this.queues = new HashMap<>();
+            List<QueuedItem> items = this.queues.computeIfAbsent(player.getUUID(), k -> new ArrayList<>());
+            if(items.size() >= MAX_QUEUE_SIZE)
+                return false;
+            items.add(new QueuedItem(backpack.copyAndClear(), time));
+            return true;
+        }
+
+        public void resetQueue()
+        {
+            this.queues = null;
+        }
     }
 
     private record QueuedItem(ItemStack stack, int time)
