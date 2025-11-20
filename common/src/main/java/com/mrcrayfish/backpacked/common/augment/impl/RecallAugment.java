@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common.augment.impl;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrcrayfish.backpacked.common.Shelf;
+import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
@@ -17,16 +17,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public record RecallAugment(Optional<Shelf> shelf) implements Augment<RecallAugment>
+public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<RecallAugment>
 {
     public static final RecallAugment EMPTY = new RecallAugment(Optional.empty());
     public static final AugmentType<RecallAugment> TYPE = new AugmentType<>(
         Utils.rl("recall"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Shelf.CODEC.optionalFieldOf("shelf").forGetter(RecallAugment::shelf)
+            ShelfKey.CODEC.optionalFieldOf("shelf_key").forGetter(RecallAugment::shelfKey)
         ).apply(instance, RecallAugment::new)),
         StreamCodec.composite(
-            ByteBufCodecs.optional(Shelf.STREAM_CODEC), RecallAugment::shelf,
+            ByteBufCodecs.optional(ShelfKey.STREAM_CODEC), RecallAugment::shelfKey,
             RecallAugment::new
         ),
         () -> new RecallAugment(Optional.empty())
@@ -46,19 +46,19 @@ public record RecallAugment(Optional<Shelf> shelf) implements Augment<RecallAugm
         RecallAugment other = (current instanceof RecallAugment a) ? a : EMPTY;
 
         // When updating the shelf, we need to check if the player is within distance
-        if(this.shelf.isPresent() && !Objects.equals(this.shelf, other.shelf))
+        if(this.shelfKey.isPresent() && !Objects.equals(this.shelfKey, other.shelfKey))
         {
-            Shelf shelf = this.shelf.get();
+            ShelfKey shelfKey = this.shelfKey.get();
 
             // Server should be present
             MinecraftServer server = player.getServer();
             assert server != null;
 
-            ServerLevel level = server.getLevel(shelf.key());
+            ServerLevel level = server.getLevel(shelfKey.level());
             if(level != null)
             {
                 Recall recall = ((Recall.Access) level).backpacked$getRecall();
-                BlockPos shelfPos = recall.getShelfBlockPos(shelf.id());
+                BlockPos shelfPos = recall.getShelfBlockPos(shelfKey.id());
                 if(shelfPos == null || shelfPos.distToCenterSqr(player.position()) > UPDATE_SHELF_RANGE_SQR)
                 {
                     updated = updated.setShelf(null);
@@ -72,9 +72,9 @@ public record RecallAugment(Optional<Shelf> shelf) implements Augment<RecallAugm
         return updated;
     }
 
-    public RecallAugment setShelf(@Nullable Shelf shelf)
+    public RecallAugment setShelf(@Nullable ShelfKey shelfKey)
     {
-        return new RecallAugment(Optional.ofNullable(shelf));
+        return new RecallAugment(Optional.ofNullable(shelfKey));
     }
 
 }

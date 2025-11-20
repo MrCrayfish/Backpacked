@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TextWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
-import com.mrcrayfish.backpacked.common.Shelf;
+import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -25,7 +25,7 @@ public class RecallMenu extends AugmentSettingsMenu
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.horizontal().spacing(2);
             layout.addChild(new TextWidget(() -> {
-                return Component.literal(supplier.get().shelf().map(shelf -> shelf.id().toString()).orElse("Not Set"));
+                return Component.literal(supplier.get().shelfKey().map(shelfKey -> shelfKey.id().toString()).orElse("Not Set"));
             }, Minecraft.getInstance().font)).setWidth(200);
             layout.addChild(CustomButton.builder().setSize(20, 20).setAction(btn -> {
                 Minecraft mc = Minecraft.getInstance();
@@ -36,7 +36,7 @@ public class RecallMenu extends AugmentSettingsMenu
                         return;
                     if(mc.level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf) {
                         ResourceKey<Level> key = mc.level.dimension();
-                        updater.accept(supplier.get().setShelf(new Shelf(key, shelf.id())));
+                        updater.accept(supplier.get().setShelf(new ShelfKey(key, shelf.id())));
                     }
                 }
             }).build());

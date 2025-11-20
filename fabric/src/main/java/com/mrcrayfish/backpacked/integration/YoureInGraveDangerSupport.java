@@ -208,7 +208,7 @@ public class YoureInGraveDangerSupport
         private boolean hasRecallAugment(ItemStack stack)
         {
             RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-            return augment != null && augment.shelf().isPresent();
+            return augment != null && augment.shelfKey().isPresent();
         }
     }
 }

@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.common.Shelf;
+import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
 import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
@@ -552,7 +552,7 @@ public class AugmentHandler
 
     public static boolean recallBackpack(ServerPlayer player, ItemStack stack, RecallAugment augment)
     {
-        Optional<Shelf> optional = augment.shelf();
+        Optional<ShelfKey> optional = augment.shelfKey();
         if(optional.isEmpty())
             return false;
 
@@ -560,13 +560,13 @@ public class AugmentHandler
         if(server == null)
             return false;
 
-        Shelf shelf = optional.get();
-        ServerLevel level = server.getLevel(shelf.key());
+        ShelfKey shelfKey = optional.get();
+        ServerLevel level = server.getLevel(shelfKey.level());
         if(level == null)
             return false;
 
         Recall recall = ((Recall.Access) level).backpacked$getRecall();
-        return recall.recallToShelf(player, shelf.id(), stack);
+        return recall.recallToShelf(player, shelfKey.id(), stack);
     }
 
     /*private static boolean isFarmland()
