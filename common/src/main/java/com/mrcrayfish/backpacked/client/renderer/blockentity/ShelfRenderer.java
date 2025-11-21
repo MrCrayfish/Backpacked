@@ -15,16 +15,22 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
@@ -33,10 +39,12 @@ import org.joml.Vector3f;
 public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 {
     private final ItemRenderer itemRenderer;
+    private final EntityRenderDispatcher entityRenderDispatcher;
 
     public ShelfRenderer(BlockEntityRendererProvider.Context context)
     {
         this.itemRenderer = context.getItemRenderer();
+        this.entityRenderDispatcher = context.getEntityRenderer();
     }
 
     @Override
@@ -80,10 +88,37 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
         });
         RenderSystem.disableBlend();
+
+        ItemStack backpackStack = entity.getBackpack();
+        this.renderBackpackName(entity, backpackStack.getHoverName(), pose, buffer, light);
     }
 
     private BakedModel getModel(ModelResourceLocation location)
     {
         return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
+    }
+
+    protected void renderBackpackName(ShelfBlockEntity shelf, Component name, PoseStack poseStack, MultiBufferSource source, int light)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(!(minecraft.hitResult instanceof BlockHitResult result))
+            return;
+
+        if(!result.getBlockPos().equals(shelf.getBlockPos()))
+            return;
+
+        poseStack.pushPose();
+        poseStack.translate(0, 0.4375, 0);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-90F));
+        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+        poseStack.scale(0.025F, -0.025F, 0.025F);
+
+        Matrix4f matrix = poseStack.last().pose();
+        float halfWidth = minecraft.font.width(name) / 2F;
+        int alpha = (int) (minecraft.options.getBackgroundOpacity(0.25F) * 255) << 24;
+        minecraft.font.drawInBatch(name, -halfWidth, 0, 0x20FFFFFF, false, matrix, source, Font.DisplayMode.SEE_THROUGH, alpha, light);
+        minecraft.font.drawInBatch(name, -halfWidth, 0, -1, false, matrix, source, Font.DisplayMode.NORMAL, 0, light);
+
+        poseStack.popPose();
     }
 }
