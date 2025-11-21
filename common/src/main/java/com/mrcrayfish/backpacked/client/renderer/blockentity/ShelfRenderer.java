@@ -108,7 +108,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             return;
 
         poseStack.pushPose();
-        poseStack.translate(0, 0.4375, 0);
+        poseStack.translate(0, 0.375, 0.1875);
         poseStack.mulPose(Axis.YP.rotationDegrees(-90F));
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         poseStack.scale(0.025F, -0.025F, 0.025F);
