@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public final class Recall extends SavedData
 {
@@ -74,7 +73,7 @@ public final class Recall extends SavedData
         Shelf shelf = this.shelves.get(shelfId);
         if(shelf != null)
         {
-            if(!shelf.queues(player, backpack, this.timer))
+            if(!shelf.queue(player, backpack, this.timer))
                 return false;
             this.runNow = true;
             this.setDirty();
@@ -188,34 +187,24 @@ public final class Recall extends SavedData
             }
 
             Map<UUID, List<QueuedItem>> playerToQueue = shelf.queues();
-            if(playerToQueue == null)
-                continue;
-
-            // Collect all queued items for the shelf and sort by the time they were queued
-            List<QueuedItem> items = playerToQueue.entrySet().stream()
-                .flatMap(e -> e.getValue().stream())
-                .sorted(Comparator.comparing(QueuedItem::time))
-                .collect(Collectors.toCollection(ArrayList::new));
-
-            // Put the latest queued item on the shelf
-            ItemStack existing = shelfBlockEntity.getBackpack();
-            if(!items.isEmpty()) {
-                QueuedItem last = items.removeLast();
-                shelfBlockEntity.setBackpack(last.stack.copyAndClear());
+            if(playerToQueue != null)
+            {
+                if(shelfBlockEntity.getBackpack().isEmpty())
+                {
+                    // Find the list that contains a queued item that has been waiting
+                    // the longest to recall, which is the first item in each list.
+                    List<QueuedItem> minItems = getMinimumQueue(playerToQueue);
+                    if(minItems != null)
+                    {
+                        QueuedItem item = minItems.removeFirst();
+                        shelfBlockEntity.setBackpack(item.stack.copyAndClear());
+                        shelf.decrementCount();
+                        shelf.cleanQueues();
+                        this.setDirty();
+                    }
+                }
             }
-
-            // If shelf had an item, spawn into level at the shelf
-            if(!existing.isEmpty()) {
-                this.flushItem(this.level, shelfBlockEntity.getBlockPos().getCenter(), existing, true);
-            }
-
-            // Finally, spawn all other queued items into the level at the shelf
-            for(QueuedItem item : items) {
-                this.flushItem(this.level, shelfBlockEntity.getBlockPos().getCenter(), item.stack, true);
-            }
-
-            shelf.resetQueue();
-            this.setDirty();
+            shelfBlockEntity.setRecallQueueCount(shelf.count);
         }
 
         if(corrected != null)
@@ -226,6 +215,24 @@ public final class Recall extends SavedData
 
         this.runNow = false;
         this.force = false;
+    }
+
+    @Nullable
+    private static List<QueuedItem> getMinimumQueue(Map<UUID, List<QueuedItem>> playerToQueue)
+    {
+        List<QueuedItem> minItems = null;
+        for(List<QueuedItem> items : playerToQueue.values())
+        {
+            if(items.isEmpty())
+                continue;
+
+            // Just a simple min comparison, lower time = older
+            if(minItems == null || items.getFirst().time < minItems.getFirst().time)
+            {
+                minItems = items;
+            }
+        }
+        return minItems;
     }
 
     private static Recall load(ServerLevel level, HolderLookup.Provider provider, CompoundTag tag)
@@ -250,7 +257,7 @@ public final class Recall extends SavedData
                                 List<QueuedItem> items = QueuedItem.CODEC.listOf()
                                     .parse(ops, queueTag.get("QueuedItems"))
                                     .resultOrPartial(Constants.LOG::error)
-                                    .map(ArrayList::new).orElse(new ArrayList<>());
+                                    .map(LinkedList::new).orElse(new LinkedList<>());
                                 items.removeIf(item -> item.stack.isEmpty());
                                 if(!items.isEmpty()) {
                                     queues.put(owner, items);
@@ -303,6 +310,7 @@ public final class Recall extends SavedData
     {
         private final BlockPos pos;
         private @Nullable Map<UUID, List<QueuedItem>> queues;
+        private int count;
 
         private Shelf(BlockPos pos)
         {
@@ -313,6 +321,8 @@ public final class Recall extends SavedData
         {
             this.pos = pos;
             this.queues = queues != null && !queues.isEmpty() ? queues : null;
+            this.cleanQueues();
+            this.updateCount();
         }
 
         @Nullable
@@ -329,20 +339,52 @@ public final class Recall extends SavedData
             }
         }
 
-        public boolean queues(ServerPlayer player, ItemStack backpack, int time)
+        public boolean queue(ServerPlayer player, ItemStack backpack, int time)
         {
             if(this.queues == null)
+            {
+                this.count = 0;
                 this.queues = new HashMap<>();
-            List<QueuedItem> items = this.queues.computeIfAbsent(player.getUUID(), k -> new ArrayList<>());
+            }
+            List<QueuedItem> items = this.queues.computeIfAbsent(player.getUUID(), k -> new LinkedList<>());
             if(items.size() >= MAX_QUEUE_SIZE)
                 return false;
             items.add(new QueuedItem(backpack.copyAndClear(), time));
+            this.count++;
             return true;
         }
 
-        public void resetQueue()
+        private void decrementCount()
         {
-            this.queues = null;
+            if(this.count > 0)
+            {
+                this.count--;
+            }
+        }
+
+        private void updateCount()
+        {
+            if(this.queues != null)
+            {
+                this.count = 0;
+                for(List<QueuedItem> items : this.queues.values())
+                {
+                    this.count += items.size();
+                }
+            }
+        }
+
+        private void cleanQueues()
+        {
+            if(this.queues != null)
+            {
+                this.queues.entrySet().removeIf(e -> e.getValue().isEmpty());
+                if(this.queues.isEmpty())
+                {
+                    this.queues = null;
+                    this.count = 0;
+                }
+            }
         }
     }
 

@@ -56,6 +56,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     private final SimpleContainer container = new ShelfContainer(this);
     private @Nullable UUID id;
     private @Nullable BackpackShelfContainer inventory;
+    private int recallQueueCount;
 
     public ShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
     {
@@ -72,6 +73,20 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public Container getInventory()
     {
         return this.inventory;
+    }
+
+    public int getRecallQueueCount()
+    {
+        return this.recallQueueCount;
+    }
+
+    public void setRecallQueueCount(int queueCount)
+    {
+        if(this.recallQueueCount != queueCount)
+        {
+            this.recallQueueCount = queueCount;
+            this.setChanged();
+        }
     }
 
     public ItemStack getBackpackWithContents()
@@ -199,6 +214,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             this.inventory.load(tag, provider);
         }
+        this.recallQueueCount = tag.getInt("QueueCount");
     }
 
     @Override
@@ -222,6 +238,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         CompoundTag tag = new CompoundTag();
         tag.putUUID("Id", this.id());
         tag.put("Backpack", this.container.getItem(0).saveOptional(provider));
+        tag.putInt("QueueCount", this.recallQueueCount);
         return tag;
     }
 
@@ -284,7 +301,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public void setChanged()
     {
         super.setChanged();
-
         /*if(this.level instanceof ServerLevel)
         {
             ItemStack backpack = this.container.getItem(0);
