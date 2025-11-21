@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
+import com.mrcrayfish.backpacked.client.Icons;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
@@ -15,6 +16,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,6 +40,8 @@ import org.joml.Vector3f;
  */
 public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 {
+    private static final Component RECALL_ICON = ScreenUtil.getIconComponent(Icons.RECALL);
+
     private final ItemRenderer itemRenderer;
     private final EntityRenderDispatcher entityRenderDispatcher;
 
@@ -64,6 +68,9 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         pose.translate(0.5, 0.0, 0.5);
         pose.translate(0, 0.001, 0);
         pose.mulPose(facing.getRotation());
+
+        this.renderBackpackName(entity, pose, buffer, light);
+
         pose.translate(-0.5, 0.0, -0.5);
         pose.translate(0.5, -6 * 0.0625, -5 * 0.0625);
 
@@ -88,9 +95,6 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
         });
         RenderSystem.disableBlend();
-
-        ItemStack backpackStack = entity.getBackpack();
-        this.renderBackpackName(entity, backpackStack.getHoverName(), pose, buffer, light);
     }
 
     private BakedModel getModel(ModelResourceLocation location)
@@ -98,26 +102,36 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
     }
 
-    protected void renderBackpackName(ShelfBlockEntity shelf, Component name, PoseStack poseStack, MultiBufferSource source, int light)
+    private void renderBackpackName(ShelfBlockEntity shelf, PoseStack poseStack, MultiBufferSource source, int light)
     {
-        Minecraft minecraft = Minecraft.getInstance();
-        if(!(minecraft.hitResult instanceof BlockHitResult result))
-            return;
-
-        if(!result.getBlockPos().equals(shelf.getBlockPos()))
-            return;
-
         poseStack.pushPose();
-        poseStack.translate(0, 0.375, 0.1875);
+        poseStack.mulPose(Axis.XP.rotationDegrees(-90F));
+        poseStack.translate(0, 1.1875, -0.1875);
+
         poseStack.mulPose(Axis.YP.rotationDegrees(-90F));
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.scale(0.025F, -0.025F, 0.025F);
+        poseStack.scale(0.02F, -0.02F, 0.02F);
 
-        Matrix4f matrix = poseStack.last().pose();
-        float halfWidth = minecraft.font.width(name) / 2F;
-        int alpha = (int) (minecraft.options.getBackgroundOpacity(0.25F) * 255) << 24;
-        minecraft.font.drawInBatch(name, -halfWidth, 0, 0x20FFFFFF, false, matrix, source, Font.DisplayMode.SEE_THROUGH, alpha, light);
-        minecraft.font.drawInBatch(name, -halfWidth, 0, -1, false, matrix, source, Font.DisplayMode.NORMAL, 0, light);
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.hitResult instanceof BlockHitResult result && result.getBlockPos().equals(shelf.getBlockPos()))
+        {
+            Component label = shelf.getBackpack().getHoverName();
+            float halfWidth = mc.font.width(label) / 2F;
+            mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, poseStack.last().pose(), source, Font.DisplayMode.SEE_THROUGH, 0x2A000000, light);
+            mc.font.drawInBatch(label, -halfWidth, 0, -1, true, poseStack.last().pose(), source, Font.DisplayMode.NORMAL, 0, light);
+            poseStack.translate(0, -12, 0);
+        }
+
+        int recallCount = shelf.getRecallQueueCount();
+        if(recallCount > 0)
+        {
+            poseStack.scale(1.1F, 1.1F, 1.1F);
+            Matrix4f matrix = poseStack.last().pose();
+            Component label = ScreenUtil.join(" ", RECALL_ICON, Component.literal(Integer.toString(recallCount)));
+            float halfWidth = mc.font.width(label) / 2F;
+            mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, matrix, source, Font.DisplayMode.SEE_THROUGH, 0, light);
+            mc.font.drawInBatch(label, -halfWidth, 0, -1, false, matrix, source, Font.DisplayMode.NORMAL, 0, light);
+        }
 
         poseStack.popPose();
     }

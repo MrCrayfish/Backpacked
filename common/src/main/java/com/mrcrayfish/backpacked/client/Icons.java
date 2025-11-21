@@ -4,5 +4,6 @@ public enum Icons
 {
     MIDDLE_MOUSE,
     SHIFT_1,
-    SHIFT_2
+    SHIFT_2,
+    RECALL
 }
