@@ -136,12 +136,13 @@ public class YoureInGraveDangerSupport
         public void handleDropRules(DeathContext context)
         {
             this.inventory.forEach(pair -> {
+                int index = pair.getFirst();
                 GraveItem graveItem = pair.getSecond();
                 ItemStack stack = graveItem.stack;
                 if(this.hasRecallAugment(stack)) {
                     ServerPlayer player = context.player();
                     RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-                    if(augment != null && AugmentHandler.recallBackpack(player, stack, augment)) {
+                    if(augment != null && AugmentHandler.recallBackpack(player, index, stack, augment)) {
                         graveItem.dropRule = DropRule.DESTROY;
                     }
                 }

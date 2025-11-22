@@ -28,6 +28,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -48,6 +49,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -61,6 +63,8 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     private final SimpleContainer container = new ShelfContainer(this);
     private @Nullable BackpackShelfContainer inventory;
     private int recallQueueCount;
+    private @Nullable UUID recallOwner = null;
+    private int recallIndex = -1;
     private @Nullable ShelfKey key;
     private boolean loadingItems;
     private int animation = -1;
@@ -96,6 +100,16 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
     }
 
+    public void setRecallOwner(@Nullable UUID recallOwner)
+    {
+        this.recallOwner = recallOwner;
+    }
+
+    public void setRecallIndex(int recallIndex)
+    {
+        this.recallIndex = recallIndex;
+    }
+
     public ShelfKey key()
     {
         Preconditions.checkNotNull(this.level);
@@ -123,7 +137,20 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             ItemStack backpack = this.getBackpack();
             if(!backpack.isEmpty())
             {
+                UUID originalOwner = this.recallOwner;
+                int originalIndex = this.recallIndex;
                 this.setBackpack(ItemStack.EMPTY);
+
+                // Try to place the backpack on the original player if a recalled backpack
+                if(player.getUUID().equals(originalOwner) && originalIndex != -1)
+                {
+                    if(BackpackHelper.setBackpackStack(player, backpack.copy(), originalIndex))
+                    {
+                        return;
+                    }
+                }
+
+                // Otherwise spawn into the world and instantly pickup by the player
                 Vec3 pos = this.worldPosition.getCenter();
                 ItemEntity entity = new ItemEntity(serverLevel, pos.x, pos.y - 0.25, pos.z, backpack.copyAndClear());
                 if(serverLevel.addFreshEntity(entity))
@@ -234,6 +261,14 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             this.inventory.load(tag, provider);
         }
         this.recallQueueCount = tag.getInt("QueueCount");
+        if(tag.hasUUID("RecallOwner"))
+        {
+            this.recallOwner = tag.getUUID("RecallOwner");
+            if(tag.contains("RecallIndex", Tag.TAG_INT))
+            {
+                this.recallIndex = tag.getInt("RecallIndex");
+            }
+        }
     }
 
     @Override
@@ -247,6 +282,14 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         if(this.inventory != null)
         {
             this.inventory.save(tag, provider);
+        }
+        if(this.recallOwner != null)
+        {
+            tag.putUUID("RecallOwner", this.recallOwner);
+            if(this.recallIndex > 0)
+            {
+                tag.putInt("RecallIndex", this.recallIndex);
+            }
         }
     }
 
@@ -274,6 +317,8 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public void setBackpack(ItemStack stack)
     {
         this.container.setItem(0, stack);
+        this.recallOwner = null;
+        this.recallIndex = -1;
         this.setChanged();
     }
 

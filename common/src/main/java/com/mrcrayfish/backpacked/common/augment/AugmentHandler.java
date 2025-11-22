@@ -550,7 +550,7 @@ public class AugmentHandler
         };
     }
 
-    public static boolean recallBackpack(ServerPlayer player, ItemStack stack, RecallAugment augment)
+    public static boolean recallBackpack(ServerPlayer player, int index, ItemStack stack, RecallAugment augment)
     {
         Optional<ShelfKey> optional = augment.shelfKey();
         if(optional.isEmpty())
@@ -566,7 +566,7 @@ public class AugmentHandler
             return false;
 
         Recall recall = ((Recall.Access) level).backpacked$getRecall();
-        return recall.recallToShelf(player, shelfKey, stack);
+        return recall.recallToShelf(player, shelfKey, index, stack);
     }
 
     /*private static boolean isFarmland()

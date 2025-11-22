@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -42,14 +43,18 @@ public class FabricPlayerMixin
         if(serverPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
             return;
 
-        BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
-            if(!stack.isEmpty()) {
+        NonNullList<ItemStack> removed = BackpackHelper.removeAllBackpacks(player);
+        for(int index = 0; index < removed.size(); index++)
+        {
+            ItemStack stack = removed.get(index);
+            if(!stack.isEmpty())
+            {
                 RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-                if(augment != null && AugmentHandler.recallBackpack(serverPlayer, stack, augment)) {
+                if(augment != null && AugmentHandler.recallBackpack(serverPlayer, index, stack, augment)) {
                     return;
                 }
                 player.drop(stack, true, false);
             }
-        });
+        }
     }
 }

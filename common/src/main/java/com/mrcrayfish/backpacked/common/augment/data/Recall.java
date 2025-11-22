@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.common.augment.data;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
@@ -69,12 +70,12 @@ public final class Recall extends SavedData
         return this.shelves.containsKey(pos.asLong());
     }
 
-    public boolean recallToShelf(ServerPlayer player, ShelfKey key, ItemStack backpack)
+    public boolean recallToShelf(ServerPlayer player, ShelfKey key, int originalIndex, ItemStack backpack)
     {
         Shelf shelf = this.shelves.get(key.position());
         if(shelf != null)
         {
-            if(!shelf.queue(player, backpack, this.timer))
+            if(!shelf.queue(player, originalIndex, backpack, this.timer))
                 return false;
             this.runNow = true;
             this.setDirty();
@@ -182,11 +183,13 @@ public final class Recall extends SavedData
                 {
                     // Find the list that contains a queued item that has been waiting
                     // the longest to recall, which is the first item in each list.
-                    List<QueuedItem> minItems = getMinimumQueue(playerToQueue);
-                    if(minItems != null)
+                    var queue = getMinimumQueue(playerToQueue);
+                    if(queue != null)
                     {
-                        QueuedItem item = minItems.removeFirst();
+                        QueuedItem item = queue.getSecond().removeFirst();
                         shelfBlockEntity.setBackpack(item.stack.copyAndClear());
+                        shelfBlockEntity.setRecallOwner(queue.getFirst());
+                        shelfBlockEntity.setRecallIndex(item.originalIndex);
                         shelf.decrementCount();
                         shelf.cleanQueues();
                         this.setDirty();
@@ -201,21 +204,24 @@ public final class Recall extends SavedData
     }
 
     @Nullable
-    private static List<QueuedItem> getMinimumQueue(Map<UUID, List<QueuedItem>> playerToQueue)
+    private static Pair<UUID, List<QueuedItem>> getMinimumQueue(Map<UUID, List<QueuedItem>> playerToQueue)
     {
+        UUID owner = null;
         List<QueuedItem> minItems = null;
-        for(List<QueuedItem> items : playerToQueue.values())
+        for(var entry : playerToQueue.entrySet())
         {
+            var items = entry.getValue();
             if(items.isEmpty())
                 continue;
 
             // Just a simple min comparison, lower time = older
             if(minItems == null || items.getFirst().time < minItems.getFirst().time)
             {
+                owner = entry.getKey();
                 minItems = items;
             }
         }
-        return minItems;
+        return minItems != null ? Pair.of(owner, minItems) : null;
     }
 
     private static Recall load(ServerLevel level, HolderLookup.Provider provider, CompoundTag tag)
@@ -323,7 +329,7 @@ public final class Recall extends SavedData
             }
         }
 
-        public boolean queue(ServerPlayer player, ItemStack backpack, int time)
+        public boolean queue(ServerPlayer player, int originalIndex, ItemStack backpack, int time)
         {
             if(this.queues == null)
             {
@@ -333,7 +339,7 @@ public final class Recall extends SavedData
             List<QueuedItem> items = this.queues.computeIfAbsent(player.getUUID(), k -> new LinkedList<>());
             if(items.size() >= MAX_QUEUE_SIZE)
                 return false;
-            items.add(new QueuedItem(backpack.copyAndClear(), time));
+            items.add(new QueuedItem(originalIndex, backpack.copyAndClear(), time));
             this.count++;
             return true;
         }
@@ -372,9 +378,10 @@ public final class Recall extends SavedData
         }
     }
 
-    private record QueuedItem(ItemStack stack, int time)
+    private record QueuedItem(int originalIndex, ItemStack stack, int time)
     {
         private static final Codec<QueuedItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.INT.fieldOf("original_index").orElse(-1).forGetter(QueuedItem::originalIndex),
             ItemStack.OPTIONAL_CODEC.fieldOf("item").orElse(ItemStack.EMPTY).forGetter(QueuedItem::stack),
             Codec.INT.fieldOf("queued_at").orElse(0).forGetter(QueuedItem::time)
         ).apply(instance, QueuedItem::new));

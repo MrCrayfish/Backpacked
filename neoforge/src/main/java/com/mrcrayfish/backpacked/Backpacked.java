@@ -15,6 +15,7 @@ import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.level.ServerPlayer;
@@ -142,15 +143,19 @@ public class Backpacked
             if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
                 return;
 
-            BackpackHelper.removeAllBackpacks(player).forEach(stack -> {
-                if(!stack.isEmpty()) {
+            NonNullList<ItemStack> removed = BackpackHelper.removeAllBackpacks(player);
+            for(int index = 0; index < removed.size(); index++)
+            {
+                ItemStack stack = removed.get(index);
+                if(!stack.isEmpty())
+                {
                     RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
-                    if(augment != null && AugmentHandler.recallBackpack(player, stack, augment)) {
+                    if(augment != null && AugmentHandler.recallBackpack(player, index, stack, augment)) {
                         return;
                     }
                     event.getDrops().add(this.createDrop(player, stack));
                 }
-            });
+            }
         }
     }
 
