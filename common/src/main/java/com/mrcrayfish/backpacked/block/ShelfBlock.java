@@ -22,7 +22,10 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -50,10 +53,10 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     );
 
     private static final Map<Direction, VoxelShape> SHELVED_SHAPES = Maps.newEnumMap(ImmutableMap.of(
-            Direction.NORTH, Block.box(2, 3, 7, 14, 14, 16),
-            Direction.SOUTH, Block.box(2, 3, 0, 14, 14, 9),
-            Direction.WEST, Block.box(7, 3, 2, 16, 14, 14),
-            Direction.EAST, Block.box(0, 3, 2, 9, 14, 14))
+        Direction.NORTH, Block.box(2, 3, 7, 14, 15, 16),
+        Direction.SOUTH, Block.box(2, 3, 0, 14, 15, 9),
+        Direction.WEST, Block.box(7, 3, 2, 16, 15, 14),
+        Direction.EAST, Block.box(0, 3, 2, 9, 15, 14))
     );
 
     public ShelfBlock(Properties properties)
