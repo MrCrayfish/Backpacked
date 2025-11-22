@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -115,11 +116,18 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         Minecraft mc = Minecraft.getInstance();
         if(mc.hitResult instanceof BlockHitResult result && result.getBlockPos().equals(shelf.getBlockPos()))
         {
-            Component label = shelf.getBackpack().getHoverName();
-            float halfWidth = mc.font.width(label) / 2F;
-            mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, poseStack.last().pose(), source, Font.DisplayMode.SEE_THROUGH, 0x2A000000, light);
-            mc.font.drawInBatch(label, -halfWidth, 0, -1, true, poseStack.last().pose(), source, Font.DisplayMode.NORMAL, 0, light);
-            poseStack.translate(0, -12, 0);
+            ItemStack backpack = shelf.getBackpack();
+            if(!backpack.isEmpty() && backpack.has(DataComponents.CUSTOM_NAME))
+            {
+                Component label = backpack.get(DataComponents.CUSTOM_NAME);
+                if(label != null)
+                {
+                    float halfWidth = mc.font.width(label) / 2F;
+                    mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, poseStack.last().pose(), source, Font.DisplayMode.SEE_THROUGH, 0x2A000000, light);
+                    mc.font.drawInBatch(label, -halfWidth, 0, -1, true, poseStack.last().pose(), source, Font.DisplayMode.NORMAL, 0, light);
+                    poseStack.translate(0, -12, 0);
+                }
+            }
         }
 
         int recallCount = shelf.getRecallQueueCount();
