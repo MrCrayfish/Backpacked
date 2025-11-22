@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 public final class Recall extends SavedData
 {
     public static final String ID = "backpacked_recall";
-    private static final int MAX_QUEUE_SIZE = 16;
+    private static final int MAX_QUEUE_SIZE = 18;
 
     private final ServerLevel level;
     private final Map<Long, Shelf> shelves = new HashMap<>();
