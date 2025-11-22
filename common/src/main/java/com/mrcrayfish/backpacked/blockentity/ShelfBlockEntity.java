@@ -18,11 +18,13 @@ import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.network.message.MessageShelfPlaceAnimation;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.FrameworkAPI;
+import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -35,6 +37,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -132,33 +135,41 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 
     public void popBackpack(Player player)
     {
-        if(this.level instanceof ServerLevel serverLevel)
+        if(!(this.level instanceof ServerLevel serverLevel))
+            return;
+
+        ItemStack backpack = this.getBackpack();
+        if(backpack.isEmpty())
+            return;
+
+        Vec3 pos = this.worldPosition.getCenter().subtract(0, 0.25, 0);
+        UUID originalOwner = this.recallOwner;
+        int originalIndex = this.recallIndex;
+        this.setBackpack(ItemStack.EMPTY);
+
+        // Try to place the backpack on the original player if a recalled backpack
+        if(player.getUUID().equals(originalOwner) && originalIndex != -1)
         {
-            ItemStack backpack = this.getBackpack();
-            if(!backpack.isEmpty())
+            if(BackpackHelper.getBackpackStack(player, originalIndex).isEmpty())
             {
-                UUID originalOwner = this.recallOwner;
-                int originalIndex = this.recallIndex;
-                this.setBackpack(ItemStack.EMPTY);
-
-                // Try to place the backpack on the original player if a recalled backpack
-                if(player.getUUID().equals(originalOwner) && originalIndex != -1)
+                if(BackpackHelper.setBackpackStack(player, backpack.copy(), originalIndex))
                 {
-                    if(BackpackHelper.setBackpackStack(player, backpack.copy(), originalIndex))
-                    {
-                        return;
-                    }
-                }
-
-                // Otherwise spawn into the world and instantly pickup by the player
-                Vec3 pos = this.worldPosition.getCenter();
-                ItemEntity entity = new ItemEntity(serverLevel, pos.x, pos.y - 0.25, pos.z, backpack.copyAndClear());
-                if(serverLevel.addFreshEntity(entity))
-                {
-                    // Instantly pick up item
-                    entity.playerTouch(player);
+                    Network.getPlay().sendToTrackingLocation(
+                        () -> LevelLocation.create(serverLevel, this.worldPosition, 16),
+                        new MessageLootboundTakeItem(player.getId(), new ItemStack(backpack.getItem()), pos, false)
+                    );
+                    serverLevel.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
+                    return;
                 }
             }
+        }
+
+        // Otherwise spawn into the world and instantly pickup by the player
+        ItemEntity entity = new ItemEntity(serverLevel, pos.x, pos.y - 0.25, pos.z, backpack.copyAndClear());
+        if(serverLevel.addFreshEntity(entity))
+        {
+            // Instantly pick up item
+            entity.playerTouch(player);
         }
     }
 

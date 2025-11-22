@@ -141,9 +141,12 @@ public class ClientPlayHandler
         ItemEntity entity = new ItemEntity(minecraft.level, pos.x, pos.y, pos.z, stack);
         minecraft.particleEngine.add(new ItemPickupParticle(minecraft.getEntityRenderDispatcher(), minecraft.renderBuffers(), minecraft.level, entity, player));
 
-        float pitch = 0.7F + 0.3F * minecraft.level.random.nextFloat();
-        SimpleSoundInstance sound = new SimpleSoundInstance(ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.BLOCKS, 1F, pitch, SoundInstance.createUnseededRandom(), pos.x, pos.y, pos.z);
-        minecraft.getSoundManager().play(sound);
+        if(message.sound())
+        {
+            float pitch = 0.7F + 0.3F * minecraft.level.random.nextFloat();
+            SimpleSoundInstance sound = new SimpleSoundInstance(ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.BLOCKS, 1F, pitch, SoundInstance.createUnseededRandom(), pos.x, pos.y, pos.z);
+            minecraft.getSoundManager().play(sound);
+        }
     }
 
     public static void handleSyncAugmentChange(MessageSyncAugmentChange message)
