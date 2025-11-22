@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -70,6 +72,12 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
         return CODEC;
     }
 
+    private boolean isInteractionTargetingShelf(BlockPos pos, BlockHitResult result)
+    {
+        Vec3 localHit = result.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
+        return localHit.y <= 0.3125;
+    }
+
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
     {
@@ -80,12 +88,8 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
                 if(shelf.getBackpack().isEmpty())
                 {
                     shelf.setBackpack(stack.copyAndClear());
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
-                else
-                {
-                    shelf.popBackpack(player);
-                }
-                return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -98,10 +102,20 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
         {
             if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
             {
-                return shelf.interact(level, player);
+                if(this.isInteractionTargetingShelf(pos, result))
+                {
+                    if(player instanceof ServerPlayer serverPlayer)
+                    {
+                        shelf.openShelfManagement(serverPlayer);
+                    }
+                }
+                else if(!player.isCrouching() && !shelf.getBackpack().isEmpty())
+                {
+                    shelf.popBackpack(player);
+                }
             }
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
     @Override

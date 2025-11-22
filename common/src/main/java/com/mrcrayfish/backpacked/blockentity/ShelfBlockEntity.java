@@ -116,22 +116,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return stack;
     }
 
-    public InteractionResult interact(Level level, Player player)
-    {
-        if(player instanceof ServerPlayer serverPlayer)
-        {
-            if(!serverPlayer.isCrouching() && !this.getBackpack().isEmpty())
-            {
-                this.popBackpack(player);
-            }
-            else
-            {
-                this.openShelfManagement(serverPlayer);
-            }
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
     public void popBackpack(Player player)
     {
         if(this.level instanceof ServerLevel serverLevel)

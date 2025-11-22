@@ -243,8 +243,7 @@ public class BackpackHelper
         {
             if(slots.isUnlocked(i) && backpacks.get(i).isEmpty())
             {
-                ItemStack copy = player.isCreative() ? stack.copy() : stack.copyAndClear();
-                backpacks.set(i, copy);
+                backpacks.set(i, stack.copyAndClear());
                 return true;
             }
         }
