@@ -31,6 +31,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import org.joml.Matrix4f;
@@ -74,6 +75,26 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 
         pose.translate(-0.5, 0.0, -0.5);
         pose.translate(0.5, -6 * 0.0625, -5 * 0.0625);
+
+        if(entity.isAnimationPlaying())
+        {
+            entity.applyAnimation(0, 1, partialTick, time -> {
+                pose.translate(0, 0, -0.125 * (1 - time));
+            });
+            entity.applyAnimation(0, 1, partialTick, time -> {
+                float scale = 0.5F + 0.5F * time;
+                pose.translate(0, 3 * 0.0625, 8 * 0.0625);
+                pose.scale(scale, scale, scale);
+                pose.translate(0, -3 * 0.0625, -8 * 0.0625);
+            });
+            entity.applyAnimation(1, 4, partialTick, time -> {
+                float stretch = Mth.sin(Mth.PI * time) * 0.25F;
+                float flatten = Mth.sin(Mth.PI * time) * 0.15F * -1;
+                pose.translate(0, 3 * 0.0625, 8 * 0.0625);
+                pose.scale(1 + stretch, 1 + stretch, 1 + flatten);
+                pose.translate(0, -3 * 0.0625, -8 * 0.0625);
+            });
+        }
 
         // Apply shelf offset since models can have different shapes and sizes
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);

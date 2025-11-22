@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.network.play;
 
+import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
@@ -174,5 +175,18 @@ public class ClientPlayHandler
         var end = message.pos().getBottomCenter();
         minecraft.particleEngine.add(new FarmhandPlantParticle(dispatcher, renderBuffers, level, stack, start, end));
         minecraft.level.playSound(null, start.x, start.y, start.z, ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.PLAYERS, 1F, 0.5F);
+    }
+
+    public static void handleMessageShelfPlaceAnimation(MessageShelfPlaceAnimation message, MessageContext context)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.level == null)
+            return;
+
+        var level = minecraft.level;
+        if(!(level.getBlockEntity(message.pos()) instanceof ShelfBlockEntity shelf))
+            return;
+
+        shelf.playAnimation();
     }
 }

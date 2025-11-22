@@ -17,6 +17,8 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageShelfPlaceAnimation;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
@@ -26,7 +28,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -46,7 +47,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Author: MrCrayfish
@@ -54,11 +55,14 @@ import java.util.UUID;
 public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
 {
     public static final int SIZE = 1;
+    public static final int TOTAL_ANIMATION_TICKS = 4;
 
     private final SimpleContainer container = new ShelfContainer(this);
     private @Nullable BackpackShelfContainer inventory;
     private int recallQueueCount;
     private @Nullable ShelfKey key;
+    private boolean loadingItems;
+    private int animation = -1;
 
     public ShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
     {
@@ -214,7 +218,9 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     {
         super.loadAdditional(tag, provider);
         CompoundTag containerTag = tag.getCompound("Container");
+        this.loadingItems = true;
         ContainerHelper.loadAllItems(containerTag, this.container.getItems(), provider);
+        this.loadingItems = false;
         ItemStack backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
         this.container.setItem(0, backpack);
         this.inventory = backpack.isEmpty() ? null : new BackpackShelfContainer(this, this.getBackpackSize());
@@ -328,6 +334,35 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
     }
 
+    public static void clientTick(Level level, BlockPos pos, BlockState state, ShelfBlockEntity shelf)
+    {
+        if(shelf.animation >= 0 && shelf.animation < TOTAL_ANIMATION_TICKS)
+        {
+            shelf.animation++;
+        }
+    }
+
+    public void playAnimation()
+    {
+        if(!this.isAnimationPlaying())
+        {
+            this.animation = 0;
+        }
+    }
+
+    public boolean isAnimationPlaying()
+    {
+        return this.animation >= 0 && this.animation < TOTAL_ANIMATION_TICKS;
+    }
+
+    public void applyAnimation(int start, int end, float partialTick, Consumer<Float> time)
+    {
+        if(this.animation < start || this.animation >= end)
+            return;
+        float length = end - start;
+        time.accept(((this.animation - start) + partialTick) / length);
+    }
+
     public static class BackpackShelfContainer extends UnlockableContainer
     {
         private final ShelfBlockEntity entity;
@@ -407,12 +442,20 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         @Override
         public void setItem(int slot, ItemStack stack)
         {
-            super.setItem(slot, stack);
+            ItemStack before = this.getItem(slot);
             if(this.shelf.level instanceof ServerLevel level)
             {
-                float pitch = stack.isEmpty() ? 0.75F : 1.0F;
-                level.playSound(null, this.shelf.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, pitch);
+                if(before.isEmpty() ^ stack.isEmpty())
+                {
+                    float pitch = stack.isEmpty() ? 0.75F : 1.0F;
+                    level.playSound(null, this.shelf.worldPosition, ModSounds.ITEM_BACKPACK_PLACE.get(), SoundSource.BLOCKS, 1.0F, pitch);
+                    if(!this.shelf.loadingItems && !stack.isEmpty())
+                    {
+                        Network.getPlay().sendToTrackingBlockEntity(() -> this.shelf, new MessageShelfPlaceAnimation(this.shelf.worldPosition));
+                    }
+                }
             }
+            super.setItem(slot, stack);
         }
 
         @Override
