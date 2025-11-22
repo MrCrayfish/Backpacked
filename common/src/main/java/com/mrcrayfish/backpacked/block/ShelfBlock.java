@@ -72,13 +72,17 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     {
         if(stack.getItem() instanceof BackpackItem)
         {
-            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
             {
-                if(shelfBlockEntity.getBackpack().isEmpty())
+                if(shelf.getBackpack().isEmpty())
                 {
-                    shelfBlockEntity.setBackpack(stack.copyAndClear());
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    shelf.setBackpack(stack.copyAndClear());
                 }
+                else
+                {
+                    shelf.popBackpack(player);
+                }
+                return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -89,9 +93,9 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     {
         if(!level.isClientSide())
         {
-            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
             {
-                return shelfBlockEntity.interact(player);
+                return shelf.interact(level, player);
             }
         }
         return InteractionResult.SUCCESS;

@@ -36,6 +36,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -115,19 +116,39 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         return stack;
     }
 
-    public InteractionResult interact(Player player)
+    public InteractionResult interact(Level level, Player player)
     {
         if(player instanceof ServerPlayer serverPlayer)
         {
-            if(!this.container.getItem(0).isEmpty() && !serverPlayer.isCrouching())
+            if(!serverPlayer.isCrouching() && !this.getBackpack().isEmpty())
             {
-                this.openBackpackInventory(serverPlayer);
-                return InteractionResult.SUCCESS;
+                this.popBackpack(player);
             }
-            this.openShelfManagement(serverPlayer);
-            return InteractionResult.SUCCESS;
+            else
+            {
+                this.openShelfManagement(serverPlayer);
+            }
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    public void popBackpack(Player player)
+    {
+        if(this.level instanceof ServerLevel serverLevel)
+        {
+            ItemStack backpack = this.getBackpack();
+            if(!backpack.isEmpty())
+            {
+                this.setBackpack(ItemStack.EMPTY);
+                Vec3 pos = this.worldPosition.getCenter();
+                ItemEntity entity = new ItemEntity(serverLevel, pos.x, pos.y - 0.25, pos.z, backpack.copyAndClear());
+                if(serverLevel.addFreshEntity(entity))
+                {
+                    // Instantly pick up item
+                    entity.playerTouch(player);
+                }
+            }
+        }
     }
 
     private void openBackpackInventory(ServerPlayer player)
