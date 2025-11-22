@@ -307,6 +307,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public void setChanged()
     {
         super.setChanged();
+        BlockEntityUtil.sendUpdatePacket(this);
         /*if(this.level instanceof ServerLevel)
         {
             ItemStack backpack = this.container.getItem(0);
@@ -400,7 +401,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             {
                 this.shelf.updateInventory();
                 this.shelf.setChanged();
-                BlockEntityUtil.sendUpdatePacket(this.shelf);
             }
         }
 
