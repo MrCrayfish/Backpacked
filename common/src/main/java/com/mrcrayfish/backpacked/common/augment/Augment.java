@@ -24,7 +24,7 @@ public interface Augment<T extends Augment<T>>
 
     AugmentType<T> type();
 
-    default T beforeUpdate(ServerPlayer player, Augment<?> current)
+    default T onUpdate(ServerPlayer player, Augment<?> current)
     {
         return (T) this;
     }

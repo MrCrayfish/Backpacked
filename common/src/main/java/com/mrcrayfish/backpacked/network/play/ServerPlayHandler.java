@@ -349,7 +349,7 @@ public class ServerPlayHandler
             return;
 
         // Allows augments to perform a sort of sanitization before updating
-        updatedAugment = updatedAugment.beforeUpdate(serverPlayer, currentAugment);
+        updatedAugment = updatedAugment.onUpdate(serverPlayer, currentAugment);
 
         // Don't need to update if the augments are the same
         if(Objects.equals(currentAugment, updatedAugment))

@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -40,7 +41,7 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
     }
 
     @Override
-    public RecallAugment beforeUpdate(ServerPlayer player, Augment<?> current)
+    public RecallAugment onUpdate(ServerPlayer player, Augment<?> current)
     {
         RecallAugment updated = this;
         RecallAugment other = (current instanceof RecallAugment a) ? a : EMPTY;
@@ -57,22 +58,38 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
             ServerLevel level = server.getLevel(shelfKey.level());
             if(level != null)
             {
-                Recall recall = ((Recall.Access) level).backpacked$getRecall();
-                BlockPos shelfPos = recall.getShelfBlockPos(shelfKey.id());
-                if(shelfPos == null || shelfPos.distToCenterSqr(player.position()) > UPDATE_SHELF_RANGE_SQR)
+                BlockPos pos = BlockPos.of(shelfKey.position());
+                if(!level.isLoaded(pos))
                 {
-                    updated = updated.setShelf(null);
+                    updated = updated.setShelfKey(null);
+                }
+                else if(level.getBlockEntity(pos, ModBlockEntities.SHELF.get()).isEmpty())
+                {
+                    updated = updated.setShelfKey(null);
+                }
+                else if(pos.distToCenterSqr(player.getEyePosition()) > UPDATE_SHELF_RANGE_SQR)
+                {
+                    updated = updated.setShelfKey(null);
+                }
+
+                if(updated.shelfKey().isPresent())
+                {
+                    Recall recall = ((Recall.Access) level).backpacked$getRecall();
+                    if(!recall.isShelfKnown(pos))
+                    {
+                        updated = updated.setShelfKey(null);
+                    }
                 }
             }
             else
             {
-                updated = updated.setShelf(null);
+                updated = updated.setShelfKey(null);
             }
         }
         return updated;
     }
 
-    public RecallAugment setShelf(@Nullable ShelfKey shelfKey)
+    public RecallAugment setShelfKey(@Nullable ShelfKey shelfKey)
     {
         return new RecallAugment(Optional.ofNullable(shelfKey));
     }

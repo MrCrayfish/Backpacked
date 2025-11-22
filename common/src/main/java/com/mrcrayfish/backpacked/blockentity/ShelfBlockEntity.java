@@ -1,8 +1,10 @@
 package com.mrcrayfish.backpacked.blockentity;
 
+import com.google.common.base.Preconditions;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.Pagination;
+import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
@@ -54,9 +56,9 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public static final int SIZE = 1;
 
     private final SimpleContainer container = new ShelfContainer(this);
-    private @Nullable UUID id;
     private @Nullable BackpackShelfContainer inventory;
     private int recallQueueCount;
+    private @Nullable ShelfKey key;
 
     public ShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
     {
@@ -87,6 +89,16 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
             this.recallQueueCount = queueCount;
             this.setChanged();
         }
+    }
+
+    public ShelfKey key()
+    {
+        Preconditions.checkNotNull(this.level);
+        if(this.key == null)
+        {
+            this.key = new ShelfKey(this.level.dimension(), this.worldPosition.asLong());
+        }
+        return this.key;
     }
 
     public ItemStack getBackpackWithContents()
@@ -201,10 +213,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider)
     {
         super.loadAdditional(tag, provider);
-        if(tag.contains("Id", Tag.TAG_INT_ARRAY))
-        {
-            this.id = tag.getUUID("Id");
-        }
         CompoundTag containerTag = tag.getCompound("Container");
         ContainerHelper.loadAllItems(containerTag, this.container.getItems(), provider);
         ItemStack backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
@@ -221,7 +229,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider)
     {
         super.saveAdditional(tag, provider);
-        tag.putUUID("Id", this.id());
         CompoundTag containerTag = new CompoundTag();
         ContainerHelper.saveAllItems(containerTag, this.container.getItems(), provider);
         tag.put("Container", containerTag);
@@ -236,7 +243,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     public CompoundTag getUpdateTag(HolderLookup.Provider provider)
     {
         CompoundTag tag = new CompoundTag();
-        tag.putUUID("Id", this.id());
         tag.put("Backpack", this.container.getItem(0).saveOptional(provider));
         tag.putInt("QueueCount", this.recallQueueCount);
         return tag;
@@ -309,16 +315,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
                 this.copyInventoryToStack(backpack);
             }
         }*/
-    }
-
-    public UUID id()
-    {
-        if(this.id == null)
-        {
-            this.id = UUID.randomUUID();
-            this.setChanged();
-        }
-        return this.id;
     }
 
     @Override

@@ -566,7 +566,7 @@ public class AugmentHandler
             return false;
 
         Recall recall = ((Recall.Access) level).backpacked$getRecall();
-        return recall.recallToShelf(player, shelfKey.id(), stack);
+        return recall.recallToShelf(player, shelfKey, stack);
     }
 
     /*private static boolean isFarmland()

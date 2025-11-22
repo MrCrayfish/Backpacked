@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.ShelfKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -29,7 +30,7 @@ public final class Recall extends SavedData
     private static final int MAX_QUEUE_SIZE = 16;
 
     private final ServerLevel level;
-    private final Map<UUID, Shelf> shelves = new HashMap<>();
+    private final Map<Long, Shelf> shelves = new HashMap<>();
     private int timer;
     private boolean runNow;
     private boolean force;
@@ -47,30 +48,30 @@ public final class Recall extends SavedData
 
     public void onShelfLoaded(ShelfBlockEntity shelf)
     {
-        if(!this.shelves.containsKey(shelf.id()))
+        long position = shelf.key().position();
+        if(!this.shelves.containsKey(position))
         {
-            this.shelves.put(shelf.id(), new Shelf(shelf.getBlockPos()));
+            this.shelves.put(position, new Shelf(shelf.getBlockPos()));
             this.setDirty();
         }
     }
 
     public void onShelfBroken(ShelfBlockEntity shelf)
     {
-        this.shelves.remove(shelf.id());
-        this.removeAndFlushQueueToBlockPos(shelf.id(), shelf.getBlockPos());
+        long position = shelf.key().position();
+        this.shelves.remove(position);
+        this.removeAndFlushQueueToBlockPos(shelf.key());
         this.setDirty();
     }
 
-    @Nullable
-    public BlockPos getShelfBlockPos(UUID shelfId)
+    public boolean isShelfKnown(BlockPos pos)
     {
-        Shelf shelf = this.shelves.get(shelfId);
-        return shelf != null ? shelf.pos : null;
+        return this.shelves.containsKey(pos.asLong());
     }
 
-    public boolean recallToShelf(ServerPlayer player, UUID shelfId, ItemStack backpack)
+    public boolean recallToShelf(ServerPlayer player, ShelfKey key, ItemStack backpack)
     {
-        Shelf shelf = this.shelves.get(shelfId);
+        Shelf shelf = this.shelves.get(key.position());
         if(shelf != null)
         {
             if(!shelf.queue(player, backpack, this.timer))
@@ -133,11 +134,12 @@ public final class Recall extends SavedData
         level.addFreshEntity(entity);
     }
 
-    private void removeAndFlushQueueToBlockPos(UUID shelfId, BlockPos pos)
+    private void removeAndFlushQueueToBlockPos(ShelfKey key)
     {
-        Shelf shelf = this.shelves.remove(shelfId);
+        Shelf shelf = this.shelves.remove(key.position());
         if(shelf == null)
             return;
+        BlockPos pos = BlockPos.of(key.position());
         shelf.forEachQueue((owner, items) -> items.forEach(item -> {
             this.flushItem(this.level, pos.getCenter(), item.stack, false);
         }));
@@ -150,12 +152,10 @@ public final class Recall extends SavedData
         if(!this.runNow && this.timer % 5 != 0)
             return;
 
-        Map<UUID, Shelf> corrected = null;
         var it = this.shelves.entrySet().iterator();
         while(it.hasNext())
         {
             var entry = it.next();
-            UUID id = entry.getKey();
             Shelf shelf = entry.getValue();
             assert shelf != null;
 
@@ -171,17 +171,6 @@ public final class Recall extends SavedData
                     this.flushItem(this.level, shelf.pos.getCenter(), item.stack, false);
                 }));
                 it.remove();
-                this.setDirty();
-                continue;
-            }
-
-            // Verify that the shelf has the same id, otherwise perform correction
-            if(!id.equals(shelfBlockEntity.id()))
-            {
-                it.remove();
-                if(corrected == null)
-                    corrected = new HashMap<>();
-                corrected.put(shelfBlockEntity.id(), shelf);
                 this.setDirty();
                 continue;
             }
@@ -205,12 +194,6 @@ public final class Recall extends SavedData
                 }
             }
             shelfBlockEntity.setRecallQueueCount(shelf.count);
-        }
-
-        if(corrected != null)
-        {
-            this.shelves.putAll(corrected);
-            this.setDirty();
         }
 
         this.runNow = false;
@@ -244,8 +227,10 @@ public final class Recall extends SavedData
         shelvesList.forEach(nbt -> {
             if(nbt instanceof CompoundTag shelfTag) {
                 try {
-                    UUID id = shelfTag.getUUID("Id");
-                    BlockPos pos = BlockPos.of(shelfTag.getLong("Pos"));
+                    if(!shelfTag.contains("Pos", Tag.TAG_LONG))
+                        return;
+                    long posAsLong = shelfTag.getLong("Pos");
+                    BlockPos pos = BlockPos.of(posAsLong);
                     if(level.isOutsideBuildHeight(pos))
                         throw new IllegalArgumentException("Shelf block position is outside the valid build height");
                     Map<UUID, List<QueuedItem>> queues = new HashMap<>();
@@ -267,7 +252,7 @@ public final class Recall extends SavedData
                             }
                         }
                     });
-                    recall.shelves.put(id, new Shelf(pos, queues));
+                    recall.shelves.put(posAsLong, new Shelf(pos, queues));
                 } catch (Exception e) {
                     Constants.LOG.error("An error occurred while reading Recall shelf entry", e);
                 }
@@ -282,10 +267,9 @@ public final class Recall extends SavedData
         tag.putInt("Timer", this.timer);
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ListTag shelves = new ListTag();
-        this.shelves.forEach((id, shelf) -> {
+        this.shelves.forEach((pos, shelf) -> {
             CompoundTag shelfTag = new CompoundTag();
-            shelfTag.putUUID("Id", id);
-            shelfTag.putLong("Pos", shelf.pos.asLong());
+            shelfTag.putLong("Pos", pos);
             Map<UUID, List<QueuedItem>> queue = shelf.queues();
             if(queue != null && !queue.isEmpty()) {
                 ListTag queuesList = new ListTag();
