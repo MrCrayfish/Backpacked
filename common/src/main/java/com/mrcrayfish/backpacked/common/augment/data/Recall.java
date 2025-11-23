@@ -274,7 +274,7 @@ public final class Recall extends SavedData
     private static Recall load(ServerLevel level, HolderLookup.Provider provider, CompoundTag tag)
     {
         Recall recall = new Recall(level);
-        recall.timer = tag.getInt("timer");
+        recall.timer = tag.getInt("Timer");
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ListTag shelvesList = tag.getList("Shelves", Tag.TAG_COMPOUND);
         shelvesList.forEach(nbt -> {
