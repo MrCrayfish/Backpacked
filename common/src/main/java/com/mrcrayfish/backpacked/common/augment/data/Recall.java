@@ -7,6 +7,9 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.ShelfKey;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import net.minecraft.core.BlockPos;
@@ -159,8 +162,29 @@ public final class Recall extends SavedData
         if(shelf == null)
             return;
         shelf.forEach((owner, items) -> items.forEach(item -> {
+            this.removeInvalidShelfFromItemStack(item.stack);
             this.flushItem(this.level, pos.getCenter(), item.stack);
         }));
+        this.setDirty();
+    }
+
+    private void removeInvalidShelfFromItemStack(ItemStack stack)
+    {
+        Augments augments = Augments.get(stack);
+        RecallAugment augment = augments.findEnabledAndCast(ModAugmentTypes.RECALL.get());
+        if(augment != null)
+        {
+            augment = augment.setShelfKey(null);
+            for(Augments.Position position : Augments.Position.values())
+            {
+                if(augments.getAugment(position).type() == ModAugmentTypes.RECALL.get())
+                {
+                    augments.setAugment(position, augment);
+                    break;
+                }
+            }
+            Augments.set(stack, augments);
+        }
     }
 
     public void tick()
@@ -187,6 +211,7 @@ public final class Recall extends SavedData
             if(shelfOptional.isEmpty() || !this.isShelfPointOfInterest(pos))
             {
                 entry.getValue().forEach((owner, items) -> items.forEach(item -> {
+                    this.removeInvalidShelfFromItemStack(item.stack);
                     this.flushItem(this.level, pos.getCenter(), item.stack);
                 }));
                 it.remove();
