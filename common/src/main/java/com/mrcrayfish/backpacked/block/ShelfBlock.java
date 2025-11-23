@@ -190,7 +190,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
                     ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(shelf);
                 }
                 ItemStack stack = shelf.getBackpackWithContents();
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack.copyAndClear());
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, unknown);
