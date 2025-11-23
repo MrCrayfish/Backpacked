@@ -61,7 +61,6 @@ public final class Recall extends SavedData
     public void onShelfBroken(ShelfBlockEntity shelf)
     {
         this.removeAndFlushQueueToBlockPos(shelf.key());
-        this.setDirty();
     }
 
     public boolean recallToShelf(ServerPlayer player, ShelfKey key, int originalIndex, ItemStack backpack)
@@ -122,6 +121,7 @@ public final class Recall extends SavedData
                 count[0] += this.flushQueue(server, owner, items);
             });
             it.remove();
+            this.setDirty();
         }
         return count[0];
     }
