@@ -53,11 +53,6 @@ public final class Recall extends SavedData
         this.queues = new HashMap<>();
     }
 
-    public void onShelfLoaded(ShelfBlockEntity shelf)
-    {
-        // TODO pull backpacks
-    }
-
     public void onShelfBroken(ShelfBlockEntity shelf)
     {
         this.removeAndFlushQueueToBlockPos(shelf.key());

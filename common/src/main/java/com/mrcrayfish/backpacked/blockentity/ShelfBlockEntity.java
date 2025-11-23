@@ -385,16 +385,6 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }*/
     }
 
-    @Override
-    public void setLevel(Level level)
-    {
-        super.setLevel(level);
-        if(level instanceof ServerLevel serverLevel)
-        {
-            ((Recall.Access) serverLevel).backpacked$getRecall().onShelfLoaded(this);
-        }
-    }
-
     public static void clientTick(Level level, BlockPos pos, BlockState state, ShelfBlockEntity shelf)
     {
         if(shelf.animation >= 0 && shelf.animation < TOTAL_ANIMATION_TICKS)
