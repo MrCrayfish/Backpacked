@@ -301,13 +301,13 @@ public final class Recall extends SavedData
                                     queues.put(owner, items);
                                 }
                             } catch (Exception e) {
-                                Constants.LOG.error("An error occurred while reading Recall queue entry", e);
+                                Constants.LOG.error("An error occurred while reading Recall queues", e);
                             }
                         }
                     });
                     recall.queues.put(pos, new ShelfQueue(queues));
                 } catch (Exception e) {
-                    Constants.LOG.error("An error occurred while reading Recall shelf entry", e);
+                    Constants.LOG.error("An error occurred while reading Recall data", e);
                 }
             }
         });
