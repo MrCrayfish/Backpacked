@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked;
 
+import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
@@ -8,6 +9,8 @@ import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModBlocks;
+import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
@@ -16,12 +19,14 @@ import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -42,8 +47,13 @@ import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // TODO clean up this class
 
@@ -53,6 +63,9 @@ import java.util.concurrent.CompletableFuture;
 @Mod(Constants.MOD_ID)
 public class Backpacked
 {
+    public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(BuiltInRegistries.POINT_OF_INTEREST_TYPE, Constants.MOD_ID);
+    public static final DeferredHolder<PoiType, PoiType> SHELF = POI_TYPES.register("backpack_shelf", ModPointOfInterests.BACKPACK_SHELF::value);
+
     public Backpacked(IEventBus bus)
     {
         TaskRunner.runIf(Environment.CLIENT, () -> ClientBootstrap::earlyInit);
@@ -65,6 +78,7 @@ public class Backpacked
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBlockDropLoot);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onLivingDrops);
+        POI_TYPES.register(bus);
 
         if(ModList.get().isLoaded("yigd"))
         {

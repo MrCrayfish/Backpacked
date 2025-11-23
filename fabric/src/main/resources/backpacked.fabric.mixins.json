@@ -11,6 +11,7 @@
         "FabricPlayerMixin",
         "LivingEntityMixin",
         "PackRepositoryMixin",
+        "PoiTypesAccessor",
         "ServerPacksSourceMixin"
     ],
     "client": [

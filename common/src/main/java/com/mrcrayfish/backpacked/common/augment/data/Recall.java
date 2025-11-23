@@ -4,20 +4,22 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.ShelfKey;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +33,7 @@ public final class Recall extends SavedData
     private static final int MAX_QUEUE_SIZE = 18;
 
     private final ServerLevel level;
-    private final Map<Long, Shelf> shelves = new HashMap<>();
+    private final Map<BlockPos, ShelfQueue> queues;
     private int timer;
     private boolean runNow;
     private boolean force;
@@ -45,43 +47,56 @@ public final class Recall extends SavedData
     public Recall(ServerLevel level)
     {
         this.level = level;
+        this.queues = new HashMap<>();
     }
 
     public void onShelfLoaded(ShelfBlockEntity shelf)
     {
-        long position = shelf.key().position();
-        if(!this.shelves.containsKey(position))
-        {
-            this.shelves.put(position, new Shelf(shelf.getBlockPos()));
-            this.setDirty();
-        }
+        // TODO pull backpacks
     }
 
     public void onShelfBroken(ShelfBlockEntity shelf)
     {
-        long position = shelf.key().position();
-        this.shelves.remove(position);
         this.removeAndFlushQueueToBlockPos(shelf.key());
         this.setDirty();
     }
 
-    public boolean isShelfKnown(BlockPos pos)
-    {
-        return this.shelves.containsKey(pos.asLong());
-    }
-
     public boolean recallToShelf(ServerPlayer player, ShelfKey key, int originalIndex, ItemStack backpack)
     {
-        Shelf shelf = this.shelves.get(key.position());
-        if(shelf != null)
-        {
-            if(!shelf.queue(player, originalIndex, backpack, this.timer))
-                return false;
-            this.runNow = true;
-            this.setDirty();
+        BlockPos pos = BlockPos.of(key.position());
+        if(!this.level.isInWorldBounds(pos))
+            return false;
+
+        if(!this.isShelfPointOfInterest(pos))
+            return false;
+
+        ShelfQueue queue = this.queues.computeIfAbsent(pos, k -> new ShelfQueue());
+        if(!queue.add(player, originalIndex, backpack, this.timer))
+            return false;
+
+        this.runNow = true;
+        this.setDirty();
+        return true;
+    }
+
+    public boolean isShelfPointOfInterest(BlockPos pos)
+    {
+        if(this.level.getPoiManager().existsAtPosition(ModPointOfInterests.BACKPACK_SHELF.key(), pos))
             return true;
-        }
-        return false;
+
+        if(!this.level.isLoaded(pos))
+            return false;
+
+        BlockState state = this.level.getBlockState(pos);
+        if(!(state.getBlock() instanceof ShelfBlock))
+            return false;
+
+        var optional = PoiTypes.forState(state);
+        if(optional.isEmpty())
+            return false;
+
+        this.level.getPoiManager().add(pos, optional.get());
+        return true;
     }
 
     public void forceNextRun()
@@ -93,11 +108,11 @@ public final class Recall extends SavedData
     public int flushAllQueues(MinecraftServer server)
     {
         int[] count = {0};
-        var it = this.shelves.entrySet().iterator();
+        var it = this.queues.entrySet().iterator();
         while(it.hasNext())
         {
-            Shelf shelf = it.next().getValue();
-            shelf.forEachQueue((owner, items) -> {
+            ShelfQueue shelf = it.next().getValue();
+            shelf.forEach((owner, items) -> {
                 count[0] += this.flushQueue(server, owner, items);
             });
             it.remove();
@@ -123,26 +138,25 @@ public final class Recall extends SavedData
         return count[0];
     }
 
-    private void flushItem(ServerLevel level, Vec3 position, ItemStack stack, boolean unlimited)
+    private void flushItem(ServerLevel level, Vec3 position, ItemStack stack)
     {
-        if(stack.isEmpty())
-            return;
-        ItemEntity entity = new ItemEntity(this.level, position.x, position.y, position.z, stack.copyAndClear());
-        entity.setDefaultPickUpDelay();
-        entity.setExtendedLifetime();
-        if(unlimited)
-            entity.setUnlimitedLifetime();
-        level.addFreshEntity(entity);
+        if(!stack.isEmpty())
+        {
+            ItemEntity entity = new ItemEntity(this.level, position.x, position.y, position.z, stack.copyAndClear());
+            entity.setDefaultPickUpDelay();
+            entity.setExtendedLifetime();
+            level.addFreshEntity(entity);
+        }
     }
 
     private void removeAndFlushQueueToBlockPos(ShelfKey key)
     {
-        Shelf shelf = this.shelves.remove(key.position());
+        BlockPos pos = BlockPos.of(key.position());
+        ShelfQueue shelf = this.queues.remove(pos);
         if(shelf == null)
             return;
-        BlockPos pos = BlockPos.of(key.position());
-        shelf.forEachQueue((owner, items) -> items.forEach(item -> {
-            this.flushItem(this.level, pos.getCenter(), item.stack, false);
+        shelf.forEach((owner, items) -> items.forEach(item -> {
+            this.flushItem(this.level, pos.getCenter(), item.stack);
         }));
     }
 
@@ -153,50 +167,60 @@ public final class Recall extends SavedData
         if(!this.runNow && this.timer % 5 != 0)
             return;
 
-        var it = this.shelves.entrySet().iterator();
+        // Don't perform tick if level contains no players
+        if(this.level.players().isEmpty())
+            return;
+
+        var it = this.queues.entrySet().iterator();
         while(it.hasNext())
         {
             var entry = it.next();
-            Shelf shelf = entry.getValue();
-            assert shelf != null;
 
-            // If the area is not loaded, backpacks can not be returned, so we'll hold off
-            BlockPos blockPos = shelf.pos;
-            if(!this.force && !this.level.isLoaded(blockPos))
+            BlockPos pos = entry.getKey();
+            if(!this.force && !this.level.isLoaded(pos))
                 continue;
 
-            // If the block entity is not a shelf, unregistered and clear any existing queue
-            if(!(this.level.getBlockEntity(blockPos) instanceof ShelfBlockEntity shelfBlockEntity))
+            var shelfOptional = this.level.getBlockEntity(pos, ModBlockEntities.SHELF.get());
+            if(shelfOptional.isEmpty() || !this.isShelfPointOfInterest(pos))
             {
-                shelf.forEachQueue((owner, items) -> items.forEach(item -> {
-                    this.flushItem(this.level, shelf.pos.getCenter(), item.stack, false);
+                entry.getValue().forEach((owner, items) -> items.forEach(item -> {
+                    this.flushItem(this.level, pos.getCenter(), item.stack);
                 }));
                 it.remove();
                 this.setDirty();
                 continue;
             }
 
-            Map<UUID, List<QueuedItem>> playerToQueue = shelf.queues();
+            ShelfQueue queue = entry.getValue();
+            ShelfBlockEntity shelf = shelfOptional.get();
+            Map<UUID, List<QueuedItem>> playerToQueue = queue.queues();
             if(playerToQueue != null)
             {
-                if(shelfBlockEntity.getBackpack().isEmpty())
+                if(shelf.getBackpack().isEmpty())
                 {
                     // Find the list that contains a queued item that has been waiting
                     // the longest to recall, which is the first item in each list.
-                    var queue = getMinimumQueue(playerToQueue);
-                    if(queue != null)
+                    var playerQueue = getMinimumQueue(playerToQueue);
+                    if(playerQueue != null)
                     {
-                        QueuedItem item = queue.getSecond().removeFirst();
-                        shelfBlockEntity.setBackpack(item.stack.copyAndClear());
-                        shelfBlockEntity.setRecallOwner(queue.getFirst());
-                        shelfBlockEntity.setRecallIndex(item.originalIndex);
-                        shelf.decrementCount();
-                        shelf.cleanQueues();
+                        QueuedItem item = playerQueue.getSecond().removeFirst();
+                        shelf.setBackpack(item.stack.copyAndClear());
+                        shelf.setRecallOwner(playerQueue.getFirst());
+                        shelf.setRecallIndex(item.originalIndex);
+                        queue.decrementCount();
+                        queue.cleanQueues();
                         this.setDirty();
                     }
                 }
             }
-            shelfBlockEntity.setRecallQueueCount(shelf.count);
+
+            shelf.setRecallQueueCount(queue.count);
+
+            if(queue.isEmpty())
+            {
+                it.remove();
+                this.setDirty();
+            }
         }
 
         this.runNow = false;
@@ -233,10 +257,10 @@ public final class Recall extends SavedData
         shelvesList.forEach(nbt -> {
             if(nbt instanceof CompoundTag shelfTag) {
                 try {
-                    if(!shelfTag.contains("Pos", Tag.TAG_LONG))
-                        return;
-                    long posAsLong = shelfTag.getLong("Pos");
-                    BlockPos pos = BlockPos.of(posAsLong);
+                    var posOptional = NbtUtils.readBlockPos(shelfTag, "Pos");
+                    if(posOptional.isEmpty())
+                        throw new IllegalArgumentException("Missing shelf block position when loading queue");
+                    BlockPos pos = posOptional.get();
                     if(level.isOutsideBuildHeight(pos))
                         throw new IllegalArgumentException("Shelf block position is outside the valid build height");
                     Map<UUID, List<QueuedItem>> queues = new HashMap<>();
@@ -258,7 +282,7 @@ public final class Recall extends SavedData
                             }
                         }
                     });
-                    recall.shelves.put(posAsLong, new Shelf(pos, queues));
+                    recall.queues.put(pos, new ShelfQueue(queues));
                 } catch (Exception e) {
                     Constants.LOG.error("An error occurred while reading Recall shelf entry", e);
                 }
@@ -273,9 +297,9 @@ public final class Recall extends SavedData
         tag.putInt("Timer", this.timer);
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
         ListTag shelves = new ListTag();
-        this.shelves.forEach((pos, shelf) -> {
+        this.queues.forEach((pos, shelf) -> {
             CompoundTag shelfTag = new CompoundTag();
-            shelfTag.putLong("Pos", pos);
+            shelfTag.put("Pos", NbtUtils.writeBlockPos(pos));
             Map<UUID, List<QueuedItem>> queue = shelf.queues();
             if(queue != null && !queue.isEmpty()) {
                 ListTag queuesList = new ListTag();
@@ -296,20 +320,15 @@ public final class Recall extends SavedData
         return tag;
     }
 
-    private static final class Shelf
+    private static final class ShelfQueue
     {
-        private final BlockPos pos;
         private @Nullable Map<UUID, List<QueuedItem>> queues;
         private int count;
 
-        private Shelf(BlockPos pos)
-        {
-            this.pos = pos;
-        }
+        private ShelfQueue() {}
 
-        private Shelf(BlockPos pos, @Nullable Map<UUID, List<QueuedItem>> queues)
+        private ShelfQueue(@Nullable Map<UUID, List<QueuedItem>> queues)
         {
-            this.pos = pos;
             this.queues = queues != null && !queues.isEmpty() ? queues : null;
             this.cleanQueues();
             this.updateCount();
@@ -321,7 +340,7 @@ public final class Recall extends SavedData
             return this.queues;
         }
 
-        public void forEachQueue(BiConsumer<UUID, List<QueuedItem>> consumer)
+        public void forEach(BiConsumer<UUID, List<QueuedItem>> consumer)
         {
             if(this.queues != null)
             {
@@ -329,7 +348,7 @@ public final class Recall extends SavedData
             }
         }
 
-        public boolean queue(ServerPlayer player, int originalIndex, ItemStack backpack, int time)
+        public boolean add(ServerPlayer player, int originalIndex, ItemStack backpack, int time)
         {
             if(this.queues == null)
             {
@@ -375,6 +394,11 @@ public final class Recall extends SavedData
                     this.count = 0;
                 }
             }
+        }
+
+        private boolean isEmpty()
+        {
+            return this.queues == null || this.queues.isEmpty();
         }
     }
 
