@@ -29,6 +29,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -103,14 +104,20 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         }
     }
 
-    public void setRecallOwner(@Nullable UUID recallOwner)
+    public void recall(ItemStack stack, UUID owner, int originalIndex)
     {
-        this.recallOwner = recallOwner;
-    }
+        if(this.level instanceof ServerLevel level)
+        {
+            this.setBackpack(stack.copyAndClear());
+            this.recallOwner = owner;
+            this.recallIndex = originalIndex;
 
-    public void setRecallIndex(int recallIndex)
-    {
-        this.recallIndex = recallIndex;
+            Vec3 center = this.getBlockState().getShape(this.level, this.worldPosition).bounds().getCenter().add(Vec3.atLowerCornerOf(this.worldPosition));
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL, center.x, center.y, center.z, 20, 0.25, 0.25, 0.25, 0.1);
+
+            float pitch = 0.7F + 0.1F * level.random.nextFloat();
+            level.playSound(null, center.x, center.y, center.z, SoundEvents.PLAYER_TELEPORT, SoundSource.BLOCKS, 1.0F, pitch);
+        }
     }
 
     public ShelfKey key()

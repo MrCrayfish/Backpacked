@@ -227,9 +227,7 @@ public final class Recall extends SavedData
                     if(playerQueue != null)
                     {
                         QueuedItem item = playerQueue.getSecond().removeFirst();
-                        shelf.setBackpack(item.stack.copyAndClear());
-                        shelf.setRecallOwner(playerQueue.getFirst());
-                        shelf.setRecallIndex(item.originalIndex);
+                        shelf.recall(item.stack, playerQueue.getFirst(), item.originalIndex);
                         queue.decrementCount();
                         queue.cleanQueues();
                         this.setDirty();
