@@ -81,6 +81,9 @@ public final class Recall extends SavedData
 
     public boolean isShelfPointOfInterest(BlockPos pos)
     {
+        if(!this.level.isInWorldBounds(pos))
+            return false;
+
         if(this.level.getPoiManager().existsAtPosition(ModPointOfInterests.BACKPACK_SHELF.key(), pos))
             return true;
 
