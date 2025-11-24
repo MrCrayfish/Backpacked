@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Icons;
 import com.mrcrayfish.backpacked.client.Keys;
+import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
@@ -267,10 +268,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 var factory = AugmentSettingsFactories.getFactory(augment);
                 if(factory == null)
                     return;
-                factory.apply(this, () -> this.menu.getAugments().getAugment(position), updatedAugment -> {
+                AugmentHolder<Augment<?>> holder = new AugmentHolder<>(() -> this.menu.getAugments().getAugment(position), updatedAugment -> {
                     Network.getPlay().sendToServer(new MessageUpdateAugment(position, updatedAugment));
                     this.updateAugments(this.menu.getAugments().setAugment(position, updatedAugment));
-                }).show(btn);
+                }, position, this.menu.getBackpackIndex());
+                factory.apply(this, holder).show(btn);
             }).setActive(() -> {
                 // Setting button should only be active if it has a settings factory
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();

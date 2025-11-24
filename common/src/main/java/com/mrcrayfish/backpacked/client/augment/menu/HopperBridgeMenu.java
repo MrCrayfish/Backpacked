@@ -1,11 +1,8 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.ItemGrid;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomEditBox;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.util.Utils;
@@ -17,9 +14,6 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class HopperBridgeMenu extends AugmentSettingsMenu
 {
@@ -42,31 +36,31 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
     private static String lastQuery = "";
     private static boolean selectedOnly = false;
 
-    public HopperBridgeMenu(PopupMenuHandler handler, Supplier<HopperBridgeAugment> supplier, Consumer<HopperBridgeAugment> updater)
+    public HopperBridgeMenu(PopupMenuHandler handler, AugmentHolder<HopperBridgeAugment> holder)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
             TitleWidget title = layout.addChild(new TitleWidget(OPTIONS_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
-            layout.addChild(createOption(INSERT_LABEL, INSERT_TOOLTIP, CustomButton.state(() -> supplier.get().insert(), value -> updater.accept(supplier.get().setInsert(value)))
+            layout.addChild(createOption(INSERT_LABEL, INSERT_TOOLTIP, CustomButton.state(() -> holder.get().insert(), value -> holder.update(holder.get().setInsert(value)))
                 .setSize(60, 18)
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().insert()))
+                .setMessage(() -> CommonComponents.optionStatus(holder.get().insert()))
                 .build(), divider.getWidth()));
-            layout.addChild(createOption(EXTRACT_LABEL, EXTRACT_TOOLTIP, CustomButton.state(() -> supplier.get().extract(), value -> updater.accept(supplier.get().setExtract(value)))
+            layout.addChild(createOption(EXTRACT_LABEL, EXTRACT_TOOLTIP, CustomButton.state(() -> holder.get().extract(), value -> holder.update(holder.get().setExtract(value)))
                 .setSize(60, 18)
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().extract()))
+                .setMessage(() -> CommonComponents.optionStatus(holder.get().extract()))
                 .build(), divider.getWidth()));
 
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
             layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
 
-            layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, CustomButton.values(() -> supplier.get().filterMode(), value -> updater.accept(supplier.get().setFilterMode(value)))
+            layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, CustomButton.values(() -> holder.get().filterMode(), value -> holder.update(holder.get().setFilterMode(value)))
                     .setSize(60, 18).build(), divider.getWidth()));
 
-            ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(supplier, updater).setWidth(divider.getWidth()).setHeight(64).build();
-            list.setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
+            ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(holder::get, holder::update).setWidth(divider.getWidth()).setHeight(64).build();
+            list.setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
             LinearLayout header = LinearLayout.horizontal().spacing(2);
 
             CustomEditBox searchField = CustomEditBox.builder()
@@ -75,7 +69,7 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                 .setIcon(Utils.rl("backpack/editbox/search"))
                 .setText(lastQuery)
                 .setHint(SEARCH_HINT)
-                .setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
+                .setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
                 .setCallback(s -> {
                     list.setSearchQuery(s);
                     lastQuery = s;
@@ -91,7 +85,7 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                 .setIcon(btn -> selectedOnly ? TOGGLE_ON : TOGGLE_OFF, 6, 6)
                 .setTooltip(btn -> Tooltip.create(selectedOnly ? SELECTED_ONLY_LABEL : SHOW_ALL_LABEL))
                 .setAction(btn -> list.setSelectedOnly(selectedOnly))
-                .setActive(() -> supplier.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
+                .setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
                 .build());
             layout.addChild(header);
             layout.addChild(list);

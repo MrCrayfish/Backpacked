@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
@@ -12,9 +13,6 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 public class LightweaverMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
@@ -25,7 +23,7 @@ public class LightweaverMenu extends AugmentSettingsMenu
 
     private static final int MIN_CONTENT_WIDTH = 130;
 
-    public LightweaverMenu(PopupMenuHandler handler, Supplier<LightweaverAugment> supplier, Consumer<LightweaverAugment> updater)
+    public LightweaverMenu(PopupMenuHandler handler, AugmentHolder<LightweaverAugment> holder)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
@@ -34,18 +32,18 @@ public class LightweaverMenu extends AugmentSettingsMenu
             title.setWidth(divider.getWidth());
             layout.addChild(createOption(LIGHT_LEVEL_LABEL, LIGHT_LEVEL_TOOLTIP, Stepper.builder()
                 .setSize(60, 18)
-                .setInitialValue(supplier.get().minimumLight())
+                .setInitialValue(holder.get().minimumLight())
                 .setRange(0, 15)
                 .setWrap(true)
                 .setOnChange(newValue -> {
-                    updater.accept(supplier.get().setMinimumLight(newValue));
+                    holder.update(holder.get().setMinimumLight(newValue));
                 }).build(), divider.getWidth()));
             layout.addChild(createOption(PLACE_SOUND_LABEL, PLACE_SOUND_TOOLTIP, CustomButton.state(() -> {
-                    return supplier.get().sound();
+                    return holder.get().sound();
                 }, newValue -> {
-                    updater.accept(supplier.get().setSound(newValue));
+                    holder.update(holder.get().setSound(newValue));
                 })
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().sound()))
+                .setMessage(() -> CommonComponents.optionStatus(holder.get().sound()))
                 .setSize(60, 18)
                 .build(), divider.getWidth()));
             return layout;

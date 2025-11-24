@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
@@ -11,9 +12,6 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 public class LootboundMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
@@ -24,20 +22,20 @@ public class LootboundMenu extends AugmentSettingsMenu
 
     private static final int MIN_CONTENT_WIDTH = 110;
 
-    public LootboundMenu(PopupMenuHandler handler, Supplier<LootboundAugment> supplier, Consumer<LootboundAugment> updater)
+    public LootboundMenu(PopupMenuHandler handler, AugmentHolder<LootboundAugment> holder)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
             TitleWidget title = layout.addChild(new TitleWidget(OPTIONS_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
-            layout.addChild(createOption(BLOCKS_LABEL, BLOCKS_TOOLTIP, CustomButton.state(() -> supplier.get().blocks(), value -> updater.accept(supplier.get().setBlocks(value)))
+            layout.addChild(createOption(BLOCKS_LABEL, BLOCKS_TOOLTIP, CustomButton.state(() -> holder.get().blocks(), value -> holder.update(holder.get().setBlocks(value)))
                 .setSize(60, 18)
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().blocks()))
+                .setMessage(() -> CommonComponents.optionStatus(holder.get().blocks()))
                 .build(), divider.getWidth()));
-            layout.addChild(createOption(MOBS_LABEL, MOBS_TOOLTIP, CustomButton.state(() -> supplier.get().mobs(), value -> updater.accept(supplier.get().setMobs(value)))
+            layout.addChild(createOption(MOBS_LABEL, MOBS_TOOLTIP, CustomButton.state(() -> holder.get().mobs(), value -> holder.update(holder.get().setMobs(value)))
                 .setSize(60, 18)
-                .setMessage(() -> CommonComponents.optionStatus(supplier.get().mobs()))
+                .setMessage(() -> CommonComponents.optionStatus(holder.get().mobs()))
                 .build(), divider.getWidth()));
             return layout;
         });

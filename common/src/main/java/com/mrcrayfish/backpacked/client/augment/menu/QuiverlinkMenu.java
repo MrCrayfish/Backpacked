@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
@@ -10,9 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 public class QuiverlinkMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
@@ -21,7 +19,7 @@ public class QuiverlinkMenu extends AugmentSettingsMenu
 
     private static final int MIN_CONTENT_WIDTH = 120;
 
-    public QuiverlinkMenu(PopupMenuHandler handler, Supplier<QuiverlinkAugment> supplier, Consumer<QuiverlinkAugment> updater)
+    public QuiverlinkMenu(PopupMenuHandler handler, AugmentHolder<QuiverlinkAugment> holder)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
@@ -31,7 +29,7 @@ public class QuiverlinkMenu extends AugmentSettingsMenu
             layout.addChild(createOption(
                 PRIORITY_LABEL,
                 PRIORITY_TOOLTIP,
-                CustomButton.values(() -> supplier.get().priority(), priority -> updater.accept(supplier.get().setPriority(priority)))
+                CustomButton.values(() -> holder.get().priority(), priority -> holder.update(holder.get().setPriority(priority)))
                     .setSize(60, 18).build(),
                 divider.getWidth()
             ));

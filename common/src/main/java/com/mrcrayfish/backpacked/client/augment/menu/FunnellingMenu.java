@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
@@ -30,8 +31,6 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Comparator;
 import java.util.Locale;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class FunnellingMenu extends AugmentSettingsMenu
 {
@@ -46,12 +45,12 @@ public class FunnellingMenu extends AugmentSettingsMenu
     private static String lastQuery = "";
     private static boolean lastFilter = false;
 
-    public FunnellingMenu(PopupMenuHandler handler, Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater)
+    public FunnellingMenu(PopupMenuHandler handler, AugmentHolder<FunnellingAugment> holder)
     {
         super(handler, menu -> {
             LinearLayout layout = LinearLayout.vertical().spacing(2);
             TitleWidget title = layout.addChild(new TitleWidget(() -> {
-                int filterCount = supplier.get().filters().size();
+                int filterCount = holder.get().filters().size();
                 int maxFilters = Config.AUGMENTS.funnelling.maxFilters.get();
                 Component amount = Component.translatable("backpacked.gui.x_of_y", filterCount, maxFilters);
                 return ScreenUtil.join(" ", FILTERS_LABEL, amount);
@@ -59,7 +58,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
 
-            FilterList list = new FilterList(supplier, updater, divider.getWidth(), lastQuery, lastFilter);
+            FilterList list = new FilterList(holder, divider.getWidth(), lastQuery, lastFilter);
 
             int filterButtonWidth = 55;
             LinearLayout header = LinearLayout.horizontal().spacing(3);
@@ -88,7 +87,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             layout.addChild(header);
 
             layout.addChild(list);
-            layout.addChild(CustomButton.values(() -> supplier.get().mode(), mode -> updater.accept(supplier.get().setMode(mode)))
+            layout.addChild(CustomButton.values(() -> holder.get().mode(), mode -> holder.update(holder.get().setMode(mode)))
                 .setSize(divider.getWidth(), 18)
                 .build()
             );
@@ -110,16 +109,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_selected")
         );
 
-        private final Supplier<FunnellingAugment> supplier;
-        private final Consumer<FunnellingAugment> updater;
+        private final AugmentHolder<FunnellingAugment> holder;
         private String searchQuery = "";
         private boolean activatedOnly = false;
 
-        public FilterList(Supplier<FunnellingAugment> supplier, Consumer<FunnellingAugment> updater, int width, String lastQuery, boolean lastFilter)
+        public FilterList(AugmentHolder<FunnellingAugment> holder, int width, String lastQuery, boolean lastFilter)
         {
             super(width, 104, 0, 0, 18);
-            this.supplier = supplier;
-            this.updater = updater;
+            this.holder = holder;
             this.setRenderHeader(false, 0);
             this.setListBackground(LIST_BACKGROUND_SPRITE);
             this.setItemSprites(ITEM_SPRITES);
@@ -142,8 +139,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 if(item == Items.AIR)
                     return;
                 if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
-                    if(!this.activatedOnly || this.supplier.get().isFilter(item)) {
-                        this.addEntry(new FilterItem(item, this.supplier));
+                    if(!this.activatedOnly || this.holder.get().isFilter(item)) {
+                        this.addEntry(new FilterItem(item, this.holder));
                     }
                 }
             });
@@ -155,18 +152,18 @@ public class FunnellingMenu extends AugmentSettingsMenu
         {
             if(item != null)
             {
-                FunnellingAugment augment = this.supplier.get();
+                FunnellingAugment augment = this.holder.get();
                 if(!item.isToggled())
                 {
                     if(!augment.isFilterLimit())
                     {
-                        this.updater.accept(augment.addFilter(item.id));
+                        this.holder.update(augment.addFilter(item.id));
                         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     }
                 }
                 else
                 {
-                    this.updater.accept(augment.removeFilter(item.id));
+                    this.holder.update(augment.removeFilter(item.id));
                     Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 }
             }
@@ -200,14 +197,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
             private final ResourceLocation id;
             private final ItemStack display;
             private final Component label;
-            private final Supplier<FunnellingAugment> augment;
+            private final AugmentHolder<FunnellingAugment> holder;
 
-            public FilterItem(Item item, Supplier<FunnellingAugment> augment)
+            public FilterItem(Item item, AugmentHolder<FunnellingAugment> holder)
             {
                 this.id = BuiltInRegistries.ITEM.getKey(item);
                 this.display = new ItemStack(item);
                 this.label = this.trimName(this.display.getItem().getDescription());
-                this.augment = augment;
+                this.holder = holder;
             }
 
             private Component trimName(Component name)
@@ -225,7 +222,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             @Override
             public void render(GuiGraphics graphics, int index, int top, int left, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float partialTicks)
             {
-                boolean showToggle = this.isToggled() || !this.augment.get().isFilterLimit();
+                boolean showToggle = this.isToggled() || !this.holder.get().isFilterLimit();
                 int labelColour = showToggle ? 0xFFFFFFFF : 0x88FFFFFF;
                 graphics.drawString(Minecraft.getInstance().font, this.label, left + 20, top + 5, labelColour);
                 graphics.renderFakeItem(this.display, left + 2, top + 1);
@@ -246,14 +243,14 @@ public class FunnellingMenu extends AugmentSettingsMenu
             {
                 if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    return this.isToggled() || !this.augment.get().isFilterLimit();
+                    return this.isToggled() || !this.holder.get().isFilterLimit();
                 }
                 return false;
             }
 
             public boolean isToggled()
             {
-                return this.augment.get().isFilter(this.display.getItem());
+                return this.holder.get().isFilter(this.display.getItem());
             }
         }
     }
