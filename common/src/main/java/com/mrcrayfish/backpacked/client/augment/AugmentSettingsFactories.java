@@ -1,21 +1,16 @@
 package com.mrcrayfish.backpacked.client.augment;
 
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
-import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class AugmentSettingsFactories
 {
-    private static final Map<AugmentType<?>, TriFunction<?, ?, ?, ?>> FACTORIES = new HashMap<>();
+    private static final Map<AugmentType<?>, AugmentMenuFactory<?>> FACTORIES = new HashMap<>();
 
-    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, TriFunction<PopupMenuHandler, Supplier<T>, Consumer<T>, PopupMenu> menu)
+    public static <T extends Augment<T>> void registerFactory(AugmentType<T> type, AugmentMenuFactory<T> menu)
     {
         if(FACTORIES.put(type, menu) != null)
         {
@@ -29,8 +24,8 @@ public class AugmentSettingsFactories
     }
 
     @SuppressWarnings("unchecked")
-    public static TriFunction<PopupMenuHandler, Supplier<Augment<?>>, Consumer<Augment<?>>, PopupMenu> getFactory(Augment<?> augment)
+    public static AugmentMenuFactory<Augment<?>> getFactory(Augment<?> augment)
     {
-        return (TriFunction<PopupMenuHandler, Supplier<Augment<?>>, Consumer<Augment<?>>, PopupMenu>) FACTORIES.get(augment.type());
+        return (AugmentMenuFactory<Augment<?>>) FACTORIES.get(augment.type());
     }
 }
