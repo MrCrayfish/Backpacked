@@ -12,9 +12,15 @@ import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.*;
+import net.minecraft.core.SectionPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -36,7 +42,7 @@ public final class Recall extends SavedData
     private static final int MAX_QUEUE_SIZE = 18;
 
     private final ServerLevel level;
-    private final Map<BlockPos, ShelfQueue> queues;
+    private final Object2ObjectOpenHashMap<SectionPos, Short2ObjectOpenHashMap<ShelfQueue>> queues;
     private int timer;
     private boolean runNow;
     private boolean force;
@@ -50,7 +56,7 @@ public final class Recall extends SavedData
     public Recall(ServerLevel level)
     {
         this.level = level;
-        this.queues = new HashMap<>();
+        this.queues = new Object2ObjectOpenHashMap<>();
     }
 
     public void onShelfBroken(ShelfBlockEntity shelf)
@@ -64,10 +70,10 @@ public final class Recall extends SavedData
         if(!this.level.isInWorldBounds(pos))
             return false;
 
-        if(!this.isShelfPointOfInterest(pos))
+        if(!this.isShelfAtBlockPos(pos))
             return false;
 
-        ShelfQueue queue = this.queues.computeIfAbsent(pos, k -> new ShelfQueue());
+        ShelfQueue queue = this.getOrCreateShelfQueue(pos);
         if(!queue.add(player, originalIndex, backpack, this.timer))
             return false;
 
@@ -76,7 +82,15 @@ public final class Recall extends SavedData
         return true;
     }
 
-    public boolean isShelfPointOfInterest(BlockPos pos)
+    private ShelfQueue getOrCreateShelfQueue(BlockPos pos)
+    {
+        SectionPos sectionPos = SectionPos.of(pos);
+        short relativePos = SectionPos.sectionRelativePos(pos);
+        var sectionMap = this.queues.computeIfAbsent(sectionPos, k -> new Short2ObjectOpenHashMap<>());
+        return sectionMap.computeIfAbsent(relativePos, k -> new ShelfQueue());
+    }
+
+    public boolean isShelfAtBlockPos(BlockPos pos)
     {
         if(!this.level.isInWorldBounds(pos))
             return false;
@@ -111,9 +125,10 @@ public final class Recall extends SavedData
         var it = this.queues.entrySet().iterator();
         while(it.hasNext())
         {
-            ShelfQueue shelf = it.next().getValue();
-            shelf.forEach((owner, items) -> {
-                count[0] += this.flushQueue(server, owner, items);
+            it.next().getValue().forEach((relativePos, shelfQueue) -> {
+                shelfQueue.forEach((owner, items) -> {
+                    count[0] += this.flushQueue(server, owner, items);
+                });
             });
             it.remove();
             this.setDirty();
@@ -153,14 +168,30 @@ public final class Recall extends SavedData
     private void removeAndFlushQueueToBlockPos(ShelfKey key)
     {
         BlockPos pos = BlockPos.of(key.position());
-        ShelfQueue shelf = this.queues.remove(pos);
-        if(shelf == null)
-            return;
-        shelf.forEach((owner, items) -> items.forEach(item -> {
-            this.removeInvalidShelfFromItemStack(item.stack);
-            this.flushItem(this.level, pos.getCenter(), item.stack);
-        }));
-        this.setDirty();
+        SectionPos sectionPos = SectionPos.of(pos);
+        var sectionMap = this.queues.get(sectionPos);
+        if(sectionMap != null)
+        {
+            short relativePos = SectionPos.sectionRelativePos(pos);
+            ShelfQueue queue = sectionMap.remove(relativePos);
+            if(queue != null)
+            {
+                // Flush items of every player queue
+                queue.forEach((owner, items) -> items.forEach(item -> {
+                    this.removeInvalidShelfFromItemStack(item.stack);
+                    this.flushItem(this.level, pos.getCenter(), item.stack);
+                }));
+
+                // Clean up
+                if(sectionMap.isEmpty())
+                {
+                    this.queues.remove(sectionPos);
+                }
+
+                // Since we have removed things, mark as needing to be saved
+                this.setDirty();
+            }
+        }
     }
 
     private void removeInvalidShelfFromItemStack(ItemStack stack)
@@ -193,53 +224,66 @@ public final class Recall extends SavedData
         if(this.level.players().isEmpty())
             return;
 
-        var it = this.queues.entrySet().iterator();
-        while(it.hasNext())
+        var sectionIterator = this.queues.entrySet().iterator();
+        while(sectionIterator.hasNext())
         {
-            var entry = it.next();
-
-            BlockPos pos = entry.getKey();
-            if(!this.force && !this.level.isLoaded(pos))
-                continue;
-
-            var shelfOptional = this.level.getBlockEntity(pos, ModBlockEntities.SHELF.get());
-            if(shelfOptional.isEmpty() || !this.isShelfPointOfInterest(pos))
+            var sectionEntry = sectionIterator.next();
+            var relativeIterator = sectionEntry.getValue().short2ObjectEntrySet().iterator();
+            while(relativeIterator.hasNext())
             {
-                entry.getValue().forEach((owner, items) -> items.forEach(item -> {
-                    this.removeInvalidShelfFromItemStack(item.stack);
-                    this.flushItem(this.level, pos.getCenter(), item.stack);
-                }));
-                it.remove();
-                this.setDirty();
-                continue;
-            }
+                var relativeEntry = relativeIterator.next();
+                BlockPos pos = sectionEntry.getKey().relativeToBlockPos(relativeEntry.getShortKey());
+                if(!this.force && !this.level.isLoaded(pos))
+                    continue;
 
-            ShelfQueue queue = entry.getValue();
-            ShelfBlockEntity shelf = shelfOptional.get();
-            Map<UUID, List<QueuedItem>> playerToQueue = queue.queues();
-            if(playerToQueue != null)
-            {
-                if(shelf.getBackpack().isEmpty())
+                var shelfOptional = this.level.getBlockEntity(pos, ModBlockEntities.SHELF.get());
+                if(shelfOptional.isEmpty() || !this.isShelfAtBlockPos(pos))
                 {
-                    // Find the list that contains a queued item that has been waiting
-                    // the longest to recall, which is the first item in each list.
-                    var playerQueue = getMinimumQueue(playerToQueue);
-                    if(playerQueue != null)
+                    ShelfQueue queue = relativeEntry.getValue();
+                    queue.forEach((owner, items) -> items.forEach(item -> {
+                        this.removeInvalidShelfFromItemStack(item.stack);
+                        this.flushItem(this.level, pos.getCenter(), item.stack);
+                    }));
+                    sectionIterator.remove();
+                    this.setDirty();
+                    continue;
+                }
+
+                ShelfQueue queue = relativeEntry.getValue();
+                ShelfBlockEntity shelf = shelfOptional.get();
+                Map<UUID, List<QueuedItem>> playerToQueue = queue.queues();
+                if(playerToQueue != null)
+                {
+                    if(shelf.getBackpack().isEmpty())
                     {
-                        QueuedItem item = playerQueue.getSecond().removeFirst();
-                        shelf.recall(item.stack, playerQueue.getFirst(), item.originalIndex);
-                        queue.decrementCount();
-                        queue.cleanQueues();
-                        this.setDirty();
+                        // Find the list that contains a queued item that has been waiting
+                        // the longest to recall, which is the first item in each list.
+                        var playerQueue = getMinimumQueue(playerToQueue);
+                        if(playerQueue != null)
+                        {
+                            QueuedItem item = playerQueue.getSecond().removeFirst();
+                            shelf.recall(item.stack, playerQueue.getFirst(), item.originalIndex);
+                            queue.decrementCount();
+                            queue.cleanQueues();
+                            this.setDirty();
+                        }
                     }
+                }
+
+                shelf.setRecallQueueCount(queue.count);
+
+                // Clean up
+                if(queue.isEmpty())
+                {
+                    relativeIterator.remove();
+                    this.setDirty();
                 }
             }
 
-            shelf.setRecallQueueCount(queue.count);
-
-            if(queue.isEmpty())
+            // Clean up
+            if(sectionEntry.getValue().isEmpty())
             {
-                it.remove();
+                sectionIterator.remove();
                 this.setDirty();
             }
         }
@@ -273,40 +317,69 @@ public final class Recall extends SavedData
     {
         Recall recall = new Recall(level);
         recall.timer = tag.getInt("Timer");
+
+        // Read in all the queues
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ListTag shelvesList = tag.getList("Shelves", Tag.TAG_COMPOUND);
-        shelvesList.forEach(nbt -> {
-            if(nbt instanceof CompoundTag shelfTag) {
-                try {
-                    var posOptional = NbtUtils.readBlockPos(shelfTag, "Pos");
-                    if(posOptional.isEmpty())
-                        throw new IllegalArgumentException("Missing shelf block position when loading queue");
-                    BlockPos pos = posOptional.get();
-                    if(level.isOutsideBuildHeight(pos))
-                        throw new IllegalArgumentException("Shelf block position is outside the valid build height");
-                    Map<UUID, List<QueuedItem>> queues = new HashMap<>();
-                    ListTag queuesList = shelfTag.getList("Queues", Tag.TAG_COMPOUND);
-                    queuesList.forEach(nbt1 -> {
-                        if(nbt1 instanceof CompoundTag queueTag) {
+        ListTag sectionList = tag.getList("RecallQueues", Tag.TAG_COMPOUND);
+        sectionList.forEach(nbt -> {
+            try {
+                CompoundTag sectionTag = (CompoundTag) nbt;
+
+                // There must be a section position, otherwise throw exception
+                if(!sectionTag.contains("SectionPos", Tag.TAG_LONG))
+                    throw new IllegalArgumentException("Missing section position");
+
+                SectionPos sectionPos = SectionPos.of(sectionTag.getLong("SectionPos"));
+                ListTag relativeList = sectionTag.getList("ShelfQueues", Tag.TAG_COMPOUND);
+                relativeList.forEach(nbt1 -> {
+                    try {
+                        CompoundTag relativeTag = (CompoundTag) nbt1;
+
+                        // There must be a relative position, otherwise throw exception
+                        if(!relativeTag.contains("RelativePos", Tag.TAG_SHORT))
+                            throw new IllegalArgumentException("Missing relative position");
+
+                        ListTag entryList = relativeTag.getList("PlayerQueues", Tag.TAG_COMPOUND);
+                        if(entryList.isEmpty())
+                            return;
+
+                        short relativePos = relativeTag.getShort("RelativePos");
+                        BlockPos pos = sectionPos.relativeToBlockPos(relativePos);
+
+                        // Ignore positions that are outside the build height
+                        if(level.isOutsideBuildHeight(pos))
+                            throw new IllegalArgumentException("Relative position is outside the build height");
+
+                        // Gather all player queues, only accept non-empty
+                        Map<UUID, List<QueuedItem>> playerQueues = new LinkedHashMap<>();
+                        entryList.forEach(nbt2 -> {
                             try {
-                                UUID owner = queueTag.getUUID("Owner");
+                                CompoundTag entryTag = (CompoundTag) nbt2;
+                                UUID owner = entryTag.getUUID("Owner");
                                 List<QueuedItem> items = QueuedItem.CODEC.listOf()
-                                    .parse(ops, queueTag.get("QueuedItems"))
+                                    .parse(ops, entryTag.get("Backpacks"))
                                     .resultOrPartial(Constants.LOG::error)
                                     .map(LinkedList::new).orElse(new LinkedList<>());
                                 items.removeIf(item -> item.stack.isEmpty());
                                 if(!items.isEmpty()) {
-                                    queues.put(owner, items);
+                                    playerQueues.put(owner, items);
                                 }
-                            } catch (Exception e) {
-                                Constants.LOG.error("An error occurred while reading Recall queues", e);
+                            } catch(Exception e) {
+                                Constants.LOG.error("Error while reading Recall player queues", e);
                             }
+                        });
+
+                        // Finally push into the recall queue if not empty
+                        if(!playerQueues.isEmpty()) {
+                            var relativeMap = recall.queues.computeIfAbsent(sectionPos, k -> new Short2ObjectOpenHashMap<>());
+                            relativeMap.put(relativePos, new ShelfQueue(playerQueues));
                         }
-                    });
-                    recall.queues.put(pos, new ShelfQueue(queues));
-                } catch (Exception e) {
-                    Constants.LOG.error("An error occurred while reading Recall data", e);
-                }
+                    } catch(Exception e) {
+                        Constants.LOG.error("Error while reading Recall shelf queues", e);
+                    }
+                });
+            } catch (Exception e) {
+                Constants.LOG.error("Error while reading Recall queues", e);
             }
         });
         return recall;
@@ -317,27 +390,40 @@ public final class Recall extends SavedData
     {
         tag.putInt("Timer", this.timer);
         RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ListTag shelves = new ListTag();
-        this.queues.forEach((pos, shelf) -> {
-            CompoundTag shelfTag = new CompoundTag();
-            shelfTag.put("Pos", NbtUtils.writeBlockPos(pos));
-            Map<UUID, List<QueuedItem>> queue = shelf.queues();
-            if(queue != null && !queue.isEmpty()) {
-                ListTag queuesList = new ListTag();
-                queue.forEach((owner, items) -> {
-                    CompoundTag queueTag = new CompoundTag();
-                    queueTag.putUUID("Owner", owner);
+        ListTag sectionsList = new ListTag();
+        this.queues.forEach((sectionPos, relativeMap) -> {
+            CompoundTag sectionTag = new CompoundTag();
+            sectionTag.putLong("SectionPos", sectionPos.asLong());
+            ListTag relativeList = new ListTag();
+            relativeMap.forEach((relativePos, shelfQueue) -> {
+                if(shelfQueue.isEmpty())
+                    return;
+                CompoundTag relativeTag = new CompoundTag();
+                relativeTag.putShort("RelativePos", relativePos);
+                ListTag entryList = new ListTag();
+                shelfQueue.forEach((owner, items) -> {
+                    CompoundTag entryTag = new CompoundTag();
+                    entryTag.putUUID("Owner", owner);
                     QueuedItem.CODEC.listOf()
                         .encodeStart(ops, items)
                         .resultOrPartial(Constants.LOG::error)
-                        .ifPresent(t -> queueTag.put("QueuedItems", t));
-                    queuesList.add(queueTag);
+                        .ifPresent(t -> entryTag.put("Backpacks", t));
+                    entryList.add(entryTag);
                 });
-                shelfTag.put("Queues", queuesList);
+                if(!entryList.isEmpty()) {
+                    relativeTag.put("PlayerQueues", entryList);
+                    relativeList.add(relativeTag);
+                }
+            });
+            if(!relativeList.isEmpty()) {
+                sectionTag.put("ShelfQueues", relativeList);
+                sectionsList.add(sectionTag);
             }
-            shelves.add(shelfTag);
         });
-        tag.put("Shelves", shelves);
+        if(!sectionsList.isEmpty())
+        {
+            tag.put("RecallQueues", sectionsList);
+        }
         return tag;
     }
 

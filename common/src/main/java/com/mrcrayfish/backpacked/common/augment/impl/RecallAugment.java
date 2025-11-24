@@ -75,7 +75,7 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
                 if(updated.shelfKey().isPresent())
                 {
                     Recall recall = ((Recall.Access) level).backpacked$getRecall();
-                    if(!recall.isShelfPointOfInterest(pos))
+                    if(!recall.isShelfAtBlockPos(pos))
                     {
                         updated = updated.setShelfKey(null);
                     }
