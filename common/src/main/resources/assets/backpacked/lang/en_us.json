@@ -187,5 +187,10 @@
     "augment.backpacked.hopper_bridge.filter_mode.extract": "Extract",
     "augment.backpacked.hopper_bridge.filter_mode.extract.tooltip": "Only selected items can be extracted, however any item can be inserted",
     "augment.backpacked.recall": "Recall",
-    "augment.backpacked.recall.desc": "Upon death, the backpack returns to the assigned Backpack Shelf.\nIf the Backpack Shelf is occupied, it will be spawned as an item at the shelf"
+    "augment.backpacked.recall.desc": "Upon death, the backpack returns to the assigned Backpack Shelf.\nIf the Backpack Shelf is occupied, it will be spawned as an item at the shelf",
+    "augment.backpacked.recall.link_shelf": "Link Shelf",
+    "augment.backpacked.recall.link_shelf.tooltip": "Player must be looking at a Backpack Shelf",
+    "augment.backpacked.recall.status.checking": "Checking...",
+    "augment.backpacked.recall.status.no_shelf_linked": "No Shelf Linked",
+    "augment.backpacked.recall.status.shelf_missing": "Shelf is Missing"
 }

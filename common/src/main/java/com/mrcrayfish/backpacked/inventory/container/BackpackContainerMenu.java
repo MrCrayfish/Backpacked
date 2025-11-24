@@ -49,7 +49,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), -1, -1, data.columns(), data.rows(), data.owner(), data.slots(), data.pagination(), data.augments());
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), -1, data.backpackIndex(), data.columns(), data.rows(), data.owner(), data.slots(), data.pagination(), data.augments());
     }
 
     public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int ownerId, int backpackIndex, int cols, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments)

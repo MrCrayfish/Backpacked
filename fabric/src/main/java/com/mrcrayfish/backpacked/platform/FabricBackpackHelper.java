@@ -40,7 +40,7 @@ public class FabricBackpackHelper implements IBackpackHelper
     {
         FrameworkAPI.openMenuWithData(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
             return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, ownerId, backpackIndex, cols, rows, owner, slots, pagination, augments);
-        }, title), new BackpackContainerData(cols, rows, owner, slots, pagination, augments));
+        }, title), new BackpackContainerData(backpackIndex, cols, rows, owner, slots, pagination, augments));
     }
 
     @Override

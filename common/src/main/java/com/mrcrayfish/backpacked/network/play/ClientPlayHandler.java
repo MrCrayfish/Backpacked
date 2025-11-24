@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
+import com.mrcrayfish.backpacked.client.augment.menu.RecallMenu;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
@@ -191,5 +192,10 @@ public class ClientPlayHandler
             return;
 
         shelf.playAnimation();
+    }
+
+    public static void handleMessageResponseShelfKey(MessageResponseShelfKey message, MessageContext context)
+    {
+        RecallMenu.ShelfStatus.handle(message.backpackIndex(), message.position(), message.valid());
     }
 }

@@ -2,13 +2,17 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.client.augment.menu.RecallMenu;
 import com.mrcrayfish.backpacked.common.CreativeCategorySort;
 import com.mrcrayfish.backpacked.common.ItemSorting;
+import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.SavedAugments;
+import com.mrcrayfish.backpacked.common.augment.data.Recall;
+import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
@@ -24,9 +28,11 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -468,5 +474,49 @@ public class ServerPlayHandler
             }
         }
         container.setChanged();
+    }
+
+    public static void handleMessageCheckShelfKey(MessageCheckShelfKey message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        // Player must be in a backpack container and must be the wearer
+        if(!(serverPlayer.containerMenu instanceof BackpackContainerMenu menu) || !menu.isOwner())
+            return;
+
+        // Only works if in an equipped backpack, not a shelf
+        if(!(menu.getBackpackInventory() instanceof BackpackInventory))
+            return;
+
+        // Backpack index must match current menu's backpack index
+        int backpackIndex = menu.getBackpackIndex();
+        if(menu.getBackpackIndex() != backpackIndex)
+            return;
+
+        if(!menu.getBackpackInventory().stillValid(serverPlayer))
+            return;
+
+        ItemStack stack = BackpackHelper.getBackpackStack(serverPlayer, backpackIndex);
+        if(stack.isEmpty())
+            return;
+
+        Augments.Position position = message.position();
+        Augments augments = Augments.get(stack);
+        if(!(augments.getAugment(position) instanceof RecallAugment(Optional<ShelfKey> shelfKey)))
+            return;
+
+        shelfKey.ifPresentOrElse(key -> {
+            boolean valid = false;
+            ServerLevel keyLevel = serverPlayer.server.getLevel(key.level());
+            if(keyLevel != null) {
+                Recall recall = ((Recall.Access) keyLevel).backpacked$getRecall();
+                valid = recall.isShelfAtBlockPos(BlockPos.of(key.position()));
+            }
+            Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageResponseShelfKey(backpackIndex, position, valid));
+        }, () -> {
+            Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageResponseShelfKey(backpackIndex, position, false));
+        });
     }
 }

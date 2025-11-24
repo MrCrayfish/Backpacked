@@ -39,6 +39,8 @@ public class Network
         .registerPlayMessage("sort_backpack", MessageSortBackpack.class, MessageSortBackpack.STREAM_CODEC, MessageSortBackpack::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("farmhand_plant", MessageFarmhandPlant.class, MessageFarmhandPlant.STREAM_CODEC, MessageFarmhandPlant::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("shelf_place_animation", MessageShelfPlaceAnimation.class, MessageShelfPlaceAnimation.STREAM_CODEC, MessageShelfPlaceAnimation::handle, PacketFlow.CLIENTBOUND)
+        .registerPlayMessage("check_shelf_key", MessageCheckShelfKey.class, MessageCheckShelfKey.STREAM_CODEC, MessageCheckShelfKey::handle, PacketFlow.SERVERBOUND)
+        .registerPlayMessage("response_shelf_key", MessageResponseShelfKey.class, MessageResponseShelfKey.STREAM_CODEC, MessageResponseShelfKey::handle, PacketFlow.CLIENTBOUND)
         .build();
 
     public static void init() {}
