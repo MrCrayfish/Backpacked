@@ -79,7 +79,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         if(entity.isAnimationPlaying())
         {
             entity.applyAnimation(0, 1, partialTick, time -> {
-                pose.translate(0, 0, -0.125 * (1 - time));
+                pose.translate(0, 0, -0.5 * (1 - time));
             });
             entity.applyAnimation(0, 1, partialTick, time -> {
                 float scale = 0.25F + 0.75F * time;
