@@ -153,7 +153,7 @@
     "augment.backpacked.lootbound.mobs": "Mobs",
     "augment.backpacked.lootbound.mobs.tooltip": "When enabled, drops from mobs will be pulled into the backpack",
     "augment.backpacked.reforge": "Reforge",
-    "augment.backpacked.reforge.desc": "Repairs damaged items inside the backpack upon picking up experience orbs.\nItems are repaired collectively, rather than one at a time.",
+    "augment.backpacked.reforge.desc": "Repairs damaged items inside the backpack upon picking up experience orbs.\nOnly repairs items enchanted with Mending.\nItems are repaired collectively, rather than one at a time.",
     "augment.backpacked.immortal": "Immortal",
     "augment.backpacked.immortal.desc": "Totems of Undying stored in the backpack will be activated on death.\nTotems held in the main and offhand will be used before ones located in the backpack.",
     "augment.backpacked.lightweaver": "Lightweaver",

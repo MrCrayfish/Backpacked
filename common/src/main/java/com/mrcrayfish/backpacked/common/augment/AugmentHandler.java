@@ -22,6 +22,9 @@ import com.mrcrayfish.framework.api.event.PlayerEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +36,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -258,11 +263,12 @@ public class AugmentHandler
         if(orb.isRemoved())
             return;
 
+        Holder<Enchantment> mending = player.level().holderLookup(Registries.ENCHANTMENT).getOrThrow(Enchantments.MENDING);
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.REFORGE.get());
         for(var snapshot : snapshots)
         {
             InventoryHelper.streamFor(snapshot.inventory()).filter(stack -> {
-                return stack.isDamageableItem() && stack.isDamaged() && stack.getCount() == 1 && stack.getMaxStackSize() == 1 && Services.PLATFORM.isRepairable(stack);
+                return stack.getEnchantments().getLevel(mending) > 0 && stack.isDamageableItem() && stack.isDamaged() && stack.getCount() == 1 && stack.getMaxStackSize() == 1 && Services.PLATFORM.isRepairable(stack);
             }).forEach(stack -> {
                 int repairableAmount = EnchantmentHelper.modifyDurabilityToRepairFromXp((ServerLevel) player.level(), stack, orb.getValue());
                 int maxRepairableDamage = Math.min(repairableAmount, stack.getDamageValue());
