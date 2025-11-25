@@ -109,7 +109,7 @@
                         "y": {
                             "type": "backpacked:and",
                             "first": {  
-                                "type": "backpacked:animation_tick"
+                                "type": "backpacked:tick_count"
                             },
                             "second": 3,
                             "op": "multiply"
