@@ -171,9 +171,9 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos)
     {
-        if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+        if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
         {
-            return AbstractContainerMenu.getRedstoneSignalFromContainer(shelfBlockEntity);
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(shelf.getContainer());
         }
         return 0;
     }
@@ -189,7 +189,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
                 {
                     ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(shelf);
                 }
-                ItemStack stack = shelf.getBackpackWithContents();
+                ItemStack stack = shelf.getBackpack();
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack.copyAndClear());
                 level.updateNeighbourForOutputSignal(pos, this);
             }

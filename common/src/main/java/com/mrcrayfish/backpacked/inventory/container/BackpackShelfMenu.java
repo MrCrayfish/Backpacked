@@ -71,11 +71,6 @@ public class BackpackShelfMenu extends CustomContainerMenu
             copy = slotStack.copy();
             if (index < ShelfBlockEntity.SIZE)
             {
-                // Before quick moving, copy the inventory to the stack
-                if(slot.container instanceof ShelfBlockEntity.ShelfContainer container)
-                {
-                    container.getShelf().copyInventoryToStack(slotStack);
-                }
                 if(!this.moveItemStackTo(slotStack, ShelfBlockEntity.SIZE, this.slots.size(), false))
                 {
                     return ItemStack.EMPTY;
