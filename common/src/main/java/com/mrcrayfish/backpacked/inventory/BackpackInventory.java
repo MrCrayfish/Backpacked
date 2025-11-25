@@ -78,9 +78,9 @@ public class BackpackInventory extends UnlockableContainer
         if(slots == null)
             return;
 
-        for(int i = 0; i < this.getContainerSize(); i++)
+        for(int i = 0; i < this.items.size(); i++)
         {
-            ItemStack stack = this.getItem(i);
+            ItemStack stack = this.items.get(i);
             if(!stack.isEmpty() && !slots.isUnlocked(i))
             {
                 InventoryHelper.spawnStack(stack, this.player.level(), this.player.position());
