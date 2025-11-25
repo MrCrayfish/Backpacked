@@ -109,6 +109,7 @@ public class CustomiseBackpackScreen extends CustomScreen
     private PlayerDisplay playerDisplay;
     private final MutableInt scroll = new MutableInt();
     private ScrollBar scrollBar;
+    private int tickCount;
 
     public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, CosmeticProperties properties, boolean showCosmeticWarning, Map<ResourceLocation, Double> completionMap)
     {
@@ -216,6 +217,7 @@ public class CustomiseBackpackScreen extends CustomScreen
     {
         super.tick();
         this.updateButtons();
+        this.tickCount++;
     }
 
     @Override
@@ -318,7 +320,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
 
-    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick)
+    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick, int tickCount)
     {
         PoseStack pose = graphics.pose();
         pose.pushPose();
@@ -331,7 +333,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, backpack, mc.player, mc.level, partialTick, model -> {
                 BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
                 graphics.bufferSource().endBatch();
-            });
+            }, tickCount);
             pose.pushPose();
             renderer.render(context);
             pose.popPose();
@@ -470,7 +472,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             graphics.drawString(mc.font, this.label, x + 24, textY, textColour, selected);
 
             // Draw backpack cosmetic
-            drawBackpackInGui(mc, graphics, this.backpack, x + 12, y + 12, partialTick);
+            drawBackpackInGui(mc, graphics, this.backpack, x + 12, y + 12, partialTick, CustomiseBackpackScreen.this.tickCount);
         }
 
         @Override

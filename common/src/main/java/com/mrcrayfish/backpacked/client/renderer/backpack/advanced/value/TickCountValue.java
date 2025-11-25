@@ -21,7 +21,6 @@ public class TickCountValue implements Value
     @Override
     public double get(BackpackRenderContext context)
     {
-        LivingEntity entity = context.entity();
-        return entity != null ? entity.tickCount + context.partialTick() : 0;
+        return context.tickCount() + context.partialTick();
     }
 }

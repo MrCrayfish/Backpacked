@@ -108,7 +108,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         meta.renderer().ifPresentOrElse(renderer -> {
             BackpackRenderContext context = new BackpackRenderContext(Scene.ON_SHELF, RenderMode.MODELS_ONLY, pose, buffer, light, backpack, null, entity.getLevel(), partialTick, model -> {
                 BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
-            });
+            }, entity.tickCount);
             pose.pushPose();
             renderer.render(context);
             pose.popPose();

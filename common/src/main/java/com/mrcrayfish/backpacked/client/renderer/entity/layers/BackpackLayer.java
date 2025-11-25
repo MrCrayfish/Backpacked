@@ -92,7 +92,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         meta.renderer().ifPresentOrElse(renderer -> {
             BackpackRenderContext context = new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.ALL, pose, source, light, backpack, player, player.level(), partialTick, model -> {
                 BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
-            });
+            }, player.tickCount);
             pose.pushPose();
             renderer.render(context);
             pose.popPose();

@@ -130,7 +130,7 @@ public class FirstPersonEffectsRenderer
 
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresent(renderer -> {
-            renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, backpack, player, player.level(), partialTick, model -> {}));
+            renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, backpack, player, player.level(), partialTick, model -> {}, player.tickCount));
         });
     }
 }

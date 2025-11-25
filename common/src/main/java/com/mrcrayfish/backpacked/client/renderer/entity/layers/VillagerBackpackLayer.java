@@ -65,7 +65,7 @@ public class VillagerBackpackLayer<T extends AbstractVillager, M extends Village
             meta.renderer().ifPresentOrElse(renderer -> {
                 BackpackRenderContext context = new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.ALL, pose, source, light, backpack, villager, villager.level(), partialTick, model -> {
                     BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
-                });
+                }, villager.tickCount);
                 pose.pushPose();
                 renderer.render(context);
                 pose.popPose();

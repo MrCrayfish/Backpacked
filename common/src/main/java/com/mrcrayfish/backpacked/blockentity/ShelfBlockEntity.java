@@ -72,6 +72,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
     private @Nullable ShelfKey key;
     private boolean loadingItems;
     private int animation = -1;
+    public int tickCount;
 
     public ShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
     {
@@ -398,6 +399,7 @@ public class ShelfBlockEntity extends BlockEntity implements IOptionalStorage
         {
             shelf.animation++;
         }
+        shelf.tickCount++;
     }
 
     public void playAnimation()

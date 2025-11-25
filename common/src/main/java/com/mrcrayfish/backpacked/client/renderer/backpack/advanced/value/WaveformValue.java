@@ -32,8 +32,7 @@ public record WaveformValue(Waveform waveform, double wavelength, double amplitu
     @Override
     public double get(BackpackRenderContext context)
     {
-        LivingEntity entity = context.entity();
-        double time = entity != null ? entity.tickCount + context.partialTick() : 0;
+        double time = context.tickCount() + context.partialTick();
         return this.waveform.function.apply(time, this.wavelength, this.amplitude, this.phase);
     }
 
