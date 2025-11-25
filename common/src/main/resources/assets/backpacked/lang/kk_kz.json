@@ -51,7 +51,7 @@
     "augment.backpacked.quiverlink.priority.inventory.tooltip": "Ойыншы инвентары бірінші ізделеді",
     "augment.backpacked.quiverlink.priority.tooltip": "Оқ-дәрі іздегенде қай инвентарьды бірінші іздеу керектігін анықтайды",
     "augment.backpacked.recall": "Recall",
-    "augment.backpacked.recall.desc": "Upon death, the backpack returns to the assigned Backpack Shelf.\nIf the Backpack Shelf is occupied, it will be spawned as an item at the shelf",
+    "augment.backpacked.recall.desc": "Upon death, the backpack returns to the assigned Backpack Shelf.\nIf the Backpack Shelf is occupied, the backpack will be put into a queue.\nIf a Backpack Shelf is not linked or it doesn't exist, the backpack will drop on death as normal.",
     "augment.backpacked.recall.link_shelf": "Link Shelf",
     "augment.backpacked.recall.link_shelf.tooltip": "Player must be looking at a Backpack Shelf",
     "augment.backpacked.recall.status.checking": "Checking...",
