@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
-// TODO switch to block pos instead of id
 public record ShelfKey(ResourceKey<Level> level, long position)
 {
     public ShelfKey(ResourceKey<Level> level, BlockPos pos)
