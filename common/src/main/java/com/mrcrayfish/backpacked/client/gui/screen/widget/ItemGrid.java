@@ -18,6 +18,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -75,7 +76,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
 
     private void updateList()
     {
-        String search = this.searchQuery.toLowerCase();
+        String search = this.searchQuery.toLowerCase().trim();
         boolean empty = search.trim().isBlank();
         this.clearEntries();
 
@@ -92,7 +93,23 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         });
 
         // Sorts all items based on name
-        visibleItems.sort(Comparator.comparing(item -> item.getDescription().getString()));
+        if(!empty)
+        {
+            visibleItems.sort(Comparator.<Item>comparingInt(item -> {
+                String name = item.getDescription().getString().toLowerCase(Locale.ROOT);
+                if(name.equals(search)) {
+                    return 0;
+                } else if(name.startsWith(search)) {
+                    return 1;
+                }
+                return 2;
+            }).thenComparing(item -> item.getDescription().getString()));
+        }
+        else
+        {
+            visibleItems.sort(Comparator.comparing(item -> item.getDescription().getString()));
+        }
+
 
         // Pull chunks of items from the list and distribute them into a row item
         int chunkSize = (this.getRowWidth() + this.spacing) / (this.itemSize + this.spacing);
