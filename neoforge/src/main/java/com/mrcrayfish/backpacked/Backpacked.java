@@ -150,7 +150,7 @@ public class Backpacked
                 {
                     RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
                     if(augment != null && AugmentHandler.recallBackpack(player, index, stack, augment)) {
-                        return;
+                        continue;
                     }
                     event.getDrops().add(this.createDrop(player, stack));
                 }
