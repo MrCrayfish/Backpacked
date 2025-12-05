@@ -162,7 +162,7 @@ public class Backpacked
     {
         float deltaX = player.getRandom().nextFloat() * 0.5F;
         float deltaZ = player.getRandom().nextFloat() * (Mth.PI * 2);
-        ItemEntity entity = new ItemEntity(player.level(), player.getX(), player.getEyeY() - 0.3F, player.getZ(), stack);
+        ItemEntity entity = new ItemEntity(player.level(), player.getX(), player.getEyeY() - 0.3F, player.getZ(), stack.copyAndClear());
         entity.setDeltaMovement(-Mth.sin(deltaZ) * deltaX, 0.2, Mth.cos(deltaZ) * deltaX);
         entity.setPickUpDelay(40);
         return entity;
