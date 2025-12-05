@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.common.PlaceSound;
+import com.mrcrayfish.backpacked.common.PlaceSoundControls;
 import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
 import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
@@ -11,7 +11,7 @@ import com.mrcrayfish.backpacked.common.augment.impl.*;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
-import com.mrcrayfish.backpacked.mixin.common.BlockItemMixin;
+import com.mrcrayfish.backpacked.mixin.common.BlockItemInvoker;
 import com.mrcrayfish.backpacked.mixin.common.CropBlockMixin;
 import com.mrcrayfish.backpacked.mixin.common.IntegerPropertyMixin;
 import com.mrcrayfish.backpacked.network.Network;
@@ -28,7 +28,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -41,7 +40,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -311,13 +309,12 @@ public class AugmentHandler
             ItemStack torch = snapshot.inventory().findFirst(stack -> stack.is(Items.TORCH));
             if(!torch.isEmpty())
             {
-                PlaceSound.update(augment);
-                InteractionResult result = torch.useOn(UseItemOnBlockFaceContext.create(level, player, torch, pos.below(), Direction.UP));
-                PlaceSound.reset();
-                if(result.consumesAction())
-                {
-                    snapshot.inventory().setChanged();
-                }
+                PlaceSoundControls.runWithOptions(!augment.sound(), true, () -> {
+                    InteractionResult result = torch.useOn(UseItemOnBlockFaceContext.create(level, player, torch, pos.below(), Direction.UP));
+                    if(result.consumesAction()) {
+                        snapshot.inventory().setChanged();
+                    }
+                });
             }
         }
     }
@@ -455,7 +452,7 @@ public class AugmentHandler
         if(context == null)
             return false;
 
-        BlockState state = ((BlockItemMixin) item).backpacked$getPlacementState(context);
+        BlockState state = ((BlockItemInvoker) item).backpacked$getPlacementState(context);
         return state != null;
     }
 

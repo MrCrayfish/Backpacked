@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.common.PlaceSound;
+import com.mrcrayfish.backpacked.common.PlaceSoundControls;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -26,17 +26,18 @@ public abstract class LevelMixin
         Level level = (Level) (Object) this;
         if(level instanceof ServerLevel)
         {
-            if(PlaceSound.disableNextPlay())
+            if(!PlaceSoundControls.isAboutToPlay())
+                return;
+
+            if(PlaceSoundControls.shouldPreventNextPlay())
             {
-                PlaceSound.reset();
                 ci.cancel();
                 return;
             }
 
             // If send to all, removes the player argument which would prevent sending the sound to that player
-            if(PlaceSound.sendToAll())
+            if(PlaceSoundControls.shouldSendToAllPlayers())
             {
-                PlaceSound.reset();
                 this.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, event, source, pitch, volume);
                 ci.cancel();
             }

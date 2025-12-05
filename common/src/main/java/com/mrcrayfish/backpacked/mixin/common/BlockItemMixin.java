@@ -1,14 +1,20 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
+import com.mrcrayfish.backpacked.common.PlaceSoundControls;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockItem.class)
-public interface BlockItemMixin
+public abstract class BlockItemMixin
 {
-    @Invoker(value = "getPlacementState")
-    BlockState backpacked$getPlacementState(BlockPlaceContext context);
+    @Inject(method = "place", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", ordinal = 0))
+    private void backpacked$aboutToPlayPlaceSound(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir)
+    {
+        PlaceSoundControls.markAboutToPlay();
+    }
 }
