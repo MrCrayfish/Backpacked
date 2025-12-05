@@ -142,6 +142,9 @@ public class Backpacked
             if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
                 return;
 
+            if(Config.BACKPACK.equipable.keepOnDeath.get())
+                return;
+
             NonNullList<ItemStack> removed = BackpackHelper.removeAllBackpacks(player);
             for(int index = 0; index < removed.size(); index++)
             {

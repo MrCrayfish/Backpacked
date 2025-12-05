@@ -53,6 +53,12 @@ public class Config
                     how many slots will appear when opening the "Equipped Backpacks" menu.""")
             public final IntProperty maxEquipable = IntProperty.create(5, 1, MAX_EQUIPPABLE_BACKPACKS);
 
+            @ConfigProperty(name = "keepOnDeath", comment = """
+                    If enabled, backpacks will stay equipped on the player after death (same as the
+                    keepInventory game rule). Please note that this will make the Recall augment
+                    effectively useless.""")
+            public final BoolProperty keepOnDeath = BoolProperty.create(false);
+
             @ConfigProperty(name = "unlockFirstEquipableSlot", comment = """
                     If true, the first slot will automatically be unlocked by default and for free.""")
             public final BoolProperty unlockFirstEquipableSlot = BoolProperty.create(true);

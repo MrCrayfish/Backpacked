@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.mixin;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
@@ -41,6 +42,9 @@ public class FabricPlayerMixin
             return;
 
         if(serverPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+            return;
+
+        if(Config.BACKPACK.equipable.keepOnDeath.get())
             return;
 
         NonNullList<ItemStack> removed = BackpackHelper.removeAllBackpacks(player);
