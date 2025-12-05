@@ -112,10 +112,10 @@ public abstract class ServerPlayerMixin implements BackpackedInteractAccess
     @Inject(method = "onChangedBlock", at = @At(value = "TAIL"))
     private void backpacked$TryAndPlaceTorch(ServerLevel level, BlockPos pos, CallbackInfo ci)
     {
-        Player player = (Player) (Object) this;
+        ServerPlayer player = (ServerPlayer) (Object) this;
         if(player.isSpectator())
             return;
-        int brightness = level.getRawBrightness(pos, 0);
+        int brightness = level.getMaxLocalRawBrightness(pos);
         AugmentHandler.onPlayerChangedBlockPos(player, level, pos, brightness);
     }
 }

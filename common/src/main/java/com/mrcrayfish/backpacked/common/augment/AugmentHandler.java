@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.datafixers.util.Pair;
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.common.PlaceSound;
 import com.mrcrayfish.backpacked.common.ShelfKey;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
 import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
@@ -23,13 +24,13 @@ import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -40,6 +41,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -295,12 +297,9 @@ public class AugmentHandler
         return ItemStack.EMPTY;
     }
 
-    public static void onPlayerChangedBlockPos(Player player, ServerLevel level, BlockPos pos, int brightness)
+    public static void onPlayerChangedBlockPos(ServerPlayer player, ServerLevel level, BlockPos pos, int brightness)
     {
-        onPlayerWalkOnCrops((ServerPlayer) player);
-
-        if(!level.isEmptyBlock(pos))
-            return;
+        onPlayerWalkOnCrops(player);
 
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.LIGHTWEAVER.get());
         for(var snapshot : snapshots)
@@ -312,18 +311,13 @@ public class AugmentHandler
             ItemStack torch = snapshot.inventory().findFirst(stack -> stack.is(Items.TORCH));
             if(!torch.isEmpty())
             {
-                BlockState state = Block.updateFromNeighbourShapes(Blocks.TORCH.defaultBlockState(), level, pos);
-                if(!state.isAir())
+                PlaceSound.update(augment);
+                InteractionResult result = torch.useOn(UseItemOnBlockFaceContext.create(level, player, torch, pos.below(), Direction.UP));
+                PlaceSound.reset();
+                if(result.consumesAction())
                 {
-                    SoundType sound = state.getSoundType();
-                    level.setBlock(pos, state, Block.UPDATE_ALL);
-                    if(augment.sound())
-                    {
-                        level.playSound(null, player.xo, player.yo, player.zo, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 6.0F, sound.getPitch() * 0.8F);
-                    }
-                    torch.shrink(1);
+                    snapshot.inventory().setChanged();
                 }
-                break;
             }
         }
     }

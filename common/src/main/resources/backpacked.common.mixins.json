@@ -15,6 +15,7 @@
         "common.HopperBlockEntityMixin",
         "common.IntegerPropertyMixin",
         "common.ItemEntityMixin",
+        "common.LevelMixin",
         "common.LivingEntityMixin",
         "common.MerchantResultSlotMixin",
         "common.MobMixin",
