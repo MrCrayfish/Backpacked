@@ -1,3 +1,5 @@
+import org.apache.commons.io.FilenameUtils
+
 plugins {
     id 'java'
     id 'idea'
@@ -166,3 +168,25 @@ signing {
 }
 
 loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
+tasks.register("signJar") {
+    dependsOn remapJar
+    onlyIf {
+        findProperty('keyStore') || System.getenv("KEYSTORE")
+    }
+    doLast {
+        def unsignedJar = tasks.remapJar.archiveFile.get()
+        def name = FilenameUtils.removeExtension(unsignedJar.getAsFile().getName());
+        def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get();
+        def options = [:]
+        options['jar'] = unsignedJar.getAsFile().getAbsolutePath()
+        options['signedJar'] = signedJar.getAsFile().getAbsolutePath()
+        options['alias'] = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
+        options['keyStore'] = findProperty('keyStore') ?: System.getenv("KEYSTORE")
+        options['storePass'] = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
+        options['storetype'] = "jks"
+        this.getAnt().invokeMethod("signjar", options);
+    }
+}
+
+build.dependsOn signJar
