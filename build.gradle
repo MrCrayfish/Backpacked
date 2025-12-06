@@ -77,22 +77,40 @@ subprojects {
     }
 
     processResources {
+        def expandProps = [
+            "minecraft_version": minecraft_version,
+            "forge_version": forge_version,
+            "fabric_version": fabric_version,
+            "fabric_loader_version": fabric_loader_version,
+            "framework_version": framework_version,
+            "trinkets_version": trinkets_version,
+            "curios_version": curios_version,
+            "mod_name": mod_name,
+            "mod_version": mod_version,
+            "mod_author": mod_author,
+            "mod_id": mod_id,
+            "mod_license": mod_license,
+            "mod_desc": mod_desc,
+            "mod_homepage": mod_homepage,
+            "mod_source": mod_source,
+            "mod_issues": mod_issues
+        ]
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
-            expand project.properties
+            expand expandProps
         }
+        inputs.properties(expandProps)
+        exclude ".cache" // Remove cache from generated data
     }
 
     // Disables Gradle's custom module metadata from being published to maven. The
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
-    tasks.withType(GenerateModuleMetadata) {
+    tasks.withType(GenerateModuleMetadata).configureEach {
         enabled = false
     }
-}
 
-task incrementBuild {
-    doLast {
-        int version = file('/release_build').text.toInteger()
-        file('/release_build').text = version + 1
+    // Mute javadoc warnings
+    tasks.withType(Javadoc).configureEach {
+        options.addStringOption('Xdoclint:none', '-quiet')
     }
 }
