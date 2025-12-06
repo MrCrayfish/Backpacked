@@ -24,23 +24,25 @@ public abstract class LevelMixin
     private void backpacked$lightweaverPlaceSound(Player player, BlockPos pos, SoundEvent event, SoundSource source, float pitch, float volume, CallbackInfo ci)
     {
         Level level = (Level) (Object) this;
-        if(level instanceof ServerLevel)
+        if(!(level instanceof ServerLevel))
+            return;
+
+        // Return if not the targeted sound call
+        if(!PlaceSoundControls.isAboutToPlay())
+            return;
+
+        // Cancels the sound if controls is marked as preventing next sound
+        if(PlaceSoundControls.shouldPreventNextPlay())
         {
-            if(!PlaceSoundControls.isAboutToPlay())
-                return;
+            ci.cancel();
+            return;
+        }
 
-            if(PlaceSoundControls.shouldPreventNextPlay())
-            {
-                ci.cancel();
-                return;
-            }
-
-            // If send to all, removes the player argument which would prevent sending the sound to that player
-            if(PlaceSoundControls.shouldSendToAllPlayers())
-            {
-                this.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, event, source, pitch, volume);
-                ci.cancel();
-            }
+        // If send to all, removes the player argument which would prevent sending the sound to that player
+        if(PlaceSoundControls.shouldSendToAllPlayers())
+        {
+            this.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, event, source, pitch, volume);
+            ci.cancel();
         }
     }
 }

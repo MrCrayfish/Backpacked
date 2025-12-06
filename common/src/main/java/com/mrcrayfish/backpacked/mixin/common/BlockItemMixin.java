@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin
 {
+    /* Marks in PlaceSoundControls just before the block place sound is about to play so it can
+     * correctly apply the modifications in PlaceSoundControls */
     @Inject(method = "place", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", ordinal = 0))
     private void backpacked$aboutToPlayPlaceSound(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir)
     {
