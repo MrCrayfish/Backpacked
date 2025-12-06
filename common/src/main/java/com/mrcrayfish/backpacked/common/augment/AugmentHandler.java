@@ -351,7 +351,7 @@ public class AugmentHandler
                 continue;
 
             ItemStack copy = seed.copyWithCount(1);
-            if(!farmhand.plant(copy, pos))
+            if(!farmhand.plant(copy, pos, player))
                 continue;
 
             // Send particles to players
@@ -414,7 +414,7 @@ public class AugmentHandler
                     break;
 
                 ItemStack copy = stack.copyWithCount(1);
-                if(!farmhand.plant(copy, pos))
+                if(!farmhand.plant(copy, pos, player))
                     continue;
 
                 // Send particles to players
