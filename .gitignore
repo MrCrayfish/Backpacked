@@ -22,6 +22,8 @@ build
 eclipse
 run
 runPlayerTwo
+*/src/generated/
 */src/generated/resources/.cache
 forge/runs
+fabric/runs
 neoforge/runs
