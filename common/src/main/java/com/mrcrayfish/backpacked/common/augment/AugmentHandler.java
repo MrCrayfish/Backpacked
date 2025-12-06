@@ -45,6 +45,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -309,12 +310,14 @@ public class AugmentHandler
             ItemStack torch = snapshot.inventory().findFirst(stack -> stack.is(Items.TORCH));
             if(!torch.isEmpty())
             {
-                PlaceSoundControls.runWithOptions(!augment.sound(), true, () -> {
-                    InteractionResult result = torch.useOn(UseItemOnBlockFaceContext.create(level, player, torch, pos.below(), Direction.UP));
-                    if(result.consumesAction()) {
-                        snapshot.inventory().setChanged();
-                    }
+                InteractionResult result = PlaceSoundControls.runWithOptions(!augment.sound(), true, () -> {
+                    return torch.useOn(UseItemOnBlockFaceContext.create(level, player, torch, pos.below(), Direction.UP));
                 });
+                if(result.consumesAction())
+                {
+                    snapshot.inventory().setChanged();
+                    return;
+                }
             }
         }
     }

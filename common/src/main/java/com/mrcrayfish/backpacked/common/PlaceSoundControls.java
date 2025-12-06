@@ -1,5 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
+import java.util.function.Supplier;
+
 public final class PlaceSoundControls
 {
     private static final PlaceSoundControls INSTANCE = new PlaceSoundControls();
@@ -9,14 +11,14 @@ public final class PlaceSoundControls
     private boolean preventNextPlay;
     private boolean sendToAllPlayers;
 
-    public static void runWithOptions(boolean preventNextPlay, boolean sendToAllPlayers, Runnable action)
+    public static <T> T runWithOptions(boolean preventNextPlay, boolean sendToAllPlayers, Supplier<T> action)
     {
         try
         {
             INSTANCE.enabled = true;
             INSTANCE.preventNextPlay = preventNextPlay;
             INSTANCE.sendToAllPlayers = sendToAllPlayers;
-            action.run();
+            return action.get();
         }
         finally
         {
