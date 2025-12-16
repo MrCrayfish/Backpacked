@@ -2,6 +2,8 @@ package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.common.*;
+import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
+import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.framework.api.config.*;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
@@ -9,10 +11,7 @@ import com.mrcrayfish.framework.api.config.validate.Validator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -414,6 +413,14 @@ public class Config
 
     public static class Augments
     {
+        @ConfigProperty(name = "disabledAugments", comment = """
+                A list that contains ids of augments that should be disabled. The augments will be
+                hidden from the popup menu and cannot be selected. Augments applied on existing
+                backpacks will simply be removed. Use advanced tooltips (F3 + H) to discover the IDs
+                of augments.
+                Example: disabledAugments = ["backpacked:recall", "backpacked:lootbound"]""")
+        public final ListProperty<String> disabledAugments = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator(""));
+
         @ConfigProperty(name = "funnelling", comment = "Funnelling related properties")
         public final Funnelling funnelling = new Funnelling();
 
@@ -425,15 +432,8 @@ public class Config
         }
     }
 
-    public static class ResourceLocationValidator implements Validator<String>
+    public record ResourceLocationValidator(String hint) implements Validator<String>
     {
-        private final String hint;
-
-        public ResourceLocationValidator(String hint)
-        {
-            this.hint = hint;
-        }
-
         @Override
         public boolean test(String value)
         {
@@ -451,6 +451,7 @@ public class Config
     private static final PaymentItem INVENTORY_PAYMENT_ITEM = new PaymentItem(BACKPACK.inventory.slots.unlockCost.paymentItem::get);
     private static final PaymentItem BACKPACK_PAYMENT_ITEM = new PaymentItem(BACKPACK.equipable.unlockCost.paymentItem::get);
     private static Set<ResourceLocation> bannedItemsList;
+    private static Set<ResourceLocation> disabledAugments;
 
     public static void init()
     {
@@ -459,6 +460,8 @@ public class Config
                 updateBannedItemsList();
                 INVENTORY_PAYMENT_ITEM.clearItem();
                 BACKPACK_PAYMENT_ITEM.clearItem();
+            } else if(object == AUGMENTS) {
+                disabledAugments = null;
             }
         });
         FrameworkConfigEvents.RELOAD.register(object -> {
@@ -466,6 +469,8 @@ public class Config
                 updateBannedItemsList();
                 INVENTORY_PAYMENT_ITEM.clearItem();
                 BACKPACK_PAYMENT_ITEM.clearItem();
+            } else if(object == AUGMENTS) {
+                disabledAugments = null;
             }
         });
     }
@@ -488,5 +493,19 @@ public class Config
     public static PaymentItem getBackpackPaymentItem()
     {
         return BACKPACK_PAYMENT_ITEM;
+    }
+
+    public static Set<ResourceLocation> getDisabledAugments()
+    {
+        if(disabledAugments == null)
+        {
+            disabledAugments = ImmutableSet.copyOf(Config.AUGMENTS.disabledAugments.get().stream()
+                .map(ResourceLocation::tryParse)
+                .filter(Objects::nonNull)
+                .filter(ModRegistries.AUGMENT_TYPES::containsKey) // Ensure augment types exist
+                .filter(id -> !EmptyAugment.TYPE.id().equals(id)) // Ensure empty augment is not disabled
+                .collect(Collectors.toSet()));
+        }
+        return disabledAugments;
     }
 }

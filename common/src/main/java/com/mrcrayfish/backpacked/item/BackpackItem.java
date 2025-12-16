@@ -102,7 +102,7 @@ public class BackpackItem extends Item
             boolean owner = ownerPlayer.equals(openingPlayer);
             UnlockableSlots slots = item.getUnlockableSlots(backpack);
             Pagination pagination = BackpackHelper.createPaginationInfo(ownerPlayer, backpackIndex);
-            Augments augments = backpack.get(ModDataComponents.AUGMENTS.get());
+            Augments augments = Augments.get(backpack);
             Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, ownerPlayer.getId(), backpackIndex, cols, rows, owner, slots, pagination, augments, title);
             return true;
         }

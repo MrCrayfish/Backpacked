@@ -242,6 +242,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                         lines.add(HOLD_TO_EXPAND.apply(ScreenUtil.getShiftIcon()).withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
+                if(Minecraft.getInstance().options.advancedItemTooltips)
+                    lines.add(Component.literal(type.id().toString()).withStyle(ChatFormatting.DARK_GRAY));
                 return ScreenUtil.createMultilineTooltip(lines);
             }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build(), LayoutSettings::alignHorizontallyCenter);
         this.augmentsButtons.put(position, augmentBtn);

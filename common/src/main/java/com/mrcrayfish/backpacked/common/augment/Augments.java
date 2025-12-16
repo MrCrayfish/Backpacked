@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import net.minecraft.network.FriendlyByteBuf;
@@ -34,12 +35,22 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
         Augments::new
     );
 
+    public Augments(Augment<?> firstAugment, boolean firstState, Augment<?> secondAugment, boolean secondState, Augment<?> thirdAugment, boolean thirdState)
+    {
+        this.firstAugment = firstAugment;
+        this.firstState = firstState;
+        this.secondAugment = secondAugment;
+        this.secondState = secondState;
+        this.thirdAugment = thirdAugment;
+        this.thirdState = thirdState;
+    }
+
     public Augment<?> getAugment(Position position)
     {
         return switch(position) {
-            case FIRST -> this.firstAugment;
-            case SECOND -> this.secondAugment;
-            case THIRD -> this.thirdAugment;
+            case FIRST -> restrict(this.firstAugment);
+            case SECOND -> restrict(this.secondAugment);
+            case THIRD -> restrict(this.thirdAugment);
         };
     }
 
@@ -74,6 +85,8 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
     @SuppressWarnings("unchecked")
     public <T extends Augment<T>> T findEnabledAndCast(AugmentType<T> type)
     {
+        if(Config.getDisabledAugments().contains(type.id()))
+            return null;
         if(this.firstState && this.firstAugment.type() == type)
             return (T) this.firstAugment;
         if(this.secondState && this.secondAugment.type() == type)
@@ -85,6 +98,8 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
 
     public <T extends Augment<T>> boolean has(AugmentType<T> type)
     {
+        if(Config.getDisabledAugments().contains(type.id()))
+            return false;
         return this.firstAugment.type() == type || this.secondAugment.type() == type || this.thirdAugment.type() == type;
     }
 
@@ -103,5 +118,14 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
     public static void set(ItemStack stack, Augments augments)
     {
         stack.set(ModDataComponents.AUGMENTS.get(), augments);
+    }
+
+    public static Augment<?> restrict(Augment<?> augment)
+    {
+        if(Config.getDisabledAugments().contains(augment.type().id()))
+        {
+            return EmptyAugment.INSTANCE;
+        }
+        return augment;
     }
 }

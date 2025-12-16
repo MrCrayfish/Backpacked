@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
@@ -40,6 +41,8 @@ public class AugmentPopupMenu extends PopupMenu
         GridLayout grid = new GridLayout().rowSpacing(2).columnSpacing(2);
         AtomicInteger count = new AtomicInteger();
         AugmentType.stream().sorted().forEach(type -> {
+            if(Config.getDisabledAugments().contains(type.id()))
+                return;
             CustomButton augmentBtn = CustomButton.builder()
                 .setIcon(type.sprite(), 12, 12)
                 .setActive(() -> type.isEmpty() || !selectedAugments.get().has(type))
@@ -69,6 +72,8 @@ public class AugmentPopupMenu extends PopupMenu
                             lines.add(BackpackScreen.HOLD_TO_EXPAND.apply(ScreenUtil.getShiftIcon()).withStyle(ChatFormatting.DARK_GRAY));
                         }
                     }
+                    if(Minecraft.getInstance().options.advancedItemTooltips)
+                        lines.add(Component.literal(type.id().toString()).withStyle(ChatFormatting.DARK_GRAY));
                     return ScreenUtil.createMultilineTooltip(lines);
                 }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build();
             augmentBtn.setTooltip(Tooltip.create(type.name()));

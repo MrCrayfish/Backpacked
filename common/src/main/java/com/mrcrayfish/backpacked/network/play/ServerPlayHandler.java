@@ -273,6 +273,10 @@ public class ServerPlayHandler
         if(type == null)
             throw new IllegalArgumentException("Player sent an invalid augment type");
 
+        // Prevent changing to an augment that is disabled
+        if(Config.getDisabledAugments().contains(type.id()))
+            return;
+
         Augments currentAugments = Augments.get(stack);
         SavedAugments savedAugments = SavedAugments.get(stack);
 
