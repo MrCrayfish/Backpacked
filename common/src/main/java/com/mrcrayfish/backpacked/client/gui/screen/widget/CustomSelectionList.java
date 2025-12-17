@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 
 public class CustomSelectionList<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E>
 {
-    private static final int OUTLINE_SIZE = 1;
-    private static final int SCROLL_BAR_GAP = 2;
+    protected static final int OUTLINE_SIZE = 1;
+    protected static final int SCROLL_BAR_GAP = 2;
 
     protected int contentPadding = 2;
     protected int scrollBarWidth = 6;

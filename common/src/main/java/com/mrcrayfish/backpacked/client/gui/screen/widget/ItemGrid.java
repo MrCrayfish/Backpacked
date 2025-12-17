@@ -132,7 +132,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
     {
         this.hoveredStack = null;
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
-        if(this.hoveredStack != null)
+        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.getX(), this.getY() + OUTLINE_SIZE, this.getWidth(), this.getHeight() - OUTLINE_SIZE * 2) && this.hoveredStack != null)
         {
             graphics.renderTooltip(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
         }
