@@ -4,7 +4,7 @@
     "augment.backpacked.farmhand": "Farmhand",
     "augment.backpacked.farmhand.desc": "Harvesting a fully-grown crop replants a matching seed from the backpack.",
     "augment.backpacked.funnelling": "Funnelling",
-    "augment.backpacked.funnelling.desc": "Funnels picked up items into the backpack instead of the inventory.\nA filter can be applied to only allow specific items.\nIf the backpack is full or an item is not allowed, it wil be placed into the inventory as normal.",
+    "augment.backpacked.funnelling.desc": "Funnels picked up items into the backpack instead of the inventory.\nA filter can be applied to only allow specific items.\nIf the backpack is full or an item is not allowed, it will be placed into the inventory as normal.",
     "augment.backpacked.funnelling.mode": "Mode: %s",
     "augment.backpacked.funnelling.mode.allow": "Allow",
     "augment.backpacked.funnelling.mode.allow.tooltip": "Only items that are activated in the list will be funnelled into the backpack",
