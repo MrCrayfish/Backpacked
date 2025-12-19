@@ -9,13 +9,9 @@ import com.mrcrayfish.backpacked.common.ItemCollection;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -88,60 +84,6 @@ public record FunnellingAugment(ItemCollection filters, Mode mode) implements Au
         if(matched && this.mode == Mode.DISALLOW)
             return false;
         return this.mode == Mode.DISALLOW;
-    }
-
-    public static final class ItemFilter
-    {
-        private static final Codec<ItemFilter> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-                ResourceLocation.CODEC.fieldOf("item").forGetter(ItemFilter::id)
-        ).apply(instance, ItemFilter::new));
-
-        private static final StreamCodec<RegistryFriendlyByteBuf, ItemFilter> STREAM_CODEC = StreamCodec.composite(
-                ResourceLocation.STREAM_CODEC, ItemFilter::id,
-                ItemFilter::new
-        );
-
-        private final ResourceLocation id;
-        private Item item;
-
-        public ItemFilter(ResourceLocation id)
-        {
-            this.id = id;
-        }
-
-        public ResourceLocation id()
-        {
-            return this.id;
-        }
-
-        public Item item()
-        {
-            if(this.item == null)
-            {
-                this.item = BuiltInRegistries.ITEM.get(this.id);
-            }
-            return this.item;
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if(obj == this) return true;
-            if(obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (ItemFilter) obj;
-            return Objects.equals(this.id, that.id);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return this.id.hashCode();
-        }
-
-        public boolean match(ItemStack stack)
-        {
-            return stack.is(this.item());
-        }
     }
 
     public enum Mode implements StringRepresentable, LabelAndDescription
