@@ -183,6 +183,16 @@ public class BackpackItem extends Item
             stack.set(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), slots);
         }
 
+        // Unlock the first augment bay if configured to do so
+        if(Config.BACKPACK.augmentBays.unlockFirstAugmentBay.get())
+        {
+            if(!slots.isUnlocked(0))
+            {
+                slots = slots.unlockSlot(0);
+                stack.set(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), slots);
+            }
+        }
+
         return slots;
     }
 }
