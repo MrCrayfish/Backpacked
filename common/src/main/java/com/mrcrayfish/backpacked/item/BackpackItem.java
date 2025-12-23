@@ -163,8 +163,8 @@ public class BackpackItem extends Item
         if(!stack.is(this))
             return null;
 
-        /*if(Config.BACKPACK.inventory.slots.unlockAllSlots.get())
-            return UnlockableSlots.ALL;*/
+        if(Config.BACKPACK.augmentBays.unlockAllAugmentBays.get())
+            return UnlockableSlots.ALL;
 
         // If missing, create the component
         UnlockableSlots slots = stack.get(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get());

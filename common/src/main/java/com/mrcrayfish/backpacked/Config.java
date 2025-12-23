@@ -201,6 +201,10 @@ public class Config
                     If true, the first augment bay will automatically be unlocked by default and for free.""")
             public final BoolProperty unlockFirstAugmentBay = BoolProperty.create(false);
 
+            @ConfigProperty(name = "unlockAllAugmentBays", comment = """
+                    If set to true, all augment bays will be unlocked by default.""")
+            public final BoolProperty unlockAllAugmentBays = BoolProperty.create(false);
+
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for augment bays")
             public final UnlockCost unlockCost = new UnlockCost(List.of(10, 20, 30, 40));
         }
