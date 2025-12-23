@@ -20,6 +20,7 @@ import java.util.Set;
 public final class UnlockableSlots
 {
     public static final UnlockableSlots ALL = new UnlockableSlots();
+    public static final UnlockableSlots NONE = new UnlockableSlots(0);
 
     public static final Codec<UnlockableSlots> CODEC = RecordCodecBuilder.create(builder -> builder.group(
         Codec.list(Codec.INT).fieldOf("slots").forGetter(slots -> List.copyOf(slots.slots)),

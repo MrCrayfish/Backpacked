@@ -25,6 +25,10 @@ public class ModDataComponents
         return builder.persistent(UnlockableSlots.CODEC).networkSynchronized(UnlockableSlots.STREAM_CODEC);
     });
 
+    public static final RegistryEntry<DataComponentType<UnlockableSlots>> UNLOCKABLE_AUGMENT_BAYS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_augment_bays"), builder -> {
+        return builder.persistent(UnlockableSlots.CODEC).networkSynchronized(UnlockableSlots.STREAM_CODEC);
+    });
+
     public static final RegistryEntry<DataComponentType<Augments>> AUGMENTS = RegistryEntry.dataComponentType(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "augments"), builder -> {
         return builder.persistent(Augments.CODEC).networkSynchronized(Augments.STREAM_CODEC);
     });

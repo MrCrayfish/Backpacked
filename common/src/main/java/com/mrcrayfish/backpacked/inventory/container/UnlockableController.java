@@ -32,6 +32,11 @@ public abstract class UnlockableController
 
     public abstract List<Container> getPaymentContainers();
 
+    public int getMaxSlots()
+    {
+        return this.cachedSlots.getMaxSlots();
+    }
+
     public final boolean unlockSlot(int slot)
     {
         UnlockableSlots before = this.cachedSlots;

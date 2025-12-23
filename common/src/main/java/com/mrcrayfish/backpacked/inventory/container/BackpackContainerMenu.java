@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.CostModel;
@@ -43,16 +44,17 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
     private final int cols;
     private final int rows;
     private final boolean owner;
-    private final UnlockableController controller;
+    private final UnlockableController slotController;
+    private final UnlockableController augmentBayController;
     private final Pagination pagination;
     private Augments augments;
 
     public BackpackContainerMenu(int id, Inventory playerInventory, BackpackContainerData data)
     {
-        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), -1, data.backpackIndex(), data.columns(), data.rows(), data.owner(), data.slots(), data.pagination(), data.augments());
+        this(id, playerInventory, new SimpleContainer(Mth.clamp(data.columns(), 1, MAX_COLUMNS) * Mth.clamp(data.rows(), 1, MAX_ROWS)), -1, data.backpackIndex(), data.columns(), data.rows(), data.owner(), data.slots(), data.pagination(), data.augments(), data.bays());
     }
 
-    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int ownerId, int backpackIndex, int cols, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments)
+    public BackpackContainerMenu(int id, Inventory playerInventory, Container backpackContainer, int ownerId, int backpackIndex, int cols, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments, UnlockableSlots bays)
     {
         super(ModContainers.BACKPACK.get(), id);
         this.backpackInventory = backpackContainer;
@@ -62,7 +64,8 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         this.rows = Mth.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
         this.pagination = pagination;
-        this.controller = new BackpackUnlockableController(this, slots, List.of(playerInventory, backpackContainer));
+        this.slotController = new BackpackUnlockableController(this, slots, List.of(playerInventory, backpackContainer));
+        this.augmentBayController = new AugmentUnlockableController(this, bays, List.of(playerInventory, backpackContainer));
         this.augments = augments;
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
@@ -76,7 +79,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         {
             for(int x = 0; x < cols; x++)
             {
-                this.addSlot(new BackpackSlot(this.controller, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
+                this.addSlot(new BackpackSlot(this.slotController, backpackContainer, x + y * cols, backpackSlotsX + x * 18, backpackSlotsY + y * 18));
             }
         }
 
@@ -121,9 +124,9 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         return this.pagination;
     }
 
-    public UnlockableController getController()
+    public UnlockableController getSlotController()
     {
-        return this.controller;
+        return this.slotController;
     }
 
     public Augments getAugments()
@@ -134,6 +137,11 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
     public void setAugments(Augments augments)
     {
         this.augments = augments;
+    }
+
+    public UnlockableController getAugmentBayController()
+    {
+        return this.augmentBayController;
     }
 
     @Override
@@ -216,7 +224,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
             if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
                 if(this.backpackInventory == otherMenu.backpackInventory) {
                     if(otherPlayer != unlockingPlayer) {
-                        otherMenu.controller.cachedSlots = this.controller.cachedSlots;
+                        otherMenu.slotController.cachedSlots = this.slotController.cachedSlots;
                     }
                     Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndexes));
                 }
@@ -267,6 +275,58 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         public PaymentItem getPaymentItem()
         {
             return Config.getInventoryPaymentItem();
+        }
+
+        @Override
+        public List<Container> getPaymentContainers()
+        {
+            return this.paymentContainers;
+        }
+    }
+
+    private static class AugmentUnlockableController extends UnlockableController
+    {
+        private final BackpackContainerMenu menu;
+        private final List<Container> paymentContainers;
+
+        private AugmentUnlockableController(BackpackContainerMenu menu, UnlockableSlots bays, List<Container> paymentContainers)
+        {
+            super(bays);
+            this.menu = menu;
+            this.paymentContainers = paymentContainers;
+        }
+
+        @Override
+        public Optional<UnlockableSlots> getSlots(Player player)
+        {
+            ItemStack backpack = this.menu.getBackpackStack();
+            if(!backpack.isEmpty())
+            {
+                return Optional.ofNullable(backpack.get(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get()));
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public void setSlots(Player player, UnlockableSlots slots)
+        {
+            ItemStack backpack = this.menu.getBackpackStack();
+            if(!backpack.isEmpty())
+            {
+                backpack.set(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), slots);
+            }
+        }
+
+        @Override
+        public CostModel getCostModel()
+        {
+            return Config.BACKPACK.augmentBays.unlockCost;
+        }
+
+        @Override
+        public PaymentItem getPaymentItem()
+        {
+            return Config.getAugmentBayPaymentItem();
         }
 
         @Override

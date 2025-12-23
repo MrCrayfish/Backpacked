@@ -151,7 +151,7 @@ public class Backpacked
                 ItemStack stack = removed.get(index);
                 if(!stack.isEmpty())
                 {
-                    RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+                    RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
                     if(augment != null && AugmentHandler.recallBackpack(player, index, stack, augment)) {
                         continue;
                     }

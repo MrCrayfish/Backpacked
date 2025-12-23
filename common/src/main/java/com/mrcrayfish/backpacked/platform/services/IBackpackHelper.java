@@ -22,7 +22,7 @@ public interface IBackpackHelper
 
     ShelfBlockEntity createShelfBlockEntityType(BlockPos pos, BlockState state);
 
-    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int ownerId, int backpackIndex, int cols, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments, Component title);
+    void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int ownerId, int backpackIndex, int cols, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments, Component title, UnlockableSlots bays);
 
     BackpackItem createBackpackItem(Item.Properties properties);
 }

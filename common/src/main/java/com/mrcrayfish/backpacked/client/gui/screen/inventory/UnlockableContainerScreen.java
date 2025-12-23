@@ -168,7 +168,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
         super.renderTooltip(graphics, mouseX, mouseY);
     }
 
-    private List<ClientTooltipComponent> createUnlockTooltip(UnlockableSlot slot)
+    protected List<ClientTooltipComponent> createUnlockTooltip(UnlockableSlot slot)
     {
         Component hintText = HOLD_TO_UNLOCK;
         int nextCost = slot.getNextUnlockCost(Math.max(1, this.selectedSlots.size()));
@@ -276,7 +276,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
         }
     }
 
-    private void spawnSlotUnlockedParticles(int slotX, int slotY)
+    protected void spawnSlotUnlockedParticles(int slotX, int slotY)
     {
         Particle2D top = new Particle2D(slotX + 2, slotY + 2, 12, 6)
             .setLife(50)

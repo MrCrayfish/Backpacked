@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
@@ -24,8 +25,7 @@ public class ItemEntityMixin
         ItemStack stack = entity.getItem();
         if(stack.is(ModItems.BACKPACK.get()))
         {
-            Augments augments = Augments.get(stack);
-            ImbuedHideAugment augment = augments.findEnabledAndCast(ModAugmentTypes.IMBUED_HIDE.get());
+            ImbuedHideAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.IMBUED_HIDE.get());
             if(augment != null)
             {
                 cir.setReturnValue(true);

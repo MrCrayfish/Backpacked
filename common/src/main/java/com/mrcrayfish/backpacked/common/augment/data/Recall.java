@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.common.augment.data;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
@@ -196,11 +197,11 @@ public final class Recall extends SavedData
 
     private void removeInvalidShelfFromItemStack(ItemStack stack)
     {
-        Augments augments = Augments.get(stack);
-        RecallAugment augment = augments.findEnabledAndCast(ModAugmentTypes.RECALL.get());
+        RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
         if(augment != null)
         {
             augment = augment.setShelfKey(null);
+            Augments augments = Augments.get(stack);
             for(Augments.Position position : Augments.Position.values())
             {
                 if(augments.getAugment(position).type() == ModAugmentTypes.RECALL.get())

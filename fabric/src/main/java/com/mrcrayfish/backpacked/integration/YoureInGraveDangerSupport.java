@@ -136,7 +136,7 @@ public class YoureInGraveDangerSupport
                 ItemStack stack = graveItem.stack;
                 if(this.hasRecallAugment(stack)) {
                     ServerPlayer player = context.player();
-                    RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+                    RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
                     if(augment != null && AugmentHandler.recallBackpack(player, index, stack, augment)) {
                         graveItem.dropRule = DropRule.DESTROY;
                     }
@@ -208,7 +208,7 @@ public class YoureInGraveDangerSupport
 
         private boolean hasRecallAugment(ItemStack stack)
         {
-            RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+            RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
             return augment != null && augment.shelfKey().isPresent();
         }
     }

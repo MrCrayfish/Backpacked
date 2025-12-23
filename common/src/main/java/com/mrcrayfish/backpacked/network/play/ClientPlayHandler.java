@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticle;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.network.MessageContext;
@@ -197,5 +198,23 @@ public class ClientPlayHandler
     public static void handleMessageResponseShelfKey(MessageResponseShelfKey message, MessageContext context)
     {
         RecallMenu.ShelfStatus.handle(message.backpackIndex(), message.position(), message.valid());
+    }
+
+    public static void handleUnlockAugmentBay(MessageSyncUnlockAugmentBay message)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.player == null)
+            return;
+
+        if(!(minecraft.player.containerMenu instanceof BackpackContainerMenu menu))
+            return;
+
+        if(!menu.getAugmentBayController().unlockSlot(message.position().ordinal()))
+            return;
+
+        if(minecraft.screen instanceof BackpackScreen screen)
+        {
+            screen.onAugmentBayUnlocked(message.position());
+        }
     }
 }

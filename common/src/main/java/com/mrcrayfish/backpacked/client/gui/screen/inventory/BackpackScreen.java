@@ -6,6 +6,8 @@ import com.mrcrayfish.backpacked.client.Icons;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
+import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
+import com.mrcrayfish.backpacked.client.gui.ItemCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.TextInputMenu;
@@ -17,12 +19,15 @@ import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
+import com.mrcrayfish.framework.api.client.screen.widget.element.Icon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,6 +35,9 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
@@ -60,6 +68,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component RENAME = Component.translatable("backpacked.gui.rename");
     private static final Component SORT = Component.translatable("backpacked.gui.sort");
     public static final Function<Component, MutableComponent> HOLD_TO_EXPAND = component -> Component.translatable("backpacked.gui.hold_button_to_expand", component);
+    private static final Component CLICK_TO_UNLOCK = Component.translatable("backpacked.gui.click_to_unlock");
+    private static final Component AUGMENT_BAY = Component.translatable("backpacked.gui.augment_bay");
+    private static final Component NOT_ENOUGH_EXP = Component.translatable("backpacked.gui.not_enough_exp");
+    private static final Component MISSING_ITEMS = Component.translatable("backpacked.gui.missing_items");
 
     private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
     private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
@@ -73,6 +85,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
     private static final ResourceLocation ICON_RENAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
     private static final ResourceLocation ICON_SORT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
+    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final ResourceLocation ICON_LOCK_OUTLINED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_outlined");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
@@ -85,6 +99,15 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         Utils.rl("backpack/augment_settings"),
         Utils.rl("backpack/augment_settings_disabled"),
         Utils.rl("backpack/augment_settings_focused")
+    );
+    private static final WidgetSprites BUTTON_TEXTURES = new WidgetSprites(
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+    );
+    private static final WidgetSprites DISABLED_BUTTON_TEXTURES = new WidgetSprites(
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled")
     );
 
     private static final int TITLE_LABEL_WIDTH = 110;
@@ -107,7 +130,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private boolean opened;
     private int timer;
     private final List<Layout> layouts = new ArrayList<>();
-    private EnumMap<Augments.Position, CustomButton> augmentsButtons;
+    private EnumMap<Augments.Position, FrameworkButton> augmentsButtons;
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
@@ -201,25 +224,40 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private LinearLayout createAugmentsPanel()
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
-        layout.addChild(this.createAugmentLayout(Augments.Position.FIRST));
-        layout.addChild(Divider.horizontal(30).colour(0xFFE0CDB7));
-        layout.addChild(this.createAugmentLayout(Augments.Position.SECOND));
-        layout.addChild(Divider.horizontal(30).colour(0xFFE0CDB7));
-        layout.addChild(this.createAugmentLayout(Augments.Position.THIRD));
+        UnlockableController bays = this.menu.getAugmentBayController();
+        var positions = Augments.Position.values();
+        for(int i = 0; i < bays.getMaxSlots() && i < positions.length; i++)
+        {
+            if(i != 0) layout.addChild(Divider.horizontal(30).colour(0xFFE0CDB7));
+            layout.addChild(this.createAugmentLayout(positions[i]));
+        }
         return layout;
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private LinearLayout createAugmentLayout(Augments.Position position)
     {
         LinearLayout layout = LinearLayout.horizontal().spacing(1);
-        CustomButton augmentBtn = layout.addChild(CustomButton.builder()
+        FrameworkButton augmentBtn = layout.addChild(FrameworkButton.builder()
             .setSize(20, 20)
-            .setIcon(btn -> this.menu.getAugments().getAugment(position).type().sprite(), 12, 12)
+            .setTexture(() -> {
+                if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal()))
+                    return DISABLED_BUTTON_TEXTURES;
+                return BUTTON_TEXTURES;
+            })
+            .setIcon(btn -> new AugmentIcon(btn, this.menu, position))
             .setAction(btn -> {
+                if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal())) {
+                    Network.getPlay().sendToServer(new MessageUnlockAugmentBay(position));
+                    return;
+                }
                 new AugmentPopupMenu(this, this.menu::getAugments, augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
                 }).show(btn);
             }).setTooltip(btn -> {
+                if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal())) {
+                    return null;
+                }
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 List<Component> lines = new ArrayList<>();
                 lines.add(SWAP_AUGMENT);
@@ -245,7 +283,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 if(Minecraft.getInstance().options.advancedItemTooltips)
                     lines.add(Component.literal(type.id().toString()).withStyle(ChatFormatting.DARK_GRAY));
                 return ScreenUtil.createMultilineTooltip(lines);
-            }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build(), LayoutSettings::alignHorizontallyCenter);
+            }).setTooltipOptions(
+                com.mrcrayfish.framework.api.client.screen.TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT |
+                com.mrcrayfish.framework.api.client.screen.TooltipOptions.REBUILD_TOOLTIP_ON_WIDGET_HOVER
+            ).build(), LayoutSettings::alignHorizontallyCenter);
         this.augmentsButtons.put(position, augmentBtn);
 
         // Adds a toggle and settings button for the augment
@@ -258,7 +299,9 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             }).setSize(10, 10).setIcon(btn -> {
                 boolean state = this.menu.getAugments().getState(position);
                 return AUGMENT_TOGGLE_SPRITES.get(state, btn.isHovered() && btn.isActive());
-        }, 10, 10).noTexture().build(), 0, 0);
+        }, 10, 10).setActive(() -> {
+            return this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal());
+        }).noTexture().build(), 0, 0);
         options.addChild(CustomButton.builder()
             .setSize(10, 10)
             .setTexture(AUGMENT_SETTINGS_SPRITES)
@@ -276,6 +319,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 }, position, this.menu.getBackpackIndex());
                 factory.apply(this, holder).show(btn);
             }).setActive(() -> {
+                if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal()))
+                    return false;
                 // Setting button should only be active if it has a settings factory
                 AugmentType<?> type = this.menu.getAugments().getAugment(position).type();
                 return AugmentSettingsFactories.hasFactory(type);
@@ -293,10 +338,10 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     public void updateAugment(Augments.Position position, Augment<?> augment)
     {
         this.menu.setAugments(this.menu.getAugments().setAugment(position, augment));
-        CustomButton augmentBtn = this.augmentsButtons.get(position);
+        FrameworkButton augmentBtn = this.augmentsButtons.get(position);
         if(augmentBtn != null)
         {
-            augmentBtn.rebuildTooltip();
+            //augmentBtn.rebuildTooltip();
         }
     }
 
@@ -413,7 +458,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         {
             case ENABLED -> this.setHideLockedSlots(false);
             case DISABLED -> this.setHideLockedSlots(true);
-            case PURCHASABLE -> this.setHideLockedSlots(!this.getMenu().getController().canAffordNextSlot(this.player, Math.max(1, this.selectedSlots.size() + 1)));
+            case PURCHASABLE -> this.setHideLockedSlots(!this.getMenu().getSlotController().canAffordNextSlot(this.player, Math.max(1, this.selectedSlots.size() + 1)));
         }
     }
 
@@ -437,6 +482,43 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 this.timer = 5;
             }
         }
+    }
+
+    @Override
+    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
+    {
+        // Draws the cost tooltip to unlock the augment bay
+        for(var entry : this.augmentsButtons.entrySet())
+        {
+            if(!this.menu.getAugmentBayController().isSlotUnlocked(entry.getKey().ordinal()) && entry.getValue().isHovered())
+            {
+                List<ClientTooltipComponent> components = this.createUnlockAugmentBayTooltip();
+                ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
+                return;
+            }
+        }
+        super.renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    protected List<ClientTooltipComponent> createUnlockAugmentBayTooltip()
+    {
+        Component hintText = CLICK_TO_UNLOCK;
+        UnlockableController bayController = this.menu.getAugmentBayController();
+        int nextCost = bayController.getNextUnlockCost(1);
+        boolean canAfford = bayController.canAffordNextSlot(this.player, 1);
+        List<ClientTooltipComponent> components = new ArrayList<>();
+        components.add(new ClientTextTooltip(AUGMENT_BAY.copy().withStyle(ChatFormatting.GRAY).getVisualOrderText()));
+        switch(bayController.getCostModel().getPaymentType()) {
+            case EXPERIENCE -> {
+                components.add(new ClientTextTooltip(hintText.getVisualOrderText()));
+                components.add(new ExperienceCostTooltip(nextCost));
+            }
+            case ITEM -> {
+                components.add(new ClientTextTooltip(hintText.getVisualOrderText()));
+                components.add(new ItemCostTooltip(bayController.getPaymentItem(), nextCost));
+            }
+        }
+        return components;
     }
 
     @Override
@@ -523,5 +605,63 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         super.removed();
         MouseRestorer.capturePosition();
+    }
+
+    public void onAugmentBayUnlocked(Augments.Position position)
+    {
+        FrameworkButton button = this.augmentsButtons.get(position);
+        if(button != null)
+        {
+            this.spawnSlotUnlockedParticles(button.getX(), button.getY());
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.3F, 0.25F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHAIN_BREAK, 1.3F, 0.7F));
+        }
+    }
+
+    private static class AugmentIcon extends Icon
+    {
+        private final FrameworkButton button;
+        private final BackpackContainerMenu menu;
+        private final Augments.Position position;
+
+        private AugmentIcon(FrameworkButton button, BackpackContainerMenu menu, Augments.Position position)
+        {
+            this.button = button;
+            this.menu = menu;
+            this.position = position;
+        }
+
+        @Override
+        public int width()
+        {
+            return 12;
+        }
+
+        @Override
+        public int height()
+        {
+            return 12;
+        }
+
+        @Override
+        public void draw(GuiGraphics graphics, int x, int y, float partialTick)
+        {
+            if(!this.menu.getAugmentBayController().isSlotUnlocked(this.position.ordinal()))
+            {
+                if(this.button.isHovered())
+                {
+                    graphics.blitSprite(ICON_LOCK_OUTLINED, x - 1, y - 1, 14, 14);
+                }
+                else
+                {
+                    graphics.blitSprite(ICON_LOCK, x, y, 12, 12);
+                }
+            }
+            else
+            {
+                ResourceLocation sprite = this.menu.getAugments().getAugment(this.position).type().sprite();
+                graphics.blitSprite(sprite, x, y, 12, 12);
+            }
+        }
     }
 }

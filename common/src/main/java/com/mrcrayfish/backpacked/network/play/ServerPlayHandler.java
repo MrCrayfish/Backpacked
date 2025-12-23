@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.network.play;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.client.augment.menu.RecallMenu;
 import com.mrcrayfish.backpacked.common.CreativeCategorySort;
 import com.mrcrayfish.backpacked.common.ItemSorting;
 import com.mrcrayfish.backpacked.common.ShelfKey;
@@ -522,5 +521,27 @@ public class ServerPlayHandler
         }, () -> {
             Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageResponseShelfKey(backpackIndex, position, false));
         });
+    }
+
+    public static void handleUnlockAugmentBay(MessageUnlockAugmentBay message, MessageContext context)
+    {
+        Player player = context.getPlayer().orElse(null);
+        if(!(player instanceof ServerPlayer serverPlayer))
+            return;
+
+        if(!(player.containerMenu instanceof BackpackContainerMenu menu))
+            return;
+
+        if(!menu.stillValid(serverPlayer) || !menu.isOwner())
+            return;
+
+        var position = message.position();
+        if(menu.getAugmentBayController().isSlotUnlocked(position.ordinal()))
+            return;
+
+        if(!menu.getAugmentBayController().handleUnlockSlot(serverPlayer, position.ordinal()))
+            return;
+
+        Network.PLAY.sendToPlayer(() -> (ServerPlayer) player, new MessageSyncUnlockAugmentBay(position));
     }
 }

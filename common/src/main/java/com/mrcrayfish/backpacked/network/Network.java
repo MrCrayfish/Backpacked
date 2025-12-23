@@ -41,6 +41,8 @@ public class Network
         .registerPlayMessage("shelf_place_animation", MessageShelfPlaceAnimation.class, MessageShelfPlaceAnimation.STREAM_CODEC, MessageShelfPlaceAnimation::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("check_shelf_key", MessageCheckShelfKey.class, MessageCheckShelfKey.STREAM_CODEC, MessageCheckShelfKey::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("response_shelf_key", MessageResponseShelfKey.class, MessageResponseShelfKey.STREAM_CODEC, MessageResponseShelfKey::handle, PacketFlow.CLIENTBOUND)
+        .registerPlayMessage("unlock_augment_bat", MessageUnlockAugmentBay.class, MessageUnlockAugmentBay.STREAM_CODEC, MessageUnlockAugmentBay::handle, PacketFlow.SERVERBOUND)
+        .registerPlayMessage("sync_unlock_augment_bay", MessageSyncUnlockAugmentBay.class, MessageSyncUnlockAugmentBay.STREAM_CODEC, MessageSyncUnlockAugmentBay::handle, PacketFlow.CLIENTBOUND)
         .build();
 
     public static void init() {}

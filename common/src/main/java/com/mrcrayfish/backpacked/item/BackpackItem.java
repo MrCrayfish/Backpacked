@@ -20,14 +20,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +44,7 @@ public class BackpackItem extends Item
         super(properties
             .component(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT)
             .component(ModDataComponents.UNLOCKABLE_SLOTS.get(), new UnlockableSlots(0))
+            .component(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), new UnlockableSlots(0))
             .component(ModDataComponents.AUGMENTS.get(), Augments.EMPTY)
         );
     }
@@ -73,6 +72,11 @@ public class BackpackItem extends Item
     public int getRowCount()
     {
         return Config.BACKPACK.inventory.size.rows.get();
+    }
+
+    public int getMaxAugmentBays(ItemStack stack)
+    {
+        return 3;
     }
 
     @Override
@@ -103,7 +107,8 @@ public class BackpackItem extends Item
             UnlockableSlots slots = item.getUnlockableSlots(backpack);
             Pagination pagination = BackpackHelper.createPaginationInfo(ownerPlayer, backpackIndex);
             Augments augments = Augments.get(backpack);
-            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, ownerPlayer.getId(), backpackIndex, cols, rows, owner, slots, pagination, augments, title);
+            UnlockableSlots bays = item.getUnlockableAugmentBays(backpack);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, ownerPlayer.getId(), backpackIndex, cols, rows, owner, slots, pagination, augments, title, bays);
             return true;
         }
         if(Objects.equals(ownerPlayer, openingPlayer))
@@ -147,6 +152,35 @@ public class BackpackItem extends Item
         {
             slots = slots.setMaxSlots(maxSlots);
             stack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
+        }
+
+        return slots;
+    }
+
+    @Nullable
+    public UnlockableSlots getUnlockableAugmentBays(ItemStack stack)
+    {
+        if(!stack.is(this))
+            return null;
+
+        /*if(Config.BACKPACK.inventory.slots.unlockAllSlots.get())
+            return UnlockableSlots.ALL;*/
+
+        // If missing, create the component
+        UnlockableSlots slots = stack.get(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get());
+        if(slots == null)
+        {
+            slots = new UnlockableSlots(this.getMaxAugmentBays(stack));
+            stack.set(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), slots);
+            return slots;
+        }
+
+        // Update the max bays if the size is different
+        int maxBays = this.getMaxAugmentBays(stack);
+        if(slots.getMaxSlots() != maxBays)
+        {
+            slots = slots.setMaxSlots(maxBays);
+            stack.set(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), slots);
         }
 
         return slots;

@@ -53,7 +53,7 @@ public class FabricPlayerMixin
             ItemStack stack = removed.get(index);
             if(!stack.isEmpty())
             {
-                RecallAugment augment = Augments.get(stack).findEnabledAndCast(ModAugmentTypes.RECALL.get());
+                RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
                 if(augment != null && AugmentHandler.recallBackpack(serverPlayer, index, stack, augment)) {
                     return;
                 }

@@ -110,8 +110,7 @@ public class BackpackInventory extends UnlockableContainer
     {
         if(container instanceof Hopper)
         {
-            Augments augments = Augments.get(this.stack);
-            HopperBridgeAugment augment = augments.findEnabledAndCast(ModAugmentTypes.HOPPER_BRIDGE.get());
+            HopperBridgeAugment augment = BackpackHelper.findAugment(this.stack, ModAugmentTypes.HOPPER_BRIDGE.get());
             if(augment != null)
             {
                 if(!augment.extract())

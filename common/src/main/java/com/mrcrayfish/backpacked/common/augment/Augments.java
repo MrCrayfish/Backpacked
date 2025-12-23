@@ -12,9 +12,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> secondAugment, boolean secondState, Augment<?> thirdAugment, boolean thirdState)
+public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> secondAugment, boolean secondState, Augment<?> thirdAugment, boolean thirdState, Augment<?> fourthAugment, boolean fourthState)
 {
-    public static final Augments EMPTY = new Augments(EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true);
+    public static final Augments EMPTY = new Augments(EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true, EmptyAugment.INSTANCE, true);
 
     public static final Codec<Augments> CODEC = RecordCodecBuilder.create(builder -> builder.group(
         Augment.CODEC.optionalFieldOf("first", EmptyAugment.INSTANCE).forGetter(Augments::firstAugment),
@@ -22,28 +22,31 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
         Augment.CODEC.optionalFieldOf("second", EmptyAugment.INSTANCE).forGetter(Augments::secondAugment),
         Codec.BOOL.optionalFieldOf("secondState", true).forGetter(Augments::secondState),
         Augment.CODEC.optionalFieldOf("third", EmptyAugment.INSTANCE).forGetter(Augments::thirdAugment),
-        Codec.BOOL.optionalFieldOf("thirdState", true).forGetter(Augments::thirdState)
+        Codec.BOOL.optionalFieldOf("thirdState", true).forGetter(Augments::thirdState),
+        Augment.CODEC.optionalFieldOf("fourth", EmptyAugment.INSTANCE).forGetter(Augments::fourthAugment),
+        Codec.BOOL.optionalFieldOf("fourthState", true).forGetter(Augments::fourthState)
     ).apply(builder, Augments::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, Augments> STREAM_CODEC = StreamCodec.composite(
-        Augment.STREAM_CODEC, Augments::firstAugment,
-        ByteBufCodecs.BOOL, Augments::firstState,
-        Augment.STREAM_CODEC, Augments::secondAugment,
-        ByteBufCodecs.BOOL, Augments::secondState,
-        Augment.STREAM_CODEC, Augments::thirdAugment,
-        ByteBufCodecs.BOOL, Augments::thirdState,
-        Augments::new
-    );
-
-    public Augments(Augment<?> firstAugment, boolean firstState, Augment<?> secondAugment, boolean secondState, Augment<?> thirdAugment, boolean thirdState)
-    {
-        this.firstAugment = firstAugment;
-        this.firstState = firstState;
-        this.secondAugment = secondAugment;
-        this.secondState = secondState;
-        this.thirdAugment = thirdAugment;
-        this.thirdState = thirdState;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, Augments> STREAM_CODEC = StreamCodec.of((buf, augments) -> {
+        Augment.STREAM_CODEC.encode(buf, augments.firstAugment);
+        buf.writeBoolean(augments.firstState);
+        Augment.STREAM_CODEC.encode(buf, augments.secondAugment);
+        buf.writeBoolean(augments.secondState);
+        Augment.STREAM_CODEC.encode(buf, augments.thirdAugment);
+        buf.writeBoolean(augments.thirdState);
+        Augment.STREAM_CODEC.encode(buf, augments.fourthAugment);
+        buf.writeBoolean(augments.fourthState);
+    }, buf -> {
+        Augment<?> firstAugment = Augment.STREAM_CODEC.decode(buf);
+        boolean firstState = buf.readBoolean();
+        Augment<?> secondAugment = Augment.STREAM_CODEC.decode(buf);
+        boolean secondState = buf.readBoolean();
+        Augment<?> thirdAugment = Augment.STREAM_CODEC.decode(buf);
+        boolean thirdState = buf.readBoolean();
+        Augment<?> fourthAugment = Augment.STREAM_CODEC.decode(buf);
+        boolean fourthState = buf.readBoolean();
+        return new Augments(firstAugment, firstState, secondAugment, secondState, thirdAugment, thirdState, fourthAugment, fourthState);
+    });
 
     public Augment<?> getAugment(Position position)
     {
@@ -51,15 +54,17 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
             case FIRST -> restrict(this.firstAugment);
             case SECOND -> restrict(this.secondAugment);
             case THIRD -> restrict(this.thirdAugment);
+            case FOURTH -> restrict(this.fourthAugment);
         };
     }
 
     public Augments setAugment(Position position, Augment<?> augment)
     {
         return switch(position) {
-            case FIRST -> new Augments(augment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState);
-            case SECOND -> new Augments(this.firstAugment, this.firstState, augment, this.secondState, this.thirdAugment, this.thirdState);
-            case THIRD -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, augment, this.thirdState);
+            case FIRST -> new Augments(augment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState, this.fourthAugment, this.fourthState);
+            case SECOND -> new Augments(this.firstAugment, this.firstState, augment, this.secondState, this.thirdAugment, this.thirdState, this.fourthAugment, this.fourthState);
+            case THIRD -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, augment, this.thirdState, this.fourthAugment, this.fourthState);
+            case FOURTH -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState, augment, this.fourthState);
         };
     }
 
@@ -69,31 +74,18 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
             case FIRST -> this.firstState;
             case SECOND -> this.secondState;
             case THIRD -> this.thirdState;
+            case FOURTH -> this.fourthState;
         };
     }
 
     public Augments setState(Position position, boolean state)
     {
         return switch(position) {
-            case FIRST -> new Augments(this.firstAugment, state, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState);
-            case SECOND -> new Augments(this.firstAugment, this.firstState, this.secondAugment, state, this.thirdAugment, this.thirdState);
-            case THIRD -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, state);
+            case FIRST -> new Augments(this.firstAugment, state, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState, this.fourthAugment, this.fourthState);
+            case SECOND -> new Augments(this.firstAugment, this.firstState, this.secondAugment, state, this.thirdAugment, this.thirdState, this.fourthAugment, this.fourthState);
+            case THIRD -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, state, this.fourthAugment, this.fourthState);
+            case FOURTH -> new Augments(this.firstAugment, this.firstState, this.secondAugment, this.secondState, this.thirdAugment, this.thirdState, this.fourthAugment, state);
         };
-    }
-
-    @Nullable
-    @SuppressWarnings("unchecked")
-    public <T extends Augment<T>> T findEnabledAndCast(AugmentType<T> type)
-    {
-        if(Config.getDisabledAugments().contains(type.id()))
-            return null;
-        if(this.firstState && this.firstAugment.type() == type)
-            return (T) this.firstAugment;
-        if(this.secondState && this.secondAugment.type() == type)
-            return (T) this.secondAugment;
-        if(this.thirdState && this.thirdAugment.type() == type)
-            return (T) this.thirdAugment;
-        return null;
     }
 
     public <T extends Augment<T>> boolean has(AugmentType<T> type)
@@ -105,7 +97,7 @@ public record Augments(Augment<?> firstAugment, boolean firstState, Augment<?> s
 
     public enum Position
     {
-        FIRST, SECOND, THIRD;
+        FIRST, SECOND, THIRD, FOURTH;
 
         public static final StreamCodec<FriendlyByteBuf, Position> STREAM_CODEC = StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Position.class));
     }

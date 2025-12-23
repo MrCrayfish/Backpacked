@@ -45,6 +45,9 @@ public class Config
         @ConfigProperty(name = "inventory", comment = "Inventory related properties")
         public final Inventory inventory = new Inventory();
 
+        @ConfigProperty(name = "augmentBays", comment = "Augment Bay related properties")
+        public final AugmentBays augmentBays = new AugmentBays();
+
         public static class Equipable
         {
             @ConfigProperty(name = "maxEquipable", comment = """
@@ -192,6 +195,12 @@ public class Config
             }
         }
 
+        public static class AugmentBays
+        {
+            @ConfigProperty(name = "unlockCost", comment = "Cost related properties for augment bays")
+            public final UnlockCost unlockCost = new UnlockCost(List.of(10, 20, 30, 40));
+        }
+
         public static class UnlockCost implements CostModel
         {
             @ConfigProperty(name = "paymentType", comment = """
@@ -243,7 +252,7 @@ public class Config
                     If enabled, instead of using a cost that is calculated based on a minCost
                     and maxCost, custom costs allow the cost to be specified manually using
                     a list of values (see customCosts).""")
-            public final BoolProperty useCustomCosts = BoolProperty.create(false);
+            public final BoolProperty useCustomCosts;
 
             @ConfigProperty(name = "customCosts", comment = """
                     A list of values that represent the cost to unlock each slot. For example,
@@ -259,13 +268,24 @@ public class Config
                     15 slots costing 5. If the values were [1, 3, 10] and again there are 30 inventory slots,
                     then this will be interpreted as the first 10 slots costing 1, the next 10 slots costing 3,
                     and the final 10 slots costing 10.""")
-            public final ListProperty<Integer> customCosts = ListProperty.create(ListProperty.INT);
+            public final ListProperty<Integer> customCosts;
 
             public UnlockCost(InterpolateFunction defaultFunction, int defaultMinCost, int defaultMaxCost)
             {
-                this.costInterpolateFunction =  EnumProperty.create(defaultFunction);
+                this.costInterpolateFunction = EnumProperty.create(defaultFunction);
                 this.minCost = IntProperty.create(defaultMinCost, 1, 100);
                 this.maxCost = IntProperty.create(defaultMaxCost, 1, 100);
+                this.useCustomCosts = BoolProperty.create(false);
+                this.customCosts = ListProperty.create(ListProperty.INT);
+            }
+
+            public UnlockCost(List<Integer> customCosts)
+            {
+                this.costInterpolateFunction = EnumProperty.create(InterpolateFunction.LINEAR);
+                this.minCost = IntProperty.create(10, 1, 100);
+                this.maxCost = IntProperty.create(40, 1, 100);
+                this.useCustomCosts = BoolProperty.create(true);
+                this.customCosts = ListProperty.create(ListProperty.INT, () -> customCosts);
             }
 
             @Override
@@ -450,6 +470,7 @@ public class Config
     public static final int MAX_EQUIPPABLE_BACKPACKS = 9;
     private static final PaymentItem INVENTORY_PAYMENT_ITEM = new PaymentItem(BACKPACK.inventory.slots.unlockCost.paymentItem::get);
     private static final PaymentItem BACKPACK_PAYMENT_ITEM = new PaymentItem(BACKPACK.equipable.unlockCost.paymentItem::get);
+    private static final PaymentItem AUGMENT_BAY_PAYMENT_ITEM = new PaymentItem(BACKPACK.augmentBays.unlockCost.paymentItem::get);
     private static Set<ResourceLocation> bannedItemsList;
     private static Set<ResourceLocation> disabledAugments;
 
@@ -460,6 +481,7 @@ public class Config
                 updateBannedItemsList();
                 INVENTORY_PAYMENT_ITEM.clearItem();
                 BACKPACK_PAYMENT_ITEM.clearItem();
+                AUGMENT_BAY_PAYMENT_ITEM.clearItem();
             } else if(object == AUGMENTS) {
                 disabledAugments = null;
             }
@@ -469,6 +491,7 @@ public class Config
                 updateBannedItemsList();
                 INVENTORY_PAYMENT_ITEM.clearItem();
                 BACKPACK_PAYMENT_ITEM.clearItem();
+                AUGMENT_BAY_PAYMENT_ITEM.clearItem();
             } else if(object == AUGMENTS) {
                 disabledAugments = null;
             }
@@ -493,6 +516,11 @@ public class Config
     public static PaymentItem getBackpackPaymentItem()
     {
         return BACKPACK_PAYMENT_ITEM;
+    }
+
+    public static PaymentItem getAugmentBayPaymentItem()
+    {
+        return AUGMENT_BAY_PAYMENT_ITEM;
     }
 
     public static Set<ResourceLocation> getDisabledAugments()

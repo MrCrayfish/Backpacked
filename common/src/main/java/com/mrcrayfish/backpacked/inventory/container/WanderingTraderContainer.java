@@ -21,7 +21,7 @@ public class WanderingTraderContainer extends BackpackContainerMenu
 
     public WanderingTraderContainer(int id, Inventory playerInventory, WanderingTrader trader)
     {
-        super(id, playerInventory, trader.getInventory(), trader.getId(), 0, 8, 1, false, UnlockableSlots.ALL, Pagination.NONE, Augments.EMPTY);
+        super(id, playerInventory, trader.getInventory(), trader.getId(), 0, 8, 1, false, UnlockableSlots.ALL, Pagination.NONE, Augments.EMPTY, UnlockableSlots.NONE);
         this.trader = trader;
     }
 
