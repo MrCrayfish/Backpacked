@@ -519,10 +519,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         components.add(new ClientTextTooltip(AUGMENT_BAY.copy().withStyle(ChatFormatting.GRAY).getVisualOrderText()));
         switch(bayController.getCostModel().getPaymentType()) {
             case EXPERIENCE -> {
+                if(!canAfford) hintText = NOT_ENOUGH_EXP.copy().withStyle(ChatFormatting.RED);
                 components.add(new ClientTextTooltip(hintText.getVisualOrderText()));
                 components.add(new ExperienceCostTooltip(nextCost));
             }
             case ITEM -> {
+                if(!canAfford) hintText = MISSING_ITEMS.copy().withStyle(ChatFormatting.RED);
                 components.add(new ClientTextTooltip(hintText.getVisualOrderText()));
                 components.add(new ItemCostTooltip(bayController.getPaymentItem(), nextCost));
             }
