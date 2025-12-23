@@ -89,7 +89,6 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final ResourceLocation ICON_RENAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
     private static final ResourceLocation ICON_SORT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
     private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final ResourceLocation ICON_LOCK_OUTLINED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_outlined");
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
