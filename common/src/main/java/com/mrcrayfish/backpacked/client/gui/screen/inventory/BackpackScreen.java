@@ -33,7 +33,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.layouts.*;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -648,13 +651,15 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         {
             if(!this.menu.getAugmentBayController().isSlotUnlocked(this.position.ordinal()))
             {
-                if(this.button.isHovered())
+                if(this.button.isActive() && this.button.isHovered())
                 {
-                    graphics.blitSprite(ICON_LOCK_OUTLINED, x - 1, y - 1, 14, 14);
+                    graphics.blitSprite(ICON_LOCK, x, y, 12, 12);
                 }
                 else
                 {
+                    graphics.setColor(1, 1, 1, 0.5F);
                     graphics.blitSprite(ICON_LOCK, x, y, 12, 12);
+                    graphics.setColor(1, 1, 1, 1);
                 }
             }
             else
