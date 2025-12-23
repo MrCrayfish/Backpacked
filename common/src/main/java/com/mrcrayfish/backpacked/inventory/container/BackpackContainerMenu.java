@@ -302,7 +302,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
             ItemStack backpack = this.menu.getBackpackStack();
             if(!backpack.isEmpty())
             {
-                return Optional.ofNullable(backpack.get(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get()));
+                return Optional.ofNullable(BackpackHelper.getUnlockableAugmentBays(backpack));
             }
             return Optional.empty();
         }

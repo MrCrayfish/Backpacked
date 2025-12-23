@@ -7,11 +7,11 @@ import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
-import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -302,7 +302,7 @@ public class BackpackHelper
         if(Config.getDisabledAugments().contains(type.id()))
             return null;
         Augments augments = Augments.get(stack);
-        UnlockableSlots bays = stack.getOrDefault(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), UnlockableSlots.NONE);
+        UnlockableSlots bays = getUnlockableAugmentBays(stack);
         if(bays.isUnlocked(0) && augments.firstState() && augments.firstAugment().type() == type)
             return (T) augments.firstAugment();
         if(bays.isUnlocked(1) && augments.secondState() && augments.secondAugment().type() == type)
@@ -312,6 +312,15 @@ public class BackpackHelper
         if(bays.isUnlocked(3) && augments.fourthState() && augments.fourthAugment().type() == type)
             return (T) augments.fourthAugment();
         return null;
+    }
+
+    public static UnlockableSlots getUnlockableAugmentBays(ItemStack stack)
+    {
+        if(stack.getItem() instanceof BackpackItem item)
+        {
+            return item.getUnlockableAugmentBays(stack);
+        }
+        return UnlockableSlots.NONE;
     }
 
     public static <T extends Augment<T>> List<InventoryAugmentSnapshot.One<T>> getBackpackInventoriesWithAugment(Player player, AugmentType<T> type)
