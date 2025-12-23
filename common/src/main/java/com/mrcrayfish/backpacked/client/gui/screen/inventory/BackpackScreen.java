@@ -249,6 +249,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 return BUTTON_TEXTURES;
             })
             .setIcon(btn -> new AugmentIcon(btn, this.menu, position))
+            .setDependent(() -> {
+                if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal())) {
+                    return this.menu.getAugmentBayController().canAffordNextSlot(this.minecraft.player, 1);
+                }
+                return true;
+            })
             .setAction(btn -> {
                 if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal())) {
                     Network.getPlay().sendToServer(new MessageUnlockAugmentBay(position));
