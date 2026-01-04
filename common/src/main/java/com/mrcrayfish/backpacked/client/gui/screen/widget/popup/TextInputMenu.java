@@ -2,11 +2,10 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomEditBox;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.util.Utils;
-import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.Layout;
@@ -31,9 +30,9 @@ public class TextInputMenu extends PopupMenu
         this.layout.addChild(title);
         this.layout.addChild(Divider.horizontal(WIDTH).colour(0xFFE0CDB7));
 
-        CustomEditBox editBox = this.layout.addChild(CustomEditBox.builder()
+        FrameworkEditBox editBox = this.layout.addChild(FrameworkEditBox.builder()
             .setSize(WIDTH, 16)
-            .setText(initialInput)
+            .setInitialText(initialInput)
             .setMaxTextLength(maxLength)
             .setBackground(new WidgetSprites(
                 Utils.rl("backpack/editbox/background"),

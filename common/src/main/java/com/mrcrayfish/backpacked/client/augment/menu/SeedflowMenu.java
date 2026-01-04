@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -61,12 +62,13 @@ public class SeedflowMenu extends AugmentSettingsMenu
                 .build();
             list.setActive(() -> holder.get().useFilters());
 
-            layout.addChild(CustomEditBox.builder()
+            layout.addChild(FrameworkEditBox.builder()
                 .setSize(divider1.getWidth(), 16)
-                .setIcon(Utils.rl("backpack/editbox/search"))
-                .setText(lastQuery)
+                .setPadding(2, 0, 2, 0)
+                .setIcon(Utils.rl("backpack/editbox/search"), 12, 12)
+                .setInitialText(lastQuery)
                 .setHint(SEARCH_HINT)
-                .setActive(() -> holder.get().useFilters())
+                .setDependent(() -> holder.get().useFilters())
                 .setCallback(s -> {
                     list.setSearchQuery(s);
                     lastQuery = s;

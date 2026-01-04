@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -59,13 +60,14 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
             list.setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
             LinearLayout header = LinearLayout.horizontal().spacing(2);
 
-            CustomEditBox searchField = CustomEditBox.builder()
+            FrameworkEditBox searchField = FrameworkEditBox.builder()
                 .setWidth(divider.getWidth() - 18 - 2)
+                .setPadding(2, 0, 2, 0)
                 .setHeight(16)
-                .setIcon(Utils.rl("backpack/editbox/search"))
-                .setText(lastQuery)
+                .setIcon(Utils.rl("backpack/editbox/search"), 12, 12)
+                .setInitialText(lastQuery)
                 .setHint(SEARCH_HINT)
-                .setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
+                .setDependent(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
                 .setCallback(s -> {
                     list.setSearchQuery(s);
                     lastQuery = s;

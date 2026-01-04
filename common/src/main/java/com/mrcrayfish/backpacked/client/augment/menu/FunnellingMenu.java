@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -70,11 +71,12 @@ public class FunnellingMenu extends AugmentSettingsMenu
 
             int filterButtonWidth = 55;
             LinearLayout header = LinearLayout.horizontal().spacing(3);
-            CustomEditBox searchField = CustomEditBox.builder()
+            FrameworkEditBox searchField = FrameworkEditBox.builder()
                 .setWidth(divider.getWidth() - 3 - filterButtonWidth)
+                .setPadding(2, 0, 2, 0)
                 .setHeight(16)
-                .setIcon(Utils.rl("backpack/editbox/search"))
-                .setText(lastQuery)
+                .setIcon(Utils.rl("backpack/editbox/search"), 12, 12)
+                .setInitialText(lastQuery)
                 .setHint(SEARCH_HINT)
                 .setCallback(s -> {
                     grid.setSearchQuery(s);
