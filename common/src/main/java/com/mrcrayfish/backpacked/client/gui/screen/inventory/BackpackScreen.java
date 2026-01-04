@@ -236,7 +236,6 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         return layout;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private LinearLayout createAugmentLayout(Augments.Position position)
     {
         LinearLayout layout = LinearLayout.horizontal().spacing(1);
@@ -292,8 +291,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                     lines.add(Component.literal(type.id().toString()).withStyle(ChatFormatting.DARK_GRAY));
                 return ScreenUtil.createMultilineTooltip(lines);
             }).setTooltipOptions(
-                com.mrcrayfish.framework.api.client.screen.TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT |
-                com.mrcrayfish.framework.api.client.screen.TooltipOptions.REBUILD_TOOLTIP_ON_WIDGET_HOVER
+                com.mrcrayfish.framework.api.client.screen.widget.TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT |
+                com.mrcrayfish.framework.api.client.screen.widget.TooltipOptions.REBUILD_TOOLTIP_ON_WIDGET_HOVER
             ).build(), LayoutSettings::alignHorizontallyCenter);
         this.augmentsButtons.put(position, augmentBtn);
 
