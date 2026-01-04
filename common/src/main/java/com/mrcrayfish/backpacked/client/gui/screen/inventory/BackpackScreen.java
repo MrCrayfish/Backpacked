@@ -26,8 +26,11 @@ import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import com.mrcrayfish.framework.api.client.screen.widget.element.Icon;
+import com.mrcrayfish.framework.api.client.screen.widget.element.Sound;
+import com.mrcrayfish.framework.api.client.screen.widget.input.Action;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -298,18 +301,19 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
         // Adds a toggle and settings button for the augment
         GridLayout options = new GridLayout().spacing(0);
-        options.addChild(CustomButton.state(() -> {
+        options.addChild(BackpackButtons.state(() -> {
                 return this.menu.getAugments().getState(position);
             }, newValue -> {
-                Network.getPlay().sendToServer(new MessageSetAugmentState(position, newValue));
                 this.updateAugments(this.menu.getAugments().setState(position, newValue));
-            }).setSize(10, 10).setIcon(btn -> {
+            }, newValue -> {
+                Network.getPlay().sendToServer(new MessageSetAugmentState(position, newValue));
+            }).setIcon(btn -> () -> {
                 boolean state = this.menu.getAugments().getState(position);
                 return AUGMENT_TOGGLE_SPRITES.get(state, btn.isHovered() && btn.isActive());
-        }, 10, 10).setActive(() -> {
-            return this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal());
-        }).noTexture().build(), 0, 0);
-        options.addChild(CustomButton.builder()
+            }, 10, 10).setDependent(() -> {
+                return this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal());
+            }).noTexture().setSize(10, 10).build(), 0, 0);
+        options.addChild(FrameworkButton.builder()
             .setSize(10, 10)
             .setTexture(AUGMENT_SETTINGS_SPRITES)
             .setTooltip(btn -> Tooltip.create(CONFIGURE))
@@ -325,7 +329,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                     this.updateAugments(this.menu.getAugments().setAugment(position, updatedAugment));
                 }, position, this.menu.getBackpackIndex());
                 factory.apply(this, holder).show(btn);
-            }).setActive(() -> {
+            }).setDependent(() -> {
                 if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal()))
                     return false;
                 // Setting button should only be active if it has a settings factory
@@ -374,7 +378,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     {
         LinearLayout layout = LinearLayout.vertical().spacing(2);
 
-        layout.addChild(CustomButton.builder()
+        layout.addChild(FrameworkButton.builder()
             .setSize(10, 10)
             .setIcon(ICON_SORT, 10, 10)
             .setTooltipDelay(0)
@@ -388,17 +392,16 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setTertiaryAction(Action.create(btn -> {
                 ItemSorting[] values = ItemSorting.values();
                 sorting = values[(sorting.ordinal() + 1) % values.length];
-            }, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.WOODEN_BUTTON_CLICK_ON)))
+            }, Sound.create(SoundEvents.WOODEN_BUTTON_CLICK_ON)))
             .setContentRenderer((btn, graphics, mouseX, mouseY, partialTick) -> {
-                CustomButton.Icon icon = btn.getIcon();
+                Icon icon = btn.getIcon();
                 if(icon != null) {
-                    graphics.blitSprite(icon.sprite(btn), btn.getX(), btn.getY(), icon.width(), icon.height());
+                    icon.draw(graphics, btn.getX(), btn.getY(), partialTick);
                 }
                 if(btn.isHovered() && btn.isActive()) {
                     graphics.fillGradient(btn.getX(), btn.getY(), btn.getX() + btn.getWidth(), btn.getY() + btn.getHeight(), -2130706433, -2130706433);
                 }
-            }).build()
-        );
+            }).build());
 
         if(this.owner && !Config.BACKPACK.cosmetics.disableCustomisation.get())
         {

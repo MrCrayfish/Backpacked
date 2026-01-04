@@ -3,10 +3,11 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -30,7 +31,7 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
     private static final ResourceLocation ARROW_RIGHT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_right");
 
-    private @Nullable CustomButton backButton;
+    private @Nullable FrameworkButton backButton;
 
     public BackpackManagementScreen(BackpackManagementMenu menu, Inventory inventory, Component title)
     {
@@ -51,7 +52,7 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
 
         if(this.menu.showInventoryButton())
         {
-            this.backButton = this.addRenderableWidget(CustomButton.builder()
+            this.backButton = this.addRenderableWidget(BackpackButtons.builder()
                 .setPosition(this.leftPos + this.imageWidth + 4, this.topPos + (41 - 16) / 2 + 17)
                 .setSize(16, 16)
                 .setIcon(ARROW_RIGHT, 4, 6)

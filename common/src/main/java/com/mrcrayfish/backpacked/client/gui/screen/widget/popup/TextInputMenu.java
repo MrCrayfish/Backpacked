@@ -1,14 +1,13 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLinearLayout;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomEditBox;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.ChatFormatting;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -41,9 +40,9 @@ public class TextInputMenu extends PopupMenu
                 Utils.rl("backpack/editbox/background_focused")
             )).build()
         );
-        this.layout.addChild(CustomButton.builder()
+        this.layout.addChild(BackpackButtons.builder()
             .setSize(WIDTH / 3, 18)
-            .setMessage(Component.literal("Save"))
+            .setLabel(Component.literal("Save"))
             .setAction(btn -> {
                 onSave.accept(editBox.getText());
             }).build(), LayoutSettings::alignHorizontallyRight);

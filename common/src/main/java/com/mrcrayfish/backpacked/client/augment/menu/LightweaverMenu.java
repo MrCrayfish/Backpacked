@@ -2,15 +2,15 @@ package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Stepper;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
+import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 public class LightweaverMenu extends AugmentSettingsMenu
@@ -38,12 +38,11 @@ public class LightweaverMenu extends AugmentSettingsMenu
                 .setOnChange(newValue -> {
                     holder.update(holder.get().setMinimumLight(newValue));
                 }).build(), divider.getWidth()));
-            layout.addChild(createOption(PLACE_SOUND_LABEL, PLACE_SOUND_TOOLTIP, CustomButton.state(() -> {
+            layout.addChild(createOption(PLACE_SOUND_LABEL, PLACE_SOUND_TOOLTIP, BackpackButtons.onOff(() -> {
                     return holder.get().sound();
                 }, newValue -> {
                     holder.update(holder.get().setSound(newValue));
                 })
-                .setMessage(() -> CommonComponents.optionStatus(holder.get().sound()))
                 .setSize(60, 18)
                 .build(), divider.getWidth()));
             return layout;

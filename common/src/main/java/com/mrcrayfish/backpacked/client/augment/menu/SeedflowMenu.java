@@ -6,6 +6,8 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -33,21 +35,19 @@ public class SeedflowMenu extends AugmentSettingsMenu
             Divider divider1 = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, optionsTitle.getWidth())).colour(0xFFE0CDB7));
             optionsTitle.setWidth(divider1.getWidth());
 
-            CustomButton randomizeBtn = CustomButton.state(() -> {
+            FrameworkButton randomizeBtn = BackpackButtons.onOff(() -> {
                     return holder.get().randomizeSeeds();
                 }, newValue -> {
                     holder.update(holder.get().setRandomizeSeeds(newValue));
                 })
-                .setMessage(() -> CommonComponents.optionStatus(holder.get().randomizeSeeds()))
                 .setSize(60, 18).build();
             layout.addChild(createOption(RANDOMISE_SEEDS_LABEL, RANDOMISE_SEEDS_TOOLTIP, randomizeBtn, divider1.getWidth()));
 
-            CustomButton useFiltersBtn = CustomButton.state(() -> {
+            FrameworkButton useFiltersBtn = BackpackButtons.onOff(() -> {
                     return holder.get().useFilters();
                 }, newValue -> {
                     holder.update(holder.get().setUseFilters(newValue));
                 })
-                .setMessage(() -> CommonComponents.optionStatus(holder.get().useFilters()))
                 .setSize(60, 18).build();
             layout.addChild(createOption(USE_FILTERS_LABEL, USE_FILTERS_TOOLTIP, useFiltersBtn, divider1.getWidth()));
 

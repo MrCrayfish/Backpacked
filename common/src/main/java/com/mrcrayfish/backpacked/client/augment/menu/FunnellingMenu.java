@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
@@ -9,6 +10,8 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -82,13 +85,11 @@ public class FunnellingMenu extends AugmentSettingsMenu
                     Utils.rl("backpack/editbox/background_focused")
                 )).build();
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
-            header.addChild(CustomButton.state(() -> selectedOnly, newValue -> selectedOnly = newValue)
+            header.addChild(Buttons.createToggle(() -> selectedOnly, newValue -> selectedOnly = newValue, grid::setSelectedOnly)
                 .setSize(filterButtonWidth, 18)
-                .setGap(4)
-                .setMessage(ACTIVE_LABEL)
-                .setContentRenderer(CustomButton.ToggleContentRenderer.INSTANCE)
+                .setSpacing(2)
+                .setLabel(ACTIVE_LABEL)
                 .setTooltip(btn -> Tooltip.create(selectedOnly ? ACTIVATED_ONLY_LABEL : SHOW_ALL_LABEL))
-                .setAction(btn -> grid.setSelectedOnly(selectedOnly))
                 .setTexture(new WidgetSprites(
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
                     ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
@@ -96,10 +97,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
             layout.addChild(header);
 
             layout.addChild(grid);
-            layout.addChild(CustomButton.values(() -> holder.get().mode(), mode -> holder.update(holder.get().setMode(mode)))
-                .setSize(divider.getWidth(), 18)
-                .build()
-            );
+            layout.addChild(BackpackButtons.values(() -> holder.get().mode(), mode -> holder.update(holder.get().setMode(mode)), mode -> {}).setSize(divider.getWidth(), 18).build());
             return layout;
         });
     }

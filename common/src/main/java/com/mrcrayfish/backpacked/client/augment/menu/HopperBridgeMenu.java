@@ -1,11 +1,13 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -43,21 +45,15 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
             TitleWidget title = layout.addChild(new TitleWidget(OPTIONS_LABEL, Minecraft.getInstance().font));
             Divider divider = layout.addChild(Divider.horizontal(Math.max(MIN_CONTENT_WIDTH, title.getWidth())).colour(0xFFE0CDB7));
             title.setWidth(divider.getWidth());
-            layout.addChild(createOption(INSERT_LABEL, INSERT_TOOLTIP, CustomButton.state(() -> holder.get().insert(), value -> holder.update(holder.get().setInsert(value)))
-                .setSize(60, 18)
-                .setMessage(() -> CommonComponents.optionStatus(holder.get().insert()))
-                .build(), divider.getWidth()));
-            layout.addChild(createOption(EXTRACT_LABEL, EXTRACT_TOOLTIP, CustomButton.state(() -> holder.get().extract(), value -> holder.update(holder.get().setExtract(value)))
-                .setSize(60, 18)
-                .setMessage(() -> CommonComponents.optionStatus(holder.get().extract()))
-                .build(), divider.getWidth()));
+
+            layout.addChild(createOption(INSERT_LABEL, INSERT_TOOLTIP, BackpackButtons.onOff(() -> holder.get().insert(), value -> holder.update(holder.get().setInsert(value))).setSize(60, 18).build(), divider.getWidth()));
+            layout.addChild(createOption(EXTRACT_LABEL, EXTRACT_TOOLTIP, BackpackButtons.onOff(() -> holder.get().extract(), value -> holder.update(holder.get().setExtract(value))).setSize(60, 18).build(), divider.getWidth()));
 
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
             layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
 
-            layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, CustomButton.values(() -> holder.get().filterMode(), value -> holder.update(holder.get().setFilterMode(value)))
-                    .setSize(60, 18).build(), divider.getWidth()));
+            layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, BackpackButtons.values(() -> holder.get().filterMode(), value -> holder.update(holder.get().setFilterMode(value)), filterMode -> {}).setSize(60, 18).build(), divider.getWidth()));
 
             ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(holder::get, holder::update).setWidth(divider.getWidth()).setHeight(64).build();
             list.setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
@@ -80,12 +76,11 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                     Utils.rl("backpack/editbox/background_focused")
                 )).build();
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
-            header.addChild(CustomButton.state(() -> selectedOnly, newValue -> selectedOnly = newValue)
+            header.addChild(BackpackButtons.toggle(() -> selectedOnly, newValue -> selectedOnly = newValue, list::setSelectedOnly)
                 .setSize(18, 18)
-                .setIcon(btn -> selectedOnly ? TOGGLE_ON : TOGGLE_OFF, 6, 6)
+                .setIcon(btn -> () -> selectedOnly ? TOGGLE_ON : TOGGLE_OFF, 6, 6)
                 .setTooltip(btn -> Tooltip.create(selectedOnly ? SELECTED_ONLY_LABEL : SHOW_ALL_LABEL))
-                .setAction(btn -> list.setSelectedOnly(selectedOnly))
-                .setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
+                .setDependent(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
                 .build());
             layout.addChild(header);
             layout.addChild(list);

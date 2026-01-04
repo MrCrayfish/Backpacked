@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.augment.menu;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageCheckShelfKey;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -50,9 +51,9 @@ public class RecallMenu extends AugmentSettingsMenu
 
             ShelfStatus status = layout.addChild(new ShelfStatus(MIN_CONTENT_WIDTH - 2, 16, holder), LayoutSettings::alignHorizontallyCenter);
             status.check();
-            layout.addChild(CustomButton.builder()
+            layout.addChild(BackpackButtons.builder()
                 .setSize(MIN_CONTENT_WIDTH, 20)
-                .setMessage(SET_SHELF_LABEL)
+                .setLabel(SET_SHELF_LABEL)
                 .setTooltip(btn -> {
                     if(!btn.isActive()) {
                         return Tooltip.create(SET_SHELF_TOOLTIP);
@@ -60,7 +61,7 @@ public class RecallMenu extends AugmentSettingsMenu
                     return null;
                 })
                 .setTooltipDelay(0)
-                .setActive(() -> {
+                .setDependent(() -> {
                     // This is checked server side too
                     Minecraft mc = Minecraft.getInstance();
                     if(mc.level == null || mc.player == null || !(mc.hitResult instanceof BlockHitResult result))

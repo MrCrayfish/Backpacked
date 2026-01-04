@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
@@ -43,9 +44,9 @@ public class AugmentPopupMenu extends PopupMenu
         AugmentType.stream().sorted().forEach(type -> {
             if(Config.getDisabledAugments().contains(type.id()))
                 return;
-            CustomButton augmentBtn = CustomButton.builder()
+            FrameworkButton augmentBtn = BackpackButtons.builder()
                 .setIcon(type.sprite(), 12, 12)
-                .setActive(() -> type.isEmpty() || !selectedAugments.get().has(type))
+                .setDependent(() -> type.isEmpty() || !selectedAugments.get().has(type))
                 .setAction(btn -> {
                     if(type.isEmpty() || !selectedAugments.get().has(type)) {
                         updater.accept(type.defaultSupplier().get());

@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.ScrollBar;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
@@ -25,6 +25,7 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -100,9 +101,9 @@ public class CustomiseBackpackScreen extends CustomScreen
     private final boolean showCosmeticWarning;
     private int windowLeft;
     private int windowTop;
-    private CustomButton saveButton;
-    private CustomButton settingsButton;
-    private CustomButton backButton;
+    private FrameworkButton saveButton;
+    private FrameworkButton settingsButton;
+    private FrameworkButton backButton;
     private CosmeticProperties currentProperties;
     private CosmeticProperties displayBackpack = null;
     private final List<CosmeticItem> items;
@@ -152,10 +153,10 @@ public class CustomiseBackpackScreen extends CustomScreen
             return this.displayBackpack;
         }));
 
-        this.saveButton = this.addRenderableWidget(CustomButton.builder()
+        this.saveButton = this.addRenderableWidget(BackpackButtons.builder()
             .setPosition(this.windowLeft + 10, this.playerDisplay.getBottom() + 1)
             .setSize(60, 20)
-            .setMessage(SAVE)
+            .setLabel(SAVE)
             .setAction(btn -> {
                 Network.getPlay().sendToServer(new MessageBackpackCosmetics(this.backpackIndex, this.displayBackpack));
                 this.currentProperties = this.displayBackpack;
@@ -173,7 +174,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             }))
             .setAlignment(Alignment.ABOVE_LEFT)
             .build();
-        this.settingsButton = this.addRenderableWidget(CustomButton.builder()
+        this.settingsButton = this.addRenderableWidget(BackpackButtons.builder()
             .setPosition(this.saveButton.getX() + this.saveButton.getWidth(), this.saveButton.getY())
             .setSize(20, 20)
             .setIcon(SETTINGS, 10, 10)
@@ -184,7 +185,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         this.scrollBar = this.addRenderableWidget(new ScrollBar(this.windowLeft + this.windowWidth - 24, this.windowTop + 29, contentHeight - 4, this.scroll));
         this.scrollBar.active = this.items.size() > MAX_VISIBLE_ITEMS;
 
-        this.backButton = this.addRenderableWidget(CustomButton.builder()
+        this.backButton = this.addRenderableWidget(BackpackButtons.builder()
             .setPosition(this.windowLeft - 20, this.windowTop + (this.windowHeight - 17 - 20) / 2 + 17)
             .setSize(16, 16)
             .setIcon(ARROW_LEFT, 4, 6)
@@ -526,9 +527,9 @@ public class CustomiseBackpackScreen extends CustomScreen
         private static final Component MESSAGE = Component.translatable("backpacked.gui.want_more_backpacks");
         private static final Component VIEW_ADDONS = Component.translatable("backpacked.gui.view_addons");
 
-        private final CustomButton button = CustomButton.builder()
+        private final FrameworkButton button = BackpackButtons.builder()
                 .setSize(100, 14)
-                .setMessage(VIEW_ADDONS)
+                .setLabel(VIEW_ADDONS)
                 .setAction(btn -> {
                     Style style = Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://mrcrayfish.github.io/Backpacked/"));
                     CustomiseBackpackScreen.this.handleComponentClicked(style);

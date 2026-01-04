@@ -1,12 +1,14 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.CustomButton;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.QuiverlinkAugment;
+import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
@@ -29,8 +31,7 @@ public class QuiverlinkMenu extends AugmentSettingsMenu
             layout.addChild(createOption(
                 PRIORITY_LABEL,
                 PRIORITY_TOOLTIP,
-                CustomButton.values(() -> holder.get().priority(), priority -> holder.update(holder.get().setPriority(priority)))
-                    .setSize(60, 18).build(),
+                BackpackButtons.values(() -> holder.get().priority(), priority -> holder.update(holder.get().setPriority(priority)), priority -> {}).setSize(60, 18).build(),
                 divider.getWidth()
             ));
             return layout;
