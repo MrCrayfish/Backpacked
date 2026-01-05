@@ -67,11 +67,11 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             return;
 
         Direction facing = entity.getDirection();
+        this.renderBackpackName(entity, facing, pose, buffer, light);
+
         pose.translate(0.5, 0.0, 0.5);
         pose.translate(0, 0.001, 0);
         pose.mulPose(facing.getRotation());
-
-        this.renderBackpackName(entity, pose, buffer, light);
 
         pose.translate(-0.5, 0.0, -0.5);
         pose.translate(0.5, -6 * 0.0625, -5 * 0.0625);
@@ -124,12 +124,13 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
         return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
     }
 
-    private void renderBackpackName(ShelfBlockEntity shelf, PoseStack poseStack, MultiBufferSource source, int light)
+    private void renderBackpackName(ShelfBlockEntity shelf, Direction facing, PoseStack poseStack, MultiBufferSource source, int light)
     {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.XP.rotationDegrees(-90F));
-        poseStack.translate(0, 1.1875, -0.1875);
-
+        poseStack.translate(0.5, 0.0, 0.5);
+        poseStack.mulPose(facing.getRotation());
+        poseStack.translate(0, -0.1875, -1.1875);
+        poseStack.mulPose(facing.getRotation().invert());
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         poseStack.scale(0.02F, -0.02F, 0.02F);
 
