@@ -56,7 +56,10 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
 
             layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, BackpackButtons.values(() -> holder.get().filterMode(), value -> holder.update(holder.get().setFilterMode(value)), filterMode -> {}).setSize(60, 18).build(), divider.getWidth()));
 
-            ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(holder::get, holder::update).setWidth(divider.getWidth()).setHeight(64).build();
+            ItemGrid<HopperBridgeAugment> list = ItemGrid.builder(holder::get, holder::update)
+                .setWidth(divider.getWidth())
+                .setHeight(64)
+                .build();
             list.setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
             LinearLayout header = LinearLayout.horizontal().spacing(2);
 

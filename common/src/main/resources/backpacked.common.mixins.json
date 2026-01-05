@@ -30,7 +30,6 @@
         "common.ServerPlayerMixin"
     ],
     "client": [
-        "client.AbstractSelectionListMixin",
         "client.BitmapProviderDefinitionMixin"
     ],
     "injectors": {

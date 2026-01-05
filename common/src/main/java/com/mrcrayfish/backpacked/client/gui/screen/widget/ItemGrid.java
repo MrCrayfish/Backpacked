@@ -6,6 +6,10 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.common.FilterableItems;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.screen.widget.FrameworkSelectionList;
+import com.mrcrayfish.framework.api.client.screen.widget.layout.Border;
+import com.mrcrayfish.framework.api.client.screen.widget.layout.Padding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -18,7 +22,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -30,7 +33,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectionList<ItemGrid.Row<T>>
+public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelectionList
 {
     private static final ResourceLocation LIST_BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/background");
     private static final StateSprites ITEM_SPRITES = new StateSprites(
@@ -39,22 +42,23 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected"),
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected")
     );
-    private static final StateSprites SCROLL_BAR_SPRITES = new StateSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_hovered"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/scroll_bar_selected")
+    private static final ScrollerSprites SCROLLER_SPRITES = ScrollerSprites.of(
+        Utils.rl("backpack/list/scroll_bar"),
+        Utils.rl("backpack/list/scroll_bar"),
+        Utils.rl("backpack/list/scroll_bar_hovered"),
+        Utils.rl("backpack/list/scroll_bar_selected")
     );
 
     private final Supplier<T> supplier;
     private final Consumer<T> updater;
     private final int itemSize;
     private final int spacing;
-    private final List<Item> items;
+    private final List<net.minecraft.world.item.Item> items;
     private String searchQuery;
     private boolean selectedOnly;
     private @Nullable ItemStack hoveredStack;
 
-    private ItemGrid(Supplier<T> supplier, Consumer<T> updater, int width, int height, int itemSize, int spacing, String lastQuery, Predicate<Item> predicate)
+    private ItemGrid(Supplier<T> supplier, Consumer<T> updater, int width, int height, int itemSize, int spacing, String lastQuery, Predicate<net.minecraft.world.item.Item> predicate)
     {
         super(width, height, 0, 0, itemSize);
         this.supplier = supplier;
@@ -63,13 +67,18 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         this.spacing = spacing;
         this.items = BuiltInRegistries.ITEM.stream().filter(predicate).collect(ImmutableList.toImmutableList());
         this.setRenderHeader(false, 0);
-        this.setListBackground(LIST_BACKGROUND_SPRITE);
-        this.setScrollBarSprites(SCROLL_BAR_SPRITES);
-        this.setContentPadding(spacing);
-        this.setItemSpacing(spacing);
-        this.setScrollBarWidth(10);
-        this.setScrollBarStyle(ScrollBarStyle.DETACHED);
-        this.setScrollBarAlwaysVisible(true);
+        this.listBackground = LIST_BACKGROUND_SPRITE;
+        this.scrollBarBackground = LIST_BACKGROUND_SPRITE;
+        this.scrollBarBorder = Border.of(1);
+        this.scrollBarPadding = Padding.of(spacing);
+        this.scrollBarSpacing = spacing;
+        this.scrollerSprites = SCROLLER_SPRITES;
+        this.listBorder = Border.of(1);
+        this.listPadding = Padding.of(spacing);
+        this.itemSpacing = spacing;
+        this.scrollerWidth = 10;
+        this.scrollBarStyle = ScrollBarStyle.DETACHED;
+        this.scrollBarAlwaysVisible = true;
         this.searchQuery = lastQuery;
         this.updateList();
     }
@@ -81,7 +90,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         this.clearEntries();
 
         // Gather the items that should be visible
-        List<Item> visibleItems = new ArrayList<>();
+        List<net.minecraft.world.item.Item> visibleItems = new ArrayList<>();
         this.items.forEach(item -> {
             if(item == Items.AIR)
                 return;
@@ -95,7 +104,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         // Sorts all items based on name
         if(!empty)
         {
-            visibleItems.sort(Comparator.<Item>comparingInt(item -> {
+            visibleItems.sort(Comparator.<net.minecraft.world.item.Item>comparingInt(item -> {
                 String name = item.getDescription().getString().toLowerCase(Locale.ROOT);
                 if(name.equals(search)) {
                     return 0;
@@ -132,14 +141,14 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
     {
         this.hoveredStack = null;
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
-        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.getX(), this.getY() + OUTLINE_SIZE, this.getWidth(), this.getHeight() - OUTLINE_SIZE * 2) && this.hoveredStack != null)
+        if(ScreenUtil.isPointInArea(mouseX, mouseY, this.getX(), this.getY() + this.listBorder.top(), this.getWidth(), this.getHeight() - this.listBorder.top() - this.listBorder.bottom()) && this.hoveredStack != null)
         {
             graphics.renderTooltip(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
         }
     }
 
     @Override
-    public void setSelected(@Nullable ItemGrid.Row row) {}
+    public void setSelected(@Nullable Item item) {}
 
     public void setSearchQuery(String searchQuery)
     {
@@ -151,7 +160,12 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         }
     }
 
-    protected static final class Row<R extends FilterableItems<R>> extends Entry<Row<R>>
+    public void setActive(Supplier<Boolean> activeSupplier)
+    {
+        this.activeSupplier = activeSupplier;
+    }
+
+    protected static final class Row<R extends FilterableItems<R>> extends Item
     {
         private final ItemGrid<R> parent;
         private final List<ItemStack> display;
@@ -159,7 +173,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         private final Consumer<R> updater;
         private int top, left;
 
-        private Row(ItemGrid<R> parent, List<Item> items, Supplier<R> augment, Consumer<R> updater)
+        private Row(ItemGrid<R> parent, List<net.minecraft.world.item.Item> items, Supplier<R> augment, Consumer<R> updater)
         {
             this.parent = parent;
             this.display = items.stream().map(ItemStack::new).collect(ImmutableList.toImmutableList());
@@ -168,11 +182,11 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float partialTicks)
+        protected void renderContent(GuiGraphics graphics, int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, boolean selected, float partialTick)
         {
             // This will change in 1.21.8
-            this.top = top;
-            this.left = left;
+            this.top = y;
+            this.left = x;
             int itemSize = this.parent.itemSize;
             int spacing = this.parent.spacing;
             int halfSpacing = spacing / 2;
@@ -254,7 +268,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
         private int itemSize = 18;
         private int spacing = 2;
         private String initialQuery = "";
-        private Predicate<Item> predicate = item -> true;
+        private Predicate<net.minecraft.world.item.Item> predicate = item -> true;
 
         private Builder(Supplier<T> supplier, Consumer<T> updater)
         {
@@ -292,7 +306,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends CustomSelectio
             return this;
         }
 
-        public Builder<T> setPredicate(Predicate<Item> predicate)
+        public Builder<T> setPredicate(Predicate<net.minecraft.world.item.Item> predicate)
         {
             this.predicate = predicate;
             return this;
