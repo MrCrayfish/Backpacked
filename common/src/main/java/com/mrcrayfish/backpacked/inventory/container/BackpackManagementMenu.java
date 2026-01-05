@@ -161,7 +161,7 @@ public class BackpackManagementMenu extends CustomContainerMenu
         @Override
         public boolean allowsUnlockToken()
         {
-            return true;
+            return Config.BACKPACK.equipable.allowUnlockingUsingUnlockToken.get();
         }
     }
 }

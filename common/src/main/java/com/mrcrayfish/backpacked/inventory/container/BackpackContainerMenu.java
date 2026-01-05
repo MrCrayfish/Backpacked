@@ -286,7 +286,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         @Override
         public boolean allowsUnlockToken()
         {
-            return true;
+            return Config.BACKPACK.inventory.slots.allowUnlockingUsingUnlockToken.get();
         }
     }
 
@@ -344,7 +344,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         @Override
         public boolean allowsUnlockToken()
         {
-            return false;
+            return Config.BACKPACK.augmentBays.allowUnlockingUsingUnlockToken.get();
         }
     }
 }

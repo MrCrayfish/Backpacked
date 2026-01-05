@@ -71,6 +71,10 @@ public class Config
                     into the world if the slot they are in is now locked. You have been warned.""")
             public final BoolProperty unlockAllEquipableSlots = BoolProperty.create(false);
 
+            @ConfigProperty(name = "allowUnlockingUsingUnlockToken", comment = """
+                    If set to true, equipable slots may be unlocked using Unlock Tokens""")
+            public final BoolProperty allowUnlockingUsingUnlockToken = BoolProperty.create(false);
+
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for equipable slots")
             public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.LINEAR, 30, 30);
         }
@@ -115,6 +119,10 @@ public class Config
                         WARNING: Reverting the option from true to false will cause items to be dropped
                         into the world if the slot they are in is now locked. You have been warned.""")
                 public final BoolProperty unlockAllSlots = BoolProperty.create(false);
+
+                @ConfigProperty(name = "allowUnlockingUsingUnlockToken", comment = """
+                    If set to true, backpack slots may be unlocked using Unlock Tokens""")
+                public final BoolProperty allowUnlockingUsingUnlockToken = BoolProperty.create(true);
 
                 @ConfigProperty(name = "unlockCost", comment = "Cost related properties for inventory slots")
                 public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.CUBIC, 1, 50);
@@ -204,6 +212,10 @@ public class Config
             @ConfigProperty(name = "unlockAllAugmentBays", comment = """
                     If set to true, all augment bays will be unlocked by default.""")
             public final BoolProperty unlockAllAugmentBays = BoolProperty.create(false);
+
+            @ConfigProperty(name = "allowUnlockingUsingUnlockToken", comment = """
+                    If set to true, augment bays may be unlocked using Unlock Tokens""")
+            public final BoolProperty allowUnlockingUsingUnlockToken = BoolProperty.create(false);
 
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for augment bays")
             public final UnlockCost unlockCost = new UnlockCost(List.of(10, 20, 30, 40), SelectionFunction.INDEX_WITH_CLAMP);
