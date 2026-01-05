@@ -187,6 +187,7 @@
     "container.backpack_shelf": "Backpack Shelf",
     "curios.identifier.backpacked": "Backpacked",
     "item.backpacked.backpack": "Backpack",
+    "item.backpacked.unlock_token": "Unlock Token",
     "itemGroup.backpacked": "Backpacked",
     "key.backpack": "Open Backpack",
     "message.backpacked.occupied_back_slot": "Back slot is occupied by another item",
