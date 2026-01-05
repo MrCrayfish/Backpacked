@@ -293,10 +293,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 if(Minecraft.getInstance().options.advancedItemTooltips)
                     lines.add(Component.literal(type.id().toString()).withStyle(ChatFormatting.DARK_GRAY));
                 return ScreenUtil.createMultilineTooltip(lines);
-            }).setTooltipOptions(
-                com.mrcrayfish.framework.api.client.screen.widget.TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT |
-                com.mrcrayfish.framework.api.client.screen.widget.TooltipOptions.REBUILD_TOOLTIP_ON_WIDGET_HOVER
-            ).build(), LayoutSettings::alignHorizontallyCenter);
+            }).setTooltipOptions(TooltipOptions.REBUILD_TOOLTIP_ON_SHIFT).build(), LayoutSettings::alignHorizontallyCenter);
         this.augmentsButtons.put(position, augmentBtn);
 
         // Adds a toggle and settings button for the augment
@@ -352,7 +349,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         FrameworkButton augmentBtn = this.augmentsButtons.get(position);
         if(augmentBtn != null)
         {
-            //augmentBtn.rebuildTooltip();
+            augmentBtn.rebuildTooltip();
         }
     }
 
