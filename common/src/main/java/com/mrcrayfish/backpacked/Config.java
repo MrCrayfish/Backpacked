@@ -206,7 +206,7 @@ public class Config
             public final BoolProperty unlockAllAugmentBays = BoolProperty.create(false);
 
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for augment bays")
-            public final UnlockCost unlockCost = new UnlockCost(List.of(10, 20, 30, 40));
+            public final UnlockCost unlockCost = new UnlockCost(List.of(10, 20, 30, 40), SelectionFunction.INDEX_WITH_CLAMP);
         }
 
         public static class UnlockCost implements CostModel
@@ -278,6 +278,41 @@ public class Config
                     and the final 10 slots costing 10.""")
             public final ListProperty<Integer> customCosts;
 
+            @ConfigProperty(name = "customCostsSelectionFunction", comment = """
+                    Determines how the cost value is selected from the customCosts list. By default, cost values
+                    are selected by linear interpolation.
+                    
+                    Possible Functions:
+                    LINEAR_INTERPOLATION - This will look at how many slots/bays are unlocked plus one and divide it by the
+                                           maximum unlockable slots/bays. For example, if 10 out of 20 slots are unlocked,
+                                           a value of 11 divided by 20 will be calculated and that will equal 0.55 or 55%.
+                                           A cost value is then picked out of the custom costs list at the index that represents
+                                           55% he way in of the list from the start. So if a list contained 20 values, it
+                                           will be picking the 11th value. If the list only contained 10 values, it will be
+                                           picking the 5th value. While this may sound confusing, it is easier to think about
+                                           this as: If you have [5, 2, 7, 4] as cost values, 5 will be the cost to unlock the
+                                           first 25%, 2 for the next 25%, 7 for the next 25%, and 4 for the final 25%.
+                    INDEX_WITH_CLAMP     - This option will exactly match the next unlock count to a value in the custom costs
+                                           list. For example, if 10 out of 20 slots are unlocked, the next unlock count will
+                                           be 11, so the 11th value in the custom costs list will be used as the cost to
+                                           unlock the next slot/bay. This option will safely handle cases where if the 11th value
+                                           doesn't exist, due the custom costs list containing less than 11 values, the last
+                                           value in the list will be selected.
+                    
+                    Examples:
+                    1. Backpack has 27 unlockable slots, and this option is set to INDEX_WITH_CLAMP. The custom costs
+                    list contains the values [5, 5, 5, 5, 5, 10]. This is interpreted as "the first 5 unlockable slots
+                    will cost 5, all the remaining will cost 10".
+                    
+                    2. Backpack has 3 unlockable augment bays, and this option is set to INDEX_WITH_CLAMP. The custom
+                    cost lists contains the values [5, 10, 15]. This is interpreted as "the first augment bay will
+                    cost 5, the second will cost 10, and the final will cost 15".
+                    
+                    3. Backpack has 20 unlockable slots, and this option is set to LINEAR_INTERPOLATION. The custom costs
+                    list contains the values [1, 100]. This is interpreted as "the first ten unlockable slots will
+                    cost 1, then the final ten will cost 100".""")
+            public final EnumProperty<SelectionFunction> customCostsSelectionFunction;
+
             public UnlockCost(InterpolateFunction defaultFunction, int defaultMinCost, int defaultMaxCost)
             {
                 this.costInterpolateFunction = EnumProperty.create(defaultFunction);
@@ -285,15 +320,17 @@ public class Config
                 this.maxCost = IntProperty.create(defaultMaxCost, 1, 100);
                 this.useCustomCosts = BoolProperty.create(false);
                 this.customCosts = ListProperty.create(ListProperty.INT);
+                this.customCostsSelectionFunction = EnumProperty.create(SelectionFunction.LINEAR_INTERPOLATION);
             }
 
-            public UnlockCost(List<Integer> customCosts)
+            public UnlockCost(List<Integer> customCosts, SelectionFunction selectionFunction)
             {
                 this.costInterpolateFunction = EnumProperty.create(InterpolateFunction.LINEAR);
                 this.minCost = IntProperty.create(10, 1, 100);
                 this.maxCost = IntProperty.create(40, 1, 100);
                 this.useCustomCosts = BoolProperty.create(true);
                 this.customCosts = ListProperty.create(ListProperty.INT, () -> customCosts);
+                this.customCostsSelectionFunction = EnumProperty.create(selectionFunction);
             }
 
             @Override
@@ -336,6 +373,12 @@ public class Config
             public List<Integer> getCustomCosts()
             {
                 return this.customCosts.get();
+            }
+
+            @Override
+            public SelectionFunction getCustomCostsSelectionFunction()
+            {
+                return this.customCostsSelectionFunction.get();
             }
         }
     }

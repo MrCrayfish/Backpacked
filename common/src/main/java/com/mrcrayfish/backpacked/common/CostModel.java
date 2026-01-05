@@ -44,4 +44,9 @@ public interface CostModel
      * @return A list of integers representing the cost
      */
     List<Integer> getCustomCosts();
+
+    /**
+     * @return A {@link SelectionFunction} defining how custom costs are selected.
+     */
+    SelectionFunction getCustomCostsSelectionFunction();
 }

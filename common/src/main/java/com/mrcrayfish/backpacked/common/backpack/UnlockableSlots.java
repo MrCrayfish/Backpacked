@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.InterpolateFunction;
+import com.mrcrayfish.backpacked.common.SelectionFunction;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -154,7 +155,7 @@ public final class UnlockableSlots
         {
             if(model.useCustomCosts())
             {
-                totalCost += this.getNextCustomCost(model.getCustomCosts(), nextOffset);
+                totalCost += this.getNextCustomCost(model.getCustomCosts(), model.getCustomCostsSelectionFunction(), nextOffset);
                 continue;
             }
             int minLevelCost = model.getMinCost();
@@ -165,14 +166,24 @@ public final class UnlockableSlots
         return totalCost;
     }
 
-    private int getNextCustomCost(List<Integer> costs, int countOffset)
+    private int getNextCustomCost(List<Integer> costs, SelectionFunction selectionFunction, int countOffset)
     {
         if(!costs.isEmpty())
         {
-            float normal = Math.clamp((this.nextCount + countOffset) / (float) Math.max(1, this.maxSlots), 0, 1);
-            int index = (int) (costs.size() * (normal - 0.001F));
-            index = Mth.clamp(index, 0, costs.size() - 1);
-            return Math.max(1, costs.get(index));
+            return switch(selectionFunction)
+            {
+                case LINEAR_INTERPOLATION ->
+                {
+                    float normal = Math.clamp((this.nextCount + countOffset) / (float) Math.max(1, this.maxSlots), 0, 1);
+                    int index = (int) (costs.size() * (normal - 0.001F));
+                    index = Mth.clamp(index, 0, costs.size() - 1);
+                    yield Math.max(1, costs.get(index));
+                }
+                case INDEX_WITH_CLAMP ->
+                {
+                    yield costs.get(Mth.clamp(this.nextCount + countOffset - 1, 0, costs.size() - 1));
+                }
+            };
         }
         return 1;
     }
