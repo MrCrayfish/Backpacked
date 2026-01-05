@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.client.gui.ItemCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
 import com.mrcrayfish.backpacked.client.gui.particle.ScreenParticles;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.CustomContainerScreen;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
@@ -26,6 +27,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
@@ -53,6 +55,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     private int heldUnlockTime;
     private int totalUnlockTime;
     protected boolean hideLockedSlots;
+    protected boolean preventNextRelease;
 
     public UnlockableContainerScreen(T menu, Inventory inventory, Component title)
     {
@@ -201,9 +204,15 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if(!this.hasPopupMenu() && button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && !this.hideLockedSlots)
+        if(!this.hasPopupMenu() && button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && !this.hideLockedSlots)
         {
-            if(this.hoveredLockedSlot.canAffordToUnlock(this.player, 1))
+            if(this.isHoldingUnlockToken())
+            {
+                Network.PLAY.sendToServer(new MessageUnlockSlot(List.of(this.hoveredLockedSlot.index)));
+                this.preventNextRelease = true;
+                return true;
+            }
+            else if(this.menu.getCarried().isEmpty() && this.hoveredLockedSlot.canAffordToUnlock(this.player, 1))
             {
                 this.addSlotToSelected(this.hoveredLockedSlot);
                 return true;
@@ -215,7 +224,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
     {
-        if(!this.hasPopupMenu() && button == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked())
+        if(!this.hasPopupMenu() && button == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked() && !this.isHoldingUnlockToken())
         {
             if(!this.selectedSlots.contains(this.hoveredLockedSlot))
             {
@@ -242,6 +251,14 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
+        if(this.preventNextRelease)
+        {
+            this.preventNextRelease = false;
+            if(this.isHoldingUnlockToken())
+            {
+                return true;
+            }
+        }
         if(button == 0 && !this.selectedSlots.isEmpty())
         {
             this.selectedSlots.clear();
@@ -330,5 +347,10 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 this.screenParticles.addParticle(expOrbParticle);
             }
         }
+    }
+
+    protected boolean isHoldingUnlockToken()
+    {
+        return this.menu.getCarried().is(ModItems.UNLOCK_TOKEN.get());
     }
 }

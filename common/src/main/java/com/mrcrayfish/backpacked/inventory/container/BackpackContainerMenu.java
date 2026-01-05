@@ -282,6 +282,12 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         {
             return this.paymentContainers;
         }
+
+        @Override
+        public boolean allowsUnlockToken()
+        {
+            return true;
+        }
     }
 
     private static class AugmentUnlockableController extends UnlockableController
@@ -333,6 +339,12 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         public List<Container> getPaymentContainers()
         {
             return this.paymentContainers;
+        }
+
+        @Override
+        public boolean allowsUnlockToken()
+        {
+            return false;
         }
     }
 }

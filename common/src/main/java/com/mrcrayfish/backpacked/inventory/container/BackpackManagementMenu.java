@@ -157,5 +157,11 @@ public class BackpackManagementMenu extends CustomContainerMenu
         {
             return this.paymentContainers;
         }
+
+        @Override
+        public boolean allowsUnlockToken()
+        {
+            return true;
+        }
     }
 }

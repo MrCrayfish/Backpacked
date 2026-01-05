@@ -1,13 +1,17 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.PaymentItem;
 import com.mrcrayfish.backpacked.common.PaymentType;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +35,8 @@ public abstract class UnlockableController
     public abstract PaymentItem getPaymentItem();
 
     public abstract List<Container> getPaymentContainers();
+
+    public abstract boolean allowsUnlockToken();
 
     public int getMaxSlots()
     {
@@ -59,6 +65,15 @@ public abstract class UnlockableController
         if(player.isCreative())
             return true;
 
+        if(this.allowsUnlockToken() && player.hasContainerOpen())
+        {
+            ItemStack carried = player.containerMenu.getCarried();
+            if(carried.is(ModItems.UNLOCK_TOKEN.get()))
+            {
+                return carried.getCount() >= numberOfSlots;
+            }
+        }
+
         CostModel model = this.getCostModel();
         if(model.getPaymentType() == PaymentType.EXPERIENCE)
         {
@@ -74,10 +89,25 @@ public abstract class UnlockableController
         return false;
     }
 
-    private Optional<Runnable> getPaymentJob(Player player, int numberOfSlots)
+    private Optional<Runnable> getPaymentJob(ServerPlayer player, int numberOfSlots)
     {
         if(player.isCreative())
             return Optional.of(() -> {}); // Simply do nothing
+
+        if(this.allowsUnlockToken() && player.hasContainerOpen())
+        {
+            ItemStack carried = player.containerMenu.getCarried();
+            if(carried.is(ModItems.UNLOCK_TOKEN.get()))
+            {
+                if(carried.getCount() >= numberOfSlots)
+                {
+                    return Optional.of(() -> {
+                        carried.shrink(numberOfSlots);
+                        player.containerMenu.setCarried(carried);
+                    });
+                }
+            }
+        }
 
         CostModel model = this.getCostModel();
         if(model.getPaymentType() == PaymentType.EXPERIENCE)
