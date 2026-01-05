@@ -263,54 +263,60 @@ public class Config
             public final BoolProperty useCustomCosts;
 
             @ConfigProperty(name = "customCosts", comment = """
-                    A list of values that represent the cost to unlock each slot. For example,
-                    if the backpack has 27 inventory slots in total, this list can hold 27 values to
-                    specify the cost. Unlocking the first slot, the cost will be the first value
-                    in the list. Unlocking the next slot, the cost will be the next value in the
-                    list, and so on. This gives full control over the cost to unlock each slot.
-                    
-                    If the list does not contain enough values to cover every slot, a value is instead
-                    selected from first to last value based on how many slots are unlocked. For example,
-                    if the list only contains the values [1, 5] but there are 30 inventory slots in the
-                    backpack, then this will be interpreted as the first 15 slots costing 1, and the last
-                    15 slots costing 5. If the values were [1, 3, 10] and again there are 30 inventory slots,
-                    then this will be interpreted as the first 10 slots costing 1, the next 10 slots costing 3,
-                    and the final 10 slots costing 10.""")
+                    A list of numbers that represent the cost values, must be whole and positive
+                    numbers only. See customCostsSelectionFunction property to set the behaviour of
+                    how values are selected from the custom costs list.
+                    """)
             public final ListProperty<Integer> customCosts;
 
             @ConfigProperty(name = "customCostsSelectionFunction", comment = """
-                    Determines how the cost value is selected from the customCosts list. By default, cost values
-                    are selected by linear interpolation.
+                    Determines how the cost value is selected from the customCosts list.
                     
                     Possible Functions:
-                    LINEAR_INTERPOLATION - This will look at how many slots/bays are unlocked plus one and divide it by the
+                    LINEAR_INTERPOLATION - This will count how many slots/bays are unlocked plus one and divide it by the
                                            maximum unlockable slots/bays. For example, if 10 out of 20 slots are unlocked,
-                                           a value of 11 divided by 20 will be calculated and that will equal 0.55 or 55%.
-                                           A cost value is then picked out of the custom costs list at the index that represents
-                                           55% he way in of the list from the start. So if a list contained 20 values, it
-                                           will be picking the 11th value. If the list only contained 10 values, it will be
-                                           picking the 5th value. While this may sound confusing, it is easier to think about
-                                           this as: If you have [5, 2, 7, 4] as cost values, 5 will be the cost to unlock the
-                                           first 25%, 2 for the next 25%, 7 for the next 25%, and 4 for the final 25%.
-                    INDEX_WITH_CLAMP     - This option will exactly match the next unlock count to a value in the custom costs
+                                           a value of 11 divided by 20 will be evaluated and that will equal 0.55 or 55%.
+                                           A cost value is then picked out of the customCosts list at the position that
+                                           represents 55% percent of the lists length. So if customCosts contained 20 values, it
+                                           will be picking the 11th value. The formula is custom_costs_length * ((unlocked_count + 1) / total_unlockable).
+                                           (See below for real examples)
+                    INDEX_WITH_CLAMP     - This option will exactly match the next unlock count to an index in the customCosts
                                            list. For example, if 10 out of 20 slots are unlocked, the next unlock count will
                                            be 11, so the 11th value in the custom costs list will be used as the cost to
                                            unlock the next slot/bay. This option will safely handle cases where if the 11th value
                                            doesn't exist, due the custom costs list containing less than 11 values, the last
-                                           value in the list will be selected.
+                                           value in the list will be selected. (See below for real examples)
                     
                     Examples:
                     1. Backpack has 27 unlockable slots, and this option is set to INDEX_WITH_CLAMP. The custom costs
-                    list contains the values [5, 5, 5, 5, 5, 10]. This is interpreted as "the first 5 unlockable slots
-                    will cost 5, all the remaining will cost 10".
+                    list contains the values [5, 5, 5, 5, 5, 10]. This is interpreted as "the first five unlock costs
+                    will be 5, all the remaining will cost 10".
                     
                     2. Backpack has 3 unlockable augment bays, and this option is set to INDEX_WITH_CLAMP. The custom
                     cost lists contains the values [5, 10, 15]. This is interpreted as "the first augment bay will
                     cost 5, the second will cost 10, and the final will cost 15".
                     
-                    3. Backpack has 20 unlockable slots, and this option is set to LINEAR_INTERPOLATION. The custom costs
-                    list contains the values [1, 100]. This is interpreted as "the first ten unlockable slots will
-                    cost 1, then the final ten will cost 100".""")
+                    3. Backpack has 18 unlockable slots, and this option is set to LINEAR_INTERPOLATION. The custom costs
+                    list contains the values [1, 100]. This is interpreted as "the first nine unlock costs will
+                    cost 1, then the final nine will cost 100".
+                    
+                    4. Backpack has 9 unlockable slots, and this option is set to LINEAR_INTERPOLATION, and the custom costs
+                    list contains the values [1, 2, 3, 4, 5, 6, 7, 8, 9]. Since the count of the unlockable slots (9) and the
+                    length of the customCosts list (9) are the exact same, the first unlock cost will be 1, the
+                    second 2, the third 3, and so on until 9. However, if you bumped the backpack to 18 unlockable slots,
+                    this would then change to, the first two unlock costs will be 1, the next two unlock costs will be 2, the
+                    following two unlock costs will be 3.
+                    
+                    Note from MrCrayfish:
+                    This may seem confusing (and it is), but just play around with this config property. Always start with a
+                    fresh backpack everytime you change this property, or you may not see how the property affects the selection
+                    process. I suggest starting with LINEAR_INTERPOLATION and then adding enough values to the customCosts list
+                    so it matches the number of slots in the backpack (so if the backpack has 54 slots, put 54 values into customCosts).
+                    Once you've tried that, half the number of values in customCosts (so if 54 slots, put 27 values into customCosts)
+                    and this will give you an understanding of how the function works. Then afterwards, try INDEX_WITH_CLAMP but set
+                    the values [1, 2, 3] as the customCosts. You will see the first unlock cost 1, the second cost 2, and every other
+                    unlock will cost 3.
+                    """)
             public final EnumProperty<SelectionFunction> customCostsSelectionFunction;
 
             public UnlockCost(InterpolateFunction defaultFunction, int defaultMinCost, int defaultMaxCost)
