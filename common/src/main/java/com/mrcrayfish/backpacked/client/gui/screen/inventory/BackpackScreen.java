@@ -630,6 +630,36 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
     }
 
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top, int button)
+    {
+        for(Layout layout : this.layouts)
+        {
+            if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, layout.getX() - LABEL_PADDING, layout.getY() - LABEL_PADDING, LABEL_PADDING + layout.getWidth() + LABEL_PADDING, LABEL_PADDING + layout.getHeight() + LABEL_PADDING))
+            {
+                return false;
+            }
+        }
+
+        int backpackX = this.leftPos;
+        int backpackY = this.topPos + BACKPACK_TOP;
+        int backpackWidth = this.imageWidth;
+        int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
+        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, backpackX, backpackY, backpackWidth, backpackHeight))
+        {
+            return false;
+        }
+
+        int inventoryX = this.leftPos + (this.imageWidth - INVENTORY_WIDTH) / 2;
+        int inventoryY = this.topPos + BACKPACK_TOP + backpackHeight + GAP;
+        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, inventoryX, inventoryY, INVENTORY_WIDTH, INVENTORY_HEIGHT))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private static class AugmentIcon extends Icon
     {
         private final FrameworkButton button;
