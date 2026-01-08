@@ -2,10 +2,10 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
+import net.minecraft.util.TriState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 
 @EventBusSubscriber(modid = Constants.MOD_ID)

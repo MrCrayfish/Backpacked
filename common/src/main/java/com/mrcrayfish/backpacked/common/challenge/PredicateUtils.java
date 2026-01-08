@@ -2,9 +2,9 @@ package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mrcrayfish.backpacked.common.BlockSnapshot;
 import com.mrcrayfish.backpacked.common.predicates.BlockSnapshotPredicate;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -54,7 +54,7 @@ public final class PredicateUtils
         if(optional.isEmpty())
             return true;
         EntityPredicate predicate = optional.get();
-        return predicate.matches(player.serverLevel(), null, player);
+        return predicate.matches(player.level(), null, player);
     }
 
     public static boolean match(Optional<BlockSnapshotPredicate> optional, BlockSnapshot snapshot)

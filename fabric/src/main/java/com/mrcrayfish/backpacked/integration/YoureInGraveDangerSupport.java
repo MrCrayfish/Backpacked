@@ -1,40 +1,15 @@
 package com.mrcrayfish.backpacked.integration;
 
-import com.b1n_ry.yigd.compat.CompatComponent;
-import com.b1n_ry.yigd.compat.InvModCompat;
-import com.b1n_ry.yigd.data.DeathContext;
-import com.b1n_ry.yigd.data.GraveItem;
-import com.b1n_ry.yigd.events.LoadModCompatEvent;
-import com.b1n_ry.yigd.util.DropRule;
-import com.mojang.datafixers.util.Pair;
-import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
-import com.mrcrayfish.backpacked.common.augment.Augments;
-import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
-import com.mrcrayfish.backpacked.core.ModAugmentTypes;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
 public class YoureInGraveDangerSupport
 {
     public static void init()
     {
-        LoadModCompatEvent.EVENT.register(list -> {
+        /*LoadModCompatEvent.EVENT.register(list -> {
             list.add(new BackpackedCompat());
-        });
+        });*/
     }
 
-   private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, GraveItem>>>
+    /*private static class BackpackedCompat implements InvModCompat<List<Pair<Integer, GraveItem>>>
     {
         @Override
         public String getModName()
@@ -211,5 +186,5 @@ public class YoureInGraveDangerSupport
             RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
             return augment != null && augment.shelfKey().isPresent();
         }
-    }
+    }*/
 }

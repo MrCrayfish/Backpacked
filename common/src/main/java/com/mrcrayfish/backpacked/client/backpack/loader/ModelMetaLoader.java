@@ -9,8 +9,9 @@ import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -24,17 +25,18 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public class ModelMetaLoader extends SimplePreparableReloadListener<Map<ResourceLocation, ModelMeta>>
+public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Identifier, ModelMeta>>
 {
+    public static final Identifier ID = Utils.id("model_meta_loader");
     private static final String DIRECTORY = "backpacked";
     private static final String EXTENSION = ".json";
     private static final FileToIdConverter CONVERTER = new FileToIdConverter(DIRECTORY, EXTENSION);
     private static final Gson GSON = new GsonBuilder().create();
 
     @Override
-    protected Map<ResourceLocation, ModelMeta> prepare(ResourceManager manager, ProfilerFiller filler)
+    protected Map<Identifier, ModelMeta> prepare(ResourceManager manager, ProfilerFiller filler)
     {
-        Map<ResourceLocation, ModelMeta> map = new HashMap<>();
+        Map<Identifier, ModelMeta> map = new HashMap<>();
         CONVERTER.listMatchingResources(manager).forEach((location, resource) -> {
             try(Reader reader = resource.openAsReader()) {
                 JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
@@ -45,7 +47,7 @@ public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Resource
                 } else {
                     String raw = location.getPath();
                     String path = location.getPath().substring((DIRECTORY + "/").length(), raw.length() - EXTENSION.length());
-                    ResourceLocation key = ResourceLocation.fromNamespaceAndPath(location.getNamespace(), path);
+                    Identifier key = Identifier.fromNamespaceAndPath(location.getNamespace(), path);
                     map.put(key, result.getOrThrow(JsonParseException::new));
                 }
             } catch(IOException e) {
@@ -56,7 +58,7 @@ public class ModelMetaLoader extends SimplePreparableReloadListener<Map<Resource
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, ModelMeta> map, ResourceManager manager, ProfilerFiller filler)
+    protected void apply(Map<Identifier, ModelMeta> map, ResourceManager manager, ProfilerFiller filler)
     {
         ClientRegistry.instance().updateModelMeta(map);
     }

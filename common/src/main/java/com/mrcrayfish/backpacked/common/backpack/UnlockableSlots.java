@@ -34,14 +34,7 @@ public final class UnlockableSlots
         UnlockableSlots::new
     );
 
-    public static final DataSerializer<UnlockableSlots> SERIALIZER = new DataSerializer<>(STREAM_CODEC, (obj, provider) -> {
-        return CODEC.encodeStart(NbtOps.INSTANCE, obj).result().orElse(new CompoundTag());
-    }, (tag, provider) -> {
-        if(tag instanceof CompoundTag) {
-            return CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(null);
-        }
-        return null;
-    });
+    public static final DataSerializer<UnlockableSlots> SERIALIZER = new DataSerializer<>(STREAM_CODEC, CODEC);
 
     private final Set<Integer> slots;
     private final int maxSlots;

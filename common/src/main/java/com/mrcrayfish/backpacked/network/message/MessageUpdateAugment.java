@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import com.mrcrayfish.framework.api.network.PlayMessageContext;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -15,7 +16,7 @@ public record MessageUpdateAugment(Augments.Position position, Augment<?> augmen
         MessageUpdateAugment::new
     );
 
-    public static void handle(MessageUpdateAugment message, MessageContext context)
+    public static void handle(MessageUpdateAugment message, PlayMessageContext context)
     {
         context.execute(() -> ServerPlayHandler.handleUpdateAugment(message, context));
         context.setHandled(true);

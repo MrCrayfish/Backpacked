@@ -15,7 +15,7 @@ public record BlockSnapshot(ServerLevel level, BlockState state, BlockPos pos, @
     {
         BlockState state = level.getBlockState(pos);
         Holder<Biome> biome = level.getBiome(pos);
-        int timeOfDay = (int) level.getTimeOfDay(0);
+        int timeOfDay = (int) level.getDayTime();
         return new BlockSnapshot(level, state, pos, null, biome, timeOfDay);
     }
 
@@ -24,7 +24,7 @@ public record BlockSnapshot(ServerLevel level, BlockState state, BlockPos pos, @
         BlockState state = level.getBlockState(pos);
         Holder<Biome> biome = level.getBiome(pos);
         CompoundTag tag = captureBlockEntityTag(level, pos);
-        int timeOfDay = (int) level.getTimeOfDay(0);
+        int timeOfDay = (int) level.getDayTime();
         return new BlockSnapshot(level, state, pos, tag, biome, timeOfDay);
     }
 

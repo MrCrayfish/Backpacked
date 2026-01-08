@@ -3,10 +3,12 @@ package com.mrcrayfish.backpacked.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.entity.LootCapture;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,8 +42,8 @@ public class EntityMixin implements LootCapture
         this.backpacked$killedByPlayer = null;
     }
 
-    @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;setDefaultPickUpDelay()V"), cancellable = true)
-    private void backpacked$SpawnItem(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, @Local(ordinal = 0) ItemEntity itemEntity)
+    @Inject(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;setDefaultPickUpDelay()V"), cancellable = true)
+    private void backpacked$SpawnItem(ServerLevel serverLevel, ItemStack itemStack, Vec3 vec3, CallbackInfoReturnable<ItemEntity> cir, @Local(ordinal = 0) ItemEntity itemEntity)
     {
         if(this.backpacked$killedByPlayer != null)
         {

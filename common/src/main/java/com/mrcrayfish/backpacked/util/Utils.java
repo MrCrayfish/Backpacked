@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.util;
 
 import com.mrcrayfish.backpacked.Constants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 
 public class Utils
@@ -9,13 +9,13 @@ public class Utils
     public static final RandomSource RANDOM = RandomSource.create();
 
     /**
-     * Shortcut method to create a ResourceLocation using "backpacked" as the namespace
+     * Shortcut method to create a Identifier using "backpacked" as the namespace
      *
-     * @param path the path for the ResourceLocation
-     * @return a new ResourceLocation instance
+     * @param path the path for the Identifier
+     * @return a new Identifier instance
      */
-    public static ResourceLocation rl(String path)
+    public static Identifier id(String path)
     {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, path);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, path);
     }
 }

@@ -12,7 +12,6 @@ import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageCheckShelfKey;
 import com.mrcrayfish.backpacked.util.Utils;
-import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -20,10 +19,11 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Objects;
@@ -94,9 +94,9 @@ public class RecallMenu extends AugmentSettingsMenu
     {
         private static final WeakHashMap<Key, Consumer<Boolean>> PENDING = new WeakHashMap<>();
 
-        private static final ResourceLocation SHELF_STATUS_DEFAULT_SPRITE = Utils.rl("backpack/shelf_status_default");
-        private static final ResourceLocation SHELF_STATUS_INVALID_SPRITE = Utils.rl("backpack/shelf_status_invalid");
-        private static final ResourceLocation SHELF_STATUS_VALID_SPRITE = Utils.rl("backpack/shelf_status_valid");
+        private static final Identifier SHELF_STATUS_DEFAULT_SPRITE = Utils.id("backpack/shelf_status_default");
+        private static final Identifier SHELF_STATUS_INVALID_SPRITE = Utils.id("backpack/shelf_status_invalid");
+        private static final Identifier SHELF_STATUS_VALID_SPRITE = Utils.id("backpack/shelf_status_valid");
 
         private final Key key;
         private final AugmentHolder<RecallAugment> holder;
@@ -125,13 +125,13 @@ public class RecallMenu extends AugmentSettingsMenu
         @Override
         protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
         {
-            graphics.blitSprite(this.getStatusSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getStatusSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
             int textX = this.getX() + this.getWidth() / 2;
             int textY = this.getY() + (int) Math.ceil((this.getHeight() - 9) / 2.0);
             graphics.drawCenteredString(Minecraft.getInstance().font, this.getLabel(), textX, textY, 0xFFFFFFFF);
         }
 
-        private ResourceLocation getStatusSprite()
+        private Identifier getStatusSprite()
         {
             return switch(this.status) {
                 case NOT_SET -> SHELF_STATUS_DEFAULT_SPRITE;

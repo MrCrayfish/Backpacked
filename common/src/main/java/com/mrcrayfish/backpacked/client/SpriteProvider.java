@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.client;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface SpriteProvider
 {
-    ResourceLocation getSprite(boolean active, boolean hovered);
+    Identifier getSprite(boolean active, boolean hovered);
 }

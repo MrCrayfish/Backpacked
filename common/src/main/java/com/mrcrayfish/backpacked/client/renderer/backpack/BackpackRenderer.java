@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.renderer.backpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface BackpackRenderer
 {
@@ -13,9 +13,9 @@ public interface BackpackRenderer
 
     Type type();
 
-    record Type(ResourceLocation id, MapCodec<? extends BackpackRenderer> codec)
+    record Type(Identifier id, MapCodec<? extends BackpackRenderer> codec)
     {
-        private static final Codec<BackpackRenderer.Type> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+        private static final Codec<BackpackRenderer.Type> CODEC = Identifier.CODEC.flatXmap(id -> {
             BackpackRenderer.Type codec = RendererTypes.getAll().get(id);
             if(codec != null) {
                 return DataResult.success(codec);
@@ -30,7 +30,7 @@ public interface BackpackRenderer
 
         private static BackpackRenderer.Type get(BackpackRenderer renderer)
         {
-            ResourceLocation id = renderer.type().id();
+            Identifier id = renderer.type().id();
             if(!RendererTypes.getAll().containsKey(id))
                 throw new IllegalArgumentException("Unregistered backpack renderer: " + id);
             return RendererTypes.getAll().get(id);

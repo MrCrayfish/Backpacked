@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -9,14 +8,15 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public abstract class MenuItem extends AbstractWidget
 {
     protected static final WidgetSprites SPRITES = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item"),
-            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item_hovered")
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item_hovered")
     );
 
     DropdownMenu owner;
@@ -39,9 +39,8 @@ public abstract class MenuItem extends AbstractWidget
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
-        RenderSystem.enableBlend();
-        graphics.blitSprite(SPRITES.get(this.active, this.isHovered() || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-        RenderSystem.disableBlend();
+        // TODO 1.21.11 test
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITES.get(this.active, this.isHovered() || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
 
         Font font = Minecraft.getInstance().font;
         int offset = (this.getHeight() - font.lineHeight) / 2 + 1;

@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface BaseCondition
 {
@@ -14,9 +14,9 @@ public interface BaseCondition
 
     boolean test(BackpackRenderContext context);
 
-    record Type(ResourceLocation id, MapCodec<? extends BaseCondition> codec)
+    record Type(Identifier id, MapCodec<? extends BaseCondition> codec)
     {
-        public static final Codec<BaseCondition.Type> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+        public static final Codec<BaseCondition.Type> CODEC = Identifier.CODEC.flatXmap(id -> {
             BaseCondition.Type serializer = ConditionTypes.getAll().get(id);
             if(serializer != null) {
                 return DataResult.success(serializer);

@@ -12,7 +12,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 public record TranslateMatrixFunction(Value x, Value y, Value z) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        Utils.rl("translate_matrix"),
+        Utils.id("translate_matrix"),
         RecordCodecBuilder.<TranslateMatrixFunction>mapCodec(builder -> builder.group(
             Value.EITHER_CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
             Value.EITHER_CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),

@@ -19,7 +19,6 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class AugmentPopupMenu extends PopupMenu
     {
         super(handler);
         this.setAlignment(Alignment.END_TOP);
-        this.setBackground(Utils.rl("augment/menu_background"));
+        this.setBackground(Utils.id("augment/menu_background"));
         GridLayout grid = new GridLayout().rowSpacing(2).columnSpacing(2);
         AtomicInteger count = new AtomicInteger();
         AugmentType.stream().sorted().forEach(type -> {
@@ -63,13 +62,13 @@ public class AugmentPopupMenu extends PopupMenu
                     if(!type.isEmpty()) {
                         String rawDescription = type.description().getString();
                         int firstBreak = rawDescription.indexOf("\n");
-                        if(!Screen.hasShiftDown() && firstBreak != -1) {
+                        if(!Minecraft.getInstance().hasShiftDown() && firstBreak != -1) {
                             rawDescription = "• " + rawDescription.substring(0, firstBreak);
                         } else {
                             rawDescription = "• " + rawDescription.replace("\n", "\n• ");
                         }
                         lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
-                        if(!Screen.hasShiftDown() && firstBreak != -1) {
+                        if(!Minecraft.getInstance().hasShiftDown() && firstBreak != -1) {
                             lines.add(BackpackScreen.HOLD_TO_EXPAND.apply(ScreenUtil.getShiftIcon()).withStyle(ChatFormatting.DARK_GRAY));
                         }
                     }

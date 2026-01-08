@@ -15,7 +15,8 @@
         "ServerPacksSourceMixin"
     ],
     "client": [
-        "client.CreateWorldScreenMixin"
+        "client.CreateWorldScreenMixin",
+        "client.WanderingTraderRendererMixin"
     ],
     "injectors": {
         "defaultRequire": 1,

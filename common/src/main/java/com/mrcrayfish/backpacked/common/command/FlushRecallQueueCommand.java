@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.permissions.Permissions;
 
 /**
  * Author: MrCrayfish
@@ -15,7 +16,7 @@ public class FlushRecallQueueCommand
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(Commands.literal("backpacked:flush_recall_queue").requires(source -> {
-            return source.hasPermission(2);
+            return source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
         }).executes(context -> {
             MinecraftServer server = context.getSource().getServer();
             int[] count = {0};

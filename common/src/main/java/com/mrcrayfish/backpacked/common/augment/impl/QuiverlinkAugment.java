@@ -16,7 +16,7 @@ import java.util.Locale;
 public record QuiverlinkAugment(Priority priority) implements Augment<QuiverlinkAugment>
 {
     public static final AugmentType<QuiverlinkAugment> TYPE = new AugmentType<>(
-        Utils.rl("quiverlink"),
+        Utils.id("quiverlink"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Priority.CODEC.fieldOf("priority").orElse(Priority.BACKPACK).forGetter(QuiverlinkAugment::priority)
         ).apply(instance, QuiverlinkAugment::new)),

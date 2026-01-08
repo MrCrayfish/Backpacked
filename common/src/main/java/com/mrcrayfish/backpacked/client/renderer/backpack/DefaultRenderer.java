@@ -2,21 +2,26 @@ package com.mrcrayfish.backpacked.client.renderer.backpack;
 
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.Constants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.backpacked.client.StandaloneModels;
+import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
+import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
+import net.minecraft.resources.Identifier;
 
 public class DefaultRenderer implements BackpackRenderer
 {
-    public static final Type TYPE = new Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "default"), MapCodec.unit(new DefaultRenderer()));
+    public static final Type TYPE = new Type(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "default"), MapCodec.unit(new DefaultRenderer()));
 
     @Override
     public void render(BackpackRenderContext context)
     {
         if(context.renderMode().canDrawModels())
         {
-            BakedModel model = Minecraft.getInstance().getModelManager().getModel(context.backpack().getBaseModel());
-            context.bakedModelRenderer().accept(model);
+            FrameworkModelResource<FrameworkBakedModel> model = StandaloneModels.getResource(context.backpack().getBaseModel());
+            if(model != null)
+            {
+                // TODO 1.21.11 test
+                context.bakedModelRenderer().accept(model.getModel());
+            }
         }
     }
 

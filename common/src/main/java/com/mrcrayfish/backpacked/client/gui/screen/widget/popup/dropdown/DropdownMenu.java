@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.layouts.Layout;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class DropdownMenu extends PopupMenu
         private int minItemWidth = 0;
         private int minItemHeight = 20;
         private @Nullable Alignment alignment;
-        private @Nullable ResourceLocation background = Utils.rl("backpack/dropdown/background");
+        private @Nullable Identifier background = Utils.id("backpack/dropdown/background");
         private @Nullable Integer border;
         private @Nullable Integer spacing;
 
@@ -74,7 +74,7 @@ public class DropdownMenu extends PopupMenu
             return this;
         }
 
-        public Builder setBackground(@Nullable ResourceLocation background)
+        public Builder setBackground(@Nullable Identifier background)
         {
             this.background = background;
             return this;

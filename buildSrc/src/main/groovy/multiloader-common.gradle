@@ -50,11 +50,6 @@ repositories {
             }
         }
     }
-    if (!System.getenv("CI") && System.getenv("LOCAL_MAVEN")) {
-        maven {
-            url "file://" + System.getenv("LOCAL_MAVEN")
-        }
-    }
     maven {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
@@ -178,10 +173,6 @@ publishing {
                         password = getGprKey()
                     }
                 }
-            }
-        } else if (System.getenv("LOCAL_MAVEN")) {
-            maven {
-                url "file://" + System.getenv("LOCAL_MAVEN")
             }
         }
     }

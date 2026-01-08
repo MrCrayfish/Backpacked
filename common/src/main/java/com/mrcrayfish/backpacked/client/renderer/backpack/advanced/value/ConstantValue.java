@@ -11,7 +11,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 public record ConstantValue(double value) implements Value
 {
     public static final Type TYPE = new Type(
-        Utils.rl("constant"),
+        Utils.id("constant"),
         RecordCodecBuilder.<ConstantValue>mapCodec(builder -> builder.group(
             Codec.DOUBLE.fieldOf("value").forGetter(o -> o.value)
         ).apply(builder, ConstantValue::new))

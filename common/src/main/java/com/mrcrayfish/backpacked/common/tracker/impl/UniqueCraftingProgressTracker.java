@@ -1,16 +1,19 @@
 package com.mrcrayfish.backpacked.common.tracker.impl;
 
+import com.mojang.serialization.Codec;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.framework.api.event.PlayerEvents;
+import com.mrcrayfish.framework.api.event.FrameworkPlayerEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +24,7 @@ import java.util.function.Predicate;
  */
 public class UniqueCraftingProgressTracker extends CraftingProgressTracker
 {
-    protected Set<ResourceLocation> craftedItems = new HashSet<>();
+    protected Set<Identifier> craftedItems = new HashSet<>();
 
     public UniqueCraftingProgressTracker(int totalCount, ProgressFormatter formatter, Predicate<ItemStack> predicate)
     {
@@ -31,7 +34,7 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
     @Override
     protected void processCrafted(ItemStack stack, ServerPlayer player)
     {
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        Identifier id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if(!this.craftedItems.contains(id) && this.predicate.test(stack))
         {
             this.count++;
@@ -41,31 +44,29 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
     }
 
     @Override
-    public void read(CompoundTag tag)
+    public void read(ValueInput input)
     {
-        super.read(tag);
+        super.read(input);
         this.craftedItems.clear();
-        ListTag list = tag.getList("CraftedItems", Tag.TAG_STRING);
-        list.forEach(nbt -> {
-            ResourceLocation id = ResourceLocation.tryParse(nbt.getAsString());
-            if(id != null) this.craftedItems.add(id);
+        input.list("CraftedItems", Codec.STRING).ifPresent(list -> {
+            list.forEach(string -> {
+                Identifier id = Identifier.tryParse(string);
+                if(id != null) this.craftedItems.add(id);
+            });
         });
     }
 
     @Override
-    public void write(CompoundTag tag)
+    public void write(ValueOutput output)
     {
-        super.write(tag);
-        ListTag list = new ListTag();
-        this.craftedItems.forEach(location -> {
-            list.add(StringTag.valueOf(location.toString()));
-        });
-        tag.put("CraftedItems", list);
+        super.write(output);
+        ValueOutput.TypedOutputList<String> list = output.list("CraftedItems", Codec.STRING);
+        this.craftedItems.forEach(location -> list.add(location.toString()));
     }
 
     public static void registerEvent()
     {
-        PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
+        FrameworkPlayerEvents.CRAFTED_ITEM.register((player, stack, inventory) -> {
             if(player.level().isClientSide())
                 return;
             UnlockManager.getTrackers(player, UniqueCraftingProgressTracker.class).forEach(tracker -> {

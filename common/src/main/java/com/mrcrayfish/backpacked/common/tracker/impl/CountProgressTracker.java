@@ -1,11 +1,15 @@
 package com.mrcrayfish.backpacked.common.tracker.impl;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Author: MrCrayfish
@@ -41,15 +45,15 @@ public class CountProgressTracker implements IProgressTracker
     }
 
     @Override
-    public void read(CompoundTag tag)
+    public void read(ValueInput input)
     {
-        this.count = tag.getInt("Count");
+        this.count = input.getIntOr("Count", 0);
     }
 
     @Override
-    public void write(CompoundTag tag)
+    public void write(ValueOutput output)
     {
-        tag.putInt("Count", this.count);
+        output.putInt("Count", this.count);
     }
 
     @Override

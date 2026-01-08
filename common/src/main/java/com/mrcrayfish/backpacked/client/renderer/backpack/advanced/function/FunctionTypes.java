@@ -2,14 +2,14 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
  */
 public class FunctionTypes
 {
-    private static final BiMap<ResourceLocation, BaseFunction.Type> FUNCTIONS = HashBiMap.create();
+    private static final BiMap<Identifier, BaseFunction.Type> FUNCTIONS = HashBiMap.create();
 
     public static void register(BaseFunction.Type type)
     {
@@ -18,7 +18,7 @@ public class FunctionTypes
             throw new IllegalStateException("Function already registered: " + type.id());
     }
 
-    public static BiMap<ResourceLocation, BaseFunction.Type> getAll()
+    public static BiMap<Identifier, BaseFunction.Type> getAll()
     {
         return FUNCTIONS;
     }

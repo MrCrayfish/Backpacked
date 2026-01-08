@@ -4,15 +4,15 @@ import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
  */
-public record MessageUnlockBackpack(ResourceLocation cosmeticId)
+public record MessageUnlockBackpack(Identifier cosmeticId)
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageUnlockBackpack> STREAM_CODEC = StreamCodec.composite(
-        ResourceLocation.STREAM_CODEC, MessageUnlockBackpack::cosmeticId,
+        Identifier.STREAM_CODEC, MessageUnlockBackpack::cosmeticId,
         MessageUnlockBackpack::new
     );
 

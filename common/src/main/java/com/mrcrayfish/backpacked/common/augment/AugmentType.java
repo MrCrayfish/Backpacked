@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.core.ModRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -16,10 +16,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, ResourceLocation sprite, Component name, Component description, Supplier<AugmentType<?>> requires) implements Comparable<AugmentType<?>>
+public record AugmentType<T extends Augment<T>>(Identifier id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, Identifier sprite, Component name, Component description, Supplier<AugmentType<?>> requires) implements Comparable<AugmentType<?>>
 {
     public static final Comparator<AugmentType<?>> BY_NAME = Comparator.comparing(type -> type.name().getString());
-    static final Codec<AugmentType<?>> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+    static final Codec<AugmentType<?>> CODEC = Identifier.CODEC.flatXmap(id -> {
         AugmentType<?> type = ModRegistries.AUGMENT_TYPES.getValue(id);
         if(type != null)
             return DataResult.success(type);
@@ -39,7 +39,7 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
      * @param streamCodec a stream codec for synchronization to clients
      * @param defaultSupplier a default supplier for the augment value
      */
-    public AugmentType(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier)
+    public AugmentType(Identifier id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier)
     {
         this(id, codec, streamCodec, defaultSupplier, () -> null);
     }
@@ -56,10 +56,10 @@ public record AugmentType<T extends Augment<T>>(ResourceLocation id, MapCodec<T>
      * @param defaultSupplier a default supplier for the augment value
      * @param requires an augment type this type depends
      */
-    public AugmentType(ResourceLocation id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, Supplier<AugmentType<?>> requires)
+    public AugmentType(Identifier id, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultSupplier, Supplier<AugmentType<?>> requires)
     {
         this(id, codec, streamCodec, defaultSupplier,
-            ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "augment/%s".formatted(id.getPath())),
+            Identifier.fromNamespaceAndPath(id.getNamespace(), "augment/%s".formatted(id.getPath())),
             Component.translatable("augment.%s.%s".formatted(id.getNamespace(), id.getPath().replace("/", "."))),
             Component.translatable("augment.%s.%s.desc".formatted(id.getNamespace(), id.getPath().replace("/", "."))),
             requires

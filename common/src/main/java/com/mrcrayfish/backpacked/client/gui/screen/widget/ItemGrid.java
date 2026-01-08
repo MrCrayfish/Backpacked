@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.StateSprites;
 import com.mrcrayfish.backpacked.common.FilterableItems;
@@ -12,14 +11,16 @@ import com.mrcrayfish.framework.api.client.screen.widget.layout.Border;
 import com.mrcrayfish.framework.api.client.screen.widget.layout.Padding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -35,18 +36,18 @@ import java.util.function.Supplier;
 
 public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelectionList
 {
-    private static final ResourceLocation LIST_BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/background");
+    private static final Identifier LIST_BACKGROUND_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/background");
     private static final StateSprites ITEM_SPRITES = new StateSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_hovered"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected")
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_hovered"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected")
     );
     private static final ScrollerSprites SCROLLER_SPRITES = ScrollerSprites.of(
-        Utils.rl("backpack/list/scroll_bar"),
-        Utils.rl("backpack/list/scroll_bar"),
-        Utils.rl("backpack/list/scroll_bar_hovered"),
-        Utils.rl("backpack/list/scroll_bar_selected")
+        Utils.id("backpack/list/scroll_bar"),
+        Utils.id("backpack/list/scroll_bar"),
+        Utils.id("backpack/list/scroll_bar_hovered"),
+        Utils.id("backpack/list/scroll_bar_selected")
     );
 
     private final Supplier<T> supplier;
@@ -66,7 +67,6 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         this.itemSize = itemSize;
         this.spacing = spacing;
         this.items = BuiltInRegistries.ITEM.stream().filter(predicate).collect(ImmutableList.toImmutableList());
-        this.setRenderHeader(false, 0);
         this.listBackground = LIST_BACKGROUND_SPRITE;
         this.scrollBarBackground = LIST_BACKGROUND_SPRITE;
         this.scrollBarBorder = Border.of(1);
@@ -95,7 +95,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
             if(item == Items.AIR)
                 return;
             if(!this.selectedOnly || this.supplier.get().isFilteringItem(item)) {
-                if(empty || item.getDescription().getString().toLowerCase(Locale.ROOT).contains(search)) {
+                if(empty || item.getName().getString().toLowerCase(Locale.ROOT).contains(search)) {
                     visibleItems.add(item);
                 }
             }
@@ -105,18 +105,18 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         if(!empty)
         {
             visibleItems.sort(Comparator.<net.minecraft.world.item.Item>comparingInt(item -> {
-                String name = item.getDescription().getString().toLowerCase(Locale.ROOT);
+                String name = item.getName().getString().toLowerCase(Locale.ROOT);
                 if(name.equals(search)) {
                     return 0;
                 } else if(name.startsWith(search)) {
                     return 1;
                 }
                 return 2;
-            }).thenComparing(item -> item.getDescription().getString()));
+            }).thenComparing(item -> item.getName().getString()));
         }
         else
         {
-            visibleItems.sort(Comparator.comparing(item -> item.getDescription().getString()));
+            visibleItems.sort(Comparator.comparing(item -> item.getName().getString()));
         }
 
 
@@ -143,7 +143,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
         if(ScreenUtil.isPointInArea(mouseX, mouseY, this.getX(), this.getY() + this.listBorder.top(), this.getWidth(), this.getHeight() - this.listBorder.top() - this.listBorder.bottom()) && this.hoveredStack != null)
         {
-            graphics.renderTooltip(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
+            graphics.setTooltipForNextFrame(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
         }
     }
 
@@ -154,7 +154,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
     {
         if(!this.searchQuery.equals(searchQuery))
         {
-            this.setClampedScrollAmount(0);
+            this.refreshScrollAmount(); // TODO 1.21.11 test
             this.searchQuery = searchQuery;
             this.updateList();
         }
@@ -171,7 +171,6 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         private final List<ItemStack> display;
         private final Supplier<R> supplier;
         private final Consumer<R> updater;
-        private int top, left;
 
         private Row(ItemGrid<R> parent, List<net.minecraft.world.item.Item> items, Supplier<R> augment, Consumer<R> updater)
         {
@@ -182,11 +181,8 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         }
 
         @Override
-        protected void renderContent(GuiGraphics graphics, int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, boolean selected, float partialTick)
+        protected void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, boolean selected, float partialTick)
         {
-            // This will change in 1.21.8
-            this.top = y;
-            this.left = x;
             int itemSize = this.parent.itemSize;
             int spacing = this.parent.spacing;
             int halfSpacing = spacing / 2;
@@ -196,14 +192,10 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
                 ItemStack stack = this.display.get(i);
                 int offset = i * (itemSize + spacing);
                 boolean itemSelected = this.supplier.get().isFilteringItem(stack.getItem());
-                boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, left + offset - halfSpacing, top - halfSpacing, itemSize + spacing, itemSize + spacing);
-                RenderSystem.enableBlend();
-                RenderSystem.enableDepthTest();
-                graphics.setColor(1, 1, 1, active ? 1.0F : 0.5F);
-                graphics.blitSprite(ITEM_SPRITES.get(itemSelected, itemHovered), left + offset, top, itemSize, itemSize);
-                graphics.setColor(1, 1, 1, 1);
-                RenderSystem.disableBlend();
-                graphics.renderFakeItem(stack, left + offset + (itemSize - 16) / 2, top + (itemSize - 16) / 2);
+                boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, this.getContentX() + offset - halfSpacing, this.getContentY() - halfSpacing, itemSize + spacing, itemSize + spacing);
+                int alpha = ARGB.white(active ? 1.0F : 0.5F);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ITEM_SPRITES.get(itemSelected, itemHovered), this.getContentX() + offset, this.getContentY(), itemSize, itemSize, alpha);
+                graphics.renderFakeItem(stack, this.getContentX() + offset + (itemSize - 16) / 2, this.getContentY() + (itemSize - 16) / 2);
                 if(itemHovered)
                 {
                     this.parent.hoveredStack = stack;
@@ -218,9 +210,9 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button)
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
         {
-            if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            if(event.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             {
                 int itemSize = this.parent.itemSize;
                 int spacing = this.parent.spacing;
@@ -229,7 +221,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
                 for(int i = 0; i < this.display.size(); i++)
                 {
                     int offset = i * (itemSize + spacing);
-                    if(!ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.left + offset - halfSpacing, this.top - halfSpacing, itemSize + spacing, itemSize + spacing))
+                    if(!ScreenUtil.isPointInArea((int) event.x(), (int) event.y(), this.getContentX() + offset - halfSpacing, this.getContentY() - halfSpacing, itemSize + spacing, itemSize + spacing))
                         continue;
 
                     ItemStack stack = this.display.get(i);

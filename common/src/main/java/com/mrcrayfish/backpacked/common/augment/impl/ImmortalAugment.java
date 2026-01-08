@@ -10,7 +10,7 @@ public record ImmortalAugment() implements Augment<ImmortalAugment>
 {
     public static final ImmortalAugment INSTANCE = new ImmortalAugment();
     public static final AugmentType<ImmortalAugment> TYPE = new AugmentType<>(
-        Utils.rl("immortal"),
+        Utils.id("immortal"),
         MapCodec.unit(INSTANCE),
         StreamCodec.unit(INSTANCE),
         () -> INSTANCE

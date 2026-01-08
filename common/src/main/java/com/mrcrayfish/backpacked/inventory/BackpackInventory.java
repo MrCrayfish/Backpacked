@@ -14,7 +14,7 @@ import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -172,7 +172,7 @@ public class BackpackInventory extends UnlockableContainer
 
     public static boolean isAllowedItem(ItemStack stack)
     {
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        Identifier id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if(Config.getBannedItemsList().contains(id))
             return false;
 

@@ -9,7 +9,6 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.backpacked.common.augment.impl.*;
-import com.mrcrayfish.framework.api.event.InputEvents;
 
 /**
  * Author: MrCrayfish
@@ -18,7 +17,6 @@ public class ClientBootstrap
 {
     public static void earlyInit()
     {
-        InputEvents.REGISTER_KEY_MAPPING.register(consumer -> consumer.accept(Keys.KEY_BACKPACK));
         RendererTypes.register(DefaultRenderer.TYPE);
         RendererTypes.register(AdvancedRenderer.TYPE);
         FunctionTypes.register(PushMatrixFunction.TYPE);

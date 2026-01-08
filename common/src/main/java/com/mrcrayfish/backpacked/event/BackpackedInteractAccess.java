@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.event;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface BackpackedInteractAccess
 {
-    List<ResourceLocation> getBackpacked$CapturedInteractIds();
+    List<Identifier> getBackpacked$CapturedInteractIds();
 }

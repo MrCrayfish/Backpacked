@@ -18,47 +18,46 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 public final class Farmhand extends SavedData
 {
     public static final String ID = "backpacked_farmhand";
     public static final int PLANT_TIME = 14;
-    private static final int MAX_DISTANCE_SQR = 16 * 16;
+    public static final int MAX_DISTANCE_SQR = 16 * 16;
+    public static final Codec<Farmhand> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        Codec.unboundedMap(BlockPos.CODEC, DelayedPlantTask.CODEC).xmap(Function.identity(), HashMap::new).fieldOf("Tasks").forGetter(f -> f.tasks)
+    ).apply(instance, Farmhand::new));
+    public static final SavedDataType<Farmhand> TYPE = new SavedDataType<>(ID, Farmhand::new, CODEC, DataFixTypes.SAVED_DATA_RAIDS);
 
-    private final ServerLevel level;
-    private final Map<BlockPos, DelayedPlantTask> tasks = new HashMap<>();
+    private final Map<BlockPos, DelayedPlantTask> tasks;
 
-    @SuppressWarnings("DataFlowIssue")
-    public static SavedData.Factory<Farmhand> factory(ServerLevel level)
+    private Farmhand(Map<BlockPos, DelayedPlantTask> tasks)
     {
-        return new SavedData.Factory<>(() -> new Farmhand(level), (tag, provider) -> load(level, provider, tag), null);
+        this.tasks = tasks;
     }
 
-    public Farmhand(ServerLevel level)
+    private Farmhand()
     {
-        this.level = level;
+        this.tasks = new HashMap<>();
     }
 
     public boolean plant(ItemStack stack, BlockPos pos, ServerPlayer player)
     {
         Preconditions.checkArgument(stack.getItem() instanceof BlockItem);
-
-        // Player must be in the same level
-        if(player.level() != this.level)
-            return false;
 
         // Player must be alive and near the planting position
         if(!player.isAlive() || pos.distToCenterSqr(player.position()) > MAX_DISTANCE_SQR)
@@ -78,43 +77,18 @@ public final class Farmhand extends SavedData
         return this.tasks.containsKey(pos);
     }
 
-    public void tick()
+    public void tick(ServerLevel level)
     {
         this.tasks.entrySet().removeIf(entry -> {
             DelayedPlantTask task = entry.getValue();
             task.delay--;
             if(task.delay <= 0) {
-                task.run(this.level);
+                task.run(level);
                 this.setDirty();
                 return true;
             }
             return false;
         });
-    }
-
-    private static Farmhand load(ServerLevel level, HolderLookup.Provider provider, CompoundTag tag)
-    {
-        Farmhand farmhand = new Farmhand(level);
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ListTag tasks = tag.getList("Tasks", CompoundTag.TAG_COMPOUND);
-        tasks.forEach(tag1 -> {
-            DelayedPlantTask.CODEC.parse(ops, tag1).result().ifPresent(task -> {
-                farmhand.tasks.put(task.pos, task);
-            });
-        });
-        return farmhand;
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider)
-    {
-        RegistryOps<Tag> ops = provider.createSerializationContext(NbtOps.INSTANCE);
-        ListTag tasks = new ListTag();
-        this.tasks.forEach((pos, task) -> {
-            DelayedPlantTask.CODEC.encodeStart(ops, task).result().ifPresent(tasks::add);
-        });
-        tag.put("Tasks", tasks);
-        return tag;
     }
 
     private static final class DelayedPlantTask

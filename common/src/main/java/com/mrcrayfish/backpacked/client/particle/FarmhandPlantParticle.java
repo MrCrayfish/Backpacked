@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.particle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
+import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -10,6 +11,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -17,19 +19,17 @@ import net.minecraft.world.phys.Vec3;
 
 public class FarmhandPlantParticle extends Particle
 {
-    private final EntityRenderDispatcher dispatcher;
-    private final RenderBuffers buffers;
-    private final Vec3 start;
-    private final Vec3 end;
-    private final Vec3 control;
-    private final Entity entity;
-    private int life = 0;
+    protected final EntityRenderState itemRenderState;
+    protected final Vec3 start;
+    protected final Vec3 end;
+    protected final Vec3 control;
+    protected final Entity entity;
+    protected int life = 0;
 
-    public FarmhandPlantParticle(EntityRenderDispatcher dispatcher, RenderBuffers buffers, ClientLevel level, ItemStack stack, Vec3 start, Vec3 end)
+    public FarmhandPlantParticle(EntityRenderState state, ClientLevel level, ItemStack stack, Vec3 start, Vec3 end)
     {
         super(level, start.x, start.y, start.z);
-        this.dispatcher = dispatcher;
-        this.buffers = buffers;
+        this.itemRenderState = state;
         this.start = start;
         this.end = end;
         this.control = new Vec3(
@@ -52,26 +52,8 @@ public class FarmhandPlantParticle extends Particle
     }
 
     @Override
-    public void render(VertexConsumer consumer, Camera camera, float partialTick)
+    public ParticleRenderType getGroup()
     {
-        float time = (this.life + partialTick) / (float) Farmhand.PLANT_TIME;
-        float inverse = 1 - time;
-        Vec3 pos = this.start.scale(inverse * inverse * inverse);
-        pos = pos.add(this.control.scale(3 * inverse * inverse * time));
-        pos = pos.add(this.control.scale(3 * inverse * time * time));
-        pos = pos.add(this.end.scale(time * time * time));
-        Vec3 cameraPos = camera.getPosition();
-        MultiBufferSource.BufferSource source = this.buffers.bufferSource();
-        double posX = pos.x - cameraPos.x();
-        double posY = pos.y - cameraPos.y();
-        double posZ = pos.z - cameraPos.z();
-        int light = this.dispatcher.getPackedLightCoords(this.entity, partialTick);
-        this.dispatcher.render(this.entity, posX, posY, posZ, this.entity.getYRot(), 0, new PoseStack(), source, light);
-    }
-
-    @Override
-    public ParticleRenderType getRenderType()
-    {
-        return ParticleRenderType.CUSTOM;
+        return ModParticleRenderTypes.FARMHAND_PLANT;
     }
 }

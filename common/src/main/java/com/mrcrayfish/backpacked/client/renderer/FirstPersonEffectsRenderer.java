@@ -18,8 +18,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
@@ -34,18 +35,24 @@ import java.util.Optional;
  */
 public class FirstPersonEffectsRenderer
 {
+    @SuppressWarnings({"NullableProblems", "unchecked"})
     public static void draw(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, float partialTick)
     {
+        // TODO 1.21.11 test
+
         Minecraft mc = Minecraft.getInstance();
 
         Camera camera = mc.gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
+        Vec3 cameraPos = camera.position();
         double playerX = Mth.lerp(partialTick, player.xOld, player.getX()) - cameraPos.x();
         double playerY = Mth.lerp(partialTick, player.yOld, player.getY()) - cameraPos.y();
         double playerZ = Mth.lerp(partialTick, player.zOld, player.getZ()) - cameraPos.z();
 
-        PlayerRenderer renderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(player);
-        Vec3 offset = renderer.getRenderOffset(player, partialTick);
+        AvatarRenderer<AbstractClientPlayer> renderer = (AvatarRenderer<AbstractClientPlayer>) mc.getEntityRenderDispatcher().getRenderer(player);
+        AvatarRenderState avatarRenderState = new AvatarRenderState();
+        avatarRenderState.isCrouching = player.isCrouching();
+        avatarRenderState.scale = player.getScale();
+        Vec3 offset = renderer.getRenderOffset(avatarRenderState);
         double renderX = playerX + offset.x();
         double renderY = playerY + offset.y();
         double renderZ = playerZ + offset.z();
@@ -70,7 +77,7 @@ public class FirstPersonEffectsRenderer
      * @param stack the current pose stack
      * @param partialTick the current partial tick
      */
-    private static void setupTransforms(AbstractClientPlayer player, PlayerRenderer renderer, PoseStack stack, float partialTick)
+    private static void setupTransforms(AbstractClientPlayer player, AvatarRenderer<AbstractClientPlayer> renderer, PoseStack stack, float partialTick)
     {
         float scale = player.getScale();
         stack.scale(scale, scale, scale);
@@ -94,7 +101,7 @@ public class FirstPersonEffectsRenderer
      * @param player the local player
      * @param renderer the renderer of the player
      */
-    private static void setupBodyRotations(AbstractClientPlayer player, PlayerRenderer renderer, PoseStack pose)
+    private static void setupBodyRotations(AbstractClientPlayer player, AvatarRenderer<AbstractClientPlayer> renderer, PoseStack pose)
     {
         ModelPart body = renderer.getModel().body;
         body.yRot = 0;
@@ -117,7 +124,7 @@ public class FirstPersonEffectsRenderer
         if(!Services.BACKPACK.isBackpackVisible(player))
             return;
 
-        ResourceLocation cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+        Identifier cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
         ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(cosmeticId);
         if(backpack == null)
             return;

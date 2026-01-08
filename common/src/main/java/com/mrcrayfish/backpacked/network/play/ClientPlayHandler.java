@@ -18,14 +18,13 @@ import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ItemPickupParticle;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -52,7 +51,7 @@ public class ClientPlayHandler
             if(backpack != null)
             {
                 impl.unlockBackpack(message.cosmeticId());
-                mc.getToasts().addToast(new UnlockBackpackToast(backpack));
+                mc.getToastManager().addToast(new UnlockBackpackToast(backpack));
             }
         });
     }
@@ -141,7 +140,8 @@ public class ClientPlayHandler
 
         Vec3 pos = message.pos();
         ItemEntity entity = new ItemEntity(minecraft.level, pos.x, pos.y, pos.z, stack);
-        minecraft.particleEngine.add(new ItemPickupParticle(minecraft.getEntityRenderDispatcher(), minecraft.renderBuffers(), minecraft.level, entity, player));
+        EntityRenderState state = minecraft.getEntityRenderDispatcher().extractEntity(entity, 1.0F);
+        minecraft.particleEngine.add(new ItemPickupParticle(minecraft.level, state, player, entity.getDeltaMovement()));
 
         if(message.sound())
         {
@@ -178,7 +178,8 @@ public class ClientPlayHandler
         var renderBuffers = minecraft.renderBuffers();
         var start = new Vec3(player.getX(), player.getY(0.65), player.getZ()).add(Vec3.directionFromRotation(0, player.yBodyRot + 180).scale(0.25));
         var end = message.pos().getBottomCenter();
-        minecraft.particleEngine.add(new FarmhandPlantParticle(dispatcher, renderBuffers, level, stack, start, end));
+        EntityRenderState state = dispatcher.extractEntity(new ItemEntity(level, 0, 0, 0, stack), 1.0F);
+        minecraft.particleEngine.add(new FarmhandPlantParticle(state, level, stack, start, end));
         minecraft.level.playSound(null, start.x, start.y, start.z, ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.PLAYERS, 1F, 0.5F);
     }
 

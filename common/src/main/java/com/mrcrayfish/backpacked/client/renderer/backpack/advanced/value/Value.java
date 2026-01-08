@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
 
@@ -29,9 +29,9 @@ public interface Value
 
     double get(BackpackRenderContext context);
 
-    record Type(ResourceLocation id, MapCodec<? extends Value> codec)
+    record Type(Identifier id, MapCodec<? extends Value> codec)
     {
-        private static final Codec<Type> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+        private static final Codec<Type> CODEC = Identifier.CODEC.flatXmap(id -> {
             Type codec = ValueTypes.getAll().get(id);
             if(codec != null) {
                 return DataResult.success(codec);
@@ -46,7 +46,7 @@ public interface Value
 
         private static Type get(Value source)
         {
-            ResourceLocation id = source.type().id();
+            Identifier id = source.type().id();
             if(!ValueTypes.getAll().containsKey(id))
                 throw new IllegalArgumentException("Unregistered value type: " + id);
             return ValueTypes.getAll().get(id);

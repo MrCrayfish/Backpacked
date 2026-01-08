@@ -10,7 +10,7 @@ public record EmptyAugment() implements Augment<EmptyAugment>
 {
     public static final EmptyAugment INSTANCE = new EmptyAugment();
     public static final AugmentType<EmptyAugment> TYPE = new AugmentType<>(
-        Utils.rl("empty"),
+        Utils.id("empty"),
         MapCodec.unit(INSTANCE),
         StreamCodec.unit(INSTANCE),
         () -> INSTANCE

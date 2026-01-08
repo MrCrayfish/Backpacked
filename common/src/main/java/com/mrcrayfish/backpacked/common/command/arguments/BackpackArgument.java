@@ -9,7 +9,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -26,7 +26,7 @@ public class BackpackArgument implements ArgumentType<Backpack>
     @Override
     public Backpack parse(StringReader reader) throws CommandSyntaxException
     {
-        ResourceLocation id = ResourceLocation.read(reader);
+        Identifier id = Identifier.read(reader);
         return BackpackManager.instance().getBackpacks().stream().filter(backpack -> backpack.getId().equals(id)).findFirst().orElse(null);
     }
 

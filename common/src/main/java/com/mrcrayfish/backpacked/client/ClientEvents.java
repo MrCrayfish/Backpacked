@@ -4,16 +4,18 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
+import com.mrcrayfish.backpacked.core.ModKeyMappings;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePickpocketBackpack;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import com.mrcrayfish.framework.api.event.ClientConnectionEvents;
-import com.mrcrayfish.framework.api.event.InputEvents;
-import com.mrcrayfish.framework.api.event.TickEvents;
+import com.mrcrayfish.framework.api.event.client.FrameworkClientConnectionEvents;
+import com.mrcrayfish.framework.api.event.client.FrameworkClientTickEvents;
+import com.mrcrayfish.framework.api.event.client.FrameworkInputEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
@@ -35,10 +37,10 @@ public class ClientEvents
 {
     public static void init()
     {
-        TickEvents.END_CLIENT.register(ClientEvents::onClientTickEnd);
-        ClientConnectionEvents.LOGGING_IN.register(ClientEvents::onPlayerLogin);
-        InputEvents.KEY.register(ClientEvents::onKeyInput);
-        InputEvents.CLICK.register(ClientEvents::onInteraction);
+        FrameworkClientTickEvents.END_CLIENT.register(ClientEvents::onClientTickEnd);
+        FrameworkClientConnectionEvents.LOGGING_IN.register(ClientEvents::onPlayerLogin);
+        FrameworkInputEvents.KEY_PRESS.register(ClientEvents::onKeyInput);
+        FrameworkInputEvents.INTERACTION.register(ClientEvents::onInteraction);
     }
 
     private static void onPlayerLogin(LocalPlayer player, MultiPlayerGameMode gameMode, Connection connection)
@@ -47,12 +49,12 @@ public class ClientEvents
     }
 
     // Opens the backpack screen
-    public static void onKeyInput(int key, int scanCode, int action, int modifiers)
+    public static void onKeyInput(int action, KeyEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
         if(mc.player != null && mc.screen == null)
         {
-            if(Keys.KEY_BACKPACK.isDown() && Keys.KEY_BACKPACK.consumeClick())
+            if(ModKeyMappings.KEY_BACKPACK.isDown() && ModKeyMappings.KEY_BACKPACK.consumeClick())
             {
                 Network.getPlay().sendToServer(new MessageOpenBackpack());
             }

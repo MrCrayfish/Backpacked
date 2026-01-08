@@ -9,5 +9,5 @@ import com.mrcrayfish.framework.api.registry.RegistryContainer;
 @RegistryContainer
 public class ModRegistries
 {
-    public static final FrameworkRegistry<AugmentType<? extends Augment<?>>> AUGMENT_TYPES = FrameworkRegistry.<AugmentType<?>>builder(Utils.rl("augment_types")).build();
+    public static final FrameworkRegistry<AugmentType<? extends Augment<?>>> AUGMENT_TYPES = FrameworkRegistry.<AugmentType<?>>builder(Utils.id("augment_types")).build();
 }

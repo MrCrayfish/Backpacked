@@ -24,7 +24,7 @@ public class TextInputMenu extends PopupMenu
     {
         super(handler);
         this.setAlignment(Alignment.CENTERED);
-        this.setBackground(Utils.rl("augment/menu_background"));
+        this.setBackground(Utils.id("augment/menu_background"));
         TitleWidget title = new TitleWidget(Component.literal("Rename"), Minecraft.getInstance().font);
         title.setWidth(WIDTH);
         this.layout.addChild(title);
@@ -35,8 +35,8 @@ public class TextInputMenu extends PopupMenu
             .setInitialText(initialInput)
             .setMaxTextLength(maxLength)
             .setBackground(new WidgetSprites(
-                Utils.rl("backpack/editbox/background"),
-                Utils.rl("backpack/editbox/background_focused")
+                Utils.id("backpack/editbox/background"),
+                Utils.id("backpack/editbox/background_focused")
             )).build()
         );
         this.layout.addChild(BackpackButtons.builder()

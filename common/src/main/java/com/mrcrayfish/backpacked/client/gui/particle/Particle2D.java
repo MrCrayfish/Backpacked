@@ -1,14 +1,24 @@
 package com.mrcrayfish.backpacked.client.gui.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import com.mrcrayfish.backpacked.client.gui.ParticleRenderState;
+import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.AtlasIds;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix3x2fStack;
 import org.joml.Matrix4f;
 import org.joml.Vector2d;
 
@@ -26,7 +36,7 @@ public class Particle2D
     private float v1;
     private float u2;
     private float v2;
-    private ResourceLocation sprite;
+    private Identifier sprite;
     private Vector2d motion = new Vector2d();
     private Vector2d gravity = new Vector2d();
     private double friction;
@@ -67,8 +77,8 @@ public class Particle2D
     /**
      * Sets the sprite to display when rendering the particle. This must be a texture placed in
      * "assets/&lt;mod_id&gt;/textures/gui/sprites", otherwise it will not be loaded correctly.
-     * When defining the ResourceLocation, the base directory is the "sprites" directory. So the
-     * defined path in the ResourceLocation should be relative to that directory.
+     * When defining the Identifier, the base directory is the "sprites" directory. So the
+     * defined path in the Identifier should be relative to that directory.
      *
      * @param u1     the start u of the texture
      * @param v1     the start v of the texture
@@ -77,7 +87,7 @@ public class Particle2D
      * @param sprite the location to the texture
      * @return this Particle2D instance
      */
-    public Particle2D setSprite(float u1, float v1, float u2, float v2, ResourceLocation sprite)
+    public Particle2D setSprite(float u1, float v1, float u2, float v2, Identifier sprite)
     {
         this.u1 = u1;
         this.v1 = v1;
@@ -250,24 +260,29 @@ public class Particle2D
     {
         if(this.life <= 0)
             return;
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        pose.translate(Mth.lerp(partialTick, this.prevX, this.x), Mth.lerp(partialTick, this.prevY, this.y), 300);
-        pose.translate(this.width / 2, this.height / 2, 0);
-        pose.mulPose(Axis.ZP.rotationDegrees((float) Mth.lerp(partialTick, this.prevRotation, this.rotation)));
-        float scale = Mth.lerp(partialTick, this.prevScale, this.scale);
-        pose.scale(scale, scale, scale);
-        pose.translate(-this.width / 2, -this.height / 2, 0);
-        TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(this.sprite);
-        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        Matrix4f matrix = pose.last().pose();
-        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        builder.addVertex(matrix, 0, 0, 0).setUv(sprite.getU(this.u1), sprite.getV(this.v1));
-        builder.addVertex(matrix, 0, (float) this.height, 0).setUv(sprite.getU(this.u1), sprite.getV(this.v2));
-        builder.addVertex(matrix, (float) this.width, (float) this.height, 0).setUv(sprite.getU(this.u2), sprite.getV(this.v2));
-        builder.addVertex(matrix, (float) this.width, 0, 0).setUv(sprite.getU(this.u2), sprite.getV(this.v1));
-        BufferUploader.drawWithShader(builder.buildOrThrow());
-        pose.popPose();
+        Matrix3x2fStack pose = graphics.pose();
+        pose.pushMatrix();
+        pose.translate((float) Mth.lerp(partialTick, this.prevX, this.x), (float) Mth.lerp(partialTick, this.prevY, this.y));
+        pose.translate((float) (this.width / 2), (float) (this.height / 2));
+        pose.rotate((float) Mth.lerp(partialTick, this.prevRotation, this.rotation)); // TODO 1.21.11 test
+        pose.scale(Mth.lerp(partialTick, this.prevScale, this.scale));
+        pose.translate((float) (-this.width / 2), (float) (-this.height / 2));
+        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.GUI).getSprite(this.sprite);
+        GpuTextureView gpuTexture = Minecraft.getInstance().getTextureManager().getTexture(sprite.atlasLocation()).getTextureView();
+        ParticleRenderState state = new ParticleRenderState(
+            RenderPipelines.GUI_TEXTURED,
+            TextureSetup.singleTexture(gpuTexture, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST)),
+            new Matrix3x2f(graphics.pose()),
+            this.width,
+            this.height,
+            sprite.getU(this.u1),
+            sprite.getV(this.v1),
+            sprite.getU(this.u2),
+            sprite.getV(this.v2),
+            null, // TODO 1.21.11 create bounds
+            null
+        );
+        ClientServices.CLIENT.submitGuiElementRenderState(graphics, state);
+        pose.popMatrix();
     }
 }

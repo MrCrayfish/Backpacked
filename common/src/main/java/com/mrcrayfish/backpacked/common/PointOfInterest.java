@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.common;
 import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 
 import java.util.function.Supplier;
@@ -12,7 +12,7 @@ public record PointOfInterest(ResourceKey<PoiType> key, Supplier<PoiType> suppli
 {
     public PointOfInterest(String name, Supplier<PoiType> supplier)
     {
-        this(ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name)), supplier);
+        this(ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, Identifier.fromNamespaceAndPath(Constants.MOD_ID, name)), supplier);
     }
 
     public PoiType value()

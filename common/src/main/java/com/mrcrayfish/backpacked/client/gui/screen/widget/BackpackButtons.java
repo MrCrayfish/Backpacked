@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -13,9 +13,9 @@ import java.util.function.Supplier;
 public class BackpackButtons
 {
     public static final WidgetSprites DEFAULT_SPRITES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
     );
 
     public static FrameworkButton.Builder builder()

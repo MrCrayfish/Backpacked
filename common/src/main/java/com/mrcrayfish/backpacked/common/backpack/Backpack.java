@@ -10,7 +10,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public class Backpack
 {
     public static final StreamCodec<FriendlyByteBuf, Backpack> STREAM_CODEC = StreamCodec.of((buf, backpack) -> {
         backpack.checkSetup();
-        buf.writeResourceLocation(backpack.id);
+        buf.writeIdentifier(backpack.id);
         buf.writeBoolean(backpack.unlockChallenge.isPresent());
         buf.writeBoolean(backpack.error);
     }, Backpack::new);
@@ -39,7 +39,7 @@ public class Backpack
     });
 
     private final Optional<UnlockChallenge> unlockChallenge;
-    private ResourceLocation id;
+    private Identifier id;
     private String translationKey;
     private boolean setup = false;
     private boolean error = false;
@@ -51,7 +51,7 @@ public class Backpack
 
     public Backpack(FriendlyByteBuf buf)
     {
-        ResourceLocation id = buf.readResourceLocation();
+        Identifier id = buf.readIdentifier();
         this.setup(id);
         this.unlockChallenge = buf.readBoolean() ? Optional.of(UnlockChallenge.DUMMY) : Optional.empty();
         this.error = buf.readBoolean();
@@ -62,7 +62,7 @@ public class Backpack
         return this.unlockChallenge;
     }
 
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         this.checkSetup();
         return this.id;
@@ -79,12 +79,12 @@ public class Backpack
     }
 
     @Nullable
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(Identifier backpackId)
     {
         return this.unlockChallenge.map(c -> c.challenge().createProgressTracker(c.formatter(), backpackId)).orElse(null);
     }
 
-    public void setup(ResourceLocation id)
+    public void setup(Identifier id)
     {
         if(!this.setup)
         {

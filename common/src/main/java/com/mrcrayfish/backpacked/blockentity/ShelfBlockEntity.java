@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.blockentity;
 
 import com.google.common.base.Preconditions;
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.ShelfKey;
@@ -28,6 +29,7 @@ import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -40,6 +42,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +52,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -196,52 +202,48 @@ public class ShelfBlockEntity extends BlockEntity
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider)
+    protected void loadAdditional(ValueInput input)
     {
-        super.loadAdditional(tag, provider);
-        CompoundTag containerTag = tag.getCompound("Container");
-        this.loadingItems = true;
-        ContainerHelper.loadAllItems(containerTag, this.container.getItems(), provider);
-        this.loadingItems = false;
-        ItemStack backpack = ItemStack.parseOptional(provider, tag.getCompound("Backpack"));
+        super.loadAdditional(input);
+        //ValueInput container = input.childOrEmpty("Container");
+        //this.loadingItems = true;
+        //ContainerHelper.loadAllItems(container, this.container.getItems());
+        //this.loadingItems = false;
+
+        ItemStack backpack = input.read("Backpack", ItemStack.CODEC).orElse(ItemStack.EMPTY);
 
         // Prevents losing items since shelves are no longer containers
-        if(tag.contains("Items", Tag.TAG_COMPOUND))
+        Optional<ValueInput> itemsOptional = input.child("Items");
+        if(!backpack.isEmpty() && itemsOptional.isPresent())
         {
-            BackpackShelfContainer container1 = backpack.isEmpty() ? null : new BackpackShelfContainer(this, this.getBackpackSize());
-            if(container1 != null)
-            {
-                container1.load(tag, provider);
-                backpack.set(DataComponents.CONTAINER, container1.createContents());
-            }
+            BackpackShelfContainer container1 = new BackpackShelfContainer(this, this.getBackpackSize());
+            container1.load(input);
+            backpack.set(DataComponents.CONTAINER, container1.createContents());
         }
         this.container.setItem(0, backpack);
 
-        this.recallQueueCount = tag.getInt("QueueCount");
-        if(tag.hasUUID("RecallOwner"))
-        {
-            this.recallOwner = tag.getUUID("RecallOwner");
-            if(tag.contains("RecallIndex", Tag.TAG_INT))
-            {
-                this.recallIndex = tag.getInt("RecallIndex");
-            }
-        }
+        this.recallQueueCount = input.getIntOr("QueueCount", 0);
+
+        input.read("RecallOwner", UUIDUtil.CODEC).ifPresent((uuid) -> {
+            this.recallOwner = uuid;
+            input.getInt("RecallIndex").ifPresent((index) -> {
+                this.recallIndex = index;
+            });
+        });
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider)
+    protected void saveAdditional(ValueOutput output)
     {
-        super.saveAdditional(tag, provider);
-        CompoundTag containerTag = new CompoundTag();
-        ContainerHelper.saveAllItems(containerTag, this.container.getItems(), provider);
-        tag.put("Container", containerTag);
-        tag.put("Backpack", this.container.getItem(0).saveOptional(provider));
+        super.saveAdditional(output);
+        //ContainerHelper.saveAllItems(output.child("Container"), this.container.getItems());
+        output.store("Backpack", ItemStack.CODEC, this.container.getItem(0));
         if(this.recallOwner != null)
         {
-            tag.putUUID("RecallOwner", this.recallOwner);
+            output.store("RecallOwner", UUIDUtil.CODEC, this.recallOwner);
             if(this.recallIndex > 0)
             {
-                tag.putInt("RecallIndex", this.recallIndex);
+                output.putInt("RecallIndex", this.recallIndex);
             }
         }
     }
@@ -249,10 +251,14 @@ public class ShelfBlockEntity extends BlockEntity
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider provider)
     {
-        CompoundTag tag = new CompoundTag();
-        tag.put("Backpack", this.container.getItem(0).saveOptional(provider));
-        tag.putInt("QueueCount", this.recallQueueCount);
-        return tag;
+        return this.saveCustomOnly(provider);
+    }
+
+    @Override
+    public void saveCustomOnly(ValueOutput output)
+    {
+        output.store("Backpack", ItemStack.CODEC, this.container.getItem(0));
+        output.putInt("QueueCount", this.recallQueueCount);
     }
 
     @Nullable
@@ -317,6 +323,19 @@ public class ShelfBlockEntity extends BlockEntity
     {
         super.setChanged();
         BlockEntityUtil.sendUpdatePacket(this);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state)
+    {
+        if(this.level instanceof ServerLevel serverLevel)
+        {
+            // TODO 1.21.11 test
+            ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(serverLevel, this);
+            ItemStack stack = this.getBackpack();
+            Containers.dropItemStack(serverLevel, pos.getX(), pos.getY(), pos.getZ(), stack.copyAndClear());
+            serverLevel.updateNeighbourForOutputSignal(pos, state.getBlock());
+        }
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, ShelfBlockEntity shelf)

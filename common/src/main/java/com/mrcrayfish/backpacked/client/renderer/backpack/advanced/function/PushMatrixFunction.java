@@ -13,7 +13,7 @@ import java.util.List;
 public record PushMatrixFunction(List<BaseFunction> functions) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        Utils.rl("push_matrix"),
+        Utils.id("push_matrix"),
         RecordCodecBuilder.<PushMatrixFunction>mapCodec(builder -> builder.group(
             BaseFunction.CODEC.listOf().fieldOf("functions").forGetter(o -> o.functions)
         ).apply(builder, PushMatrixFunction::new))

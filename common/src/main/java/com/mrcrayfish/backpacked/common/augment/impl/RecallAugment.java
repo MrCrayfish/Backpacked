@@ -22,7 +22,7 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
 {
     public static final RecallAugment EMPTY = new RecallAugment(Optional.empty());
     public static final AugmentType<RecallAugment> TYPE = new AugmentType<>(
-        Utils.rl("recall"),
+        Utils.id("recall"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             ShelfKey.CODEC.optionalFieldOf("shelf_key").forGetter(RecallAugment::shelfKey)
         ).apply(instance, RecallAugment::new)),
@@ -50,11 +50,7 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
         if(this.shelfKey.isPresent() && !Objects.equals(this.shelfKey, other.shelfKey))
         {
             ShelfKey shelfKey = this.shelfKey.get();
-
-            // Server should be present
-            MinecraftServer server = player.getServer();
-            assert server != null;
-
+            MinecraftServer server = player.level().getServer();
             ServerLevel level = server.getLevel(shelfKey.level());
             if(level != null)
             {
@@ -75,7 +71,7 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
                 if(updated.shelfKey().isPresent())
                 {
                     Recall recall = ((Recall.Access) level).backpacked$getRecall();
-                    if(!recall.isShelfAtBlockPos(pos))
+                    if(!recall.isShelfAtBlockPos(level, pos))
                     {
                         updated = updated.setShelfKey(null);
                     }

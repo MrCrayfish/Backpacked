@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 public record SeedflowAugment(boolean randomizeSeeds, boolean useFilters, ItemCollection filters) implements Augment<SeedflowAugment>, FilterableItems<SeedflowAugment>
 {
     public static final AugmentType<SeedflowAugment> TYPE = new AugmentType<>(
-        Utils.rl("seedflow"),
+        Utils.id("seedflow"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("randomize_seeds").orElse(true).forGetter(SeedflowAugment::randomizeSeeds),
             Codec.BOOL.fieldOf("use_filters").orElse(true).forGetter(SeedflowAugment::useFilters),

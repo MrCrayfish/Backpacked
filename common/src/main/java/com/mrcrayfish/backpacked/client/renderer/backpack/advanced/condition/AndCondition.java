@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 
 public record AndCondition(BaseCondition first, BaseCondition second) implements BaseCondition
 {
-    public static final Type TYPE = new Type(Utils.rl("and"), RecordCodecBuilder.<AndCondition>mapCodec(builder -> builder.group(
+    public static final Type TYPE = new Type(Utils.id("and"), RecordCodecBuilder.<AndCondition>mapCodec(builder -> builder.group(
         BaseCondition.CODEC.fieldOf("first").forGetter(o -> o.first),
         BaseCondition.CODEC.fieldOf("second").forGetter(o -> o.second)
     ).apply(builder, AndCondition::new)));

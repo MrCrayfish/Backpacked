@@ -8,7 +8,7 @@ import com.mrcrayfish.framework.api.registry.RegistryEntry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.ItemLike;
 @RegistryContainer
 public class ModCreativeTabs
 {
-    public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "creative_tab"), builder -> {
+    public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "creative_tab"), builder -> {
         builder.title(Component.translatable("itemGroup." + Constants.MOD_ID));
         builder.icon(() -> new ItemStack(ModItems.BACKPACK.get()));
         builder.displayItems((params, output) -> {

@@ -34,10 +34,10 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
     modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
-    modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
+    //modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
 
     // Integrations
-    modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684160"
+    //modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684160"
 }
 
 sourceSets.main.resources.srcDirs += "src/generated/resources"
@@ -78,18 +78,48 @@ tasks.register("signJar") {
         findProperty('keyStore') || System.getenv("KEYSTORE")
     }
     doLast {
-        def unsignedJar = tasks.remapJar.archiveFile.get()
-        def name = FilenameUtils.removeExtension(unsignedJar.getAsFile().getName());
-        def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get();
-        def options = [:]
-        options['jar'] = unsignedJar.getAsFile().getAbsolutePath()
-        options['signedJar'] = signedJar.getAsFile().getAbsolutePath()
-        options['alias'] = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
-        options['keyStore'] = findProperty('keyStore') ?: System.getenv("KEYSTORE")
-        options['storePass'] = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
-        options['storetype'] = "jks"
-        this.getAnt().invokeMethod("signjar", options);
+        def unsignedJar = tasks.remapJar.archiveFile.get().asFile
+        def name = FilenameUtils.removeExtension(unsignedJar.getName())
+        def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get().asFile
+        def signingKeyAlias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
+        def signingKeystore = findProperty('keyStore') ?: System.getenv("KEYSTORE")
+        def signingPassword = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
+        ant.signjar(
+                jar: unsignedJar,
+                signedJar: signedJar,
+                alias: signingKeyAlias,
+                keyStore: signingKeystore,
+                storePass: signingPassword,
+                storetype: 'jks'
+        )
+        println "Signed jar created at: $signedJar"
     }
 }
 
 build.dependsOn signJar
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
+            }
+        }
+    }
+}
+loom.remapConfigurations.configureEach {
+    configurations.named(it.name) {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
+}

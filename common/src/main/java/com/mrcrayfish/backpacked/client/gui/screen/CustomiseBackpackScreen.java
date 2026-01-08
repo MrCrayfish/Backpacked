@@ -1,12 +1,10 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
-import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
@@ -15,10 +13,6 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.CustomScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
-import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
-import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
-import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.network.Network;
@@ -29,22 +23,22 @@ import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -56,20 +50,20 @@ import java.util.stream.Collectors;
  */
 public class CustomiseBackpackScreen extends CustomScreen
 {
-    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
-    private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
-    private static final ResourceLocation ROUNDED_BOX = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rounded_box");
-    private static final ResourceLocation LIST_ITEM = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item");
-    private static final ResourceLocation LIST_ITEM_FOCUSED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_focused");
-    private static final ResourceLocation LIST_ITEM_SELECTED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_selected");
-    private static final ResourceLocation LIST_ITEM_LOCKED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
-    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final ResourceLocation UNLOCK_PROGRESS_BAR = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
-    private static final ResourceLocation UNLOCK_PROGRESS_BAR_INNER = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
-    private static final ResourceLocation SETTINGS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/settings");
-    private static final ResourceLocation ARROW_LEFT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_left");
+    private static final Identifier BACKPACK_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
+    private static final Identifier LABEL_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
+    private static final Identifier CHECKERS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final Identifier LABEL_WARNING_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
+    private static final Identifier ROUNDED_BOX = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rounded_box");
+    private static final Identifier LIST_ITEM = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item");
+    private static final Identifier LIST_ITEM_FOCUSED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_focused");
+    private static final Identifier LIST_ITEM_SELECTED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_selected");
+    private static final Identifier LIST_ITEM_LOCKED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
+    private static final Identifier ICON_LOCK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final Identifier UNLOCK_PROGRESS_BAR = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
+    private static final Identifier UNLOCK_PROGRESS_BAR_INNER = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
+    private static final Identifier SETTINGS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/settings");
+    private static final Identifier ARROW_LEFT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_left");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_PARTICLES = Component.translatable("backpacked.button.show_particles");
@@ -112,7 +106,7 @@ public class CustomiseBackpackScreen extends CustomScreen
     private ScrollBar scrollBar;
     private int tickCount;
 
-    public CustomiseBackpackScreen(int backpackIndex, Map<ResourceLocation, Component> progressMap, CosmeticProperties properties, boolean showCosmeticWarning, Map<ResourceLocation, Double> completionMap)
+    public CustomiseBackpackScreen(int backpackIndex, Map<Identifier, Component> progressMap, CosmeticProperties properties, boolean showCosmeticWarning, Map<Identifier, Double> completionMap)
     {
         super(Component.translatable("backpacked.title.customise_backpack"));
         this.backpackIndex = backpackIndex;
@@ -232,24 +226,21 @@ public class CustomiseBackpackScreen extends CustomScreen
         int scrollBarBgY = this.scrollBar.getY() - 2;
         int scrollBarBgWidth = this.scrollBar.getWidth() + 4;
         int scrollBarBgHeight = this.scrollBar.getHeight() + 4;
-        graphics.blitSprite(ROUNDED_BOX, scrollBarBgX, scrollBarBgY, scrollBarBgWidth, scrollBarBgHeight);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ROUNDED_BOX, scrollBarBgX, scrollBarBgY, scrollBarBgWidth, scrollBarBgHeight);
 
         int itemBgX = this.playerDisplay.getRight() + 3;
         int itemBgWidth = (this.scrollBar.getX() - 2 - 2) - itemBgX;
-        graphics.blitSprite(ROUNDED_BOX, itemBgX, this.windowTop + 27, itemBgWidth, scrollBarBgHeight);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ROUNDED_BOX, itemBgX, this.windowTop + 27, itemBgWidth, scrollBarBgHeight);
 
         if(this.backButton.isHovered())
         {
             if(this.saveButton.active)
             {
-                this.setTooltipForNextRenderPass(List.of(
-                    BACK_TO_INVENTORY.getVisualOrderText(),
-                    UNSAVED_CHANGES.getVisualOrderText()
-                ));
+                graphics.setTooltipForNextFrame(List.of(BACK_TO_INVENTORY.getVisualOrderText(), UNSAVED_CHANGES.getVisualOrderText()), mouseX, mouseY);
             }
             else
             {
-                this.setTooltipForNextRenderPass(BACK_TO_INVENTORY);
+                graphics.setTooltipForNextFrame(List.of(BACK_TO_INVENTORY.getVisualOrderText()), mouseX, mouseY);
             }
         }
     }
@@ -281,7 +272,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             int itemX = this.windowLeft + ITEM_LIST_LEFT;
             int itemY = this.windowTop + ITEM_LIST_TOP + (hoveredIndex - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
             CosmeticItem item = this.items.get(hoveredIndex);
-            item.onMouseHover(this.minecraft, itemX, itemY, mouseX, mouseY);
+            item.onMouseHover(graphics, this.minecraft, itemX, itemY, mouseX, mouseY);
         }
     }
 
@@ -294,7 +285,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         int messageBgWidth = 7 + messageWidth + 7;
         int messageY = 8;
         graphics.fillGradient(0, 0, this.width, 50, 0xAA000000, 0x00000000);
-        graphics.blitSprite(LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
         graphics.drawString(this.font, COSMETIC_WARNING, (this.width - messageWidth) / 2, messageY + 6, 0xFFFFFFFF);
     }
 
@@ -303,36 +294,38 @@ public class CustomiseBackpackScreen extends CustomScreen
         int titleWidth = this.font.width(this.title);
         int labelWidth = 20 + titleWidth + 20;
         int labelX = x + (this.windowWidth - labelWidth) / 2;
-        graphics.blitSprite(LABEL_BACKGROUND, labelX, y, labelWidth, 21);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, labelX, y, labelWidth, 21);
 
         int titleX = x + (this.windowWidth - titleWidth) / 2;
         int checkersX = labelX + 5;
         int checkersWidth = titleX - checkersX - 2;
         if(checkersWidth > 0)
         {
-            graphics.blitSprite(CHECKERS, checkersX, y + 7, checkersWidth, 5);
-            graphics.blitSprite(CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, checkersX, y + 7, checkersWidth, 5);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
         int backPanelX = this.backButton.getX() - 6;
         int backPanelY = this.backButton.getY() - 5;
-        graphics.blitSprite(LABEL_BACKGROUND, backPanelX, backPanelY, 50, 26);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, backPanelX, backPanelY, 50, 26);
 
-        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
 
     public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick, int tickCount)
     {
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        pose.translate(x, y, 150);
-        pose.mulPose(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
-        pose.scale(16, 16, 16);
+        // TODO 1.21.1 restore
+        /*Matrix3x2fStack pose = graphics.pose();
+        pose.pushMatrix();
+        pose.translate(x, y);
+        pose.scale(1, -1); //new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
+        pose.scale(16);
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
         meta.renderer().ifPresentOrElse(renderer -> {
             BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, backpack, mc.player, mc.level, partialTick, model -> {
-                BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
+                StandaloneModelRenderer.draw(model, pose, graphics(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
+                //BakedModelRenderer.drawBakedModel(model, );
                 graphics.bufferSource().endBatch();
             }, tickCount);
             pose.pushPose();
@@ -343,7 +336,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
             graphics.bufferSource().endBatch();
         });
-        pose.popPose();
+        pose.popPose();*/
     }
 
     private int getHoveredIndex(int mouseX, int mouseY)
@@ -362,19 +355,19 @@ public class CustomiseBackpackScreen extends CustomScreen
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
     {
         if(!this.hasPopupMenu())
         {
-            if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
+            if(ScreenUtil.isPointInArea((int) event.x(), (int) event.y(), this.windowLeft + ITEM_LIST_LEFT, this.windowTop + ITEM_LIST_TOP, ITEM_LIST_WIDTH, ITEM_LIST_HEIGHT))
             {
-                if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+                if(event.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    int hoveredIndex = this.getHoveredIndex((int) mouseX, (int) mouseY);
+                    int hoveredIndex = this.getHoveredIndex((int) event.x(), (int) event.y());
                     if(hoveredIndex != -1)
                     {
                         CosmeticItem item = this.items.get(hoveredIndex);
-                        if(item.onMouseClicked(this.minecraft))
+                        if(item.onMouseClicked(event, this.minecraft))
                         {
                             return true;
                         }
@@ -382,7 +375,7 @@ public class CustomiseBackpackScreen extends CustomScreen
                 }
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
@@ -411,23 +404,23 @@ public class CustomiseBackpackScreen extends CustomScreen
     {
         protected abstract void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc);
 
-        protected boolean onMouseClicked(Minecraft mc)
+        protected boolean onMouseClicked(MouseButtonEvent event, Minecraft mc)
         {
             return false;
         }
 
-        protected void onMouseHover(Minecraft mc, int x, int y, int mouseX, int mouseY) {}
+        protected void onMouseHover(GuiGraphics graphics, Minecraft mc, int x, int y, int mouseX, int mouseY) {}
     }
 
     private class BackpackModelItem extends CosmeticItem
     {
-        private final ResourceLocation cosmeticId;
+        private final Identifier cosmeticId;
         private final ClientBackpack backpack;
         private final Component label;
         private final List<FormattedCharSequence> unlockTooltip;
         private final double completionProgress;
 
-        public BackpackModelItem(ClientBackpack backpack, Map<ResourceLocation, Component> labelMap, Map<ResourceLocation, Double> completionMap)
+        public BackpackModelItem(ClientBackpack backpack, Map<Identifier, Component> labelMap, Map<Identifier, Double> completionMap)
         {
             this.cosmeticId = backpack.getId();
             this.backpack = backpack;
@@ -452,19 +445,19 @@ public class CustomiseBackpackScreen extends CustomScreen
             boolean hovered = unlocked && (selected || ScreenUtil.isPointInArea(mouseX, mouseY, x, y, ITEM_WIDTH, ITEM_HEIGHT));
 
             // Draw background for item
-            ResourceLocation itemTexture = this.getItemTexture(unlocked, selected, hovered);
-            graphics.blitSprite(itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
+            Identifier itemTexture = this.getItemTexture(unlocked, selected, hovered);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
 
             if(!unlocked)
             {
                 int progressBarX = x + 24;
                 int progressBarY = y + ITEM_HEIGHT - 5 - 4;
-                graphics.blitSprite(UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
 
                 int progressWidth = (int) (87 * this.completionProgress);
-                graphics.blitSprite(UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
 
-                graphics.blitSprite(ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
             }
 
             // Draw label
@@ -477,7 +470,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         }
 
         @Override
-        protected void onMouseHover(Minecraft mc, int x, int y, int mouseX, int mouseY)
+        protected void onMouseHover(GuiGraphics graphics, Minecraft mc, int x, int y, int mouseX, int mouseY)
         {
             if(!this.backpack.isUnlocked(mc.player))
             {
@@ -487,15 +480,15 @@ public class CustomiseBackpackScreen extends CustomScreen
                 int lockY = y + 6;
                 if(ScreenUtil.isPointInArea(mouseX, mouseY, progressBarX, progressBarY, 89, 5) || ScreenUtil.isPointInArea(mouseX, mouseY, lockX, lockY, 12, 12))
                 {
-                    CustomiseBackpackScreen.this.setTooltipForNextRenderPass(this.unlockTooltip);
+                    graphics.setTooltipForNextFrame(mc.font, this.unlockTooltip, mouseX, mouseY);
                 }
             }
         }
 
         @Override
-        protected boolean onMouseClicked(Minecraft mc)
+        protected boolean onMouseClicked(MouseButtonEvent event, Minecraft mc)
         {
-            if(this.backpack.isUnlocked(mc.player))
+            if(event.button() == 0 && this.backpack.isUnlocked(mc.player))
             {
                 if(!CustomiseBackpackScreen.this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(this.cosmeticId))
                 {
@@ -507,7 +500,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             return false;
         }
 
-        private ResourceLocation getItemTexture(boolean unlocked, boolean selected, boolean hovered)
+        private Identifier getItemTexture(boolean unlocked, boolean selected, boolean hovered)
         {
             if(selected) return LIST_ITEM_SELECTED;
             if(unlocked) return hovered ? LIST_ITEM_FOCUSED : LIST_ITEM;
@@ -531,8 +524,8 @@ public class CustomiseBackpackScreen extends CustomScreen
                 .setSize(100, 14)
                 .setLabel(VIEW_ADDONS)
                 .setAction(btn -> {
-                    Style style = Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://mrcrayfish.github.io/Backpacked/"));
-                    CustomiseBackpackScreen.this.handleComponentClicked(style);
+                    var event = new ClickEvent.OpenUrl(URI.create("https://mrcrayfish.github.io/Backpacked/"));
+                    defaultHandleClickEvent(event, CustomiseBackpackScreen.this.minecraft, CustomiseBackpackScreen.this);
                 }).build();
 
         @Override
@@ -547,11 +540,11 @@ public class CustomiseBackpackScreen extends CustomScreen
         }
 
         @Override
-        protected boolean onMouseClicked(Minecraft mc)
+        protected boolean onMouseClicked(MouseButtonEvent event, Minecraft mc)
         {
             if(this.button.isHovered())
             {
-                this.button.onPress();
+                this.button.onPress(event);
             }
             return false;
         }

@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public final class ValueTypes
 {
-    private static final BiMap<ResourceLocation, Value.Type> SOURCES = HashBiMap.create();
+    private static final BiMap<Identifier, Value.Type> SOURCES = HashBiMap.create();
 
     public static void register(Value.Type type)
     {
@@ -21,7 +21,7 @@ public final class ValueTypes
             throw new IllegalStateException("Source already registered: " + type.id());
     }
 
-    public static Map<ResourceLocation, Value.Type> getAll()
+    public static Map<Identifier, Value.Type> getAll()
     {
         return Collections.unmodifiableMap(SOURCES);
     }

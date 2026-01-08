@@ -22,7 +22,7 @@ public class MerchantResultSlotMixin
     @Final
     private Merchant merchant;
 
-    @Inject(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;)V"))
+    @Inject(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/Identifier;)V"))
     private void backpacked$OnTake(Player player, ItemStack stack, CallbackInfo ci)
     {
         BackpackedEvents.MERCHANT_TRADE.post().handle(this.merchant, player, stack);

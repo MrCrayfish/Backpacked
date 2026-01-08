@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
-import net.minecraft.advancements.critereon.PlayerInteractTrigger;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.PlayerInteractTrigger;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ public class PlayerInteractTriggerMixin
     private void backpacked$OnTriggerHead(ServerPlayer player, ItemStack stack, Entity entity, CallbackInfo ci)
     {
         BackpackedInteractAccess access = (BackpackedInteractAccess) player;
-        List<ResourceLocation> capturedIds = access.getBackpacked$CapturedInteractIds();
+        List<Identifier> capturedIds = access.getBackpacked$CapturedInteractIds();
         if(!capturedIds.isEmpty())
         {
             BackpackedEvents.INTERACTED_WITH_ENTITY.post().handle(player, stack, entity, capturedIds);

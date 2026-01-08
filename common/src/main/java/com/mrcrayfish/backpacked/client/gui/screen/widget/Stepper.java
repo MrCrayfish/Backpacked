@@ -7,8 +7,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,13 +20,13 @@ import java.util.function.Consumer;
 public class Stepper extends AbstractWidget
 {
     private static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
     );
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_background");
-    private static final ResourceLocation INCREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_increment");
-    private static final ResourceLocation DECREMENT_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_decrement");
+    private static final Identifier BACKGROUND_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_background");
+    private static final Identifier INCREMENT_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_increment");
+    private static final Identifier DECREMENT_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_decrement");
     private static final IntRange DEFAULT_RANGE = new IntRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
 
     private final IntRange range;
@@ -43,15 +46,15 @@ public class Stepper extends AbstractWidget
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        graphics.blitSprite(BACKGROUND_SPRITE, this.getX() + this.getHeight(), this.getY() + 1, this.getWidth() - this.getHeight() * 2, this.getHeight() - 2);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, this.getX() + this.getHeight(), this.getY() + 1, this.getWidth() - this.getHeight() * 2, this.getHeight() - 2);
 
         boolean leftHovered = this.isDecrementHovered(mouseX, mouseY);
-        graphics.blitSprite(BUTTON_SPRITES.get(true, leftHovered), this.getX(), this.getY(), this.getHeight(), this.getHeight());
-        graphics.blitSprite(DECREMENT_SPRITE, this.getX() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_SPRITES.get(true, leftHovered), this.getX(), this.getY(), this.getHeight(), this.getHeight());
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, DECREMENT_SPRITE, this.getX() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
 
         boolean rightHovered = this.isIncrementHovered(mouseX, mouseY);
-        graphics.blitSprite(BUTTON_SPRITES.get(true, rightHovered), this.getX() + this.getWidth() - this.getHeight(), this.getY(), this.getHeight(), this.getHeight());
-        graphics.blitSprite(INCREMENT_SPRITE, this.getX() + this.getWidth() - this.getHeight() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_SPRITES.get(true, rightHovered), this.getX() + this.getWidth() - this.getHeight(), this.getY(), this.getHeight(), this.getHeight());
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INCREMENT_SPRITE, this.getX() + this.getWidth() - this.getHeight() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
 
         graphics.drawCenteredString(Minecraft.getInstance().font, Integer.toString(this.value), this.getX() + this.getWidth() / 2, this.getY() + (this.getHeight() - 10) / 2 + 1, 0xFFFFFFFF);
     }
@@ -60,15 +63,21 @@ public class Stepper extends AbstractWidget
     protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
-    protected boolean clicked(double mouseX, double mouseY)
+    public boolean isMouseOver(double mouseX, double mouseY)
     {
-        return this.active && this.visible && (this.isDecrementHovered((int) mouseX, (int) mouseY) || this.isIncrementHovered((int) mouseX, (int) mouseY));
+        return (this.isDecrementHovered((int) mouseX, (int) mouseY) || this.isIncrementHovered((int) mouseX, (int) mouseY));
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY)
+    protected boolean isValidClickButton(MouseButtonInfo p_447020_)
     {
-        if(this.isDecrementHovered((int) mouseX, (int) mouseY))
+        return super.isValidClickButton(p_447020_);
+    }
+
+    @Override
+    public void onClick(MouseButtonEvent event, boolean doubleClick)
+    {
+        if(this.isDecrementHovered((int) event.x(), (int) event.y()))
         {
             this.adjustValue(-1);
             if(this.callback != null)
@@ -76,7 +85,7 @@ public class Stepper extends AbstractWidget
                 this.callback.accept(this.value);
             }
         }
-        else if(this.isIncrementHovered((int) mouseX, (int) mouseY))
+        else if(this.isIncrementHovered((int) event.x(), (int) event.y()))
         {
             this.adjustValue(1);
             if(this.callback != null)

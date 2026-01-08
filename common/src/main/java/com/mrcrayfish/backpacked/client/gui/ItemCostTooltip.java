@@ -19,7 +19,7 @@ public class ItemCostTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public int getHeight()
+    public int getHeight(Font font)
     {
         return 16;
     }
@@ -32,7 +32,7 @@ public class ItemCostTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, GuiGraphics graphics)
+    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics)
     {
         graphics.renderFakeItem(this.item, x - 1, y - 1);
         graphics.renderItemDecorations(font, this.item, x - 1, y - 1, this.item.getCount() == 1 ? "1" : null);

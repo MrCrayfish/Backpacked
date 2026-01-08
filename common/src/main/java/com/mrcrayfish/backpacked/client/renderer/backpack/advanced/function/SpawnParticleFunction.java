@@ -23,7 +23,7 @@ public class SpawnParticleFunction implements BaseFunction
     private static final Set<Integer> SPAWNED = new HashSet<>();
 
     public static final Type TYPE = new Type(
-        Utils.rl("spawn_particle"),
+        Utils.id("spawn_particle"),
         RecordCodecBuilder.<SpawnParticleFunction>mapCodec(builder -> builder.group(
             ParticleTypes.CODEC.fieldOf("particle").forGetter(o -> o.particle),
             Vector.CODEC.optionalFieldOf("position", Vector.ZERO).forGetter(o -> o.position),
@@ -72,7 +72,7 @@ public class SpawnParticleFunction implements BaseFunction
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vector3f pos = context.pose().last().pose().getTranslation(new Vector3f());
-        pos = camera.getPosition().toVector3f().add(pos);
+        pos = camera.position().toVector3f().add(pos);
 
         Vector3d offset = new Vector3d();
         offset.x = this.position.x.get(context);

@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
@@ -24,11 +24,11 @@ public final class DummyChallenge extends Challenge
     @Override
     public ChallengeSerializer<?> getSerializer()
     {
-        return new ChallengeSerializer<>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "dummy"), DummyChallenge.CODEC);
+        return new ChallengeSerializer<>(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "dummy"), DummyChallenge.CODEC);
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return null;
     }

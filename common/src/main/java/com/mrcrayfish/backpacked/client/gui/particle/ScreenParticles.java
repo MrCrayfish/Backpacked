@@ -51,7 +51,7 @@ public final class ScreenParticles
         // Fixes particles not being smooth on Fabric
         if(Services.PLATFORM.getPlatform().isFabric())
         {
-            partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+            partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
         }
         float finalPartialTick = partialTick;
         this.particles.forEach(p -> p.render(graphics, finalPartialTick));

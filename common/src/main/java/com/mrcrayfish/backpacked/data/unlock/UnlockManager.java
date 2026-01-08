@@ -4,8 +4,8 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
-import com.mrcrayfish.framework.api.event.PlayerEvents;
-import com.mrcrayfish.framework.api.event.TickEvents;
+import com.mrcrayfish.framework.api.event.FrameworkPlayerEvents;
+import com.mrcrayfish.framework.api.event.FrameworkTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -36,11 +36,11 @@ public final class UnlockManager
 
     private UnlockManager()
     {
-        PlayerEvents.LOGGED_IN.register(this::onPlayerLoggedIn);
-        PlayerEvents.RESPAWN.register(this::onPlayerRespawn);
-        PlayerEvents.CHANGE_DIMENSION.register(this::onPlayerChangedDimension);
-        TickEvents.END_SERVER.register(this::onServerTick);
-        TickEvents.END_PLAYER.register(this::onPlayerTick);
+        FrameworkPlayerEvents.LOGGED_IN.register(this::onPlayerLoggedIn);
+        FrameworkPlayerEvents.RESPAWN.register(this::onPlayerRespawn);
+        FrameworkPlayerEvents.CHANGE_DIMENSION.register(this::onPlayerChangedDimension);
+        FrameworkTickEvents.END_SERVER.register(this::onServerTick);
+        FrameworkTickEvents.END_PLAYER.register(this::onPlayerTick);
         /*EntityEvents.LIVING_ENTITY_DEATH.register(this::onEntityDeath);
         BackpackedEvents.BRED_ANIMAL.register(this::onBredAnimal);
         PlayerEvents.CRAFT_ITEM.register(this::onCraftedItem);*/

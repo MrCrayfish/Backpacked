@@ -6,13 +6,11 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.Utils;
-import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 public class SeedflowMenu extends AugmentSettingsMenu
@@ -65,7 +63,7 @@ public class SeedflowMenu extends AugmentSettingsMenu
             layout.addChild(FrameworkEditBox.builder()
                 .setSize(divider1.getWidth(), 16)
                 .setPadding(2, 0, 2, 0)
-                .setIcon(Utils.rl("backpack/editbox/search"), 12, 12)
+                .setIcon(Utils.id("backpack/editbox/search"), 12, 12)
                 .setInitialText(lastQuery)
                 .setHint(SEARCH_HINT)
                 .setDependent(() -> holder.get().useFilters())
@@ -74,9 +72,9 @@ public class SeedflowMenu extends AugmentSettingsMenu
                     lastQuery = s;
                 })
                 .setBackground(new WidgetSprites(
-                        Utils.rl("backpack/editbox/background"),
-                        Utils.rl("backpack/editbox/background_disabled"),
-                        Utils.rl("backpack/editbox/background_focused")
+                        Utils.id("backpack/editbox/background"),
+                        Utils.id("backpack/editbox/background_disabled"),
+                        Utils.id("backpack/editbox/background_focused")
                 )).build());
 
             layout.addChild(list);

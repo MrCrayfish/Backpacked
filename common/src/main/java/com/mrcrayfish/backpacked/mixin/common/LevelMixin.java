@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -18,10 +19,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LevelMixin
 {
     @Shadow
-    public abstract void playSound(@Nullable Player player, double x, double y, double z, SoundEvent event, SoundSource source, float pitch, float volume);
+    public abstract void playSound(@Nullable Entity entity, double x, double y, double z, SoundEvent event, SoundSource source, float pitch, float volume);
 
-    @Inject(method = "playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", at = @At(value = "HEAD"), cancellable = true)
-    private void backpacked$lightweaverPlaceSound(Player player, BlockPos pos, SoundEvent event, SoundSource source, float pitch, float volume, CallbackInfo ci)
+    @Inject(method = "playSound(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", at = @At(value = "HEAD"), cancellable = true)
+    private void backpacked$lightweaverPlaceSound(Entity entity, BlockPos pos, SoundEvent event, SoundSource source, float pitch, float volume, CallbackInfo ci)
     {
         Level level = (Level) (Object) this;
         if(!(level instanceof ServerLevel))

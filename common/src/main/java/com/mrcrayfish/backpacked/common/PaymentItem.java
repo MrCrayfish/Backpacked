@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
 import java.util.function.Supplier;
@@ -20,8 +20,8 @@ public class PaymentItem
     {
         if(this.cachedItem == null)
         {
-            ResourceLocation id = ResourceLocation.tryParse(this.idSupplier.get());
-            this.cachedItem = BuiltInRegistries.ITEM.get(id);
+            Identifier id = Identifier.tryParse(this.idSupplier.get());
+            this.cachedItem = BuiltInRegistries.ITEM.getValue(id);
         }
         return this.cachedItem;
     }

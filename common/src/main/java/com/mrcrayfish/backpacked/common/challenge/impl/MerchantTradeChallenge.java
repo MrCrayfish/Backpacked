@@ -9,9 +9,9 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
@@ -26,7 +26,7 @@ import java.util.Optional;
 public class MerchantTradeChallenge extends Challenge
 {
     public static final ChallengeSerializer<MerchantTradeChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "merchant_trade"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "merchant_trade"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("merchant").forGetter(o -> {
                 return o.entity;
@@ -57,7 +57,7 @@ public class MerchantTradeChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(this.count, formatter, this.entity, this.item);
     }

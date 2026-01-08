@@ -1,52 +1,32 @@
 package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import com.mrcrayfish.backpacked.client.ClientRegistry;
-import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
-import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
-import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
-import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
-import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
-import com.mrcrayfish.backpacked.platform.Services;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-
-import java.util.Optional;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends RenderLayer<T, M>
+public class BackpackLayer extends RenderLayer<AvatarRenderState, PlayerModel>
 {
-    private final ItemRenderer itemRenderer;
+    private final ItemModelResolver itemModelResolver;
 
-    public BackpackLayer(RenderLayerParent<T, M> renderer, ItemRenderer itemRenderer)
+    public BackpackLayer(RenderLayerParent<AvatarRenderState, PlayerModel> renderer, ItemModelResolver itemModelResolver)
     {
         super(renderer);
-        this.itemRenderer = itemRenderer;
+        this.itemModelResolver = itemModelResolver;
     }
 
     @Override
-    public void render(PoseStack pose, MultiBufferSource source, int light, T player, float p_225628_5_, float p_225628_6_, float partialTick, float p_225628_8_, float p_225628_9_, float p_225628_10_)
+    public void submit(PoseStack stack, SubmitNodeCollector collector, int i, AvatarRenderState state, float v, float v1)
     {
-        Optional<CosmeticProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
+        // TODO 1.21.11 restore
+        /*Optional<CosmeticProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
         if(propertiesOptional.isEmpty())
             return;
 
@@ -58,7 +38,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
         if(!Services.BACKPACK.isBackpackVisible(player))
             return;
 
-        ResourceLocation cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+        Identifier cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
         ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(cosmeticId);
         if(backpack == null)
             return;
@@ -97,19 +77,14 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
             renderer.render(context);
             pose.popPose();
         }, () -> {
-            BakedModel model = this.getModel(backpack.getBaseModel());
-            BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
+            //BakedModel model = this.getModel(backpack.getBaseModel());
+            //BakedModelRenderer.drawBakedModel(model, pose, source, light, OverlayTexture.NO_OVERLAY);
         });
 
         pose.popPose();
 
         BakedModelRenderer.drawBakedModel(this.getModel(backpack.getStrapsModel()), pose, source, light, OverlayTexture.NO_OVERLAY);
 
-        pose.popPose();
-    }
-
-    private BakedModel getModel(ModelResourceLocation location)
-    {
-        return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
+        pose.popPose();*/
     }
 }

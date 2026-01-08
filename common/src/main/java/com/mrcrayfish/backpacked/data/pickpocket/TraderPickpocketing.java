@@ -1,5 +1,7 @@
 package com.mrcrayfish.backpacked.data.pickpocket;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
 import com.mrcrayfish.framework.api.sync.SyncedObject;
@@ -10,7 +12,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
@@ -20,6 +22,11 @@ import java.util.UUID;
 
 public class TraderPickpocketing extends SyncedObject
 {
+    public static final Codec<TraderPickpocketing> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        Codec.BOOL.fieldOf("Initialized").forGetter(o -> o.initialized),
+        Codec.BOOL.fieldOf("EquippedBackpack").forGetter(o -> o.backpack),
+        Codec.BOOL.fieldOf("SpawnedLoot").forGetter(o -> o.spawnedLoot)
+    ).apply(instance, TraderPickpocketing::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, TraderPickpocketing> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.BOOL,
         TraderPickpocketing::isInitialized,
@@ -29,7 +36,7 @@ public class TraderPickpocketing extends SyncedObject
         TraderPickpocketing::isLootSpawned,
         TraderPickpocketing::new
     );
-    public static final DataSerializer<TraderPickpocketing> SERIALIZER = new DataSerializer<>(STREAM_CODEC, TraderPickpocketing::write, TraderPickpocketing::read);
+    public static final DataSerializer<TraderPickpocketing> SERIALIZER = new DataSerializer<>(STREAM_CODEC, CODEC);
 
     private boolean initialized = false;
     private boolean backpack = false;
@@ -97,25 +104,6 @@ public class TraderPickpocketing extends SyncedObject
     public Map<UUID, Long> getDislikedPlayers()
     {
         return this.dislikedPlayers;
-    }
-
-    private Tag write(HolderLookup.Provider provider)
-    {
-        CompoundTag data = new CompoundTag();
-        data.putBoolean("Initialized", this.initialized);
-        data.putBoolean("EquippedBackpack", this.backpack);
-        data.putBoolean("SpawnedLoot", this.spawnedLoot);
-        return data;
-    }
-
-    private static TraderPickpocketing read(Tag tag, HolderLookup.Provider provider)
-    {
-        CompoundTag data = (CompoundTag) tag;
-        TraderPickpocketing pickpocketing = new TraderPickpocketing();
-        pickpocketing.initialized = data.getBoolean("Initialized");
-        pickpocketing.backpack = data.getBoolean("EquippedBackpack");
-        pickpocketing.spawnedLoot = data.getBoolean("SpawnedLoot");
-        return pickpocketing;
     }
 
     public static Optional<TraderPickpocketing> get(Entity entity)

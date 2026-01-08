@@ -20,7 +20,7 @@ import java.util.Locale;
 public record HopperBridgeAugment(boolean insert, boolean extract, FilterMode filterMode, ItemCollection filters) implements Augment<HopperBridgeAugment>, FilterableItems<HopperBridgeAugment>
 {
     public static final AugmentType<HopperBridgeAugment> TYPE = new AugmentType<>(
-        Utils.rl("hopper_bridge"),
+        Utils.id("hopper_bridge"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("insert").orElse(true).forGetter(HopperBridgeAugment::insert),
             Codec.BOOL.fieldOf("extract").orElse(true).forGetter(HopperBridgeAugment::extract),

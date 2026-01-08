@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common.predicates;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.BlockPos;
 
 public record BlockPositionPredicate(MinMaxBounds.Ints x, MinMaxBounds.Ints y, MinMaxBounds.Ints z)

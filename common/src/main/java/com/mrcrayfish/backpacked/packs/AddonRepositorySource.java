@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.packs;
 
 import com.mrcrayfish.backpacked.Constants;
-import net.minecraft.FileUtil;
+import net.minecraft.util.FileUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackType;

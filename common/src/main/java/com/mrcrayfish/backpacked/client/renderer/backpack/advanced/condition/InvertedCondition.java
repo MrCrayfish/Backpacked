@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 
 public record InvertedCondition(BaseCondition condition) implements BaseCondition
 {
-    public static final Type TYPE = new Type(Utils.rl("inverted"), RecordCodecBuilder.<InvertedCondition>mapCodec(builder -> builder.group(
+    public static final Type TYPE = new Type(Utils.id("inverted"), RecordCodecBuilder.<InvertedCondition>mapCodec(builder -> builder.group(
         BaseCondition.CODEC.fieldOf("condition").forGetter(o -> o.condition)
     ).apply(builder, InvertedCondition::new)));
 

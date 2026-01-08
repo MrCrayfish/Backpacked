@@ -18,9 +18,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -40,9 +42,9 @@ import java.util.Set;
 public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends CustomContainerScreen<T>
 {
     private static final Component HOLD_TO_UNLOCK = Component.translatable("backpacked.gui.hold_to_unlock");
-    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final ResourceLocation ICON_LOCK_OUTLINED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_outlined");
-    private static final ResourceLocation EXP_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
+    private static final Identifier ICON_LOCK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final Identifier ICON_LOCK_OUTLINED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_outlined");
+    private static final Identifier EXP_ORB = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
     private static final int UNLOCK_TIME = 20;
 
     private final ScreenParticles screenParticles = new ScreenParticles();
@@ -138,11 +140,11 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 {
                     if(this.selectedSlots.contains(slot))
                     {
-                        graphics.blitSprite(ICON_LOCK_OUTLINED, this.leftPos + slot.x + 1, this.topPos + slot.y + 1, 14, 14);
+                        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK_OUTLINED, this.leftPos + slot.x + 1, this.topPos + slot.y + 1, 14, 14);
                     }
                     else
                     {
-                        graphics.blitSprite(ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
+                        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
 
                         if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
                         {
@@ -202,9 +204,9 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
     {
-        if(!this.hasPopupMenu() && button == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && !this.hideLockedSlots)
+        if(!this.hasPopupMenu() && event.button() == 0 && this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && !this.hideLockedSlots)
         {
             if(this.isHoldingUnlockToken())
             {
@@ -218,13 +220,13 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY)
     {
-        if(!this.hasPopupMenu() && button == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked() && !this.isHoldingUnlockToken())
+        if(!this.hasPopupMenu() && event.button() == 0 && this.lastAddedUnlockableSlot != null && this.hoveredLockedSlot != null && this.lastAddedUnlockableSlot != this.hoveredLockedSlot && !this.hoveredLockedSlot.isUnlocked() && !this.isHoldingUnlockToken())
         {
             if(!this.selectedSlots.contains(this.hoveredLockedSlot))
             {
@@ -234,7 +236,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 }
             }
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(event, deltaX, deltaY);
     }
 
     protected void addSlotToSelected(UnlockableSlot slot)
@@ -249,7 +251,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    public boolean mouseReleased(MouseButtonEvent event)
     {
         if(this.preventNextRelease)
         {
@@ -259,13 +261,13 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
                 return true;
             }
         }
-        if(button == 0 && !this.selectedSlots.isEmpty())
+        if(event.button() == 0 && !this.selectedSlots.isEmpty())
         {
             this.selectedSlots.clear();
             this.lastAddedUnlockableSlot = null;
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     public void onSlotUnlocked(List<Integer> slotIndexes)

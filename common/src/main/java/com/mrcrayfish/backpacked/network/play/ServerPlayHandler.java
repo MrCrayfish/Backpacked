@@ -26,11 +26,12 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import com.mrcrayfish.framework.api.network.MessageContext;
+import com.mrcrayfish.framework.api.network.ConfigurationMessageContext;
+import com.mrcrayfish.framework.api.network.PlayMessageContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -39,10 +40,10 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 
@@ -51,7 +52,7 @@ import java.util.*;
  */
 public class ServerPlayHandler
 {
-    public static void handleCustomiseBackpack(MessageBackpackCosmetics message, MessageContext context)
+    public static void handleCustomiseBackpack(MessageBackpackCosmetics message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(player == null)
@@ -62,10 +63,10 @@ public class ServerPlayHandler
             return;
 
         CosmeticProperties properties = message.properties();
-        Optional<ResourceLocation> cosmeticOptional = properties.cosmetic();
+        Optional<Identifier> cosmeticOptional = properties.cosmetic();
         if(cosmeticOptional.isPresent())
         {
-            ResourceLocation cosmetic = cosmeticOptional.get();
+            Identifier cosmetic = cosmeticOptional.get();
             Backpack backpack = BackpackManager.instance().getBackpack(cosmetic);
             if(backpack == null)
                 return;
@@ -77,7 +78,7 @@ public class ServerPlayHandler
         stack.set(ModDataComponents.COSMETIC_PROPERTIES.get(), properties);
     }
 
-    public static void handleOpenBackpack(MessageOpenBackpack message, MessageContext context)
+    public static void handleOpenBackpack(MessageOpenBackpack message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer opener))
@@ -92,7 +93,7 @@ public class ServerPlayHandler
         BackpackItem.openBackpack(opener, opener, backpackIndex);
     }
 
-    public static void handlePickpocketBackpack(MessagePickpocketBackpack message, MessageContext context)
+    public static void handlePickpocketBackpack(MessagePickpocketBackpack message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer opener))
@@ -126,7 +127,7 @@ public class ServerPlayHandler
         }
     }
 
-    public static void handleNavigateBackpack(MessageNavigateBackpack message, MessageContext context)
+    public static void handleNavigateBackpack(MessageNavigateBackpack message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer opener))
@@ -160,7 +161,7 @@ public class ServerPlayHandler
         BackpackItem.openBackpack(target, opener, backpackIndex);
     }
 
-    public static void handleRequestCustomisation(MessageRequestCustomisation message, MessageContext context)
+    public static void handleRequestCustomisation(MessageRequestCustomisation message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -174,8 +175,8 @@ public class ServerPlayHandler
             return;
 
         boolean showCosmeticWarning = BackpackHelper.getFirstBackpackStack(serverPlayer) != stack;
-        Map<ResourceLocation, Component> labelMap = new HashMap<>();
-        Map<ResourceLocation, Double> completionMap = new HashMap<>();
+        Map<Identifier, Component> labelMap = new HashMap<>();
+        Map<Identifier, Double> completionMap = new HashMap<>();
         UnlockManager.getTracker(player).ifPresent(unlockTracker -> {
             for(Backpack backpack : BackpackManager.instance().getBackpacks()) {
                 if(!unlockTracker.isUnlocked(backpack.getId())) {
@@ -191,7 +192,7 @@ public class ServerPlayHandler
         Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageOpenCustomisation(message.backpackIndex(), labelMap, properties, showCosmeticWarning, completionMap));
     }
 
-    public static void handleRequestManagement(MessageRequestManagement message, MessageContext context)
+    public static void handleRequestManagement(MessageRequestManagement message, PlayMessageContext context)
     {
         context.getPlayer().ifPresent(player -> {
             if(player.containerMenu instanceof BackpackContainerMenu menu) {
@@ -201,7 +202,7 @@ public class ServerPlayHandler
     }
 
     @SuppressWarnings("ConstantValue")
-    public static void handleUnlockSlot(MessageUnlockSlot message, MessageContext context)
+    public static void handleUnlockSlot(MessageUnlockSlot message, PlayMessageContext context)
     {
         context.getPlayer().ifPresent(player ->
         {
@@ -245,7 +246,7 @@ public class ServerPlayHandler
         });
     }
 
-    public static void handleChangeAugment(MessageChangeAugment message, MessageContext context)
+    public static void handleChangeAugment(MessageChangeAugment message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -306,7 +307,7 @@ public class ServerPlayHandler
         Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageSyncAugmentChange(message.position(), updatedAugment));
     }
 
-    public static void handleSetAugmentState(MessageSetAugmentState message, MessageContext context)
+    public static void handleSetAugmentState(MessageSetAugmentState message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -329,7 +330,7 @@ public class ServerPlayHandler
         Augments.set(stack, Augments.get(stack).setState(message.position(), message.state()));
     }
 
-    public static void handleUpdateAugment(MessageUpdateAugment message, MessageContext context)
+    public static void handleUpdateAugment(MessageUpdateAugment message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -372,7 +373,7 @@ public class ServerPlayHandler
         Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageSyncAugmentChange(message.position(), updatedAugment));
     }
 
-    public static void handleRenameBackpack(MessageRenameBackpack message, MessageContext context)
+    public static void handleRenameBackpack(MessageRenameBackpack message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -408,7 +409,7 @@ public class ServerPlayHandler
         }
     }
 
-    public static void handleSortBackpack(MessageSortBackpack message, MessageContext context)
+    public static void handleSortBackpack(MessageSortBackpack message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -479,7 +480,7 @@ public class ServerPlayHandler
         container.setChanged();
     }
 
-    public static void handleMessageCheckShelfKey(MessageCheckShelfKey message, MessageContext context)
+    public static void handleMessageCheckShelfKey(MessageCheckShelfKey message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))
@@ -512,10 +513,10 @@ public class ServerPlayHandler
 
         shelfKey.ifPresentOrElse(key -> {
             boolean valid = false;
-            ServerLevel keyLevel = serverPlayer.server.getLevel(key.level());
+            ServerLevel keyLevel = serverPlayer.level().getServer().getLevel(key.level());
             if(keyLevel != null) {
                 Recall recall = ((Recall.Access) keyLevel).backpacked$getRecall();
-                valid = recall.isShelfAtBlockPos(BlockPos.of(key.position()));
+                valid = recall.isShelfAtBlockPos(keyLevel, BlockPos.of(key.position()));
             }
             Network.getPlay().sendToPlayer(() -> serverPlayer, new MessageResponseShelfKey(backpackIndex, position, valid));
         }, () -> {
@@ -523,7 +524,7 @@ public class ServerPlayHandler
         });
     }
 
-    public static void handleUnlockAugmentBay(MessageUnlockAugmentBay message, MessageContext context)
+    public static void handleUnlockAugmentBay(MessageUnlockAugmentBay message, PlayMessageContext context)
     {
         Player player = context.getPlayer().orElse(null);
         if(!(player instanceof ServerPlayer serverPlayer))

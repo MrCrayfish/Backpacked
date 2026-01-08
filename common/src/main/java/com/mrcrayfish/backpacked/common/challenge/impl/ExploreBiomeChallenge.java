@@ -13,16 +13,14 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +40,7 @@ public class ExploreBiomeChallenge extends Challenge
         return keys.isEmpty() ? DataResult.error(() -> "Must specify at least one biome") : DataResult.success(keys);
     });
     public static final ChallengeSerializer<ExploreBiomeChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "explore_biome"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "explore_biome"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
                 return challenge.biomes;
@@ -65,7 +63,7 @@ public class ExploreBiomeChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(formatter, this.biomes);
     }
@@ -74,7 +72,7 @@ public class ExploreBiomeChallenge extends Challenge
     {
         private final ProgressFormatter formatter;
         private final ImmutableSet<ResourceKey<Biome>> biomes;
-        private final Set<ResourceLocation> exploredBiomes = new HashSet<>();
+        private final Set<Identifier> exploredBiomes = new HashSet<>();
 
         private Tracker(ProgressFormatter formatter, List<ResourceKey<Biome>> biomes)
         {
@@ -86,7 +84,7 @@ public class ExploreBiomeChallenge extends Challenge
         {
             if(this.biomes.contains(biome))
             {
-                this.exploredBiomes.add(biome.location());
+                this.exploredBiomes.add(biome.identifier());
                 this.markForCompletionTest(player);
             }
         }
@@ -98,26 +96,23 @@ public class ExploreBiomeChallenge extends Challenge
         }
 
         @Override
-        public void read(CompoundTag tag)
+        public void read(ValueInput input)
         {
             this.exploredBiomes.clear();
-            ListTag list = tag.getList("ExploredBiomes", Tag.TAG_STRING);
-            list.forEach(nbt ->
-            {
-                ResourceLocation id = ResourceLocation.tryParse(nbt.getAsString());
-                if(id != null && this.biomes.stream().anyMatch(key -> key.location().equals(id)))
-                {
+            ValueInput.TypedInputList<String> list = input.listOrEmpty("ExploredBiomes", Codec.STRING);
+            list.forEach(biome -> {
+                Identifier id = Identifier.tryParse(biome);
+                if(id != null && this.biomes.stream().anyMatch(key -> key.identifier().equals(id))) {
                     this.exploredBiomes.add(id);
                 }
             });
         }
 
         @Override
-        public void write(CompoundTag tag)
+        public void write(ValueOutput output)
         {
-            ListTag list = new ListTag();
-            this.exploredBiomes.forEach(location -> list.add(StringTag.valueOf(location.toString())));
-            tag.put("ExploredBiomes", list);
+            ValueOutput.TypedOutputList<String> list = output.list("ExploredBiomes", Codec.STRING);
+            this.exploredBiomes.forEach(location -> list.add(location.toString()));
         }
 
         @Override

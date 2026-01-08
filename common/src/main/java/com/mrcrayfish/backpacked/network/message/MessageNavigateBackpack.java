@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.network.message;
 import com.mrcrayfish.backpacked.common.Navigate;
 import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import com.mrcrayfish.framework.api.network.PlayMessageContext;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -13,7 +14,7 @@ public record MessageNavigateBackpack(Navigate navigate)
          MessageNavigateBackpack::new
     );
 
-    public static void handle(MessageNavigateBackpack message, MessageContext context)
+    public static void handle(MessageNavigateBackpack message, PlayMessageContext context)
     {
         context.execute(() -> ServerPlayHandler.handleNavigateBackpack(message, context));
         context.setHandled(true);

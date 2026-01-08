@@ -13,7 +13,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 public record RotateMatrixFunction(Value x, Value y, Value z) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        Utils.rl("rotate_matrix"),
+        Utils.id("rotate_matrix"),
         RecordCodecBuilder.<RotateMatrixFunction>mapCodec(builder -> builder.group(
             Value.EITHER_CODEC.fieldOf("x").orElse(Value.ZERO).forGetter(o -> o.x),
             Value.EITHER_CODEC.fieldOf("y").orElse(Value.ZERO).forGetter(o -> o.y),

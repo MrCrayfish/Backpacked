@@ -12,7 +12,7 @@ import net.minecraft.network.codec.StreamCodec;
 public record LootboundAugment(boolean blocks, boolean mobs) implements Augment<LootboundAugment>
 {
     public static final AugmentType<LootboundAugment> TYPE = new AugmentType<>(
-        Utils.rl("lootbound"),
+        Utils.id("lootbound"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.fieldOf("blocks").orElse(true).forGetter(LootboundAugment::blocks),
             Codec.BOOL.fieldOf("mobs").orElse(true).forGetter(LootboundAugment::mobs)

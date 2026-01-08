@@ -54,7 +54,7 @@ public class ServerPlayerGameModeMixin
     {
         this.backpacked$capturedMinedItem = this.player.getMainHandItem();
         boolean captureTag = BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.post().handle(this.player);
-        this.backpacked$blockSnapshot = captureTag ? BlockSnapshot.captureWithTag(this.player.serverLevel(), pos) : BlockSnapshot.capture(this.player.serverLevel(), pos);
+        this.backpacked$blockSnapshot = captureTag ? BlockSnapshot.captureWithTag(this.player.level(), pos) : BlockSnapshot.capture(this.player.level(), pos);
     }
 
     @Inject(method = "destroyAndAck", at = @At(
@@ -103,7 +103,7 @@ public class ServerPlayerGameModeMixin
         }
     }
 
-    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/ItemUsedOnLocationTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
+    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/criterion/ItemUsedOnLocationTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
     private void backpacked$BeforeTriggerItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)
@@ -115,7 +115,7 @@ public class ServerPlayerGameModeMixin
         }
     }
 
-    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/DefaultBlockInteractionTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;)V"))
+    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/criterion/DefaultBlockInteractionTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/core/BlockPos;)V"))
     private void backpacked$BeforeTriggerDefault(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult result, CallbackInfoReturnable<InteractionResult> cir)
     {
         if(this.backpacked$capturedUseState != null && this.backpacked$capturedUseItem != null)

@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -28,8 +28,8 @@ public class ClientRegistry
         return instance;
     }
 
-    private Map<ResourceLocation, ClientBackpack> backpacks = new HashMap<>();
-    private Map<ResourceLocation, ModelMeta> modelMetaMap = new HashMap<>();
+    private Map<Identifier, ClientBackpack> backpacks = new HashMap<>();
+    private Map<Identifier, ModelMeta> modelMetaMap = new HashMap<>();
 
     public void updateBackpacks(List<Backpack> backpacks)
     {
@@ -40,13 +40,13 @@ public class ClientRegistry
     }
 
     @Nullable
-    public ClientBackpack getBackpack(ResourceLocation id)
+    public ClientBackpack getBackpack(Identifier id)
     {
         return this.backpacks.get(id);
     }
 
     @Nullable
-    public ClientBackpack getBackpackOrDefault(ResourceLocation id)
+    public ClientBackpack getBackpackOrDefault(Identifier id)
     {
         // Try getting the backpack with the given id
         ClientBackpack backpack = this.backpacks.get(id);
@@ -63,7 +63,7 @@ public class ClientRegistry
         return ImmutableList.copyOf(this.backpacks.values());
     }
 
-    public void updateModelMeta(Map<ResourceLocation, ModelMeta> map)
+    public void updateModelMeta(Map<Identifier, ModelMeta> map)
     {
         this.modelMetaMap = map;
     }

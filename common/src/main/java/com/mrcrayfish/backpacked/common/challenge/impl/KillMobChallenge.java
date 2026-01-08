@@ -8,10 +8,10 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.framework.api.event.EntityEvents;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.framework.api.event.FrameworkEntityEvents;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class KillMobChallenge extends Challenge
 {
     public static final ChallengeSerializer<KillMobChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "kill_mob"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "kill_mob"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("mob").forGetter(challenge -> {
                 return challenge.entity;
@@ -59,7 +59,7 @@ public class KillMobChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(this.count, formatter, this.entity, this.item);
     }
@@ -83,7 +83,7 @@ public class KillMobChallenge extends Challenge
 
         public static void registerEvent()
         {
-            EntityEvents.LIVING_ENTITY_DEATH.register((entity, source) -> {
+            FrameworkEntityEvents.LIVING_ENTITY_DEATH.register((entity, source) -> {
                 if(entity.level().isClientSide())
                     return false;
 

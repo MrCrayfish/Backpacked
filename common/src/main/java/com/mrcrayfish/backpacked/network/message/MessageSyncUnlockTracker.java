@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +14,9 @@ import java.util.Set;
 /**
  * Author: MrCrayfish
  */
-public record MessageSyncUnlockTracker(Set<ResourceLocation> unlockedBackpacks)
+public record MessageSyncUnlockTracker(Set<Identifier> unlockedBackpacks)
 {
-    public static final StreamCodec<ByteBuf, Set<ResourceLocation>> RESOURCE_LOCATION_SET_STREAM_CODEC = ResourceLocation.STREAM_CODEC.apply(
+    public static final StreamCodec<ByteBuf, Set<Identifier>> RESOURCE_LOCATION_SET_STREAM_CODEC = Identifier.STREAM_CODEC.apply(
         ByteBufCodecs.collection(HashSet::new)
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageSyncUnlockTracker> STREAM_CODEC = StreamCodec.composite(

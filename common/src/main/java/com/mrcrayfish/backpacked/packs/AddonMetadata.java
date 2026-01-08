@@ -11,8 +11,10 @@ import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
+import net.minecraft.server.packs.metadata.pack.PackFormat;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.world.flag.FeatureFlagSet;
 
@@ -40,7 +42,7 @@ public record AddonMetadata(Component name, Component description, Component aut
         {
             try(PackResources resources = resourcesSupplier.openPrimary(info))
             {
-                Optional<Optional<AddonMetadataSection>> result = readAddonMetadata(resources);
+                Optional<Optional<AddonMetadataSection>> result = readAddonMetadata(info, resources);
                 if(result.isEmpty())
                     return Optional.empty();
 
@@ -70,14 +72,14 @@ public record AddonMetadata(Component name, Component description, Component aut
         }
     }
 
-    private static Optional<Optional<AddonMetadataSection>> readAddonMetadata(PackResources resources) throws IOException
+    private static Optional<Optional<AddonMetadataSection>> readAddonMetadata(PackLocationInfo info, PackResources resources) throws IOException
     {
         IoSupplier<InputStream> supplier = resources.getRootResource("backpacked_addon.mcmeta");
         if(supplier != null)
         {
             try(InputStream is = supplier.get())
             {
-                return Optional.of(Optional.ofNullable(AbstractPackResources.getMetadataFromStream(AddonMetadataSection.TYPE, is)));
+                return Optional.of(Optional.ofNullable(AbstractPackResources.getMetadataFromStream(AddonMetadataSection.TYPE, is, info)));
             }
         }
         return Optional.empty();
@@ -85,26 +87,26 @@ public record AddonMetadata(Component name, Component description, Component aut
 
     private static PackCompatibility readPackCompatibility(AddonMetadataSection section, PackType type)
     {
-        int currentFormat = SharedConstants.getCurrentVersion().getPackVersion(type);
+        PackFormat currentFormat = SharedConstants.getCurrentVersion().packVersion(type);
         int packFormat = switch(type) {
             case CLIENT_RESOURCES -> section.assetsFormat();
             case SERVER_DATA -> section.dataFormat();
         };
-        if(packFormat > currentFormat) return PackCompatibility.TOO_NEW;
-        if(packFormat < currentFormat) return PackCompatibility.TOO_OLD;
+        if(packFormat > currentFormat.major()) return PackCompatibility.TOO_NEW;
+        if(packFormat < currentFormat.minor()) return PackCompatibility.TOO_OLD;
         return PackCompatibility.COMPATIBLE;
     }
 
     private record AddonMetadataSection(Component name, Component description, Component author, int addonFormat, int assetsFormat, int dataFormat)
     {
         public static final Codec<AddonMetadataSection> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                ComponentSerialization.CODEC.fieldOf("name").forGetter(AddonMetadataSection::name),
-                ComponentSerialization.CODEC.fieldOf("description").forGetter(AddonMetadataSection::description),
-                ComponentSerialization.CODEC.fieldOf("author").forGetter(AddonMetadataSection::author),
-                Codec.INT.fieldOf("addon_format").forGetter(AddonMetadataSection::addonFormat),
-                Codec.INT.fieldOf("assets_format").forGetter(AddonMetadataSection::assetsFormat),
-                Codec.INT.fieldOf("data_format").forGetter(AddonMetadataSection::dataFormat)
+            ComponentSerialization.CODEC.fieldOf("name").forGetter(AddonMetadataSection::name),
+            ComponentSerialization.CODEC.fieldOf("description").forGetter(AddonMetadataSection::description),
+            ComponentSerialization.CODEC.fieldOf("author").forGetter(AddonMetadataSection::author),
+            Codec.INT.fieldOf("addon_format").forGetter(AddonMetadataSection::addonFormat),
+            Codec.INT.fieldOf("assets_format").forGetter(AddonMetadataSection::assetsFormat),
+            Codec.INT.fieldOf("data_format").forGetter(AddonMetadataSection::dataFormat)
         ).apply(builder, AddonMetadataSection::new));
-        public static final MetadataSectionType<AddonMetadataSection> TYPE = MetadataSectionType.fromCodec("backpacked_addon", CODEC);
+        public static final MetadataSectionType<AddonMetadataSection> TYPE = new MetadataSectionType<>("backpacked_addon", CODEC);
     }
 }

@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item;
 
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 public class ButtonItem extends MenuItem
@@ -14,7 +15,7 @@ public class ButtonItem extends MenuItem
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY)
+    public void onClick(MouseButtonEvent event, boolean doubleClick)
     {
         this.action.run();
         this.getPopupMenu().deepClose();

@@ -5,15 +5,17 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.function.Supplier;
 
 public class TitleWidget extends AbstractWidget
 {
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final Identifier CHECKERS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private final Supplier<FormattedCharSequence> display;
     private final Font font;
@@ -48,8 +50,8 @@ public class TitleWidget extends AbstractWidget
         int titleX = this.getX() + (this.getWidth() - titleWidth) / 2 + this.shift;
         if(this.getWidth() > titleWidth)
         {
-            graphics.blitSprite(CHECKERS, this.getX(), this.getY(), titleX - this.getX() - 3, this.font.lineHeight);
-            graphics.blitSprite(CHECKERS, titleX + titleWidth + 3, this.getY(), this.getRight() - titleX - titleWidth - 3, this.font.lineHeight);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, this.getX(), this.getY(), titleX - this.getX() - 3, this.font.lineHeight);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, titleX + titleWidth + 3, this.getY(), this.getRight() - titleX - titleWidth - 3, this.font.lineHeight);
         }
         graphics.drawString(this.font, displayText, titleX, this.getY() + 1, 0xFF61503D, false);
     }
@@ -58,7 +60,7 @@ public class TitleWidget extends AbstractWidget
     protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
-    protected boolean isValidClickButton(int button)
+    protected boolean isValidClickButton(MouseButtonInfo info)
     {
         return false; // Prevents clicking
     }

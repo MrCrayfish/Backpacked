@@ -11,7 +11,8 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     private int height;
     private @Nullable List<AbstractWidget> cachedWidgets;
     private Alignment alignment = Alignment.END_TOP;
-    private @Nullable ResourceLocation background;
+    private @Nullable Identifier background;
     private int screenClampPadding = 0;
 
     protected PopupMenu(PopupMenuHandler handler)
@@ -93,7 +94,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         this.alignment = alignment;
     }
 
-    protected void setBackground(@Nullable ResourceLocation background)
+    protected void setBackground(@Nullable Identifier background)
     {
         this.background = background;
     }
@@ -124,7 +125,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         // Draw the background of the popup if present
         if(this.background != null)
         {
-            graphics.blitSprite(this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
         }
 
         // Draw all widgets from the layout
@@ -132,7 +133,8 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
 
         if(this.child != null)
         {
-            graphics.pose().translate(0, 0, 350);
+            // TODO 1.21.11 what this change to
+            //graphics.pose().translate(0, 0, 350);
             this.child.render(graphics, mouseX, mouseY, deltaTick);
         }
     }

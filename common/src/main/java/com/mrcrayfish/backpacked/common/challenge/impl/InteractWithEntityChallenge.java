@@ -10,9 +10,9 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +27,7 @@ import java.util.Optional;
 public class InteractWithEntityChallenge extends Challenge
 {
     public static final ChallengeSerializer<InteractWithEntityChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_entity"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_entity"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(challenge -> {
                 return challenge.entity;
@@ -61,19 +61,19 @@ public class InteractWithEntityChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(backpackId, this.count, formatter, this.entity, this.item, this.player);
     }
 
     public static class Tracker extends CountProgressTracker
     {
-        private final ResourceLocation backpackId;
+        private final Identifier backpackId;
         private final Optional<EntityPredicate> entity;
         private final Optional<ItemPredicate> item;
         private final Optional<EntityPredicate> player;
 
-        private Tracker(ResourceLocation backpackId, int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, Optional<EntityPredicate> player)
+        private Tracker(Identifier backpackId, int maxCount, ProgressFormatter formatter, Optional<EntityPredicate> entity, Optional<ItemPredicate> item, Optional<EntityPredicate> player)
         {
             super(maxCount, formatter);
             this.backpackId = backpackId;

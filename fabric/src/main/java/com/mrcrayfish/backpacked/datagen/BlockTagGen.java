@@ -22,14 +22,14 @@ public class BlockTagGen extends FabricTagProvider.BlockTagProvider
     protected void addTags(HolderLookup.Provider arg)
     {
         // Does Fabric have any standard tags?
-        this.getOrCreateTagBuilder(ModTags.Blocks.FUNNELLING)
-                .forceAddTag(BlockTags.GOLD_ORES)
-                .forceAddTag(BlockTags.IRON_ORES)
-                .forceAddTag(BlockTags.DIAMOND_ORES)
-                .forceAddTag(BlockTags.REDSTONE_ORES)
-                .forceAddTag(BlockTags.LAPIS_ORES)
-                .forceAddTag(BlockTags.COAL_ORES)
-                .forceAddTag(BlockTags.EMERALD_ORES)
-                .forceAddTag(BlockTags.COPPER_ORES);
+        this.builder(ModTags.Blocks.FUNNELLING)
+            .forceAddTag(BlockTags.GOLD_ORES)
+            .forceAddTag(BlockTags.IRON_ORES)
+            .forceAddTag(BlockTags.DIAMOND_ORES)
+            .forceAddTag(BlockTags.REDSTONE_ORES)
+            .forceAddTag(BlockTags.LAPIS_ORES)
+            .forceAddTag(BlockTags.COAL_ORES)
+            .forceAddTag(BlockTags.EMERALD_ORES)
+            .forceAddTag(BlockTags.COPPER_ORES);
     }
 }

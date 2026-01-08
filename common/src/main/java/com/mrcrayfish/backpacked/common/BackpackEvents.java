@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
-import com.mrcrayfish.framework.api.event.TickEvents;
+import com.mrcrayfish.framework.api.event.FrameworkTickEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -16,7 +16,7 @@ public class BackpackEvents
 {
     public static void init()
     {
-        TickEvents.START_PLAYER.register(BackpackEvents::updateBackpackProperties);
+        FrameworkTickEvents.START_PLAYER.register(BackpackEvents::updateBackpackProperties);
     }
 
     private static void updateBackpackProperties(Player player)

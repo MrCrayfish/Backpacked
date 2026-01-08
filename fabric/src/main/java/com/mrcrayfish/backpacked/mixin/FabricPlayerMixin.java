@@ -3,14 +3,13 @@ package com.mrcrayfish.backpacked.mixin;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
-import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,7 +40,7 @@ public class FabricPlayerMixin
         if(!(player instanceof ServerPlayer serverPlayer))
             return;
 
-        if(serverPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+        if(serverPlayer.level().getGameRules().get(GameRules.KEEP_INVENTORY))
             return;
 
         if(Config.BACKPACK.equipable.keepOnDeath.get())

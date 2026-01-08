@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Icons;
-import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
@@ -17,6 +16,7 @@ import com.mrcrayfish.backpacked.common.UnlockableSlotMode;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.core.ModKeyMappings;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
@@ -26,7 +26,6 @@ import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
-import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import com.mrcrayfish.framework.api.client.screen.widget.element.Icon;
 import com.mrcrayfish.framework.api.client.screen.widget.element.Sound;
@@ -40,18 +39,19 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -79,40 +79,40 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component NOT_ENOUGH_EXP = Component.translatable("backpacked.gui.not_enough_exp");
     private static final Component MISSING_ITEMS = Component.translatable("backpacked.gui.missing_items");
 
-    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final ResourceLocation INVENTORY_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final ResourceLocation ICON_MANAGEMENT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/management");
-    private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
-    private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
-    private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
-    private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
-    private static final ResourceLocation ICON_RENAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
-    private static final ResourceLocation ICON_SORT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
-    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final Identifier BACKPACK_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
+    private static final Identifier BACKPACK_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
+    private static final Identifier INVENTORY_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
+    private static final Identifier INVENTORY_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
+    private static final Identifier LABEL_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
+    private static final Identifier ICON_MANAGEMENT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/management");
+    private static final Identifier ICON_CUSTOMISE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
+    private static final Identifier ICON_CONFIG = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
+    private static final Identifier ICON_PREVIOUS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
+    private static final Identifier ICON_NEXT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
+    private static final Identifier ICON_RENAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
+    private static final Identifier ICON_SORT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
+    private static final Identifier ICON_LOCK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
+    private static final Identifier CHECKERS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
-        Utils.rl("backpack/augment_toggle_on"),
-        Utils.rl("backpack/augment_toggle_off"),
-        Utils.rl("backpack/augment_toggle_on_focused"),
-        Utils.rl("backpack/augment_toggle_off_focused")
+        Utils.id("backpack/augment_toggle_on"),
+        Utils.id("backpack/augment_toggle_off"),
+        Utils.id("backpack/augment_toggle_on_focused"),
+        Utils.id("backpack/augment_toggle_off_focused")
     );
     private static final WidgetSprites AUGMENT_SETTINGS_SPRITES = new WidgetSprites(
-        Utils.rl("backpack/augment_settings"),
-        Utils.rl("backpack/augment_settings_disabled"),
-        Utils.rl("backpack/augment_settings_focused")
+        Utils.id("backpack/augment_settings"),
+        Utils.id("backpack/augment_settings_disabled"),
+        Utils.id("backpack/augment_settings_focused")
     );
     private static final WidgetSprites BUTTON_TEXTURES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
     );
     private static final WidgetSprites DISABLED_BUTTON_TEXTURES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled")
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled")
     );
 
     private static final int TITLE_LABEL_WIDTH = 110;
@@ -280,13 +280,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 if(!type.isEmpty()) {
                     String rawDescription = type.description().getString();
                     int firstBreak = rawDescription.indexOf("\n");
-                    if(!Screen.hasShiftDown() && firstBreak != -1) {
+                    if(!Minecraft.getInstance().hasShiftDown() && firstBreak != -1) {
                         rawDescription = "• " + rawDescription.substring(0, firstBreak);
                     } else {
                         rawDescription = "• " + rawDescription.replace("\n", "\n• ");
                     }
                     lines.add(Component.literal(rawDescription).withStyle(ChatFormatting.GRAY));
-                    if(!Screen.hasShiftDown() && firstBreak != -1) {
+                    if(!Minecraft.getInstance().hasShiftDown() && firstBreak != -1) {
                         lines.add(HOLD_TO_EXPAND.apply(ScreenUtil.getShiftIcon()).withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
@@ -393,7 +393,8 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             .setContentRenderer((btn, graphics, mouseX, mouseY, partialTick) -> {
                 Icon icon = btn.getIcon();
                 if(icon != null) {
-                    icon.draw(graphics, btn.getX(), btn.getY(), partialTick);
+                    int alpha = ARGB.white(btn.isActive() ? 1.0F : 0.5F);
+                    icon.draw(graphics, btn.getX(), btn.getY(), alpha, partialTick);
                 }
                 if(btn.isHovered() && btn.isActive()) {
                     graphics.fillGradient(btn.getX(), btn.getY(), btn.getX() + btn.getWidth(), btn.getY() + btn.getHeight(), -2130706433, -2130706433);
@@ -558,39 +559,39 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
         // Draw the background labels for the quick action buttons and augment
         this.layouts.forEach(layout -> {
-            graphics.blitSprite(LABEL_BACKGROUND, layout.getX() - LABEL_PADDING, layout.getY() - LABEL_PADDING, LABEL_PADDING + layout.getWidth() + LABEL_PADDING, LABEL_PADDING + layout.getHeight() + LABEL_PADDING);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, layout.getX() - LABEL_PADDING, layout.getY() - LABEL_PADDING, LABEL_PADDING + layout.getWidth() + LABEL_PADDING, LABEL_PADDING + layout.getHeight() + LABEL_PADDING);
         });
 
         // Backpack Inventory
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
-        graphics.blitSprite(BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
 
         // Draw Backpack Slots
         int backpackSlotsWidth = this.cols * 18;
         int backpackSlotsHeight = this.rows * 18;
         int backpackSlotsX = (width - backpackSlotsWidth) / 2;
         int backpackSlotsY = 27;
-        graphics.blitSprite(BACKPACK_SLOT, x + backpackSlotsX, y + backpackSlotsY, backpackSlotsWidth, backpackSlotsHeight);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_SLOT, x + backpackSlotsX, y + backpackSlotsY, backpackSlotsWidth, backpackSlotsHeight);
 
         int backpackCheckersWidth = (width - 11 - 11 - backpackSlotsWidth) / 2 - 3;
         if(backpackCheckersWidth > 0)
         {
-            graphics.blitSprite(CHECKERS, x + 11, y + 27, backpackCheckersWidth, backpackSlotsHeight);
-            graphics.blitSprite(CHECKERS, x + backpackSlotsX + backpackSlotsWidth + 3, y + 27, backpackCheckersWidth, backpackSlotsHeight);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, x + 11, y + 27, backpackCheckersWidth, backpackSlotsHeight);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, x + backpackSlotsX + backpackSlotsWidth + 3, y + 27, backpackCheckersWidth, backpackSlotsHeight);
         }
 
         // Player Inventory
         int inventoryX = (width - INVENTORY_WIDTH) / 2;
         int inventoryY = BACKPACK_TOP + backpackHeight + GAP;
-        graphics.blitSprite(INVENTORY_SPRITE, x + inventoryX, y + inventoryY, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SPRITE, x + inventoryX, y + inventoryY, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
         // Draw Player Inventory Slots
         int inventorySlotsWidth = 9 * 18;
         int inventorySlotsHeight = 3 * 18;
         int inventorySlotsX = (width - inventorySlotsWidth) / 2;
         int inventorySlotsY = inventoryY + 18;
-        graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
-        graphics.blitSprite(INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
     }
 
     private void openConfigScreen()
@@ -599,14 +600,14 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     }
 
     @Override
-    public boolean keyPressed(int key, int scanCode, int action)
+    public boolean keyPressed(KeyEvent event)
     {
-        if(!this.hasPopupMenu() && Keys.KEY_BACKPACK.matches(key, scanCode))
+        if(!this.hasPopupMenu() && ModKeyMappings.KEY_BACKPACK.matches(event))
         {
             this.onClose();
             return true;
         }
-        return super.keyPressed(key, scanCode, action);
+        return super.keyPressed(event);
     }
 
     @Override
@@ -628,7 +629,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     }
 
     @Override
-    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top, int button)
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top)
     {
         for(Layout layout : this.layouts)
         {
@@ -683,25 +684,23 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
 
         @Override
-        public void draw(GuiGraphics graphics, int x, int y, float partialTick)
+        public void draw(GuiGraphics graphics, int x, int y, int alpha, float partialTick)
         {
             if(!this.menu.getAugmentBayController().isSlotUnlocked(this.position.ordinal()))
             {
                 if(this.button.isActive() && this.button.isHovered())
                 {
-                    graphics.blitSprite(ICON_LOCK, x, y, 12, 12);
+                    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x, y, 12, 12, alpha);
                 }
                 else
                 {
-                    graphics.setColor(1, 1, 1, 0.5F);
-                    graphics.blitSprite(ICON_LOCK, x, y, 12, 12);
-                    graphics.setColor(1, 1, 1, 1);
+                    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x, y, 12, 12, alpha);
                 }
             }
             else
             {
-                ResourceLocation sprite = this.menu.getAugments().getAugment(this.position).type().sprite();
-                graphics.blitSprite(sprite, x, y, 12, 12);
+                Identifier sprite = this.menu.getAugments().getAugment(this.position).type().sprite();
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 12, 12, alpha);
             }
         }
     }

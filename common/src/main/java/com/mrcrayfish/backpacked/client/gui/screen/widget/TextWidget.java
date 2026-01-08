@@ -4,6 +4,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
@@ -52,7 +53,7 @@ public class TextWidget extends AbstractWidget
     protected void updateWidgetNarration(NarrationElementOutput output) {}
 
     @Override
-    protected boolean isValidClickButton(int button)
+    protected boolean isValidClickButton(MouseButtonInfo info)
     {
         return false; // Prevents clicking
     }

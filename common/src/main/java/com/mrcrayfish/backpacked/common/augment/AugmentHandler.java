@@ -19,7 +19,7 @@ import com.mrcrayfish.backpacked.network.message.MessageFarmhandPlant;
 import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
-import com.mrcrayfish.framework.api.event.PlayerEvents;
+import com.mrcrayfish.framework.api.event.FrameworkPlayerEvents;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,19 +33,21 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -56,7 +58,7 @@ public class AugmentHandler
 {
     public static void init()
     {
-        PlayerEvents.PICKUP_EXPERIENCE.register((player, orb) -> {
+        FrameworkPlayerEvents.PICKUP_EXPERIENCE.register((player, orb) -> {
             AugmentHandler.onPlayerPickupExperienceOrb(player, orb);
             return false;
         });
@@ -335,7 +337,7 @@ public class AugmentHandler
         if(snapshots.isEmpty())
             return;
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         if(!level.getBlockState(pos).canBeReplaced())
             return;
 
@@ -381,7 +383,7 @@ public class AugmentHandler
         positions.add(BlockPos.containing(position.x - 0.5, position.y + 0.5, position.z + 0.5));
 
         // Remove positions that are not possible to place a block
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         Farmhand farmhand = ((Farmhand.Access) level).backpacked$getFarmhand();
         positions.removeIf(pos -> !level.getBlockState(pos).canBeReplaced() || farmhand.isPlanting(pos));
 
@@ -474,7 +476,9 @@ public class AugmentHandler
             {
                 if(state.hasProperty(property))
                 {
-                    return state.getValue(property) == ((IntegerPropertyMixin) property).backpacked$getMax();
+                    // TODO 1.21.11 test
+
+                    return state.getValue(property) == ((IntegerPropertyMixin) (Object) property).backpacked$getMax();
                 }
             }
 
@@ -493,13 +497,14 @@ public class AugmentHandler
     @Nullable
     private static Item getCropSeed(LevelReader reader, BlockPos pos, BlockState state)
     {
-        if(state.getBlock() instanceof BushBlock bush)
+        // TODO 1.21.11 test
+        if(state.getBlock() instanceof VegetationBlock vegetation)
         {
-            if(bush instanceof CropBlock crop)
+            if(vegetation instanceof CropBlock crop)
             {
                 return ((CropBlockMixin) crop).backpacked$getBaseSeedId().asItem();
             }
-            return bush.getCloneItemStack(reader, pos, state).getItem();
+            return vegetation.defaultBlockState().getCloneItemStack(reader, pos, false).getItem();
         }
         return null;
     }
@@ -556,17 +561,14 @@ public class AugmentHandler
         if(optional.isEmpty())
             return false;
 
-        MinecraftServer server = player.getServer();
-        if(server == null)
-            return false;
-
         ShelfKey shelfKey = optional.get();
+        MinecraftServer server = player.level().getServer();
         ServerLevel level = server.getLevel(shelfKey.level());
         if(level == null)
             return false;
 
         Recall recall = ((Recall.Access) level).backpacked$getRecall();
-        return recall.recallToShelf(player, shelfKey, index, stack);
+        return recall.recallToShelf(level, player, shelfKey, index, stack);
     }
 
     /*private static boolean isFarmland()

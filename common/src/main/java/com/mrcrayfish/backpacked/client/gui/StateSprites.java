@@ -1,20 +1,20 @@
 package com.mrcrayfish.backpacked.client.gui;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-public record StateSprites(ResourceLocation defaultSprite, ResourceLocation hoveredSprite, ResourceLocation selectedSprite, ResourceLocation selectedHoveredSprite)
+public record StateSprites(Identifier defaultSprite, Identifier hoveredSprite, Identifier selectedSprite, Identifier selectedHoveredSprite)
 {
-    public StateSprites(ResourceLocation defaultSprite, ResourceLocation hoveredSprite, ResourceLocation selectedSprite)
+    public StateSprites(Identifier defaultSprite, Identifier hoveredSprite, Identifier selectedSprite)
     {
         this(defaultSprite, hoveredSprite, selectedSprite, selectedSprite);
     }
 
-    public StateSprites(ResourceLocation defaultSprite, ResourceLocation hoveredSprite)
+    public StateSprites(Identifier defaultSprite, Identifier hoveredSprite)
     {
         this(defaultSprite, hoveredSprite, defaultSprite, hoveredSprite);
     }
 
-    public ResourceLocation get(boolean selected, boolean hovered)
+    public Identifier get(boolean selected, boolean hovered)
     {
         if(selected) return hovered ? this.selectedHoveredSprite : this.selectedSprite;
         return hovered ? this.hoveredSprite : this.defaultSprite;

@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 public class ConditionalSlot extends Slot
 {
     private final Predicate<ItemStack> predicate;
-    private @Nullable ResourceLocation icon;
+    private @Nullable Identifier icon;
 
     public ConditionalSlot(Container container, int index, int x, int y, Predicate<ItemStack> predicate)
     {
@@ -21,7 +21,7 @@ public class ConditionalSlot extends Slot
         this.predicate = predicate;
     }
 
-    public ConditionalSlot setIcon(@Nullable ResourceLocation icon)
+    public ConditionalSlot setIcon(@Nullable Identifier icon)
     {
         this.icon = icon;
         return this;
@@ -34,8 +34,8 @@ public class ConditionalSlot extends Slot
     }
 
     @Override
-    public @Nullable Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
+    public @Nullable Identifier getNoItemIcon()
     {
-        return this.icon != null ? Pair.of(InventoryMenu.BLOCK_ATLAS, this.icon) : null;
+        return this.icon;
     }
 }

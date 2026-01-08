@@ -2,6 +2,9 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -34,53 +37,53 @@ public abstract class CustomContainerScreen<T extends AbstractContainerMenu> ext
     public abstract void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
     {
         if(this.controller.isOpened())
         {
-            return this.controller.mouseClicked(mouseX, mouseY, button);
+            return this.controller.mouseClicked(event, doubleClick);
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    public boolean mouseReleased(MouseButtonEvent event)
     {
         if(this.controller.isOpened())
         {
-            return this.controller.mouseReleased(mouseX, mouseY, button);
+            return this.controller.mouseReleased(event);
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+    public boolean keyPressed(KeyEvent event)
     {
         if(this.controller.isOpened())
         {
-            return this.controller.keyPressed(keyCode, scanCode, modifiers);
+            return this.controller.keyPressed(event);
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers)
+    public boolean keyReleased(KeyEvent event)
     {
         if(this.controller.isOpened())
         {
-            return this.controller.keyReleased(keyCode, scanCode, modifiers);
+            return this.controller.keyReleased(event);
         }
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(event);
     }
 
     @Override
-    public boolean charTyped(char c, int modifiers)
+    public boolean charTyped(CharacterEvent event)
     {
         if(this.controller.isOpened())
         {
-            return this.controller.charTyped(c, modifiers);
+            return this.controller.charTyped(event);
         }
-        return super.charTyped(c, modifiers);
+        return super.charTyped(event);
     }
 
     @Override
@@ -94,12 +97,12 @@ public abstract class CustomContainerScreen<T extends AbstractContainerMenu> ext
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY)
     {
         if(this.controller.isOpened())
         {
-            return this.controller.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            return this.controller.mouseDragged(event, deltaX, deltaY);
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(event, deltaX, deltaY);
     }
 }

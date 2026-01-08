@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 public record EntityDataValue(Data data) implements Value
 {
     public static final Type TYPE = new Type(
-        Utils.rl("entity_data"),
+        Utils.id("entity_data"),
         RecordCodecBuilder.<EntityDataValue>mapCodec(builder -> builder.group(
             Data.CODEC.fieldOf("property").forGetter(o -> o.data)
         ).apply(builder, EntityDataValue::new))

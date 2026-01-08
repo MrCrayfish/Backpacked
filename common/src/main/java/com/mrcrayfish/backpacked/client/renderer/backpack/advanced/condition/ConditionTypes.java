@@ -2,11 +2,11 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ConditionTypes
 {
-    private static final BiMap<ResourceLocation, BaseCondition.Type> CONDITIONS = HashBiMap.create();
+    private static final BiMap<Identifier, BaseCondition.Type> CONDITIONS = HashBiMap.create();
 
     public static void register(BaseCondition.Type type)
     {
@@ -15,7 +15,7 @@ public class ConditionTypes
             throw new IllegalStateException("Condition already registered: " + type.id());
     }
 
-    public static BiMap<ResourceLocation, BaseCondition.Type> getAll()
+    public static BiMap<Identifier, BaseCondition.Type> getAll()
     {
         return CONDITIONS;
     }

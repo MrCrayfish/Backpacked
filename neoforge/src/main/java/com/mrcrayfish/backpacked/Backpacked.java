@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
-import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
@@ -14,11 +13,8 @@ import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
@@ -27,24 +23,21 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.concurrent.CompletableFuture;
 
 // TODO clean up this class
 
@@ -72,7 +65,8 @@ public class Backpacked
 
         if(ModList.get().isLoaded("yigd"))
         {
-            YoureInGraveDangerSupport.init();
+            // TODO restore when updated
+            //YoureInGraveDangerSupport.init();
         }
     }
 
@@ -81,20 +75,16 @@ public class Backpacked
         event.enqueueWork(Bootstrap::init);
     }
 
-    private void onGatherData(GatherDataEvent event)
+    private void onGatherData(GatherDataEvent.Server event)
     {
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        generator.addProvider(event.includeServer(), new LootTableGen(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new RecipeGen(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, existingFileHelper));
+        event.createProvider(LootTableGen::new);
+        event.createProvider(RecipeGen.Runner::new);
+        event.createProvider(BlockTagGen::new);
     }
 
-    private void addReloadListener(AddReloadListenerEvent event)
+    private void addReloadListener(AddServerReloadListenersEvent event)
     {
-        event.addListener(new BackpackLoader(event.getServerResources().getRegistryLookup()));
+        event.addListener(BackpackLoader.ID, new BackpackLoader(event.getRegistryAccess()));
     }
 
     private void onEntityDropLoot(LivingDropsEvent event)
@@ -139,7 +129,7 @@ public class Backpacked
     {
         if(event.getEntity() instanceof ServerPlayer player)
         {
-            if(player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+            if(player.level().getGameRules().get(GameRules.KEEP_INVENTORY))
                 return;
 
             if(Config.BACKPACK.equipable.keepOnDeath.get())

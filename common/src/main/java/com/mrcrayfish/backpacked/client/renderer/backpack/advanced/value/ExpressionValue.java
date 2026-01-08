@@ -10,7 +10,7 @@ import java.util.List;
 public record ExpressionValue(List<Operation> operations) implements Value
 {
     public static final Type TYPE = new Type(
-        Utils.rl("expression"),
+        Utils.id("expression"),
         RecordCodecBuilder.<ExpressionValue>mapCodec(builder -> builder.group(
             Operation.CODEC.listOf().fieldOf("operations").forGetter(o -> o.operations)
         ).apply(builder, ExpressionValue::new))

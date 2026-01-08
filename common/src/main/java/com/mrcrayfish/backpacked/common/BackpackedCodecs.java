@@ -2,9 +2,12 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.SectionPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,4 +38,10 @@ public class BackpackedCodecs
         }
         return items;
     }, Function.identity());
+
+    public static final Codec<SectionPos> SECTION_POS = RecordCodecBuilder.create(instance -> instance.group(
+        Codec.INT.fieldOf("x").forGetter(Vec3i::getX),
+        Codec.INT.fieldOf("y").forGetter(Vec3i::getY),
+        Codec.INT.fieldOf("z").forGetter(Vec3i::getZ)
+    ).apply(instance, SectionPos::of));
 }

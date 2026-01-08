@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,15 +16,15 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public record MessageOpenCustomisation(int backpackIndex, Map<ResourceLocation, Component> progressMap, CosmeticProperties properties,
-                                       boolean showCosmeticWarning, Map<ResourceLocation, Double> completionProgressMap)
+public record MessageOpenCustomisation(int backpackIndex, Map<Identifier, Component> progressMap, CosmeticProperties properties,
+                                       boolean showCosmeticWarning, Map<Identifier, Double> completionProgressMap)
 {
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageOpenCustomisation> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.VAR_INT, MessageOpenCustomisation::backpackIndex,
-        ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ComponentSerialization.STREAM_CODEC), MessageOpenCustomisation::progressMap,
+        ByteBufCodecs.map(HashMap::new, Identifier.STREAM_CODEC, ComponentSerialization.STREAM_CODEC), MessageOpenCustomisation::progressMap,
         CosmeticProperties.STREAM_CODEC, MessageOpenCustomisation::properties,
         ByteBufCodecs.BOOL, MessageOpenCustomisation::showCosmeticWarning,
-        ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.DOUBLE), MessageOpenCustomisation::completionProgressMap,
+        ByteBufCodecs.map(HashMap::new, Identifier.STREAM_CODEC, ByteBufCodecs.DOUBLE), MessageOpenCustomisation::completionProgressMap,
         MessageOpenCustomisation::new
     );
 

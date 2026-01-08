@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -79,7 +78,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
     {
         if(stack.getItem() instanceof BackpackItem)
         {
@@ -88,11 +87,11 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
                 if(shelf.getBackpack().isEmpty())
                 {
                     shelf.setBackpack(stack.copyAndClear());
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -115,7 +114,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
                 }
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -169,32 +168,13 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos)
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction face)
     {
         if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
         {
             return AbstractContainerMenu.getRedstoneSignalFromContainer(shelf.getContainer());
         }
         return 0;
-    }
-
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean unknown)
-    {
-        if(!state.is(newState.getBlock()))
-        {
-            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
-            {
-                if(level instanceof ServerLevel serverLevel)
-                {
-                    ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(shelf);
-                }
-                ItemStack stack = shelf.getBackpack();
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack.copyAndClear());
-                level.updateNeighbourForOutputSignal(pos, this);
-            }
-            super.onRemove(state, level, pos, newState, unknown);
-        }
     }
 
     @Override

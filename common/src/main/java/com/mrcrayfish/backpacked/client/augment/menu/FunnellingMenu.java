@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
@@ -11,7 +10,6 @@ import com.mrcrayfish.backpacked.common.augment.impl.FunnellingAugment;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
-import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
@@ -19,10 +17,9 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 
 import java.util.function.Predicate;
 
@@ -38,7 +35,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
         // This removes most creative/operator blocks
         if(item instanceof BlockItem blockItem) {
             var key = blockItem.getBlock().getLootTable();
-            return key != BuiltInLootTables.EMPTY;
+            return key.isPresent();
         }
         return true;
     };
@@ -75,7 +72,7 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 .setWidth(divider.getWidth() - 3 - filterButtonWidth)
                 .setPadding(2, 0, 2, 0)
                 .setHeight(16)
-                .setIcon(Utils.rl("backpack/editbox/search"), 12, 12)
+                .setIcon(Utils.id("backpack/editbox/search"), 12, 12)
                 .setInitialText(lastQuery)
                 .setHint(SEARCH_HINT)
                 .setCallback(s -> {
@@ -83,8 +80,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
                     lastQuery = s;
                 })
                 .setBackground(new WidgetSprites(
-                    Utils.rl("backpack/editbox/background"),
-                    Utils.rl("backpack/editbox/background_focused")
+                    Utils.id("backpack/editbox/background"),
+                    Utils.id("backpack/editbox/background_focused")
                 )).build();
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
             header.addChild(Buttons.createToggle(() -> selectedOnly, newValue -> selectedOnly = newValue, grid::setSelectedOnly)
@@ -93,8 +90,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 .setLabel(ACTIVE_LABEL)
                 .setTooltip(btn -> Tooltip.create(selectedOnly ? ACTIVATED_ONLY_LABEL : SHOW_ALL_LABEL))
                 .setTexture(new WidgetSprites(
-                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+                    Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
+                    Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
                 )).build());
             layout.addChild(header);
 

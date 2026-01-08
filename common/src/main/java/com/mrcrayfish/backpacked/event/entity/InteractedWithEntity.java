@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.event.entity;
 
-import com.mrcrayfish.framework.api.event.IFrameworkEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -13,12 +12,12 @@ import java.util.function.Consumer;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface InteractedWithEntity extends IFrameworkEvent
+public interface InteractedWithEntity
 {
-    void handle(ServerPlayer player, ItemStack stack, Entity entity, List<ResourceLocation> callbacks);
+    void handle(ServerPlayer player, ItemStack stack, Entity entity, List<Identifier> callbacks);
 
-    interface Capture extends IFrameworkEvent
+    interface Capture
     {
-        void handle(ServerPlayer player, ItemStack stack, Entity entity, Consumer<ResourceLocation> idConsumer);
+        void handle(ServerPlayer player, ItemStack stack, Entity entity, Consumer<Identifier> idConsumer);
     }
 }

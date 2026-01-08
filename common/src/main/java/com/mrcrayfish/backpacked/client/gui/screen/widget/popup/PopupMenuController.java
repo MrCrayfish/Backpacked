@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -113,7 +115,8 @@ public final class PopupMenuController implements ContainerEventHandler
     {
         if(this.base != null)
         {
-            graphics.pose().translate(0, 0, 350);
+            // TODO 1.21.11 how depth work now?
+            graphics.pose().translate(0, 0); //, 350);
             this.base.render(graphics, mouseX, mouseY, partialTick);
         }
     }
@@ -126,10 +129,10 @@ public final class PopupMenuController implements ContainerEventHandler
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
     {
         // Send the mouse clicked event to the top level popup menu
-        if(ContainerEventHandler.super.mouseClicked(mouseX, mouseY, button))
+        if(ContainerEventHandler.super.mouseClicked(event, doubleClick))
             return true;
 
         // Otherwise cascade down from the top popup. If the click occurred within the popup menu,
@@ -138,7 +141,7 @@ public final class PopupMenuController implements ContainerEventHandler
         PopupMenu current = this.top();
         while(current != null)
         {
-            if(current.getRectangle().containsPoint((int) mouseX, (int) mouseY))
+            if(current.getRectangle().containsPoint((int) event.x(), (int) event.y()))
             {
                 this.setFocused(null);
                 if(current.child != null)
@@ -157,10 +160,10 @@ public final class PopupMenuController implements ContainerEventHandler
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+    public boolean keyPressed(KeyEvent event)
     {
         // Allows the user to press escape to close the top popup
-        if(keyCode == GLFW.GLFW_KEY_ESCAPE)
+        if(event.key() == GLFW.GLFW_KEY_ESCAPE)
         {
             PopupMenu top = this.top();
             if(top != null)
@@ -169,7 +172,7 @@ public final class PopupMenuController implements ContainerEventHandler
                 return true;
             }
         }
-        return ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
+        return ContainerEventHandler.super.keyPressed(event);
     }
 
     @Override

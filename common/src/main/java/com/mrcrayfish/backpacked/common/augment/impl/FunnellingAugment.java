@@ -21,7 +21,7 @@ import java.util.*;
 public record FunnellingAugment(ItemCollection filters, Mode mode) implements Augment<FunnellingAugment>, FilterableItems<FunnellingAugment>
 {
     public static final AugmentType<FunnellingAugment> TYPE = new AugmentType<>(
-        Utils.rl("funnelling"),
+        Utils.id("funnelling"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             ItemCollection.CODEC.fieldOf("filters").orElse(ItemCollection.EMPTY).forGetter(FunnellingAugment::filters),
             Mode.CODEC.fieldOf("mode").orElse(Mode.ALLOW).forGetter(FunnellingAugment::mode)

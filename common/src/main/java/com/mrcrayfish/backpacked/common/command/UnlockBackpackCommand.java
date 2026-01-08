@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permissions;
 
 /**
  * Author: MrCrayfish
@@ -15,7 +16,7 @@ public class UnlockBackpackCommand
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(Commands.literal("backpacked:unlock_backpack").requires(source -> {
-            return source.hasPermission(2);
+            return source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
         }).then(Commands.argument("backpack", BackpackArgument.backpacks()).executes(context -> {
             Backpack backpack = context.getArgument("backpack", Backpack.class);
             BackpackManager.instance().unlockBackpack(context.getSource().getPlayerOrException(), backpack.getId());

@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.common.augment.impl;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
@@ -13,7 +12,7 @@ import net.minecraft.util.Mth;
 public record LightweaverAugment(int minimumLight, boolean sound) implements Augment<LightweaverAugment>
 {
     public static final AugmentType<LightweaverAugment> TYPE = new AugmentType<>(
-        Utils.rl("lightweaver"),
+        Utils.id("lightweaver"),
         RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.INT.fieldOf("minimum_light").orElse(6).forGetter(LightweaverAugment::minimumLight),
             Codec.BOOL.fieldOf("sound").orElse(true).forGetter(LightweaverAugment::sound)

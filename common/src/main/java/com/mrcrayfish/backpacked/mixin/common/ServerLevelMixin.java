@@ -1,11 +1,11 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -48,22 +48,21 @@ public abstract class ServerLevelMixin implements Farmhand.Access, Recall.Access
     public abstract DimensionDataStorage getDataStorage();
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void backpacked$init(MinecraftServer server, Executor executor, LevelStorageSource.LevelStorageAccess access, ServerLevelData data, ResourceKey key, LevelStem stem, ChunkProgressListener listener, boolean bool1, long long1, List list1, boolean bool2, RandomSequences sequences, CallbackInfo ci)
+    private void backpacked$init(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey p_215003_, LevelStem p_215004_, boolean p_215006_, long p_215007_, List p_215008_, boolean p_215009_, RandomSequences p_288977_, CallbackInfo ci)
     {
         ServerLevel level = (ServerLevel) (Object) this;
-        this.backpacked$farmhand = this.getDataStorage().computeIfAbsent(Farmhand.factory(level), Farmhand.ID);
-        this.backpacked$recall = this.getDataStorage().computeIfAbsent(Recall.factory(level), Recall.ID);
+        this.backpacked$farmhand = this.getDataStorage().computeIfAbsent(Farmhand.TYPE);
+        this.backpacked$recall = this.getDataStorage().computeIfAbsent(Recall.TYPE);
     }
 
     @Inject(method = "tick", at = @At(value = "TAIL"))
-    private void backpacked$tickTail(BooleanSupplier unknown, CallbackInfo ci)
+    private void backpacked$tickTail(BooleanSupplier unknown, CallbackInfo ci, @Local(ordinal = 0) ProfilerFiller profiler)
     {
         ServerLevel level = (ServerLevel) (Object) this;
-        ProfilerFiller profiler = level.getProfiler();
         profiler.push("backpacked_farmhand");
-        this.backpacked$farmhand.tick();
+        this.backpacked$farmhand.tick(level);
         profiler.popPush("backpacked_recall");
-        this.backpacked$recall.tick();
+        this.backpacked$recall.tick(level);
         profiler.pop();
     }
 }

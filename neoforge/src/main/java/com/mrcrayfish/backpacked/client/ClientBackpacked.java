@@ -6,40 +6,52 @@ import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
+import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticleGroup;
 import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
+import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.packs.AddonRepositorySource;
-import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
+import com.mrcrayfish.backpacked.util.Utils;
+import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
+import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
+import com.mrcrayfish.framework.api.client.model.NeoForgeModelResource;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
+import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.validation.DirectoryValidator;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,6 +60,8 @@ import java.util.Map;
 @Mod(value = Constants.MOD_ID, dist = Dist.CLIENT)
 public class ClientBackpacked
 {
+    public static final ContextKey<Boolean> WEARING_BACKPACK = new ContextKey<>(Utils.id("wearing_backpack"));
+
     public ClientBackpacked(IEventBus bus)
     {
         bus.addListener(this::onClientSetup);
@@ -57,6 +71,8 @@ public class ClientBackpacked
         bus.addListener(this::onAddLayers);
         bus.addListener(this::onRegisterAdditionalModels);
         bus.addListener(this::onFindPacks);
+        bus.addListener(this::onRegisterModifyRenderState);
+        bus.addListener(this::onRegisterParticleGroup);
         NeoForge.EVENT_BUS.addListener(this::onRenderLevelStage);
     }
 
@@ -64,15 +80,15 @@ public class ClientBackpacked
     {
         event.enqueueWork(() -> {
             ClientBootstrap.init();
-            if(!FMLLoader.isProduction()) {
+            if(!FMLEnvironment.isProduction()) {
                 NeoForge.EVENT_BUS.register(new PickpocketDebugRenderer());
             }
         });
     }
 
-    private void onRegisterClientLoaders(RegisterClientReloadListenersEvent event)
+    private void onRegisterClientLoaders(AddClientReloadListenersEvent event)
     {
-        event.registerReloadListener(new ModelMetaLoader());
+        event.addListener(ModelMetaLoader.ID, new ModelMetaLoader());
     }
 
     private void onRegisterMenuScreens(RegisterMenuScreensEvent event)
@@ -89,33 +105,39 @@ public class ClientBackpacked
 
     private void onAddLayers(EntityRenderersEvent.AddLayers event)
     {
-        addBackpackLayer(event.getSkin(PlayerSkin.Model.WIDE), event.getContext().getItemRenderer());
-        addBackpackLayer(event.getSkin(PlayerSkin.Model.SLIM), event.getContext().getItemRenderer());
+        addBackpackLayer(event.getPlayerRenderer(PlayerModelType.WIDE), event.getContext().getItemModelResolver());
+        addBackpackLayer(event.getPlayerRenderer(PlayerModelType.SLIM), event.getContext().getItemModelResolver());
 
-        EntityRenderer<?> renderer = event.getRenderer(EntityType.WANDERING_TRADER);
+        EntityRenderer<WanderingTrader, ?> renderer = event.getRenderer(EntityType.WANDERING_TRADER);
         if(renderer instanceof WanderingTraderRenderer traderRenderer)
         {
-            traderRenderer.addLayer(new VillagerBackpackLayer<>(traderRenderer, event.getContext().getItemRenderer()));
+            traderRenderer.addLayer(new VillagerBackpackLayer(traderRenderer, event.getContext().getItemModelResolver()));
         }
     }
 
-    private static void addBackpackLayer(EntityRenderer<?> renderer, ItemRenderer itemRenderer)
+    private static void addBackpackLayer(@Nullable AvatarRenderer<AbstractClientPlayer> renderer, ItemModelResolver itemModelResolver)
     {
-        if(renderer instanceof PlayerRenderer playerRenderer)
+        if(renderer != null)
         {
-            playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, itemRenderer));
+            renderer.addLayer(new BackpackLayer(renderer, itemModelResolver));
         }
     }
 
-    private void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event)
+    private void onRegisterAdditionalModels(ModelEvent.RegisterStandalone event)
     {
+        Map<Identifier, FrameworkModelResource<FrameworkBakedModel>> loadedModels = new HashMap<>();
         ResourceManager manager = Minecraft.getInstance().getResourceManager();
-        Map<ResourceLocation, Resource> models = manager.listResources("models/backpacked", location -> location.getPath().endsWith(".json"));
-        models.forEach((key, resource) -> {
-            String path = key.getPath().substring("models/".length(), key.getPath().length() - ".json".length());
-            ModelResourceLocation location = FrameworkClientAPI.createModelResourceLocation(key.getNamespace(), path);
-            event.register(location);
+        Map<Identifier, Resource> models = manager.listResources("models/backpacked", location -> location.getPath().endsWith(".json"));
+        models.forEach((id, resource) -> {
+            String path = id.getPath().substring("models/".length(), id.getPath().length() - ".json".length());
+            Identifier standaloneId = Identifier.fromNamespaceAndPath(id.getNamespace(), path);
+            FrameworkModelResource<FrameworkBakedModel> modelResource = FrameworkModelResource.create(standaloneId);
+            var key = ((NeoForgeModelResource<FrameworkBakedModel>) modelResource).standaloneKey();
+            var baker = ((NeoForgeModelResource<FrameworkBakedModel>) modelResource).unbakedModel();
+            event.register(key, baker);
+            loadedModels.put(standaloneId, modelResource);
         });
+        StandaloneModels.init(loadedModels);
     }
 
     private void onFindPacks(AddPackFindersEvent event)
@@ -123,18 +145,15 @@ public class ClientBackpacked
         // Search the resource packs folder for any backpacked addons. This makes it compatible with CurseForge modpacks.
         if(event.getPackType() == PackType.SERVER_DATA)
         {
-            Path gameDir = FMLLoader.getGamePath();
+            Path gameDir = FMLLoader.getCurrent().getGameDir(); // TODO 1.21.11 test
             Path addonDir = gameDir.resolve("resourcepacks");
             DirectoryValidator directoryValidator = LevelStorageSource.parseValidator(gameDir.resolve("allowed_symlinks.txt"));
             event.addRepositorySource(new AddonRepositorySource(addonDir, PackType.SERVER_DATA, PackSource.FEATURE, directoryValidator));
         }
     }
 
-    private void onRenderLevelStage(RenderLevelStageEvent event)
+    private void onRenderLevelStage(RenderLevelStageEvent.AfterEntities event)
     {
-        if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
-            return;
-
         Minecraft mc = Minecraft.getInstance();
         if(mc.player == null || mc.level == null)
             return;
@@ -145,7 +164,21 @@ public class ClientBackpacked
         PoseStack stack = event.getPoseStack();
         MultiBufferSource source = mc.renderBuffers().bufferSource();
         boolean frozen = mc.level.tickRateManager().isEntityFrozen(mc.player);
-        float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(!frozen);
+        float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(!frozen); // TODO 1.21.11 test
         FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);
+    }
+
+    private void onRegisterModifyRenderState(RegisterRenderStateModifiersEvent event)
+    {
+        event.registerEntityModifier(WanderingTraderRenderer.class, (trader, state) -> {
+            TraderPickpocketing.get(trader).ifPresent(data -> {
+                state.setRenderData(WEARING_BACKPACK, data.isBackpackEquipped());
+            });
+        });
+    }
+
+    private void onRegisterParticleGroup(RegisterParticleGroupsEvent event)
+    {
+        event.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
     }
 }

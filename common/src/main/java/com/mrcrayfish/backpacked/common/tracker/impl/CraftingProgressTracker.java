@@ -3,12 +3,14 @@ package com.mrcrayfish.backpacked.common.tracker.impl;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.framework.api.event.PlayerEvents;
+import com.mrcrayfish.framework.api.event.FrameworkPlayerEvents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.function.Predicate;
 
@@ -43,15 +45,15 @@ public class CraftingProgressTracker implements IProgressTracker
     }
 
     @Override
-    public void read(CompoundTag tag)
+    public void read(ValueInput input)
     {
-        this.count = tag.getInt("Count");
+        this.count = input.getIntOr("Count", 0);
     }
 
     @Override
-    public void write(CompoundTag tag)
+    public void write(ValueOutput output)
     {
-        tag.putInt("Count", this.count);
+        output.putInt("Count", this.count);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class CraftingProgressTracker implements IProgressTracker
 
     public static void registerEvent()
     {
-        PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
+        FrameworkPlayerEvents.CRAFTED_ITEM.register((player, stack, inventory) -> {
             if(player.level().isClientSide())
                 return;
             UnlockManager.getTrackers(player, CraftingProgressTracker.class).forEach(tracker -> {

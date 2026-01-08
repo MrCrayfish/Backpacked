@@ -4,12 +4,13 @@ import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ExperienceCostTooltip implements ClientTooltipComponent
 {
-    private static final ResourceLocation ICON_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
+    private static final Identifier ICON_ORB = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
 
     private final Component label;
 
@@ -20,7 +21,7 @@ public class ExperienceCostTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public int getHeight()
+    public int getHeight(Font font)
     {
         return 11;
     }
@@ -33,9 +34,9 @@ public class ExperienceCostTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, GuiGraphics graphics)
+    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics)
     {
-        graphics.blitSprite(ICON_ORB, x, y, 9, 9);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_ORB, x, y, 9, 9);
         graphics.drawString(font, this.label, x + 9 + 2, y + 1, 0xFF2B2203, false);
         graphics.drawString(font, this.label, x + 9 + 4, y + 1, 0xFF2B2203, false);
         graphics.drawString(font, this.label, x + 9 + 3, y, 0xFF2B2203, false);

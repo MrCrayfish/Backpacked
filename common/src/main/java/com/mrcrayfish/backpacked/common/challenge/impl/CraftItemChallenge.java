@@ -9,8 +9,8 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
-import com.mrcrayfish.framework.api.event.PlayerEvents;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.framework.api.event.FrameworkPlayerEvents;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class CraftItemChallenge extends Challenge
 {
     public static final ChallengeSerializer<CraftItemChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "craft_item"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "craft_item"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
                 return challenge.predicate;
@@ -50,7 +50,7 @@ public class CraftItemChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(formatter, this.predicate, this.count);
     }
@@ -67,7 +67,7 @@ public class CraftItemChallenge extends Challenge
 
         public static void registerEvent()
         {
-            PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
+            FrameworkPlayerEvents.CRAFTED_ITEM.register((player, stack, inventory) -> {
                 if(player.level().isClientSide())
                     return;
                 UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {

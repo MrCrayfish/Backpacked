@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 public record AndValue(Value first, Value second, Operator operator) implements Value
 {
     public static final Type TYPE = new Type(
-        Utils.rl("and"),
+        Utils.id("and"),
         RecordCodecBuilder.<AndValue>mapCodec(builder -> builder.group(
             Value.EITHER_CODEC.fieldOf("first").forGetter(o -> o.first),
             Value.EITHER_CODEC.fieldOf("second").forGetter(o -> o.second),

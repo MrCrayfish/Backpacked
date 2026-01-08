@@ -9,7 +9,7 @@ import com.mrcrayfish.framework.api.config.*;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import com.mrcrayfish.framework.api.config.validate.Validator;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,7 +84,7 @@ public class Config
             @ConfigProperty(name = "defaultCosmetic", comment = """
                     The default cosmetic (model) of the backpack. This should generally be a backpack
                     that is unlocked by default""")
-            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:vintage", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
+            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:vintage", new IdentifierValidator("Value needs to be a match an existing backpack"));
 
             @ConfigProperty(name = "disableCustomisation", comment = """
                     If enabled, prevents backpacks from being customised. This will remove the
@@ -104,7 +104,7 @@ public class Config
                     A list of items that are not allowed inside the inventory of a backpack.
                     Note: It is recommended to ban items that have an inventory as this will create
                     large NBT data and potentially crash the server!""")
-            public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Inventory::getDefaultBannedItems);
+            public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new IdentifierValidator("Value needs to be a valid item identifier"), Inventory::getDefaultBannedItems);
 
             @ConfigProperty(name = "slots", comment = "Slots related properties")
             public final Slots slots = new Slots();
@@ -233,7 +233,7 @@ public class Config
             @ConfigProperty(name = "paymentItem", comment = """
                     Only applicable if paymentType is set to ITEM. This option will control the item used when paying
                     to unlock new slots.""")
-            public final StringProperty paymentItem = StringProperty.create("minecraft:emerald", new ResourceLocationValidator("Must be a valid resource location that matches the id of an item"));
+            public final StringProperty paymentItem = StringProperty.create("minecraft:emerald", new IdentifierValidator("Must be a valid resource location that matches the id of an item"));
 
             @ConfigProperty(name = "costInterpolateFunction", comment = """
                     The interpolate method to use when calculating the cost of unlocking a slot. The cost
@@ -508,7 +508,7 @@ public class Config
                 backpacks will simply be removed. Use advanced tooltips (F3 + H) to discover the IDs
                 of augments.
                 Example: disabledAugments = ["backpacked:recall", "backpacked:lootbound"]""")
-        public final ListProperty<String> disabledAugments = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator(""));
+        public final ListProperty<String> disabledAugments = ListProperty.create(ListProperty.STRING, new IdentifierValidator(""));
 
         @ConfigProperty(name = "funnelling", comment = "Funnelling related properties")
         public final Funnelling funnelling = new Funnelling();
@@ -521,12 +521,12 @@ public class Config
         }
     }
 
-    public record ResourceLocationValidator(String hint) implements Validator<String>
+    public record IdentifierValidator(String hint) implements Validator<String>
     {
         @Override
         public boolean test(String value)
         {
-            return ResourceLocation.tryParse(value) != null;
+            return Identifier.tryParse(value) != null;
         }
 
         @Override
@@ -540,8 +540,8 @@ public class Config
     private static final PaymentItem INVENTORY_PAYMENT_ITEM = new PaymentItem(BACKPACK.inventory.slots.unlockCost.paymentItem::get);
     private static final PaymentItem BACKPACK_PAYMENT_ITEM = new PaymentItem(BACKPACK.equipable.unlockCost.paymentItem::get);
     private static final PaymentItem AUGMENT_BAY_PAYMENT_ITEM = new PaymentItem(BACKPACK.augmentBays.unlockCost.paymentItem::get);
-    private static Set<ResourceLocation> bannedItemsList;
-    private static Set<ResourceLocation> disabledAugments;
+    private static Set<Identifier> bannedItemsList;
+    private static Set<Identifier> disabledAugments;
 
     public static void init()
     {
@@ -569,10 +569,10 @@ public class Config
 
     public static void updateBannedItemsList()
     {
-        bannedItemsList = ImmutableSet.copyOf(Config.BACKPACK.inventory.bannedItems.get().stream().map(ResourceLocation::tryParse).collect(Collectors.toSet()));
+        bannedItemsList = ImmutableSet.copyOf(Config.BACKPACK.inventory.bannedItems.get().stream().map(Identifier::tryParse).collect(Collectors.toSet()));
     }
 
-    public static Set<ResourceLocation> getBannedItemsList()
+    public static Set<Identifier> getBannedItemsList()
     {
         return bannedItemsList != null ? bannedItemsList : Collections.emptySet();
     }
@@ -592,12 +592,12 @@ public class Config
         return AUGMENT_BAY_PAYMENT_ITEM;
     }
 
-    public static Set<ResourceLocation> getDisabledAugments()
+    public static Set<Identifier> getDisabledAugments()
     {
         if(disabledAugments == null)
         {
             disabledAugments = ImmutableSet.copyOf(Config.AUGMENTS.disabledAugments.get().stream()
-                .map(ResourceLocation::tryParse)
+                .map(Identifier::tryParse)
                 .filter(Objects::nonNull)
                 .filter(ModRegistries.AUGMENT_TYPES::containsKey) // Ensure augment types exist
                 .filter(id -> !EmptyAugment.TYPE.id().equals(id)) // Ensure empty augment is not disabled

@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.util.function.BiFunction;
@@ -14,20 +14,20 @@ import java.util.function.BiFunction;
 /**
  * Author: MrCrayfish
  */
-public record ProgressFormatter(ResourceLocation id, BiFunction<Integer, Integer, Component> formatter)
+public record ProgressFormatter(Identifier id, BiFunction<Integer, Integer, Component> formatter)
 {
-    public static final BiMap<ResourceLocation, ProgressFormatter> REGISTERED_FORMATTERS = HashBiMap.create();
-    public static final Codec<ProgressFormatter> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+    public static final BiMap<Identifier, ProgressFormatter> REGISTERED_FORMATTERS = HashBiMap.create();
+    public static final Codec<ProgressFormatter> CODEC = Identifier.CODEC.flatXmap(id -> {
         ProgressFormatter type = REGISTERED_FORMATTERS.get(id);
         return type != null ? DataResult.success(type) : DataResult.error(() -> "Formatter does not exist: " + id);
     }, type -> {
-        ResourceLocation id = REGISTERED_FORMATTERS.inverse().get(type);
+        Identifier id = REGISTERED_FORMATTERS.inverse().get(type);
         return id != null ? DataResult.success(id) : DataResult.error(() -> "Unregistered formatter");
     });
 
     private static ProgressFormatter register(String name, BiFunction<Integer, Integer, Component> function)
     {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        Identifier id = Identifier.fromNamespaceAndPath(Constants.MOD_ID, name);
         ProgressFormatter formatter = new ProgressFormatter(id, function);
         REGISTERED_FORMATTERS.put(id, formatter);
         return formatter;

@@ -11,7 +11,7 @@ import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public class BackpackManagementMenu extends CustomContainerMenu
 {
-    private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
+    private static final Identifier EMPTY_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
 
     private final Inventory inventory;
     private final Container container;

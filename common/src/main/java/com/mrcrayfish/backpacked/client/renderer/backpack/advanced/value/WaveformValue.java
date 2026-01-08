@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Author: MrCrayfish
@@ -14,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 public record WaveformValue(Waveform waveform, double wavelength, double amplitude, double phase) implements Value
 {
     public static final Type TYPE = new Type(
-        Utils.rl("waveform"),
+        Utils.id("waveform"),
         RecordCodecBuilder.<WaveformValue>mapCodec(builder -> builder.group(
             Waveform.CODEC.fieldOf("waveform").forGetter(o -> o.waveform),
             Codec.DOUBLE.fieldOf("wavelength").orElse(2.0).forGetter(o -> o.wavelength),

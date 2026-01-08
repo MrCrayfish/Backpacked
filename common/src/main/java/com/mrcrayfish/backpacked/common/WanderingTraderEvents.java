@@ -8,9 +8,9 @@ import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
 import com.mrcrayfish.backpacked.platform.Services;
-import com.mrcrayfish.framework.api.event.EntityEvents;
-import com.mrcrayfish.framework.api.event.PlayerEvents;
-import com.mrcrayfish.framework.api.event.TickEvents;
+import com.mrcrayfish.framework.api.event.FrameworkEntityEvents;
+import com.mrcrayfish.framework.api.event.FrameworkPlayerEvents;
+import com.mrcrayfish.framework.api.event.FrameworkTickEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -51,9 +51,9 @@ public class WanderingTraderEvents
 
     public static void init()
     {
-        EntityEvents.JOIN_LEVEL.register(WanderingTraderEvents::onEntityJoinLevel);
-        PlayerEvents.START_TRACKING_ENTITY.register(WanderingTraderEvents::onStartTracking);
-        TickEvents.START_LIVING_ENTITY.register(WanderingTraderEvents::onTickLivingEntity);
+        FrameworkEntityEvents.JOIN_LEVEL.register(WanderingTraderEvents::onEntityJoinLevel);
+        FrameworkPlayerEvents.STARTED_TRACKING_ENTITY.register(WanderingTraderEvents::onStartTracking);
+        FrameworkTickEvents.START_LIVING_ENTITY.register(WanderingTraderEvents::onTickLivingEntity);
     }
 
     private static void onEntityJoinLevel(Entity entity, Level level, boolean disk)
@@ -170,7 +170,7 @@ public class WanderingTraderEvents
 
     private static boolean isPlayerInvisible(Player player)
     {
-        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && BackpackHelper.getFirstBackpackStack(player).isEmpty();
+        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty() && BackpackHelper.getFirstBackpackStack(player).isEmpty();
     }
 
     private static BlockHitResult performRayTrace(Vec3 start, Vec3 end, Entity source)

@@ -219,7 +219,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
     public void handleSyncSlots(ServerPlayer unlockingPlayer, List<UnlockableSlot> unlockedSlots)
     {
         List<Integer> slotIndexes = unlockedSlots.stream().map(slot -> slot.index).toList();
-        List<ServerPlayer> players = unlockingPlayer.server.getPlayerList().getPlayers();
+        List<ServerPlayer> players = unlockingPlayer.level().getServer().getPlayerList().getPlayers();
         players.forEach(otherPlayer -> {
             if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
                 if(this.backpackInventory == otherMenu.backpackInventory) {

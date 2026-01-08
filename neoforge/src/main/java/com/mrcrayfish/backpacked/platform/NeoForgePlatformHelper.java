@@ -45,7 +45,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper
     @Override
     public boolean isRepairable(ItemStack stack)
     {
-        return stack.isRepairable();
+        return stack.isValidRepairItem(stack);
     }
 
     @Override

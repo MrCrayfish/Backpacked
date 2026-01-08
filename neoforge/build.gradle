@@ -1,28 +1,50 @@
-import net.neoforged.gradle.common.tasks.PotentiallySignJar
+import org.apache.commons.io.FilenameUtils
 
 plugins {
     id 'multiloader-loader'
-    id 'net.neoforged.gradle.userdev' version '7.0.167'
+    id 'net.neoforged.moddev'
 }
 
-def at = file('src/main/resources/META-INF/accesstransformer.cfg')
-if (at.exists()) {
-    minecraft.accessTransformers.file at
-}
+neoForge {
+    enable {
+        version = neoforge_version
+        disableRecompilation = System.getenv("CI") == "true"
+    }
 
-runs {
-    configureEach {
-        modSource project.sourceSets.main
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
     }
-    client {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
     }
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+
+    mods {
+        "$mod_id" {
+            sourceSet sourceSets.main
+        }
     }
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+
+    runs {
+        configureEach {
+            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
+        }
+        client {
+            client()
+        }
+        data {
+            clientData()
+
+            // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        server {
+            server()
+        }
     }
 }
 
@@ -42,23 +64,62 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
-    runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
+    //runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
 
     // Integrations
     //runtimeOnly "curse.maven:gravestone-mod-238551:5794085"
-    compileOnly "curse.maven:youre-in-grave-danger-544912:6684166"
-    compileOnly "curse.maven:cloth-config-348521:5729127"
+    //compileOnly "curse.maven:youre-in-grave-danger-544912:6684166"
+    //compileOnly "curse.maven:cloth-config-348521:5729127"
 }
 
-tasks.register('signJar', PotentiallySignJar) {
+tasks.register("signJar") {
     dependsOn jar
     onlyIf {
-        hasProperty('keyStore') || System.getenv("KEYSTORE")
+        findProperty('keyStore') || System.getenv("KEYSTORE")
     }
-    keyStore = findProperty('keyStore') ?: System.getenv("KEYSTORE")
-    alias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
-    storePass = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
-    input = jar.archiveFile
+    doLast {
+        def unsignedJar = tasks.jar.archiveFile.get().asFile
+        def name = FilenameUtils.removeExtension(unsignedJar.getName())
+        def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get().asFile
+        def signingKeyAlias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
+        def signingKeystore = findProperty('keyStore') ?: System.getenv("KEYSTORE")
+        def signingPassword = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
+        ant.signjar(
+            jar: unsignedJar,
+            signedJar: signedJar,
+            alias: signingKeyAlias,
+            keyStore: signingKeystore,
+            storePass: signingPassword,
+            storetype: 'jks'
+        )
+        println "Signed jar created at: $signedJar"
+    }
 }
 
 jar.finalizedBy 'signJar'
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'neoforge')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'neoforge')
+            }
+        }
+    }
+}

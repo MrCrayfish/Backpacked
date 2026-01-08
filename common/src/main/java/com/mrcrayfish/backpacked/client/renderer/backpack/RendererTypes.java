@@ -2,14 +2,14 @@ package com.mrcrayfish.backpacked.client.renderer.backpack;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
 import java.util.Map;
 
 public final class RendererTypes
 {
-    private static final BiMap<ResourceLocation, BackpackRenderer.Type> SOURCES = HashBiMap.create();
+    private static final BiMap<Identifier, BackpackRenderer.Type> SOURCES = HashBiMap.create();
 
     public static void register(BackpackRenderer.Type type)
     {
@@ -18,7 +18,7 @@ public final class RendererTypes
             throw new IllegalStateException("Renderer already registered: " + type.id());
     }
 
-    public static Map<ResourceLocation, BackpackRenderer.Type> getAll()
+    public static Map<Identifier, BackpackRenderer.Type> getAll()
     {
         return Collections.unmodifiableMap(SOURCES);
     }

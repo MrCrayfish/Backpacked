@@ -10,6 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.function.Predicate;
 
@@ -169,14 +171,14 @@ public abstract class UnlockableContainer implements Container
         return ItemContainerContents.fromItems(this.items);
     }
 
-    public void load(CompoundTag tag, HolderLookup.Provider provider)
+    public void load(ValueInput input)
     {
-        ContainerHelper.loadAllItems(tag, this.items, provider);
+        ContainerHelper.loadAllItems(input, this.items);
     }
 
-    public void save(CompoundTag tag, HolderLookup.Provider provider)
+    public void save(ValueOutput output)
     {
-        ContainerHelper.saveAllItems(tag, this.items, provider);
+        ContainerHelper.saveAllItems(output, this.items, false);
     }
 
     public ItemStack addItem(ItemStack stack)

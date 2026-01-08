@@ -12,6 +12,6 @@ import net.minecraft.world.item.Item;
 @RegistryContainer
 public class ModItems
 {
-    public static final RegistryEntry<Item> BACKPACK = RegistryEntry.item(Utils.rl("backpack"), () -> Services.BACKPACK.createBackpackItem(new Item.Properties().stacksTo(1)));
-    public static final RegistryEntry<Item> UNLOCK_TOKEN = RegistryEntry.item(Utils.rl("unlock_token"), () -> new Item(new Item.Properties()));
+    public static final RegistryEntry<Item> BACKPACK = RegistryEntry.item(Utils.id("backpack"), Services.BACKPACK::createBackpackItem, () -> new Item.Properties().stacksTo(1));
+    public static final RegistryEntry<Item> UNLOCK_TOKEN = RegistryEntry.item(Utils.id("unlock_token"), Item::new, Item.Properties::new);
 }

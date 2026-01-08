@@ -23,7 +23,7 @@ public class AugmentSettingsMenu extends PopupMenu
     public AugmentSettingsMenu(PopupMenuHandler handler, Function<PopupMenu, Layout> layoutSupplier)
     {
         super(handler);
-        this.setBackground(Utils.rl("augment/menu_background"));
+        this.setBackground(Utils.id("augment/menu_background"));
         this.setScreenClampPadding(10);
         PaddedLinearLayout layout = PaddedLinearLayout.vertical().padding(8);
         layout.addChild(layoutSupplier.apply(this));

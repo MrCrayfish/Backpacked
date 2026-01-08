@@ -1,21 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.platform.Services;
-import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.joml.Matrix4f;
 
 /**
  * Author: MrCrayfish
@@ -23,13 +9,11 @@ import org.joml.Matrix4f;
 public class PickpocketDebugRenderer
 {
     @SubscribeEvent
-    public void onRenderWorldLastEvent(RenderLevelStageEvent event)
+    public void onRenderWorldLastEvent(RenderLevelStageEvent.AfterEntities event)
     {
-        Minecraft mc = Minecraft.getInstance();
+        // TODO 1.21.11 restore
+        /*Minecraft mc = Minecraft.getInstance();
         if(!mc.getEntityRenderDispatcher().shouldRenderHitBoxes())
-            return;
-
-        if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
             return;
 
         if(!Config.PICKPOCKETING.enabled.get())
@@ -76,6 +60,6 @@ public class PickpocketDebugRenderer
             stack.popPose();
         }
         source.endBatch(RenderType.lines());
-        stack.popPose();
+        stack.popPose();*/
     }
 }

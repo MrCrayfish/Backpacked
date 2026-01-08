@@ -10,7 +10,7 @@ import java.util.List;
 public record ConditionalFunction(BaseCondition condition, List<BaseFunction> functions) implements BaseFunction
 {
     public static final Type TYPE = new Type(
-        Utils.rl("conditional"),
+        Utils.id("conditional"),
         RecordCodecBuilder.<ConditionalFunction>mapCodec(builder -> builder.group(
             BaseCondition.CODEC.fieldOf("condition").forGetter(o -> o.condition),
             BaseFunction.CODEC.listOf().fieldOf("functions").forGetter(o -> o.functions)

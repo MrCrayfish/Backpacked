@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +21,8 @@ import java.util.Map;
  */
 public final class BackpackManager
 {
-    private static final ResourceLocation FALLBACK_MODEL = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "vintage");
-    private static ResourceLocation defaultCosmetic;
+    private static final Identifier FALLBACK_MODEL = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "vintage");
+    private static Identifier defaultCosmetic;
     private static BackpackManager instance;
 
     public static BackpackManager instance()
@@ -34,7 +34,7 @@ public final class BackpackManager
         return instance;
     }
 
-    private Map<ResourceLocation, Backpack> loadedBackpacks = new HashMap<>();
+    private Map<Identifier, Backpack> loadedBackpacks = new HashMap<>();
 
     private BackpackManager()
     {
@@ -51,13 +51,13 @@ public final class BackpackManager
         });
     }
 
-    public void updateBackpacks(Map<ResourceLocation, Backpack> map)
+    public void updateBackpacks(Map<Identifier, Backpack> map)
     {
         this.loadedBackpacks = map;
     }
 
     @Nullable
-    public Backpack getBackpack(ResourceLocation id)
+    public Backpack getBackpack(Identifier id)
     {
         return this.loadedBackpacks.get(id);
     }
@@ -67,7 +67,7 @@ public final class BackpackManager
         return ImmutableList.copyOf(this.loadedBackpacks.values());
     }
 
-    public void unlockBackpack(ServerPlayer player, ResourceLocation id)
+    public void unlockBackpack(ServerPlayer player, Identifier id)
     {
         // Prevents unlocking backpacks when all backpacks are forcefully unlocked.
         // This helps in the case a server owner wants to revert the change.
@@ -91,16 +91,16 @@ public final class BackpackManager
 
     private static void updateDefaultCosmetic()
     {
-        defaultCosmetic = ResourceLocation.tryParse(Config.BACKPACK.cosmetics.defaultCosmetic.get());
+        defaultCosmetic = Identifier.tryParse(Config.BACKPACK.cosmetics.defaultCosmetic.get());
     }
 
     @Nullable
-    public static ResourceLocation getDefaultCosmetic()
+    public static Identifier getDefaultCosmetic()
     {
         return defaultCosmetic;
     }
 
-    public static ResourceLocation getDefaultOrFallbackCosmetic()
+    public static Identifier getDefaultOrFallbackCosmetic()
     {
         return defaultCosmetic != null ? defaultCosmetic : FALLBACK_MODEL;
     }

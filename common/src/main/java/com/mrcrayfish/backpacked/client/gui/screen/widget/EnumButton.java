@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 import com.mrcrayfish.backpacked.client.SpriteProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 
 import java.util.List;
@@ -41,9 +42,9 @@ public class EnumButton<T extends Enum<T> & SpriteProvider> extends Button
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        graphics.blitSprite(this.value.getSprite(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.value.getSprite(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
         if(this.isHovered && this.active)
         {
             graphics.fillGradient(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, -2130706433, -2130706433);

@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.common.BackpackedCodecs;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +26,7 @@ public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey
     {
         if(this.modIds.isPresent())
         {
-            ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            Identifier key = BuiltInRegistries.ITEM.getKey(stack.getItem());
             if(!this.modIds.get().contains(key.getNamespace()))
             {
                 return false;

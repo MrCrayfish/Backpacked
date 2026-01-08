@@ -8,7 +8,7 @@ import java.util.List;
 
 public record ManyCondition(List<BaseCondition> conditions) implements BaseCondition
 {
-    public static final Type TYPE = new Type(Utils.rl("many"), RecordCodecBuilder.<ManyCondition>mapCodec(builder -> builder.group(
+    public static final Type TYPE = new Type(Utils.id("many"), RecordCodecBuilder.<ManyCondition>mapCodec(builder -> builder.group(
         BaseCondition.CODEC.listOf().fieldOf("conditions").forGetter(o -> o.conditions)
     ).apply(builder, ManyCondition::new)));
 

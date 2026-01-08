@@ -1,22 +1,19 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
-import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.util.Utils;
-import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class HopperBridgeMenu extends AugmentSettingsMenu
 {
@@ -32,8 +29,8 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
     private static final Component FILTER_MODE_LABEL = Component.translatable("augment.backpacked.hopper_bridge.filter_mode");
     private static final Component FILTER_MODE_TOOLTIP = Component.translatable("augment.backpacked.hopper_bridge.filter_mode.tooltip");
 
-    private static final ResourceLocation TOGGLE_OFF = Utils.rl("backpack/toggle_off");
-    private static final ResourceLocation TOGGLE_ON = Utils.rl("backpack/toggle_on");
+    private static final Identifier TOGGLE_OFF = Utils.id("backpack/toggle_off");
+    private static final Identifier TOGGLE_ON = Utils.id("backpack/toggle_on");
 
     private static final int MIN_CONTENT_WIDTH = 162;
     private static String lastQuery = "";
@@ -67,7 +64,7 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                 .setWidth(divider.getWidth() - 18 - 2)
                 .setPadding(2, 0, 2, 0)
                 .setHeight(16)
-                .setIcon(Utils.rl("backpack/editbox/search"), 12, 12)
+                .setIcon(Utils.id("backpack/editbox/search"), 12, 12)
                 .setInitialText(lastQuery)
                 .setHint(SEARCH_HINT)
                 .setDependent(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF)
@@ -76,9 +73,9 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
                     lastQuery = s;
                 })
                 .setBackground(new WidgetSprites(
-                    Utils.rl("backpack/editbox/background"),
-                    Utils.rl("backpack/editbox/background_disabled"),
-                    Utils.rl("backpack/editbox/background_focused")
+                    Utils.id("backpack/editbox/background"),
+                    Utils.id("backpack/editbox/background_disabled"),
+                    Utils.id("backpack/editbox/background_focused")
                 )).build();
             header.addChild(searchField, LayoutSettings::alignVerticallyMiddle);
             header.addChild(BackpackButtons.toggle(() -> selectedOnly, newValue -> selectedOnly = newValue, list::setSelectedOnly)

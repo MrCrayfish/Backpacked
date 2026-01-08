@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
@@ -17,9 +17,9 @@ public interface BaseFunction
 
     void apply(BackpackRenderContext context);
 
-    record Type(ResourceLocation id, MapCodec<? extends BaseFunction> codec)
+    record Type(Identifier id, MapCodec<? extends BaseFunction> codec)
     {
-        public static final Codec<Type> CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+        public static final Codec<Type> CODEC = Identifier.CODEC.flatXmap(id -> {
             Type serializer = FunctionTypes.getAll().get(id);
             if(serializer != null) {
                 return DataResult.success(serializer);

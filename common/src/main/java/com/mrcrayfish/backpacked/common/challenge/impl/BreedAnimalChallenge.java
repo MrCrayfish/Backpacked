@@ -9,8 +9,8 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.animal.Animal;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class BreedAnimalChallenge extends Challenge
 {
     public static final ChallengeSerializer<BreedAnimalChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "breed_animal"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "breed_animal"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("animal").forGetter(challenge -> {
                 return challenge.entity;
@@ -50,7 +50,7 @@ public class BreedAnimalChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(this.count, formatter, this.entity);
     }

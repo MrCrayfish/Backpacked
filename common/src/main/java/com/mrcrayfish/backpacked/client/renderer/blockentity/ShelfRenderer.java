@@ -1,75 +1,87 @@
 package com.mrcrayfish.backpacked.client.renderer.blockentity;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.Icons;
-import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
-import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
-import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
-import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
+import com.mrcrayfish.backpacked.client.renderer.blockentity.state.ShelfRenderState;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
-import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Author: MrCrayfish
  */
-public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
+public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity, ShelfRenderState>
 {
     private static final Component RECALL_ICON = ScreenUtil.getIconComponent(Icons.RECALL);
 
-    private final ItemRenderer itemRenderer;
+    private final ItemModelResolver itemModelResolver;
     private final EntityRenderDispatcher entityRenderDispatcher;
 
     public ShelfRenderer(BlockEntityRendererProvider.Context context)
     {
-        this.itemRenderer = context.getItemRenderer();
-        this.entityRenderDispatcher = context.getEntityRenderer();
+        this.itemModelResolver = context.itemModelResolver();
+        this.entityRenderDispatcher = context.entityRenderer();
     }
 
     @Override
-    public void render(ShelfBlockEntity entity, float partialTick, PoseStack pose, MultiBufferSource buffer, int light, int overlay)
+    public ShelfRenderState createRenderState()
     {
-        ItemStack stack = entity.getBackpack();
-        if(!stack.is(ModItems.BACKPACK.get()))
-            return;
+        return new ShelfRenderState();
+    }
 
-        CosmeticProperties properties = stack.getOrDefault(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT);
-        ResourceLocation modelId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
-        ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(modelId);
-        if(backpack == null)
-            return;
+    @Override
+    public void extractRenderState(ShelfBlockEntity entity, ShelfRenderState state, float partialTick, Vec3 camera, ModelFeatureRenderer.@Nullable CrumblingOverlay overlay)
+    {
+        BlockEntityRenderer.super.extractRenderState(entity, state, partialTick, camera, overlay);
+        state.direction = entity.getDirection();
+        state.recallQueueCount = entity.getRecallQueueCount();
 
-        Direction facing = entity.getDirection();
-        this.renderBackpackName(entity, facing, pose, buffer, light);
+        ItemStack backpack = entity.getBackpack();
+        this.itemModelResolver.updateForTopItem(state.itemStackRenderState, backpack, ItemDisplayContext.NONE, entity.getLevel(), null, 0);
 
-        pose.translate(0.5, 0.0, 0.5);
+        CosmeticProperties properties = backpack.getOrDefault(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT);
+        Identifier modelId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+        state.backpack = ClientRegistry.instance().getBackpackOrDefault(modelId);
+
+        if(backpack.has(DataComponents.CUSTOM_NAME))
+        {
+            Component label = backpack.get(DataComponents.CUSTOM_NAME);
+            if(label != null)
+            {
+                state.nameplate = label;
+            }
+        }
+    }
+
+    @Override
+    public void submit(ShelfRenderState state, PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera)
+    {
+        Direction facing = state.direction;
+        this.renderBackpackName(state, facing, stack, collector, camera);
+
+        // TODO 1.21.11 restore
+
+        /*pose.translate(0.5, 0.0, 0.5);
         pose.translate(0, 0.001, 0);
         pose.mulPose(facing.getRotation());
 
@@ -98,8 +110,8 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 
         // Apply shelf offset since models can have different shapes and sizes
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
-        Vector3f offset = meta.shelfOffset();
-        pose.translate(offset.x * 0.0625, offset.z * 0.0625, -offset.y * 0.0625);
+        Vector3fc offset = meta.shelfOffset();
+        pose.translate(offset.x() * 0.0625, offset.z() * 0.0625, -offset.y() * 0.0625);
 
         // Fix rotation and invert
         pose.mulPose(Axis.XP.rotationDegrees(90F));
@@ -113,53 +125,45 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
             renderer.render(context);
             pose.popPose();
         }, () -> {
+            StandaloneModelRenderer.submitDraw();
             BakedModel model = this.getModel(backpack.getBaseModel());
             BakedModelRenderer.drawBakedModel(model, pose, buffer, light, OverlayTexture.NO_OVERLAY);
         });
-        RenderSystem.disableBlend();
+        RenderSystem.disableBlend();*/
     }
 
-    private BakedModel getModel(ModelResourceLocation location)
+    private void renderBackpackName(ShelfRenderState state, Direction facing, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera)
     {
-        return this.itemRenderer.getItemModelShaper().getModelManager().getModel(location);
-    }
+        if(state.nameplate == null)
+            return;
 
-    private void renderBackpackName(ShelfBlockEntity shelf, Direction facing, PoseStack poseStack, MultiBufferSource source, int light)
-    {
         poseStack.pushPose();
         poseStack.translate(0.5, 0.0, 0.5);
         poseStack.mulPose(facing.getRotation());
         poseStack.translate(0, -0.1875, -1.1875);
         poseStack.mulPose(facing.getRotation().invert());
-        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+        poseStack.mulPose(this.entityRenderDispatcher.camera.rotation());
         poseStack.scale(0.02F, -0.02F, 0.02F);
 
         Minecraft mc = Minecraft.getInstance();
-        if(mc.hitResult instanceof BlockHitResult result && result.getBlockPos().equals(shelf.getBlockPos()))
+        if(mc.hitResult instanceof BlockHitResult result && result.getBlockPos().equals(state.blockPos))
         {
-            ItemStack backpack = shelf.getBackpack();
-            if(!backpack.isEmpty() && backpack.has(DataComponents.CUSTOM_NAME))
-            {
-                Component label = backpack.get(DataComponents.CUSTOM_NAME);
-                if(label != null)
-                {
-                    float halfWidth = mc.font.width(label) / 2F;
-                    mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, poseStack.last().pose(), source, Font.DisplayMode.SEE_THROUGH, 0x2A000000, light);
-                    mc.font.drawInBatch(label, -halfWidth, 0, -1, true, poseStack.last().pose(), source, Font.DisplayMode.NORMAL, 0, light);
-                    poseStack.translate(0, -12, 0);
-                }
-            }
+            collector.submitNameTag(poseStack, null, 0, state.nameplate, true, state.lightCoords, 0, camera);
+            /*float halfWidth = mc.font.width(label) / 2F;
+            mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, poseStack.last().pose(), source, Font.DisplayMode.SEE_THROUGH, 0x2A000000, light);
+            mc.font.drawInBatch(label, -halfWidth, 0, -1, true, poseStack.last().pose(), source, Font.DisplayMode.NORMAL, 0, light);
+            poseStack.translate(0, -12, 0);*/
         }
 
-        int recallCount = shelf.getRecallQueueCount();
+        int recallCount = state.recallQueueCount;
         if(recallCount > 0)
         {
             poseStack.scale(1.1F, 1.1F, 1.1F);
-            Matrix4f matrix = poseStack.last().pose();
             Component label = ScreenUtil.join(" ", RECALL_ICON, Component.literal(Integer.toString(recallCount)));
-            float halfWidth = mc.font.width(label) / 2F;
+            collector.submitNameTag(poseStack, null, 0, label, true, state.lightCoords, 0, camera);
+            /*float halfWidth = mc.font.width(label) / 2F;
             mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, matrix, source, Font.DisplayMode.SEE_THROUGH, 0, light);
-            mc.font.drawInBatch(label, -halfWidth, 0, -1, false, matrix, source, Font.DisplayMode.NORMAL, 0, light);
+            mc.font.drawInBatch(label, -halfWidth, 0, -1, false, matrix, source, Font.DisplayMode.NORMAL, 0, light);*/
         }
 
         poseStack.popPose();

@@ -10,7 +10,7 @@ public class ReforgeAugment implements Augment<ReforgeAugment>
 {
     public static final ReforgeAugment INSTANCE = new ReforgeAugment();
     public static final AugmentType<ReforgeAugment> TYPE = new AugmentType<>(
-        Utils.rl("reforge"),
+        Utils.id("reforge"),
         MapCodec.unit(INSTANCE),
         StreamCodec.unit(INSTANCE),
         () -> INSTANCE

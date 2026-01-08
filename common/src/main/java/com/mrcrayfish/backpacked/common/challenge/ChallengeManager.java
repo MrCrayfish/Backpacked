@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mrcrayfish.backpacked.common.challenge.impl.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public final class ChallengeManager
         return instance;
     }
 
-    private final Map<ResourceLocation, ChallengeSerializer<? extends Challenge>> serializers = new HashMap<>();
+    private final Map<Identifier, ChallengeSerializer<? extends Challenge>> serializers = new HashMap<>();
 
     private ChallengeManager()
     {
@@ -47,12 +47,12 @@ public final class ChallengeManager
     }
 
     @Nullable
-    public ChallengeSerializer<? extends Challenge> getSerializer(ResourceLocation id)
+    public ChallengeSerializer<? extends Challenge> getSerializer(Identifier id)
     {
         return this.serializers.get(id);
     }
 
-    public ResourceLocation getSerializerId(ChallengeSerializer<?> serializer)
+    public Identifier getSerializerId(ChallengeSerializer<?> serializer)
     {
         return this.serializers.entrySet().stream()
             .filter(entry -> entry.getValue() == serializer)

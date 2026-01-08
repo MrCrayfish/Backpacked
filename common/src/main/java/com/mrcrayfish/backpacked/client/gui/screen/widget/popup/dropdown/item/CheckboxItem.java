@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
@@ -14,9 +16,9 @@ import java.util.function.Function;
 public class CheckboxItem extends MenuItem
 {
     private static final WidgetSprites SPRITES = new WidgetSprites(
-            Utils.rl("backpack/toggle_on"),
-            Utils.rl("backpack/toggle_off"),
-            Utils.rl("backpack/toggle_on")
+            Utils.id("backpack/toggle_on"),
+            Utils.id("backpack/toggle_off"),
+            Utils.id("backpack/toggle_on")
     );
     private static final int CHECK_BOX_SIZE = 6;
 
@@ -37,11 +39,11 @@ public class CheckboxItem extends MenuItem
         int yOffset = (this.getHeight() - CHECK_BOX_SIZE) / 2;
         int stateIconY = this.getY() + yOffset;
         int stateIconX = this.getX() + this.getWidth() - CHECK_BOX_SIZE - yOffset;
-        graphics.blitSprite(SPRITES.get(this.holder.booleanValue(), this.isHovered()), stateIconX, stateIconY, CHECK_BOX_SIZE, CHECK_BOX_SIZE);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITES.get(this.holder.booleanValue(), this.isHovered()), stateIconX, stateIconY, CHECK_BOX_SIZE, CHECK_BOX_SIZE);
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY)
+    public void onClick(MouseButtonEvent event, boolean doubleClick)
     {
         boolean newValue = !this.holder.getValue();
         this.holder.setValue(newValue);

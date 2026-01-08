@@ -6,6 +6,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -13,8 +15,8 @@ import org.apache.commons.lang3.mutable.MutableInt;
 public class ScrollBar extends AbstractWidget
 {
     private static final WidgetSprites SCROLL_BAR_SPRITES = new WidgetSprites(
-        Utils.rl("backpack/scroll_bar"),
-        Utils.rl("backpack/scroll_bar_disabled")
+        Utils.id("backpack/scroll_bar"),
+        Utils.id("backpack/scroll_bar_disabled")
     );
 
     private static final int SCROLL_BAR_WIDTH = 12;
@@ -42,21 +44,21 @@ public class ScrollBar extends AbstractWidget
         int scroll = (this.active ? this.scroll.getValue() : 0);
         if(this.grabbed) scroll += mouseY - this.grabbedY;
         int scrollBarY = this.getY() + Mth.clamp(scroll, 0, this.getMaxScroll());
-        graphics.blitSprite(SCROLL_BAR_SPRITES.get(this.active, false), this.getX(), scrollBarY, SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLL_BAR_SPRITES.get(this.active, false), this.getX(), scrollBarY, SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
     {
-        if(!this.active || !this.visible || !this.isValidClickButton(button))
+        if(!this.active || !this.visible || !this.isValidClickButton(event.buttonInfo()))
             return false;
 
-        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.getX(), this.getY() + this.scroll.getValue(), SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT))
+        if(ScreenUtil.isPointInArea((int) event.x(), (int) event.y(), this.getX(), this.getY() + this.scroll.getValue(), SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT))
         {
             if(!this.grabbed)
             {
                 this.grabbed = true;
-                this.grabbedY = (int) mouseY;
+                this.grabbedY = (int) event.y();
                 return true;
             }
         }
@@ -64,13 +66,13 @@ public class ScrollBar extends AbstractWidget
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    public boolean mouseReleased(MouseButtonEvent event)
     {
         if(this.grabbed)
         {
-            if(this.isValidClickButton(button))
+            if(this.isValidClickButton(event.buttonInfo()))
             {
-                int newScroll = this.scroll.getValue() + (int) (mouseY - this.grabbedY);
+                int newScroll = this.scroll.getValue() + (int) (event.y() - this.grabbedY);
                 this.scroll.setValue(Mth.clamp(newScroll, 0, this.getMaxScroll()));
                 this.grabbed = false;
                 return true;

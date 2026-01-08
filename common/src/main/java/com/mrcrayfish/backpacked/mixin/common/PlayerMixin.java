@@ -8,13 +8,14 @@ import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -112,7 +113,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "HEAD"))
-    public void backpacked$AddAdditionalSaveData(CompoundTag tag, CallbackInfo ci)
+    public void backpacked$AddAdditionalSaveData(ValueOutput output, CallbackInfo ci)
     {
         BackpackInventory[] inventories = this.backpacked$Inventory();
         for(BackpackInventory inventory : inventories)
@@ -131,7 +132,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
         if(player instanceof ServerPlayer serverPlayer)
         {
             BackpackedInteractAccess access = (BackpackedInteractAccess) serverPlayer;
-            List<ResourceLocation> capturedIds = access.getBackpacked$CapturedInteractIds();
+            List<Identifier> capturedIds = access.getBackpacked$CapturedInteractIds();
             capturedIds.clear();
             ItemStack stack = serverPlayer.getItemInHand(hand);
             BackpackedEvents.INTERACTED_WITH_ENTITY_CAPTURE.post().handle(serverPlayer, stack, entity, capturedIds::add);

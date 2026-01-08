@@ -10,7 +10,7 @@ public final class FarmhandAugment implements Augment<FarmhandAugment>
 {
     public static final FarmhandAugment INSTANCE = new FarmhandAugment();
     public static final AugmentType<FarmhandAugment> TYPE = new AugmentType<>(
-        Utils.rl("farmhand"),
+        Utils.id("farmhand"),
         MapCodec.unit(INSTANCE),
         StreamCodec.unit(INSTANCE),
         () -> INSTANCE

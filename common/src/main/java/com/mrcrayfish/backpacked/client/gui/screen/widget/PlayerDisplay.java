@@ -10,9 +10,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
+import org.joml.Matrix3x2fStack;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -21,7 +25,7 @@ import java.util.function.Supplier;
 
 public class PlayerDisplay extends AbstractWidget
 {
-    private static final ResourceLocation FRAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/frame");
+    private static final Identifier FRAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/frame");
     private static final int FRAME_OFFSET = 4;
 
     private final Player player;
@@ -63,29 +67,28 @@ public class PlayerDisplay extends AbstractWidget
         int widgetY = this.getY();
         int widgetWidth = this.getWidth();
         int widgetHeight = this.getHeight();
-        graphics.blitSprite(FRAME, widgetX, widgetY, widgetWidth, widgetHeight);
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        pose.translate(0, 0, 150);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, FRAME, widgetX, widgetY, widgetWidth, widgetHeight);
+        Matrix3x2fStack pose = graphics.pose();
+        pose.pushMatrix();
         graphics.enableScissor(widgetX + FRAME_OFFSET, widgetY + FRAME_OFFSET, widgetX + widgetWidth - FRAME_OFFSET, widgetY + widgetHeight - FRAME_OFFSET);
         this.renderPlayerModel(graphics, widgetX + widgetWidth / 2, widgetY + widgetHeight / 2, mouseX, mouseY);
         graphics.disableScissor();
-        pose.popPose();
+        pose.popMatrix();
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)
     {
-        if(!this.active || !this.visible || !this.isValidClickButton(button))
+        if(!this.active || !this.visible || !this.isValidClickButton(event.buttonInfo()))
             return false;
 
-        if(ScreenUtil.isPointInArea((int) mouseX, (int) mouseY, this.getX() + FRAME_OFFSET, this.getY() + FRAME_OFFSET, this.getWidth() - FRAME_OFFSET * 2, this.getHeight() - FRAME_OFFSET * 2))
+        if(ScreenUtil.isPointInArea((int) event.x(), (int) event.y(), this.getX() + FRAME_OFFSET, this.getY() + FRAME_OFFSET, this.getWidth() - FRAME_OFFSET * 2, this.getHeight() - FRAME_OFFSET * 2))
         {
             if(!this.grabbed)
             {
                 this.grabbed = true;
-                this.grabbedX = (int) mouseX;
-                this.grabbedY = (int) mouseY;
+                this.grabbedX = (int) event.x();
+                this.grabbedY = (int) event.y();
                 return true;
             }
         }
@@ -93,14 +96,14 @@ public class PlayerDisplay extends AbstractWidget
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
+    public boolean mouseReleased(MouseButtonEvent event)
     {
         if(this.grabbed)
         {
-            if(this.isValidClickButton(button))
+            if(this.isValidClickButton(event.buttonInfo()))
             {
-                this.rotationX += (float) (mouseX - this.grabbedX);
-                this.rotationY += (float) (mouseY - this.grabbedY);
+                this.rotationX += (float) (event.x() - this.grabbedX);
+                this.rotationY += (float) (event.y() - this.grabbedY);
                 this.grabbed = false;
                 return true;
             }
@@ -123,7 +126,8 @@ public class PlayerDisplay extends AbstractWidget
         float entityScale = player.getScale();
         float renderScale = 70F / entityScale;
         Vector3f box = new Vector3f(0.0F, player.getBbHeight() / 2.0F + entityScale * 0.0625F, 0.0F);
-        InventoryScreen.renderEntityInInventory(graphics, x, y + 15, renderScale, box, playerRotation, cameraRotation, player);
+        // TODO 1.21.11 restore
+        //InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, x, y + 15, renderScale, box, playerRotation, cameraRotation, player);
         this.restoreValues();
     }
 

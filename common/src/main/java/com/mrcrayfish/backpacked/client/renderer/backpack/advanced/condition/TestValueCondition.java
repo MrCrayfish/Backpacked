@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 
 public record TestValueCondition(Value first, Value second, Comparison comparison) implements BaseCondition
 {
-    public static final Type TYPE = new Type(Utils.rl("test_value"), RecordCodecBuilder.<TestValueCondition>mapCodec(builder -> builder.group(
+    public static final Type TYPE = new Type(Utils.id("test_value"), RecordCodecBuilder.<TestValueCondition>mapCodec(builder -> builder.group(
         Value.EITHER_CODEC.fieldOf("first").forGetter(o -> o.first),
         Value.EITHER_CODEC.fieldOf("second").forGetter(o -> o.second),
         Comparison.CODEC.fieldOf("comparison").forGetter(o -> o.comparison)

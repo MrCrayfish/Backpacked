@@ -10,10 +10,10 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class InteractWithBlockChallenge extends Challenge
 {
     public static final ChallengeSerializer<InteractWithBlockChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_block"),
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_block"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(BlockPredicate.CODEC.optionalFieldOf("block").forGetter(challenge -> {
                 return challenge.block;
@@ -63,7 +63,7 @@ public class InteractWithBlockChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, Identifier backpackId)
     {
         return new Tracker(this.count, formatter, this.block, this.item, this.entity);
     }

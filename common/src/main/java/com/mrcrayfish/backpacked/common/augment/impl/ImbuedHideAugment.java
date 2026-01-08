@@ -10,7 +10,7 @@ public class ImbuedHideAugment implements Augment<ImbuedHideAugment>
 {
     public static final ImbuedHideAugment INSTANCE = new ImbuedHideAugment();
     public static final AugmentType<ImbuedHideAugment> TYPE = new AugmentType<>(
-            Utils.rl("imbued_hide"),
+            Utils.id("imbued_hide"),
             MapCodec.unit(INSTANCE),
             StreamCodec.unit(INSTANCE),
             () -> INSTANCE

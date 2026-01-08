@@ -19,14 +19,6 @@ public class Bootstrap
 {
     public static void init()
     {
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.UNLOCK_TRACKER);
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.TRADER_PICKPOCKETING);
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.BACKPACK);
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.BACKPACKS);
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.COSMETIC_PROPERTIES);
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.SELECTED_BACKPACK);
-        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS);
-
         Network.init();
         UnlockManager.instance();
         BackpackEvents.init();

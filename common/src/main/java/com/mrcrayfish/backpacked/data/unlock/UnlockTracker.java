@@ -1,36 +1,68 @@
 package com.mrcrayfish.backpacked.data.unlock;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.*;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
 import com.mrcrayfish.framework.api.sync.SyncedObject;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
 public class UnlockTracker extends SyncedObject
 {
-    public static final StreamCodec<RegistryFriendlyByteBuf, UnlockTracker> STREAM_CODEC = StreamCodec.of(UnlockTracker::write, UnlockTracker::read);
-    public static final DataSerializer<UnlockTracker> SERIALIZER = new DataSerializer<>(STREAM_CODEC, UnlockTracker::write, UnlockTracker::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, UnlockTracker> STREAM_CODEC = StreamCodec.of(UnlockTracker::encode, UnlockTracker::decode);
+    public static final DataSerializer<UnlockTracker> SERIALIZER = new DataSerializer<>(STREAM_CODEC, (output, unlockTracker) -> {
+        ValueOutput.TypedOutputList<Identifier> ids = output.list("UnlockedBackpacks", Identifier.CODEC);
+        unlockTracker.unlockedBackpacks.forEach(ids::add);
+        ValueOutput.ValueOutputList trackers = output.childrenList("ProgressTrackers");
+        unlockTracker.backpackToProgressTracker.forEach((id, progressTracker) -> {
+            ValueOutput subOutput = trackers.addChild();
+            subOutput.store("Id", Identifier.CODEC, id);
+            progressTracker.write(subOutput.child("Data"));
+        });
+    }, input -> {
+        UnlockTracker unlockTracker = new UnlockTracker();
+        input.list("UnlockedBackpacks", Identifier.CODEC).ifPresent(ids -> {
+            ids.forEach(unlockTracker.unlockedBackpacks::add);
+        });
+        input.childrenList("ProgressTrackers").ifPresent(trackers -> {
+            trackers.forEach(subInput -> {
+                subInput.read("Id", Identifier.CODEC).ifPresent(id -> {
+                    IProgressTracker progressTracker = unlockTracker.backpackToProgressTracker.get(id);
+                    if(progressTracker != null) {
+                        progressTracker.read(subInput.childOrEmpty("Data"));
+                    }
+                });
+            });
+        });
+        return unlockTracker;
+    });
 
-    private final Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
-    private final Map<ResourceLocation, IProgressTracker> backpackToProgressTracker;
+    private final HashSet<Identifier> unlockedBackpacks = new HashSet<>();
+    private final Map<Identifier, IProgressTracker> backpackToProgressTracker;
     private final Map<Class<?>, List<IProgressTracker>> classToProgressTrackers;
 
     public UnlockTracker()
     {
-        Map<ResourceLocation, IProgressTracker> backpackMap = new HashMap<>();
+        Map<Identifier, IProgressTracker> backpackMap = new HashMap<>();
         Map<Class<?>, List<IProgressTracker>> classMap = new HashMap<>();
         BackpackManager.instance().getBackpacks().forEach(backpack -> {
             IProgressTracker tracker = backpack.createProgressTracker(backpack.getId());
@@ -43,22 +75,22 @@ public class UnlockTracker extends SyncedObject
         this.classToProgressTrackers = ImmutableMap.copyOf(classMap);
     }
 
-    public Set<ResourceLocation> getUnlockedBackpacks()
+    public Set<Identifier> getUnlockedBackpacks()
     {
         return Collections.unmodifiableSet(this.unlockedBackpacks);
     }
 
-    public Map<ResourceLocation, IProgressTracker> getProgressTrackerMap()
+    public Map<Identifier, IProgressTracker> getProgressTrackerMap()
     {
         return this.backpackToProgressTracker;
     }
 
-    public boolean isUnlocked(ResourceLocation id)
+    public boolean isUnlocked(Identifier id)
     {
         return this.unlockedBackpacks.contains(id);
     }
 
-    public Optional<IProgressTracker> getProgressTracker(ResourceLocation backpackId)
+    public Optional<IProgressTracker> getProgressTracker(Identifier backpackId)
     {
         if(!Config.BACKPACK.cosmetics.unlockAllCosmetics.get() && !this.unlockedBackpacks.contains(backpackId))
         {
@@ -77,7 +109,7 @@ public class UnlockTracker extends SyncedObject
         return Collections.emptyList();
     }
 
-    public boolean unlockBackpack(ResourceLocation id)
+    public boolean unlockBackpack(Identifier id)
     {
         if(BackpackManager.instance().getBackpack(id) != null)
         {
@@ -87,73 +119,35 @@ public class UnlockTracker extends SyncedObject
         return false;
     }
 
-    private CompoundTag write(HolderLookup.Provider provider)
+    private static void encode(RegistryFriendlyByteBuf buf, UnlockTracker tracker)
     {
-        CompoundTag tag = new CompoundTag();
-
-        ListTag unlockedBackpacks = new ListTag();
-        this.unlockedBackpacks.forEach(location -> unlockedBackpacks.add(StringTag.valueOf(location.toString())));
-        tag.put("UnlockedBackpacks", unlockedBackpacks);
-
-        ListTag progressTrackers = new ListTag();
-        this.backpackToProgressTracker.forEach((location, progressTracker) -> {
-            CompoundTag progressTag = new CompoundTag();
-            progressTag.putString("Id", location.toString());
-            CompoundTag dataTag = new CompoundTag();
-            progressTracker.write(dataTag);
-            progressTag.put("Data", dataTag);
-            progressTrackers.add(progressTag);
-        });
-        tag.put("ProgressTrackers", progressTrackers);
-
-        return tag;
-    }
-
-    private static UnlockTracker read(Tag tag, HolderLookup.Provider provider)
-    {
-        CompoundTag data = (CompoundTag) tag;
-        UnlockTracker tracker = new UnlockTracker();
-
-        ListTag unlockedBackpacks = data.getList("UnlockedBackpacks", Tag.TAG_STRING);
-        unlockedBackpacks.forEach(t -> tracker.unlockedBackpacks.add(ResourceLocation.tryParse(t.getAsString())));
-
-        ListTag progressTrackers = data.getList("ProgressTrackers", Tag.TAG_COMPOUND);
-        progressTrackers.forEach(t -> {
-            CompoundTag progressTag = (CompoundTag) t;
-            ResourceLocation id = ResourceLocation.tryParse(progressTag.getString("Id"));
-            IProgressTracker progressTracker = tracker.backpackToProgressTracker.get(id);
-            if(progressTracker != null) {
-                CompoundTag dataTag = progressTag.getCompound("Data");
-                progressTracker.read(dataTag);
-            }
-        });
-        return tracker;
-    }
-
-    private static void write(RegistryFriendlyByteBuf buf, UnlockTracker tracker)
-    {
-        buf.writeCollection(tracker.unlockedBackpacks, FriendlyByteBuf::writeResourceLocation);
+        buf.writeCollection(tracker.unlockedBackpacks, FriendlyByteBuf::writeIdentifier);
         buf.writeVarInt(tracker.backpackToProgressTracker.size());
         tracker.backpackToProgressTracker.forEach((id, progressTracker) -> {
-            buf.writeResourceLocation(id);
-            CompoundTag tag = new CompoundTag();
-            progressTracker.write(tag);
-            buf.writeNbt(tag);
+            buf.writeIdentifier(id);
+            ProblemReporter.Collector collector = new ProblemReporter.Collector();
+            TagValueOutput output = TagValueOutput.createWithContext(collector, buf.registryAccess());
+            progressTracker.write(output);
+            buf.writeNbt(output.buildResult());
         });
     }
 
-    private static UnlockTracker read(RegistryFriendlyByteBuf buf)
+    private static UnlockTracker decode(RegistryFriendlyByteBuf buf)
     {
-        UnlockTracker tracker = new UnlockTracker();
-        tracker.unlockedBackpacks.addAll(buf.readCollection(HashSet::new, FriendlyByteBuf::readResourceLocation));
+        UnlockTracker unlockTracker = new UnlockTracker();
+        unlockTracker.unlockedBackpacks.addAll(buf.readCollection(HashSet::new, FriendlyByteBuf::readIdentifier));
         IntStream.range(0, buf.readVarInt()).forEach(value -> {
-            ResourceLocation id = buf.readResourceLocation();
-            CompoundTag tag = buf.readNbt();
-            IProgressTracker progressTracker = tracker.backpackToProgressTracker.get(id);
+            Identifier id = buf.readIdentifier();
+            IProgressTracker progressTracker = unlockTracker.backpackToProgressTracker.get(id);
             if(progressTracker != null) {
-                progressTracker.read(tag);
+                CompoundTag tag = buf.readNbt();
+                if(tag != null) {
+                    ProblemReporter.Collector collector = new ProblemReporter.Collector();
+                    ValueInput input = TagValueInput.create(collector, buf.registryAccess(), tag);
+                    progressTracker.read(input);
+                }
             }
         });
-        return tracker;
+        return unlockTracker;
     }
 }
