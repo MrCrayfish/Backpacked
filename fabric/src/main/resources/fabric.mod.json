@@ -42,7 +42,8 @@
     "custom": {
         "framework": {
             "containers": [
-                "com.mrcrayfish.backpacked.core"
+                "com.mrcrayfish.backpacked.core",
+                "com.mrcrayfish.backpacked.network"
             ],
             "configs": [
                 "com.mrcrayfish.backpacked.Config"
