@@ -134,6 +134,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
     {
         this.selectedOnly = selectedOnly;
         this.updateList();
+        this.refreshScrollAmount();
     }
 
     @Override
