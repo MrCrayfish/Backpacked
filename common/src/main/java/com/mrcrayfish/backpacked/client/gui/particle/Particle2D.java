@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.client.gui.ParticleRenderState;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -264,23 +265,24 @@ public class Particle2D
         pose.pushMatrix();
         pose.translate((float) Mth.lerp(partialTick, this.prevX, this.x), (float) Mth.lerp(partialTick, this.prevY, this.y));
         pose.translate((float) (this.width / 2), (float) (this.height / 2));
-        pose.rotate((float) Mth.lerp(partialTick, this.prevRotation, this.rotation)); // TODO 1.21.11 test
+        pose.rotate((float) Mth.lerp(partialTick, this.prevRotation, this.rotation) * Mth.DEG_TO_RAD);
         pose.scale(Mth.lerp(partialTick, this.prevScale, this.scale));
         pose.translate((float) (-this.width / 2), (float) (-this.height / 2));
         TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.GUI).getSprite(this.sprite);
         GpuTextureView gpuTexture = Minecraft.getInstance().getTextureManager().getTexture(sprite.atlasLocation()).getTextureView();
+        Matrix3x2f matrix = new Matrix3x2f(pose);
         ParticleRenderState state = new ParticleRenderState(
             RenderPipelines.GUI_TEXTURED,
             TextureSetup.singleTexture(gpuTexture, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST)),
-            new Matrix3x2f(graphics.pose()),
+            matrix,
             this.width,
             this.height,
             sprite.getU(this.u1),
             sprite.getV(this.v1),
             sprite.getU(this.u2),
             sprite.getV(this.v2),
-            null, // TODO 1.21.11 create bounds
-            null
+            null,
+            new ScreenRectangle((int) this.x, (int) this.y, Mth.ceil(this.width), Mth.ceil(this.height)).transformMaxBounds(matrix)
         );
         ClientServices.CLIENT.submitGuiElementRenderState(graphics, state);
         pose.popMatrix();

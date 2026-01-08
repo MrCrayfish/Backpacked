@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.particle;
 
-import com.mrcrayfish.framework.platform.Services;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,7 +12,7 @@ import java.util.List;
  * Simple manager class to handle rendering particles on a screen. To implement this onto a screen,
  * create a new instance of this class as a member in a screen. Next, invoke {@link #tickParticles()}
  * somewhere in {@link Screen#tick()} or {@link AbstractContainerScreen#containerTick()} if a
- * container screen. To render the particles, invoke {@link #renderParticles(GuiGraphics, float)} in
+ * container screen. To render the particles, invoke {@link #renderParticles(GuiGraphics)} in
  * {@link Screen#render(GuiGraphics, int, int, float)}, and ideally this should be invoked after
  * everything is drawn on the screen but before rendering tooltips.
  */
@@ -44,16 +43,10 @@ public final class ScreenParticles
      * Renders all particles onto the screen
      *
      * @param graphics a GuiGraphics instance
-     * @param partialTick the current partial tick
      */
-    public void renderParticles(GuiGraphics graphics, float partialTick)
+    public void renderParticles(GuiGraphics graphics)
     {
-        // Fixes particles not being smooth on Fabric
-        if(Services.PLATFORM.getPlatform().isFabric())
-        {
-            partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        }
-        float finalPartialTick = partialTick;
-        this.particles.forEach(p -> p.render(graphics, finalPartialTick));
+        float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        this.particles.forEach(p -> p.render(graphics, partialTick));
     }
 }

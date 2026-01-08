@@ -13,9 +13,9 @@ public record ParticleRenderState(RenderPipeline pipeline, TextureSetup textureS
     @Override
     public void buildVertices(VertexConsumer consumer)
     {
-        consumer.addVertexWith2DPose(this.pose, 0, 0).setUv(this.u1, this.v1);
-        consumer.addVertexWith2DPose(this.pose, 0, (float) this.height).setUv(this.u1, this.v2);
-        consumer.addVertexWith2DPose(this.pose, (float) this.width, (float) this.height).setUv(this.u2, this.v2);
-        consumer.addVertexWith2DPose(this.pose, (float) this.width, 0).setUv(this.u2, this.v1);
+        consumer.addVertexWith2DPose(this.pose, 0, 0).setUv(this.u1, this.v1).setColor(0xFFFFFFFF);
+        consumer.addVertexWith2DPose(this.pose, 0, (float) this.height).setUv(this.u1, this.v2).setColor(0xFFFFFFFF);
+        consumer.addVertexWith2DPose(this.pose, (float) this.width, (float) this.height).setUv(this.u2, this.v2).setColor(0xFFFFFFFF);
+        consumer.addVertexWith2DPose(this.pose, (float) this.width, 0).setUv(this.u2, this.v1).setColor(0xFFFFFFFF);
     }
 }
