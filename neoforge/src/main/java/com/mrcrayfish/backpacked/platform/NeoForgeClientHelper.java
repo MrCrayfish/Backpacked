@@ -17,6 +17,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.VillagerRenderState;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -34,7 +35,8 @@ import java.util.List;
  */
 public class NeoForgeClientHelper implements IClientHelper
 {
-    private static final ReflectedMethod<AvatarRenderer, Void> SETUP_ROTATIONS = new ReflectedMethod<>(AvatarRenderer.class, "setupRotations", AbstractClientPlayer.class, PoseStack.class, float.class, float.class, float.class, float.class);
+    @SuppressWarnings("rawtypes")
+    private static final ReflectedMethod<AvatarRenderer, Void> SETUP_ROTATIONS = new ReflectedMethod<>(AvatarRenderer.class, "setupRotations", AvatarRenderState.class, PoseStack.class, float.class, float.class);
 
     @Override
     public void openConfigScreen()
@@ -62,9 +64,9 @@ public class NeoForgeClientHelper implements IClientHelper
     }
 
     @Override
-    public void invokeRotationSetup(AvatarRenderer<AbstractClientPlayer> renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick)
+    public void invokeRotationSetup(AvatarRenderer<AbstractClientPlayer> renderer, AvatarRenderState state, PoseStack stack, float bodyRot, float scale)
     {
-        SETUP_ROTATIONS.invoke(renderer, player, stack, 0, bodyRot, partialTick, scale);
+        SETUP_ROTATIONS.invoke(renderer, state, stack, bodyRot, scale);
     }
 
     @Override

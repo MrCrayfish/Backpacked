@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.VillagerRenderState;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -25,6 +26,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
@@ -35,7 +37,7 @@ import java.util.Optional;
  */
 public class FabricClientHelper implements IClientHelper
 {
-    //private static final Method SETUP_ROTATIONS = findMethod(PlayerRenderer.class); new ReflectedMethod<>(, "net.minecraft.class_1007.method_4212", AbstractClientPlayer.class, PoseStack.class, float.class, float.class, float.class, float.class);
+    private static final Method SETUP_ROTATIONS = findMethod(AvatarRenderer.class, "net.minecraft.class_1007", "method_4212", "(Lnet/minecraft/class_10055;Lnet/minecraft/class_4587;FF)V", AvatarRenderState.class, PoseStack.class, float.class, float.class);
 
     @Override
     public void openConfigScreen()
@@ -69,16 +71,17 @@ public class FabricClientHelper implements IClientHelper
     }
 
     @Override
-    public void invokeRotationSetup(AvatarRenderer<AbstractClientPlayer> renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick)
+    public void invokeRotationSetup(AvatarRenderer<AbstractClientPlayer> renderer, AvatarRenderState state, PoseStack stack, float bodyRot, float scale)
     {
-
+        try
+        {
+            SETUP_ROTATIONS.invoke(renderer, state, stack, bodyRot, scale);
+        }
+        catch(InvocationTargetException | IllegalAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
-
-    /*@Override
-    public void invokeRotationSetup(PlayerRenderer renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick)
-    {
-        //SETUP_ROTATIONS.invoke(renderer, player, stack, 0, bodyRot, partialTick, scale);
-    }*/
 
     private static Method findMethod(Class<?> targetClass, String className, String methodName, String methodDesc, Class<?>... types)
     {

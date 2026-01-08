@@ -83,7 +83,9 @@ public class FirstPersonEffectsRenderer
         stack.scale(scale, scale, scale);
 
         float bodyRot = Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
-        ClientServices.CLIENT.invokeRotationSetup(renderer, player, stack, scale, bodyRot, partialTick);
+        AvatarRenderState state = new AvatarRenderState();
+        renderer.extractRenderState(player, state, partialTick);
+        ClientServices.CLIENT.invokeRotationSetup(renderer, state, stack, bodyRot, scale);
 
         stack.scale(-1, -1, 1);
         stack.scale(0.9375F, 0.9375F, 0.9375F);

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.VillagerRenderState;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface IClientHelper
 {
     void openConfigScreen();
 
-    void invokeRotationSetup(AvatarRenderer<AbstractClientPlayer> renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick);
+    void invokeRotationSetup(AvatarRenderer<AbstractClientPlayer> renderer, AvatarRenderState state, PoseStack stack, float bodyRot, float scale);
 
     void drawTooltip(GuiGraphics graphics, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner);
 
