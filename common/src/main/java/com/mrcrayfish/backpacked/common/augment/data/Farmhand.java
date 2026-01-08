@@ -43,9 +43,9 @@ public final class Farmhand extends SavedData
     ).apply(instance, Farmhand::new));
     public static final SavedDataType<Farmhand> TYPE = new SavedDataType<>(ID, Farmhand::new, CODEC, DataFixTypes.SAVED_DATA_RAIDS);
 
-    private final Map<BlockPos, DelayedPlantTask> tasks;
+    private final HashMap<BlockPos, DelayedPlantTask> tasks;
 
-    private Farmhand(Map<BlockPos, DelayedPlantTask> tasks)
+    private Farmhand(HashMap<BlockPos, DelayedPlantTask> tasks)
     {
         this.tasks = tasks;
     }
