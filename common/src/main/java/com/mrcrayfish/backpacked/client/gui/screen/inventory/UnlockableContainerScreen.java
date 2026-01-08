@@ -99,13 +99,6 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
-    {
-        this.hoveredLockedSlot = null;
-        super.render(graphics, mouseX, mouseY, partialTicks);
-    }
-
-    @Override
     public void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
         this.screenParticles.renderParticles(graphics);
@@ -114,6 +107,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
+        this.hoveredLockedSlot = null;
         super.renderBackground(graphics, mouseX, mouseY, partialTicks);
 
         if(!this.selectedSlots.isEmpty())
