@@ -39,7 +39,7 @@ public final class Farmhand extends SavedData
     public static final int PLANT_TIME = 14;
     public static final int MAX_DISTANCE_SQR = 16 * 16;
     public static final Codec<Farmhand> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.unboundedMap(BlockPos.CODEC, DelayedPlantTask.CODEC).xmap(Function.identity(), HashMap::new).fieldOf("Tasks").forGetter(f -> f.tasks)
+        Codec.unboundedMap(BlockPos.CODEC, DelayedPlantTask.CODEC).xmap(HashMap::new, Function.identity()).fieldOf("Tasks").forGetter(f -> f.tasks)
     ).apply(instance, Farmhand::new));
     public static final SavedDataType<Farmhand> TYPE = new SavedDataType<>(ID, Farmhand::new, CODEC, DataFixTypes.SAVED_DATA_RAIDS);
 
