@@ -6,7 +6,7 @@ import net.minecraft.resources.Identifier;
 /**
  * Author: MrCrayfish
  */
-public class ClientBackpack extends Backpack
+public final class ClientBackpack extends Backpack
 {
     private final Identifier baseModel;
     private final Identifier strapsModel;

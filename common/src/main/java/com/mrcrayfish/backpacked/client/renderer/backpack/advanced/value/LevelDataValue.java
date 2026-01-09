@@ -27,10 +27,11 @@ public record LevelDataValue(Property property) implements Value
     @Override
     public double get(BackpackRenderContext context)
     {
-        Level level = context.level();
-        if(level == null)
+        // TODO 1.21.11 restore
+        //Level level = context.level();
+        //if(level == null)
             return 0;
-        return this.property.function.apply(level, context);
+        //return this.property.function.apply(level, context);
     }
 
     private enum Property implements StringRepresentable

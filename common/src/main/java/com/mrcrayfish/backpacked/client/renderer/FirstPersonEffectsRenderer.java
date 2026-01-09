@@ -137,9 +137,9 @@ public class FirstPersonEffectsRenderer
         int offset = !chestStack.isEmpty() ? 3 : 2;
         pose.translate(0, -0.06, offset * 0.0625);
 
-        ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
+        /*ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresent(renderer -> {
             renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, backpack, player, player.level(), partialTick, model -> {}, player.tickCount));
-        });
+        });*/
     }
 }

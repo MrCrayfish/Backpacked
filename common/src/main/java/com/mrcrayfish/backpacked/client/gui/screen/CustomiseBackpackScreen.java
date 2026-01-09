@@ -5,7 +5,10 @@ import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
+import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
+import com.mrcrayfish.backpacked.client.gui.pip.LivingEntityData;
+import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderState;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.ScrollBar;
@@ -18,13 +21,14 @@ import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
@@ -36,6 +40,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
 import java.net.URI;
@@ -314,29 +319,24 @@ public class CustomiseBackpackScreen extends CustomScreen
 
     public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick, int tickCount)
     {
-        // TODO 1.21.1 restore
-        /*Matrix3x2fStack pose = graphics.pose();
-        pose.pushMatrix();
-        pose.translate(x, y);
-        pose.scale(1, -1); //new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
-        pose.scale(16);
+        assert mc.player != null;
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
-        meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
-        meta.renderer().ifPresentOrElse(renderer -> {
-            BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, backpack, mc.player, mc.level, partialTick, model -> {
-                StandaloneModelRenderer.draw(model, pose, graphics(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
-                //BakedModelRenderer.drawBakedModel(model, );
-                graphics.bufferSource().endBatch();
-            }, tickCount);
-            pose.pushPose();
-            renderer.render(context);
-            pose.popPose();
-        }, () -> {
-            BakedModel model = mc.getModelManager().getModel(backpack.getBaseModel());
-            BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);
-            graphics.bufferSource().endBatch();
-        });
-        pose.popPose();*/
+        GuiBackpackRenderState state = new GuiBackpackRenderState(
+            meta.guiDisplay().orElse(null),
+            meta.renderer().orElse(null),
+            LivingEntityData.create(mc.player, partialTick),
+            backpack.getBaseModel(),
+            backpack.getStrapsModel(),
+            tickCount,
+            partialTick,
+            x,
+            x + ITEM_HEIGHT,
+            y,
+            y + ITEM_HEIGHT,
+            16,
+            null
+        );
+        ClientServices.CLIENT.submitGuiPipRenderState(graphics, state);
     }
 
     private int getHoveredIndex(int mouseX, int mouseY)
@@ -466,7 +466,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             graphics.drawString(mc.font, this.label, x + 24, textY, textColour, selected);
 
             // Draw backpack cosmetic
-            drawBackpackInGui(mc, graphics, this.backpack, x + 12, y + 12, partialTick, CustomiseBackpackScreen.this.tickCount);
+            drawBackpackInGui(mc, graphics, this.backpack, x, y, partialTick, CustomiseBackpackScreen.this.tickCount);
         }
 
         @Override

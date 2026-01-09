@@ -3,6 +3,8 @@ package com.mrcrayfish.backpacked.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
+import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderState;
+import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderer;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
@@ -73,6 +75,7 @@ public class ClientBackpacked
         bus.addListener(this::onFindPacks);
         bus.addListener(this::onRegisterModifyRenderState);
         bus.addListener(this::onRegisterParticleGroup);
+        bus.addListener(this::onRegisterPipRenderers);
         NeoForge.EVENT_BUS.addListener(this::onRenderLevelStage);
     }
 
@@ -145,7 +148,7 @@ public class ClientBackpacked
         // Search the resource packs folder for any backpacked addons. This makes it compatible with CurseForge modpacks.
         if(event.getPackType() == PackType.SERVER_DATA)
         {
-            Path gameDir = FMLLoader.getCurrent().getGameDir(); // TODO 1.21.11 test
+            Path gameDir = FMLLoader.getCurrent().getGameDir();
             Path addonDir = gameDir.resolve("resourcepacks");
             DirectoryValidator directoryValidator = LevelStorageSource.parseValidator(gameDir.resolve("allowed_symlinks.txt"));
             event.addRepositorySource(new AddonRepositorySource(addonDir, PackType.SERVER_DATA, PackSource.FEATURE, directoryValidator));
@@ -180,5 +183,10 @@ public class ClientBackpacked
     private void onRegisterParticleGroup(RegisterParticleGroupsEvent event)
     {
         event.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
+    }
+
+    private void onRegisterPipRenderers(RegisterPictureInPictureRenderersEvent event)
+    {
+        event.register(GuiBackpackRenderState.class, GuiBackpackRenderer::new);
     }
 }

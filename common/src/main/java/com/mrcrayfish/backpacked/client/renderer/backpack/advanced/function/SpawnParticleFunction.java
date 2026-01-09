@@ -61,7 +61,9 @@ public class SpawnParticleFunction implements BaseFunction
         if(Minecraft.getInstance().isPaused())
             return;
 
-        Level level = context.level();
+        // TODO gonna have to figure out how to hack this back in
+
+        /*Level level = context.level();
         if(level == null)
             return;
 
@@ -91,7 +93,7 @@ public class SpawnParticleFunction implements BaseFunction
         double particleZ = pos.z + offset.z;
         level.addParticle(this.particle, particleX, particleY, particleZ, motion.x, motion.y, motion.z);
 
-        SPAWNED.add(key);
+        SPAWNED.add(key);*/
     }
 
     public static void clearSpawned()
