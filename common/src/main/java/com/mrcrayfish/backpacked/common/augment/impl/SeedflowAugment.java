@@ -3,18 +3,18 @@ package com.mrcrayfish.backpacked.common.augment.impl;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.FilterableItems;
+import com.mrcrayfish.backpacked.common.ItemCollection;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
-import com.mrcrayfish.backpacked.common.ItemCollection;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -101,7 +101,7 @@ public record SeedflowAugment(boolean randomizeSeeds, boolean useFilters, ItemCo
     private static boolean isAgeableCrop(Block block)
     {
         // Use BushBlock to include nether warts
-        if(block instanceof BushBlock && !(block instanceof SaplingBlock))
+        if(block instanceof VegetationBlock && !(block instanceof SaplingBlock))
         {
             // If a crop, we know it has an age property
             if(block instanceof CropBlock)

@@ -463,7 +463,7 @@ public class AugmentHandler
 
     private static boolean isFullyGrownCrop(BlockState state)
     {
-        if(state.getBlock() instanceof BushBlock)
+        if(state.getBlock() instanceof VegetationBlock)
         {
             // Use max age method from crop blocks
             if(state.getBlock() instanceof CropBlock crop)
@@ -477,7 +477,6 @@ public class AugmentHandler
                 if(state.hasProperty(property))
                 {
                     // TODO 1.21.11 test
-
                     return state.getValue(property) == ((IntegerPropertyMixin) (Object) property).backpacked$getMax();
                 }
             }
@@ -497,7 +496,6 @@ public class AugmentHandler
     @Nullable
     private static Item getCropSeed(LevelReader reader, BlockPos pos, BlockState state)
     {
-        // TODO 1.21.11 test
         if(state.getBlock() instanceof VegetationBlock vegetation)
         {
             if(vegetation instanceof CropBlock crop)
