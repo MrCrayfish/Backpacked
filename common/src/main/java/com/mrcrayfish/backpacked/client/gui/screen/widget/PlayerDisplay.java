@@ -1,20 +1,24 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix3x2fStack;
 import org.joml.Quaternionf;
@@ -71,7 +75,7 @@ public class PlayerDisplay extends AbstractWidget
         Matrix3x2fStack pose = graphics.pose();
         pose.pushMatrix();
         graphics.enableScissor(widgetX + FRAME_OFFSET, widgetY + FRAME_OFFSET, widgetX + widgetWidth - FRAME_OFFSET, widgetY + widgetHeight - FRAME_OFFSET);
-        this.renderPlayerModel(graphics, widgetX + widgetWidth / 2, widgetY + widgetHeight / 2, mouseX, mouseY);
+        this.renderPlayerModel(graphics, widgetX, widgetY, widgetWidth, widgetHeight, mouseX, mouseY);
         graphics.disableScissor();
         pose.popMatrix();
     }
@@ -111,7 +115,7 @@ public class PlayerDisplay extends AbstractWidget
         return false;
     }
 
-    private void renderPlayerModel(GuiGraphics graphics, int x, int y, int mouseX, int mouseY)
+    private void renderPlayerModel(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
     {
         if(this.player == null)
             return;
@@ -123,12 +127,21 @@ public class PlayerDisplay extends AbstractWidget
         cameraRotation.mul(Axis.XN.rotationDegrees(this.rotationY + (this.grabbed ? mouseY - this.grabbedY : 0)));
         cameraRotation.mul(Axis.YP.rotationDegrees(this.rotationX + (this.grabbed ? mouseX - this.grabbedX : 0)));
         playerRotation.mul(cameraRotation);
-        float entityScale = player.getScale();
-        float renderScale = 70F / entityScale;
-        Vector3f box = new Vector3f(0.0F, player.getBbHeight() / 2.0F + entityScale * 0.0625F, 0.0F);
-        // TODO 1.21.11 restore
-        //InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, x, y + 15, renderScale, box, playerRotation, cameraRotation, player);
+        EntityRenderState state = createPlayerRenderState(this.player);
+        Vector3f box = new Vector3f(0, state.boundingBoxHeight / 2.0F + 0.0625F, 0);
+        graphics.submitEntityRenderState(state, (float) 70, box, playerRotation, cameraRotation, x, y, x + width, y + height);
         this.restoreValues();
+    }
+
+    private static EntityRenderState createPlayerRenderState(LivingEntity entity)
+    {
+        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderer<? super LivingEntity, ?> renderer = dispatcher.getRenderer(entity);
+        EntityRenderState state = renderer.createRenderState(entity, 1.0F);
+        state.lightCoords = LightTexture.FULL_BRIGHT;
+        state.shadowPieces.clear();
+        state.outlineColor = 0;
+        return state;
     }
 
     private void captureValues()
