@@ -159,7 +159,6 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        graphics.setTooltipForNextFrame();
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && (!this.hideLockedSlots || !this.selectedSlots.isEmpty()))
         {
             List<ClientTooltipComponent> components = this.createUnlockTooltip(this.hoveredLockedSlot);
