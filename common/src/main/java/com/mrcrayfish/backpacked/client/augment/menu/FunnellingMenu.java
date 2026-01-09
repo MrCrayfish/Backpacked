@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -25,7 +26,7 @@ import java.util.function.Predicate;
 
 public class FunnellingMenu extends AugmentSettingsMenu
 {
-    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
+    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint").withStyle(ChatFormatting.WHITE);
     private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
     private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.filters");
     private static final Component SHOW_ALL_LABEL = Component.translatable("backpacked.gui.show_all");

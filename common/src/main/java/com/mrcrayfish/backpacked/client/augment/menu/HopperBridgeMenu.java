@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -19,7 +20,7 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.filters");
-    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
+    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint").withStyle(ChatFormatting.WHITE);
     private static final Component INSERT_LABEL = Component.translatable("augment.backpacked.hopper_bridge.insert");
     private static final Component INSERT_TOOLTIP = Component.translatable("augment.backpacked.hopper_bridge.insert.tooltip");
     private static final Component EXTRACT_LABEL = Component.translatable("augment.backpacked.hopper_bridge.extract");

@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.augment.impl.SeedflowAugment;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -16,7 +17,7 @@ import net.minecraft.network.chat.Component;
 public class SeedflowMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
-    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
+    private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint").withStyle(ChatFormatting.WHITE);
     private static final Component RANDOMISE_SEEDS_LABEL = Component.translatable("augment.backpacked.seedflow.randomize_seeds");
     private static final Component RANDOMISE_SEEDS_TOOLTIP = Component.translatable("augment.backpacked.seedflow.randomize_seeds.tooltip");
     private static final Component USE_FILTERS_LABEL = Component.translatable("augment.backpacked.seedflow.use_filters");
