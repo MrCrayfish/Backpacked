@@ -155,9 +155,9 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
     {
         if(!this.searchQuery.equals(searchQuery))
         {
-            this.refreshScrollAmount(); // TODO 1.21.11 test
             this.searchQuery = searchQuery;
             this.updateList();
+            this.refreshScrollAmount();
         }
     }
 
