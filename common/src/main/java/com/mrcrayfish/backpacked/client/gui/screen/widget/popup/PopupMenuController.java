@@ -88,14 +88,14 @@ public final class PopupMenuController implements ContainerEventHandler
         return this.base != null;
     }
 
-    private boolean contains(PopupMenu menu)
+    public boolean contains(PopupMenu menu)
     {
         PopupMenu current = this.base;
         while(current != null)
         {
             if(current == menu)
                 return true;
-            current = menu.child;
+            current = current.child;
         }
         return false;
     }

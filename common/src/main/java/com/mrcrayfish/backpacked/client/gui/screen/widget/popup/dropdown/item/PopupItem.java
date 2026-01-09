@@ -45,7 +45,7 @@ public class PopupItem extends MenuItem
     @Override
     protected boolean selected()
     {
-        return this.menu.hasChild();
+        return this.menu.isOpen();
     }
 
     @Override

@@ -206,4 +206,9 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     {
         this.screenClampPadding = screenClampPadding;
     }
+
+    public boolean isOpen()
+    {
+        return this.controller.contains(this);
+    }
 }
