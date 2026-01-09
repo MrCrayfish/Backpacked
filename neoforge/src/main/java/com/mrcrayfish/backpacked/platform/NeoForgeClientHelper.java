@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientBackpacked;
+import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.platform.services.IClientHelper;
 import com.mrcrayfish.backpacked.util.ReflectedMethod;
 import net.minecraft.ChatFormatting;
@@ -26,6 +27,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.net.URI;
@@ -89,7 +91,7 @@ public class NeoForgeClientHelper implements IClientHelper
     @Override
     public boolean isWearingBackpack(VillagerRenderState state)
     {
-        return Boolean.TRUE.equals(state.getRenderData(ClientBackpacked.WEARING_BACKPACK));
+        return Boolean.TRUE.equals(state.getRenderData(ClientBackpacked.WEARING_BACKPACK_KEY));
     }
 
     @Override
@@ -102,5 +104,12 @@ public class NeoForgeClientHelper implements IClientHelper
     public void submitGuiPipRenderState(GuiGraphics graphics, PictureInPictureRenderState state)
     {
         graphics.submitPictureInPictureRenderState(state);
+    }
+
+    @Override
+    @Nullable
+    public BackpackRenderState getBackpackRenderState(AvatarRenderState state)
+    {
+        return state.getRenderData(ClientBackpacked.BACKPACK_RENDER_STATE_KEY);
     }
 }

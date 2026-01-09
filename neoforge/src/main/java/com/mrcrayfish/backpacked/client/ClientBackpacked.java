@@ -1,7 +1,10 @@
 package com.mrcrayfish.backpacked.client;
 
+import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
+import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderState;
 import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderer;
@@ -10,31 +13,39 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
 import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticleGroup;
 import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
+import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
+import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.packs.AddonRepositorySource;
+import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.NeoForgeModelResource;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
-import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.context.ContextKey;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.PlayerModelType;
@@ -62,7 +73,8 @@ import java.util.Map;
 @Mod(value = Constants.MOD_ID, dist = Dist.CLIENT)
 public class ClientBackpacked
 {
-    public static final ContextKey<Boolean> WEARING_BACKPACK = new ContextKey<>(Utils.id("wearing_backpack"));
+    public static final ContextKey<Boolean> WEARING_BACKPACK_KEY = new ContextKey<>(Utils.id("wearing_backpack"));
+    public static final ContextKey<BackpackRenderState> BACKPACK_RENDER_STATE_KEY = new ContextKey<>(Utils.id("backpack_render_state"));
 
     public ClientBackpacked(IEventBus bus)
     {
@@ -108,8 +120,8 @@ public class ClientBackpacked
 
     private void onAddLayers(EntityRenderersEvent.AddLayers event)
     {
-        addBackpackLayer(event.getPlayerRenderer(PlayerModelType.WIDE), event.getContext().getItemModelResolver());
-        addBackpackLayer(event.getPlayerRenderer(PlayerModelType.SLIM), event.getContext().getItemModelResolver());
+        addBackpackLayer(event.getPlayerRenderer(PlayerModelType.WIDE));
+        addBackpackLayer(event.getPlayerRenderer(PlayerModelType.SLIM));
 
         EntityRenderer<WanderingTrader, ?> renderer = event.getRenderer(EntityType.WANDERING_TRADER);
         if(renderer instanceof WanderingTraderRenderer traderRenderer)
@@ -118,11 +130,11 @@ public class ClientBackpacked
         }
     }
 
-    private static void addBackpackLayer(@Nullable AvatarRenderer<AbstractClientPlayer> renderer, ItemModelResolver itemModelResolver)
+    private static void addBackpackLayer(@Nullable AvatarRenderer<AbstractClientPlayer> renderer)
     {
         if(renderer != null)
         {
-            renderer.addLayer(new BackpackLayer(renderer, itemModelResolver));
+            renderer.addLayer(new BackpackLayer(renderer));
         }
     }
 
@@ -175,9 +187,34 @@ public class ClientBackpacked
     {
         event.registerEntityModifier(WanderingTraderRenderer.class, (trader, state) -> {
             TraderPickpocketing.get(trader).ifPresent(data -> {
-                state.setRenderData(WEARING_BACKPACK, data.isBackpackEquipped());
+                state.setRenderData(WEARING_BACKPACK_KEY, data.isBackpackEquipped());
             });
         });
+        event.registerEntityModifier(new TypeToken<AvatarRenderer<?>>() {}, (entity, state) -> {
+            if(entity instanceof AbstractClientPlayer player) {
+                CosmeticProperties properties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player).orElse(null);
+                if(properties == null)
+                    return;
+
+                Identifier cosmeticId = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
+                ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(cosmeticId);
+                if(backpack == null)
+                    return;
+
+                BackpackRenderState backpackRenderState = new BackpackRenderState();
+                ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
+                backpackRenderState.bobbing = meta.bobbing();
+                backpackRenderState.renderer = meta.renderer().orElse(null);
+                backpackRenderState.baseModel = backpack.getBaseModel();
+                backpackRenderState.strapsModel = backpack.getStrapsModel();
+                backpackRenderState.entityData = LivingEntityDataState.create(player, 1F);
+                backpackRenderState.levelData = LevelDataState.create(player.level(), 1F);
+                backpackRenderState.visible = Services.BACKPACK.isBackpackVisible(player);
+                backpackRenderState.cosmeticProperties = properties;
+                backpackRenderState.horizontalDelta = player.getDeltaMovement().horizontalDistance();
+                state.setRenderData(BACKPACK_RENDER_STATE_KEY, backpackRenderState);
+            }
+        });;
     }
 
     private void onRegisterParticleGroup(RegisterParticleGroupsEvent event)

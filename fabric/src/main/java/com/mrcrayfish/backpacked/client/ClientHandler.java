@@ -57,7 +57,7 @@ public class ClientHandler implements ClientModInitializer
             if(entityRenderer instanceof WanderingTraderRenderer renderer) {
                 registrationHelper.register(new VillagerBackpackLayer(renderer, context.getItemModelResolver()));
             } else if(entityType == EntityType.PLAYER) {
-                registrationHelper.register(new BackpackLayer((RenderLayerParent<AvatarRenderState, PlayerModel>) entityRenderer, context.getItemModelResolver()));
+                registrationHelper.register(new BackpackLayer((RenderLayerParent<AvatarRenderState, PlayerModel>) entityRenderer));
             }
         });
 
