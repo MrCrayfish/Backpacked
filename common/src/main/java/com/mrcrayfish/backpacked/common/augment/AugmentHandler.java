@@ -476,7 +476,6 @@ public class AugmentHandler
             {
                 if(state.hasProperty(property))
                 {
-                    // TODO 1.21.11 test
                     return state.getValue(property) == ((IntegerPropertyMixin) (Object) property).backpacked$getMax();
                 }
             }

@@ -133,8 +133,6 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
 
         if(this.child != null)
         {
-            // TODO 1.21.11 what this change to
-            //graphics.pose().translate(0, 0, 350);
             this.child.render(graphics, mouseX, mouseY, deltaTick);
         }
     }

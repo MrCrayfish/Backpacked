@@ -330,7 +330,6 @@ public class ShelfBlockEntity extends BlockEntity
     {
         if(this.level instanceof ServerLevel serverLevel)
         {
-            // TODO 1.21.11 test
             ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(serverLevel, this);
             ItemStack stack = this.getBackpack();
             Containers.dropItemStack(serverLevel, pos.getX(), pos.getY(), pos.getZ(), stack.copyAndClear());

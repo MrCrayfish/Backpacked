@@ -39,7 +39,6 @@ public abstract class MenuItem extends AbstractWidget
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
-        // TODO 1.21.11 test
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITES.get(this.active, this.isHovered() || this.selected()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
 
         Font font = Minecraft.getInstance().font;

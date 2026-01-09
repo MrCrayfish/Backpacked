@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
 import net.minecraft.client.Minecraft;
