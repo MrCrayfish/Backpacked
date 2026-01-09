@@ -210,7 +210,7 @@ public class ShelfBlockEntity extends BlockEntity
         //ContainerHelper.loadAllItems(container, this.container.getItems());
         //this.loadingItems = false;
 
-        ItemStack backpack = input.read("Backpack", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        ItemStack backpack = input.read("Backpack", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
 
         // Prevents losing items since shelves are no longer containers
         Optional<ValueInput> itemsOptional = input.child("Items");
@@ -237,7 +237,7 @@ public class ShelfBlockEntity extends BlockEntity
     {
         super.saveAdditional(output);
         //ContainerHelper.saveAllItems(output.child("Container"), this.container.getItems());
-        output.store("Backpack", ItemStack.CODEC, this.container.getItem(0));
+        output.store("Backpack", ItemStack.OPTIONAL_CODEC, this.container.getItem(0));
         if(this.recallOwner != null)
         {
             output.store("RecallOwner", UUIDUtil.CODEC, this.recallOwner);
@@ -257,7 +257,7 @@ public class ShelfBlockEntity extends BlockEntity
     @Override
     public void saveCustomOnly(ValueOutput output)
     {
-        output.store("Backpack", ItemStack.CODEC, this.container.getItem(0));
+        output.store("Backpack", ItemStack.OPTIONAL_CODEC, this.container.getItem(0));
         output.putInt("QueueCount", this.recallQueueCount);
     }
 
