@@ -1,9 +1,9 @@
-package com.mrcrayfish.backpacked.client.gui.pip;
+package com.mrcrayfish.backpacked.client.renderer.backpack;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
-public record LivingEntityData(
+public record LivingEntityDataState(
         double walkPosition,
         double walkSpeed,
         double headYaw,
@@ -29,7 +29,7 @@ public record LivingEntityData(
         double lightLevel
 )
 {
-    public static LivingEntityData create(LivingEntity entity, float partialTick)
+    public static LivingEntityDataState create(LivingEntity entity, float partialTick)
     {
         double walkPosition = entity.walkAnimation.position(partialTick);
         double walkSpeed = entity.walkAnimation.speed(partialTick);
@@ -54,6 +54,6 @@ public record LivingEntityData(
         double motionY = entity.getDeltaMovement().y;
         double motionZ = entity.getDeltaMovement().z;
         double lightLevel = entity.level().getLightEngine().getRawBrightness(entity.blockPosition(), 0);
-        return new LivingEntityData(walkPosition, walkSpeed, headYaw, headPitch, bodyRotation, swimAngle, attackSwing, fallFlyingCounter, health, maxHealth, absorption, maxAbsorption, armor, armorCoverage, airSupply, maxAirSupply, posX, posY, posZ, motionX, motionY, motionZ, lightLevel);
+        return new LivingEntityDataState(walkPosition, walkSpeed, headYaw, headPitch, bodyRotation, swimAngle, attackSwing, fallFlyingCounter, health, maxHealth, absorption, maxAbsorption, armor, armorCoverage, airSupply, maxAirSupply, posX, posY, posZ, motionX, motionY, motionZ, lightLevel);
     }
 }

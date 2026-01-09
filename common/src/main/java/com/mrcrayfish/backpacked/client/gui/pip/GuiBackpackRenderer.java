@@ -56,7 +56,7 @@ public class GuiBackpackRenderer extends PictureInPictureRenderer<GuiBackpackRen
         BackpackRenderer renderer = state.renderer();
         if(renderer != null)
         {
-            BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, this.bufferSource, state.baseModel(), state.strapsModel(), state.entityData(), 0xFFF000F0, state.tickCount(), state.partialTick(), model -> {
+            BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, this.bufferSource, state.baseModel(), state.strapsModel(), state.entityData(), state.levelData(), 0xFFF000F0, state.tickCount(), state.partialTick(), model -> {
                 pose.pushPose();
                 pose.translate(-0.5F, -0.5F, -0.5F);
                 StandaloneModelRenderer.draw(model, pose, this.bufferSource, 1.0F, 1.0F, 1.0F, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);

@@ -7,7 +7,8 @@ import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.gui.pip.LivingEntityData;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderState;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
@@ -27,7 +28,6 @@ import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -40,7 +40,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
 import java.net.URI;
@@ -319,12 +318,13 @@ public class CustomiseBackpackScreen extends CustomScreen
 
     public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick, int tickCount)
     {
-        assert mc.player != null;
+        assert mc.player != null && mc.level != null;
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         GuiBackpackRenderState state = new GuiBackpackRenderState(
             meta.guiDisplay().orElse(null),
             meta.renderer().orElse(null),
-            LivingEntityData.create(mc.player, partialTick),
+            LivingEntityDataState.create(mc.player, partialTick),
+            LevelDataState.create(mc.level, partialTick),
             backpack.getBaseModel(),
             backpack.getStrapsModel(),
             tickCount,

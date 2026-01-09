@@ -3,11 +3,13 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.Level;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public record LevelDataValue(Property property) implements Value
 {
@@ -27,28 +29,25 @@ public record LevelDataValue(Property property) implements Value
     @Override
     public double get(BackpackRenderContext context)
     {
-        // TODO 1.21.11 restore
-        //Level level = context.level();
-        //if(level == null)
-            return 0;
-        //return this.property.function.apply(level, context);
+        LevelDataState state = context.levelData();
+        return state != null ? this.property.function.apply(state) : 0;
     }
 
     private enum Property implements StringRepresentable
     {
-        TIME_OF_DAY("time_of_day", (level, context) -> (double) level.getLevelData().getDayTime()),
-        TEST("game_time", (level, context) -> (double) level.getGameTime()),
-        RAIN_LEVELS("rain_levels", (level, context) -> (double) level.getRainLevel(context.partialTick())),
-        THUNDER_LEVELS("thunder_levels", (level, context) -> (double) level.getThunderLevel(context.partialTick())),
-        SEA_LEVEL("sea_level", (level, context) -> (double) level.getSeaLevel()),
-        MAX_LIGHT_LEVEL("max_light_level", (level, context) -> (double) 15); // Max light level is always 15 now
+        TIME_OF_DAY("time_of_day", LevelDataState::timeOfDay),
+        GAME_TIME("game_time", LevelDataState::gameTime),
+        RAIN_LEVELS("rain_levels", LevelDataState::rainLevels),
+        THUNDER_LEVELS("thunder_levels", LevelDataState::thunderLevels),
+        SEA_LEVEL("sea_level", LevelDataState::seaLevel),
+        MAX_LIGHT_LEVEL("max_light_level", LevelDataState::maxLightLevel);
 
         public static final Codec<Property> CODEC = StringRepresentable.fromEnum(Property::values);
 
         private final String name;
-        private final BiFunction<Level, BackpackRenderContext, Double> function;
+        private final Function<LevelDataState, Double> function;
 
-        Property(String name, BiFunction<Level, BackpackRenderContext, Double> function)
+        Property(String name, Function<LevelDataState, Double> function)
         {
             this.name = name;
             this.function = function;
