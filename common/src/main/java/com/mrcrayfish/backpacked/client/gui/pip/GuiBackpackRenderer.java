@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.pip;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.StandaloneModels;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
@@ -9,6 +10,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.renderer.StandaloneModelRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -35,6 +37,8 @@ public class GuiBackpackRenderer extends PictureInPictureRenderer<GuiBackpackRen
     @Override
     protected void renderToTexture(GuiBackpackRenderState state, PoseStack pose)
     {
+        Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+
         pose.pushPose();
         pose.scale(1.0F, -1.0F, -1.0F);
         ScreenRectangle bounds = state.bounds();
