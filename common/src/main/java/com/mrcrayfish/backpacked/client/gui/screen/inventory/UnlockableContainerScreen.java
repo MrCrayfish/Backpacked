@@ -105,50 +105,52 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
+    protected void renderSlots(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        this.hoveredLockedSlot = null;
-        super.renderBackground(graphics, mouseX, mouseY, partialTicks);
+        super.renderSlots(graphics, mouseX, mouseY);
 
         if(!this.selectedSlots.isEmpty())
         {
             int progressWidth = (int) (16 * (this.totalUnlockTime - this.heldUnlockTime) / (float) Math.max(1, this.totalUnlockTime));
             for(UnlockableSlot slot : this.selectedSlots)
             {
-                int progressX = this.leftPos + slot.x;
-                int progressY = this.topPos + slot.y;
+                int progressX = slot.x;
+                int progressY = slot.y;
                 graphics.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
             }
         }
 
-        for(Slot slot : this.getMenu().slots)
+        this.hoveredLockedSlot = null;
+
+        for(Slot slot : this.menu.slots)
         {
-            if(slot instanceof UnlockableSlot lockedSlot)
+            if(!(slot instanceof UnlockableSlot lockedSlot))
+                continue;
+
+            if(this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
             {
-                if(this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY))
+                this.hoveredLockedSlot = lockedSlot;
+            }
+
+            if(lockedSlot.isUnlocked())
+                continue;
+
+            if(this.selectedSlots.contains(slot))
+            {
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK_OUTLINED, slot.x + 1, slot.y + 1, 14, 14);
+            }
+            else
+            {
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, slot.x + 2, slot.y + 2, 12, 12);
+
+                if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
                 {
-                    this.hoveredLockedSlot = lockedSlot;
+                    graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x88A89A8A);
                 }
-                if(!lockedSlot.isUnlocked())
+
+                if(this.hideLockedSlots)
                 {
-                    if(this.selectedSlots.contains(slot))
-                    {
-                        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK_OUTLINED, this.leftPos + slot.x + 1, this.topPos + slot.y + 1, 14, 14);
-                    }
-                    else
-                    {
-                        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, this.leftPos + slot.x + 2, this.topPos + slot.y + 2, 12, 12);
-
-                        if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
-                        {
-                            graphics.fill(this.leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, this.topPos + slot.y + 16, 0x88A89A8A);
-                        }
-
-                        if(this.hideLockedSlots)
-                        {
-                            graphics.fill(this.leftPos + slot.x - 1, this.topPos + slot.y - 1, this.leftPos + slot.x + 17, this.topPos + slot.y + 17, 0xAAEFDBC4);
-                        }
-                    }
+                    graphics.fill(slot.x - 1, slot.y - 1, slot.x + 17, slot.y + 17, 0xAAEFDBC4);
                 }
             }
         }
@@ -157,6 +159,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     @Override
     protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
     {
+        graphics.setTooltipForNextFrame();
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && (!this.hideLockedSlots || !this.selectedSlots.isEmpty()))
         {
             List<ClientTooltipComponent> components = this.createUnlockTooltip(this.hoveredLockedSlot);
