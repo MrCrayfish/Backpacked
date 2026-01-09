@@ -175,11 +175,10 @@ public class ClientPlayHandler
             return;
 
         var dispatcher = minecraft.getEntityRenderDispatcher();
-        var renderBuffers = minecraft.renderBuffers();
         var start = new Vec3(player.getX(), player.getY(0.65), player.getZ()).add(Vec3.directionFromRotation(0, player.yBodyRot + 180).scale(0.25));
         var end = message.pos().getBottomCenter();
-        EntityRenderState state = dispatcher.extractEntity(new ItemEntity(level, 0, 0, 0, stack), 1.0F);
-        minecraft.particleEngine.add(new FarmhandPlantParticle(state, level, stack, start, end));
+        EntityRenderState state = dispatcher.extractEntity(new ItemEntity(level, start.x, start.y, start.z, stack), 1.0F);
+        minecraft.particleEngine.add(new FarmhandPlantParticle(state, level, start, end));
         minecraft.level.playSound(null, start.x, start.y, start.z, ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.PLAYERS, 1F, 0.5F);
     }
 

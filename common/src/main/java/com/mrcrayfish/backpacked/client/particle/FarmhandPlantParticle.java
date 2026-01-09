@@ -1,20 +1,11 @@
 package com.mrcrayfish.backpacked.client.particle;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
 import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
-import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderBuffers;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class FarmhandPlantParticle extends Particle
@@ -23,10 +14,9 @@ public class FarmhandPlantParticle extends Particle
     protected final Vec3 start;
     protected final Vec3 end;
     protected final Vec3 control;
-    protected final Entity entity;
     protected int life = 0;
 
-    public FarmhandPlantParticle(EntityRenderState state, ClientLevel level, ItemStack stack, Vec3 start, Vec3 end)
+    public FarmhandPlantParticle(EntityRenderState state, ClientLevel level, Vec3 start, Vec3 end)
     {
         super(level, start.x, start.y, start.z);
         this.itemRenderState = state;
@@ -38,7 +28,6 @@ public class FarmhandPlantParticle extends Particle
             start.z + (end.z - start.z) / 2
         );
         this.hasPhysics = false;
-        this.entity = new ItemEntity(level, 0, 0, 0, stack);
     }
 
     @Override
