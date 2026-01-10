@@ -3,6 +3,8 @@ package com.mrcrayfish.backpacked.platform;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.ClientHandler;
+import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.platform.services.IClientHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
@@ -25,6 +27,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.InvocationTargetException;
@@ -131,5 +134,11 @@ public class FabricClientHelper implements IClientHelper
     public void submitGuiPipRenderState(GuiGraphics graphics, PictureInPictureRenderState state)
     {
         graphics.guiRenderState.submitPicturesInPictureState(state);
+    }
+
+    @Override
+    public @Nullable BackpackRenderState getBackpackRenderState(AvatarRenderState state)
+    {
+        return state.getData(ClientHandler.BACKPACK_RENDER_STATE_KEY);
     }
 }

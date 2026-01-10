@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
+import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
@@ -38,7 +39,8 @@ import net.minecraft.world.entity.EntityType;
  */
 public class ClientHandler implements ClientModInitializer
 {
-    public static final RenderStateDataKey<Boolean> WEARING_BACKPACK = RenderStateDataKey.create(() -> Utils.id("wearing_backpack").toString());
+    public static final RenderStateDataKey<Boolean> WEARING_BACKPACK_KEY = RenderStateDataKey.create(() -> Utils.id("wearing_backpack").toString());
+    public static final RenderStateDataKey<BackpackRenderState> BACKPACK_RENDER_STATE_KEY = RenderStateDataKey.create(() -> Utils.id("backpack_render_state").toString());
 
     @Override
     public void onInitializeClient()

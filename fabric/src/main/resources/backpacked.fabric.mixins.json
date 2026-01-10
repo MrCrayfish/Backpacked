@@ -15,6 +15,7 @@
         "ServerPacksSourceMixin"
     ],
     "client": [
+        "client.AvatarRendererMixin",
         "client.CreateWorldScreenMixin",
         "client.WanderingTraderRendererMixin"
     ],

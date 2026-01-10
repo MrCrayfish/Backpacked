@@ -17,7 +17,7 @@ public class WanderingTraderRendererMixin
     private void backpacked$ApplyBackpackState(WanderingTrader trader, VillagerRenderState state, float partialTick, CallbackInfo ci)
     {
         TraderPickpocketing.get(trader).ifPresent(data -> {
-            state.setData(ClientHandler.WEARING_BACKPACK, data.isBackpackEquipped());
+            state.setData(ClientHandler.WEARING_BACKPACK_KEY, data.isBackpackEquipped());
         });
     }
 }

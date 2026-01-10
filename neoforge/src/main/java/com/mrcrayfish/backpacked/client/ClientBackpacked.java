@@ -185,11 +185,14 @@ public class ClientBackpacked
 
     private void onRegisterModifyRenderState(RegisterRenderStateModifiersEvent event)
     {
+        // Appends the wearing backpack state of a wandering trader
         event.registerEntityModifier(WanderingTraderRenderer.class, (trader, state) -> {
             TraderPickpocketing.get(trader).ifPresent(data -> {
                 state.setRenderData(WEARING_BACKPACK_KEY, data.isBackpackEquipped());
             });
         });
+
+        // Appends backpack data to players so the layer can use to submit draws
         event.registerEntityModifier(new TypeToken<AvatarRenderer<?>>() {}, (entity, state) -> {
             if(entity instanceof AbstractClientPlayer player) {
                 CosmeticProperties properties = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player).orElse(null);
@@ -201,20 +204,21 @@ public class ClientBackpacked
                 if(backpack == null)
                     return;
 
+                float partialTick = state.ageInTicks - (int) state.ageInTicks; // Inferred
                 BackpackRenderState backpackRenderState = new BackpackRenderState();
                 ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
                 backpackRenderState.bobbing = meta.bobbing();
                 backpackRenderState.renderer = meta.renderer().orElse(null);
                 backpackRenderState.baseModel = backpack.getBaseModel();
                 backpackRenderState.strapsModel = backpack.getStrapsModel();
-                backpackRenderState.entityData = LivingEntityDataState.create(player, 1F);
-                backpackRenderState.levelData = LevelDataState.create(player.level(), 1F);
+                backpackRenderState.entityData = LivingEntityDataState.create(player, partialTick);
+                backpackRenderState.levelData = LevelDataState.create(player.level(), partialTick);
                 backpackRenderState.visible = Services.BACKPACK.isBackpackVisible(player);
                 backpackRenderState.cosmeticProperties = properties;
                 backpackRenderState.horizontalDelta = player.getDeltaMovement().horizontalDistance();
                 state.setRenderData(BACKPACK_RENDER_STATE_KEY, backpackRenderState);
             }
-        });;
+        });
     }
 
     private void onRegisterParticleGroup(RegisterParticleGroupsEvent event)
