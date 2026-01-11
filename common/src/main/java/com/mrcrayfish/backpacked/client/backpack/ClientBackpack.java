@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.backpack;
 
+import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import net.minecraft.resources.Identifier;
 
@@ -31,5 +32,10 @@ public final class ClientBackpack extends Backpack
     {
         this.checkSetup();
         return this.strapsModel;
+    }
+
+    public ModelMeta getModelMeta()
+    {
+        return ClientRegistry.instance().getModelMeta(this);
     }
 }
