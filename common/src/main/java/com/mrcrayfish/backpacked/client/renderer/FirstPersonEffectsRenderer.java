@@ -5,9 +5,7 @@ import com.mojang.math.Axis;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
-import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
-import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
-import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
+import com.mrcrayfish.backpacked.client.renderer.backpack.*;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -137,9 +135,22 @@ public class FirstPersonEffectsRenderer
         int offset = !chestStack.isEmpty() ? 3 : 2;
         pose.translate(0, -0.06, offset * 0.0625);
 
-        /*ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
+        ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresent(renderer -> {
-            renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, backpack, player, player.level(), partialTick, model -> {}, player.tickCount));
-        });*/
+            renderer.render(new BackpackRenderContext(
+                Scene.ON_ENTITY,
+                RenderMode.EFFECTS_ONLY,
+                pose,
+                backpack.getBaseModel(),
+                backpack.getStrapsModel(),
+                LivingEntityDataState.create(player, partialTick),
+                LevelDataState.create(player.level(), partialTick),
+                player.getId(),
+                light,
+                player.tickCount,
+                partialTick,
+                model -> {}))
+            ;
+        });
     }
 }
