@@ -73,7 +73,6 @@ import java.util.Map;
 @Mod(value = Constants.MOD_ID, dist = Dist.CLIENT)
 public class ClientBackpacked
 {
-    public static final ContextKey<Boolean> WEARING_BACKPACK_KEY = new ContextKey<>(Utils.id("wearing_backpack"));
     public static final ContextKey<BackpackRenderState> BACKPACK_RENDER_STATE_KEY = new ContextKey<>(Utils.id("backpack_render_state"));
 
     public ClientBackpacked(IEventBus bus)
@@ -188,7 +187,25 @@ public class ClientBackpacked
         // Appends the wearing backpack state of a wandering trader
         event.registerEntityModifier(WanderingTraderRenderer.class, (trader, state) -> {
             TraderPickpocketing.get(trader).ifPresent(data -> {
-                state.setRenderData(WEARING_BACKPACK_KEY, data.isBackpackEquipped());
+                if(data.isBackpackEquipped()) {
+                    ClientBackpack backpack = ClientRegistry.instance().getBackpack(VillagerBackpackLayer.WANDERING_BACKPACK);
+                    if(backpack == null)
+                        return;
+
+                    float partialTick = state.ageInTicks - (int) state.ageInTicks; // Inferred
+                    BackpackRenderState backpackRenderState = new BackpackRenderState();
+                    ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
+                    backpackRenderState.bobbing = meta.bobbing();
+                    backpackRenderState.renderer = meta.renderer().orElse(null);
+                    backpackRenderState.baseModel = backpack.getBaseModel();
+                    backpackRenderState.strapsModel = backpack.getStrapsModel();
+                    backpackRenderState.entityData = LivingEntityDataState.create(trader, partialTick);
+                    backpackRenderState.levelData = LevelDataState.create(trader.level(), partialTick);
+                    backpackRenderState.visible = true;
+                    backpackRenderState.cosmeticProperties = CosmeticProperties.DEFAULT;
+                    backpackRenderState.horizontalDelta = trader.getDeltaMovement().horizontalDistance();
+                    state.setRenderData(BACKPACK_RENDER_STATE_KEY, backpackRenderState);
+                }
             });
         });
 

@@ -20,7 +20,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.entity.state.VillagerRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -89,12 +89,6 @@ public class NeoForgeClientHelper implements IClientHelper
     }
 
     @Override
-    public boolean isWearingBackpack(VillagerRenderState state)
-    {
-        return Boolean.TRUE.equals(state.getRenderData(ClientBackpacked.WEARING_BACKPACK_KEY));
-    }
-
-    @Override
     public void submitGuiElementRenderState(GuiGraphics graphics, GuiElementRenderState state)
     {
         graphics.submitGuiElementRenderState(state);
@@ -108,7 +102,7 @@ public class NeoForgeClientHelper implements IClientHelper
 
     @Override
     @Nullable
-    public BackpackRenderState getBackpackRenderState(AvatarRenderState state)
+    public BackpackRenderState getBackpackRenderState(EntityRenderState state)
     {
         return state.getRenderData(ClientBackpacked.BACKPACK_RENDER_STATE_KEY);
     }

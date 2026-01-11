@@ -11,7 +11,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.entity.state.VillagerRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,12 +29,10 @@ public interface IClientHelper
 
     void setMousePos(double x, double y);
 
-    boolean isWearingBackpack(VillagerRenderState state);
-
     void submitGuiElementRenderState(GuiGraphics graphics, GuiElementRenderState state);
 
     void submitGuiPipRenderState(GuiGraphics graphics, PictureInPictureRenderState state);
 
     @Nullable
-    BackpackRenderState getBackpackRenderState(AvatarRenderState state);
+    BackpackRenderState getBackpackRenderState(EntityRenderState state);
 }

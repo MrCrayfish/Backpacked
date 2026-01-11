@@ -22,7 +22,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.entity.state.VillagerRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -119,12 +119,6 @@ public class FabricClientHelper implements IClientHelper
     }
 
     @Override
-    public boolean isWearingBackpack(VillagerRenderState state)
-    {
-        return false;
-    }
-
-    @Override
     public void submitGuiElementRenderState(GuiGraphics graphics, GuiElementRenderState state)
     {
         graphics.guiRenderState.submitGuiElement(state);
@@ -137,7 +131,7 @@ public class FabricClientHelper implements IClientHelper
     }
 
     @Override
-    public @Nullable BackpackRenderState getBackpackRenderState(AvatarRenderState state)
+    public @Nullable BackpackRenderState getBackpackRenderState(EntityRenderState state)
     {
         return state.getData(ClientHandler.BACKPACK_RENDER_STATE_KEY);
     }
