@@ -40,6 +40,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.joml.Matrix3x2f;
 import org.lwjgl.glfw.GLFW;
 
 import java.net.URI;
@@ -316,7 +317,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
 
-    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int x, int y, float partialTick, int tickCount)
+    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int windowX, int windowY, int windowWidth, int windowHeight, float partialTick, int tickCount)
     {
         assert mc.player != null && mc.level != null;
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
@@ -330,10 +331,11 @@ public class CustomiseBackpackScreen extends CustomScreen
             mc.player.getId(),
             tickCount,
             partialTick,
-            x,
-            x + ITEM_HEIGHT,
-            y,
-            y + ITEM_HEIGHT,
+            new Matrix3x2f(graphics.pose()),
+            windowX,
+            windowX + windowWidth,
+            windowY,
+            windowY + windowHeight,
             16,
             null
         );
@@ -467,7 +469,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             graphics.drawString(mc.font, this.label, x + 24, textY, textColour, selected);
 
             // Draw backpack cosmetic
-            drawBackpackInGui(mc, graphics, this.backpack, x, y, partialTick, CustomiseBackpackScreen.this.tickCount);
+            drawBackpackInGui(mc, graphics, this.backpack, x, y, ITEM_HEIGHT, ITEM_HEIGHT, partialTick, CustomiseBackpackScreen.this.tickCount);
         }
 
         @Override

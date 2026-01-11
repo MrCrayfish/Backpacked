@@ -45,13 +45,12 @@ public class UnlockBackpackToast implements Toast
     @Override
     public void render(GuiGraphics graphics, Font font, long delta)
     {
-        //TODO 1.21.11
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
-        graphics.drawString(font, TITLE, 35, 7, 0xFFFFFF, false);
-        graphics.drawString(font, this.name, 35, 18, 0xFFFFFF, false);
+        graphics.drawString(font, TITLE, 35, 7, 0xFFFFFFFF, false);
+        graphics.drawString(font, this.name, 35, 18, 0xFFFFFFFF, false);
         int tickCount = Math.toIntExact(delta / 50L);
         float partialTick = (float) (delta % 50L) / 50F;
-        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, this.backpack, 18, 16, partialTick, tickCount);
+        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, this.backpack, 0, 0, SLOT_HEIGHT, SLOT_HEIGHT, partialTick, tickCount);
 
     }
 }
