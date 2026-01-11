@@ -2,11 +2,8 @@ package com.mrcrayfish.backpacked.blockentity;
 
 import com.google.common.base.Preconditions;
 import com.mrcrayfish.backpacked.BackpackHelper;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
-import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.ShelfKey;
-import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import com.mrcrayfish.backpacked.common.backpack.BackpackState;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
@@ -21,9 +18,7 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageLootboundTakeItem;
 import com.mrcrayfish.backpacked.network.message.MessageShelfPlaceAnimation;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.BlockEntityUtil;
-import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.LevelLocation;
 import net.minecraft.core.BlockPos;
@@ -33,7 +28,6 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -42,17 +36,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -60,7 +51,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * Author: MrCrayfish
@@ -354,17 +344,19 @@ public class ShelfBlockEntity extends BlockEntity
         }
     }
 
+    public int getAnimationTicks()
+    {
+        return this.animation;
+    }
+
     public boolean isAnimationPlaying()
     {
         return this.animation >= 0 && this.animation < TOTAL_ANIMATION_TICKS;
     }
 
-    public void applyAnimation(int start, int end, float partialTick, Consumer<Float> time)
+    public int getRenderTicks()
     {
-        if(this.animation < start || this.animation >= end)
-            return;
-        float length = end - start;
-        time.accept(((this.animation - start) + partialTick) / length);
+        return this.tickCount;
     }
 
     public static class BackpackShelfContainer extends UnlockableContainer
