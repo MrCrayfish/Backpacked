@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DeferredWidgetDraw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -34,6 +35,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable Identifier background;
     private int screenClampPadding = 0;
+    private final List<AbstractWidget> deferredDraws = new LinkedList<>();
 
     protected PopupMenu(PopupMenuHandler handler)
     {
@@ -115,13 +117,16 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         this.cachedWidgets = null;
     }
 
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    protected void fillBackground(GuiGraphics graphics)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Window window = minecraft.getWindow();
         graphics.fill(0, 0, window.getWidth(), window.getHeight(), 0x50000000);
+    }
 
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    {
         // Draw the background of the popup if present
         if(this.background != null)
         {
@@ -129,10 +134,18 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         }
 
         // Draw all widgets from the layout
-        this.getWidgets().forEach(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
+        this.getWidgets().forEach(widget -> {
+            if(widget instanceof DeferredWidgetDraw render && render.shouldDefer()) {
+                this.deferredDraws.add(widget);
+            } else {
+                widget.render(graphics, mouseX, mouseY, deltaTick);
+            }
+        });
 
         if(this.child != null)
         {
+            this.child.fillBackground(graphics);
+            this.deferredDraws.forEach(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
             this.child.render(graphics, mouseX, mouseY, deltaTick);
         }
     }

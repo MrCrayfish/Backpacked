@@ -115,8 +115,7 @@ public final class PopupMenuController implements ContainerEventHandler
     {
         if(this.base != null)
         {
-            // TODO 1.21.11 how depth work now?
-            graphics.pose().translate(0, 0); //, 350);
+            this.base.fillBackground(graphics);
             this.base.render(graphics, mouseX, mouseY, partialTick);
         }
     }

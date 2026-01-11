@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item;
 
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DeferredWidgetDraw;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -8,7 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
-public class PopupItem extends MenuItem
+public class PopupItem extends MenuItem implements DeferredWidgetDraw
 {
     private final PopupMenu menu;
 
@@ -21,18 +22,10 @@ public class PopupItem extends MenuItem
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
     {
-        // TODO 1.21.11 figure out depth
-        //PoseStack poseStack = graphics.pose();
-        //poseStack.pushPose();
-        /*if(this.selected())
-        {
-            poseStack.translate(0, 0, 51);
-        }*/
         super.renderWidget(graphics, mouseX, mouseY, deltaTick);
         Font font = Minecraft.getInstance().font;
         int top = this.getY() + (this.getHeight() - font.lineHeight) / 2 + 1;
         graphics.drawString(Minecraft.getInstance().font, ">", this.getX() + this.getWidth() - 10, top, 0xFFFFFFFF);
-        //poseStack.popPose();
     }
 
     @Override
@@ -43,6 +36,12 @@ public class PopupItem extends MenuItem
 
     @Override
     protected boolean selected()
+    {
+        return this.menu.isOpen();
+    }
+
+    @Override
+    public boolean shouldDefer()
     {
         return this.menu.isOpen();
     }
