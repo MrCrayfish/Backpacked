@@ -327,6 +327,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             LevelDataState.create(mc.level, partialTick),
             backpack.getBaseModel(),
             backpack.getStrapsModel(),
+            mc.player.getId(),
             tickCount,
             partialTick,
             x,

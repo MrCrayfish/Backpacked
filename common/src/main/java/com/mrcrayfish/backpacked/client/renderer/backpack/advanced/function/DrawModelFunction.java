@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3fc;

@@ -7,9 +7,9 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.Value;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.Level;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -61,14 +61,8 @@ public class SpawnParticleFunction implements BaseFunction
         if(Minecraft.getInstance().isPaused())
             return;
 
-        // TODO gonna have to figure out how to hack this back in
-
-        /*Level level = context.level();
-        if(level == null)
-            return;
-
         // Create a key to keep track if particle has already been spawned
-        int key = Objects.hash(context.scene(), context.entity(), this);
+        int key = Objects.hash(context.scene(), context.entityId(), this);
         if(SPAWNED.contains(key))
             return;
 
@@ -91,9 +85,16 @@ public class SpawnParticleFunction implements BaseFunction
         double particleX = pos.x + offset.x;
         double particleY = pos.y + offset.y;
         double particleZ = pos.z + offset.z;
-        level.addParticle(this.particle, particleX, particleY, particleZ, motion.x, motion.y, motion.z);
 
-        SPAWNED.add(key);*/
+        // Submit to the main thread since rendering may be performed off-thread
+        Minecraft.getInstance().submit(() -> {
+            ClientLevel level = Minecraft.getInstance().level;
+            if(level != null) {
+                level.addParticle(this.particle, particleX, particleY, particleZ, motion.x, motion.y, motion.z);
+            }
+        });
+
+        SPAWNED.add(key);
     }
 
     public static void clearSpawned()

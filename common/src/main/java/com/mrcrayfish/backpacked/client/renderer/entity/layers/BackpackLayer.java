@@ -14,7 +14,6 @@ import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.renderer.StandaloneModelRenderer;
 import net.minecraft.client.model.player.PlayerModel;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -85,6 +84,7 @@ public class BackpackLayer extends RenderLayer<AvatarRenderState, PlayerModel>
                 backpackRenderState.strapsModel,
                 backpackRenderState.entityData,
                 backpackRenderState.levelData,
+                state.id,
                 state.lightCoords,
                 (int) state.ageInTicks,
                 state.ageInTicks - (int) state.ageInTicks,

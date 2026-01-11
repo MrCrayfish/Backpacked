@@ -18,6 +18,7 @@ public record BackpackRenderContext(
         Identifier strapsModel,
         @Nullable LivingEntityDataState entityData,
         @Nullable LevelDataState levelData,
+        int entityId,
         int light,
         int tickCount,
         float partialTick,

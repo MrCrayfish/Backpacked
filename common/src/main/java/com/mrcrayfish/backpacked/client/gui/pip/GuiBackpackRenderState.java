@@ -16,6 +16,7 @@ public record GuiBackpackRenderState(
         @Nullable LevelDataState levelData,
         Identifier baseModel,
         Identifier strapsModel,
+        int entityId,
         int tickCount,
         float partialTick,
         int x0,
@@ -26,8 +27,8 @@ public record GuiBackpackRenderState(
         @Nullable ScreenRectangle scissorArea,
         @Nullable ScreenRectangle bounds) implements PictureInPictureRenderState
 {
-    public GuiBackpackRenderState(@Nullable ItemTransform transform, @Nullable BackpackRenderer renderer, @Nullable LivingEntityDataState entityData, @Nullable LevelDataState levelData, Identifier baseModel, Identifier strapsModel, int tickCount, float partialTick, int x0, int x1, int y0, int y1, float scale, @Nullable ScreenRectangle scissorArea)
+    public GuiBackpackRenderState(@Nullable ItemTransform transform, @Nullable BackpackRenderer renderer, @Nullable LivingEntityDataState entityData, @Nullable LevelDataState levelData, Identifier baseModel, Identifier strapsModel, int entityId, int tickCount, float partialTick, int x0, int x1, int y0, int y1, float scale, @Nullable ScreenRectangle scissorArea)
     {
-        this(transform, renderer, entityData, levelData, baseModel, strapsModel, tickCount, partialTick, x0, x1, y0, y1, scale, scissorArea, PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea));
+        this(transform, renderer, entityData, levelData, baseModel, strapsModel, entityId, tickCount, partialTick, x0, x1, y0, y1, scale, scissorArea, PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea));
     }
 }
