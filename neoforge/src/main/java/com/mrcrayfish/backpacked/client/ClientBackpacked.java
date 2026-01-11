@@ -178,7 +178,7 @@ public class ClientBackpacked
         PoseStack stack = event.getPoseStack();
         MultiBufferSource source = mc.renderBuffers().bufferSource();
         boolean frozen = mc.level.tickRateManager().isEntityFrozen(mc.player);
-        float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(!frozen); // TODO 1.21.11 test
+        float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(!frozen);
         FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);
     }
 

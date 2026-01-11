@@ -19,7 +19,6 @@ public class DefaultRenderer implements BackpackRenderer
             FrameworkModelResource<FrameworkBakedModel> model = StandaloneModels.getResource(context.baseModel());
             if(model != null)
             {
-                // TODO 1.21.11 test
                 context.modelRenderer().accept(model.getModel());
             }
         }

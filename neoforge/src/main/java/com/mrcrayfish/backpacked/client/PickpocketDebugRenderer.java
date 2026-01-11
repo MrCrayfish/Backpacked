@@ -11,7 +11,7 @@ public class PickpocketDebugRenderer
     @SubscribeEvent
     public void onRenderWorldLastEvent(RenderLevelStageEvent.AfterEntities event)
     {
-        // TODO 1.21.11 restore
+        // TODO restore this when necessary. only used when first developing pickpocketing
         /*Minecraft mc = Minecraft.getInstance();
         if(!mc.getEntityRenderDispatcher().shouldRenderHitBoxes())
             return;
@@ -26,7 +26,6 @@ public class PickpocketDebugRenderer
         MultiBufferSource.BufferSource source = mc.renderBuffers().bufferSource();
         for(Player player : mc.level.players())
         {
-            // TODO restore this
             //if(BackpackHelper.getBackpackStack(player).isEmpty())
                 //continue;
 

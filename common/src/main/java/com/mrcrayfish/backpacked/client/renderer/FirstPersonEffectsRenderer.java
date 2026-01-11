@@ -36,8 +36,6 @@ public class FirstPersonEffectsRenderer
     @SuppressWarnings({"NullableProblems", "unchecked"})
     public static void draw(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, float partialTick)
     {
-        // TODO 1.21.11 test
-
         Minecraft mc = Minecraft.getInstance();
 
         Camera camera = mc.gameRenderer.getMainCamera();
