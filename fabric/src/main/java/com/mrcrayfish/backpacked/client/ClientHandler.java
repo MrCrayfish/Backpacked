@@ -39,7 +39,6 @@ import net.minecraft.world.entity.EntityType;
  */
 public class ClientHandler implements ClientModInitializer
 {
-    public static final RenderStateDataKey<Boolean> WEARING_BACKPACK_KEY = RenderStateDataKey.create(() -> Utils.id("wearing_backpack").toString());
     public static final RenderStateDataKey<BackpackRenderState> BACKPACK_RENDER_STATE_KEY = RenderStateDataKey.create(() -> Utils.id("backpack_render_state").toString());
 
     @Override
