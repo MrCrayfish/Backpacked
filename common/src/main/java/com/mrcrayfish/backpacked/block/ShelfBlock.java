@@ -91,7 +91,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
                 }
             }
         }
-        return InteractionResult.PASS;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
