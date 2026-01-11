@@ -7,10 +7,8 @@ import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
-import com.mrcrayfish.backpacked.datagen.BlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
-import com.mrcrayfish.backpacked.integration.YoureInGraveDangerSupport;
 import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.NonNullList;
@@ -79,7 +77,6 @@ public class Backpacked
     {
         event.createProvider(LootTableGen::new);
         event.createProvider(RecipeGen.Runner::new);
-        event.createProvider(BlockTagGen::new);
     }
 
     private void addReloadListener(AddServerReloadListenersEvent event)
