@@ -26,7 +26,7 @@ public class UnlockTracker extends SyncedObject
 
     private final Set<ResourceLocation> unlockedBackpacks = new HashSet<>();
     private final Map<ResourceLocation, IProgressTracker> backpackToProgressTracker;
-    private final Map<Class<?>, List<IProgressTracker>> classToProgressTrackers;
+    private final Map<Class<?>, List<IProgressTracker>> classToIncompleteProgressTrackers;
 
     public UnlockTracker()
     {
@@ -40,7 +40,7 @@ public class UnlockTracker extends SyncedObject
             }
         });
         this.backpackToProgressTracker = ImmutableMap.copyOf(backpackMap);
-        this.classToProgressTrackers = ImmutableMap.copyOf(classMap);
+        this.classToIncompleteProgressTrackers = ImmutableMap.copyOf(classMap);
     }
 
     public Set<ResourceLocation> getUnlockedBackpacks()
@@ -68,13 +68,30 @@ public class UnlockTracker extends SyncedObject
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> getProgressTrackers(Class<T> trackerClass)
+    public <T> List<T> getIncompleteProgressTrackers(Class<T> trackerClass)
     {
-        if(this.classToProgressTrackers.containsKey(trackerClass))
+        if(this.classToIncompleteProgressTrackers.containsKey(trackerClass))
         {
-            return (List<T>) this.classToProgressTrackers.get(trackerClass);
+            return Collections.unmodifiableList((List<T>) this.classToIncompleteProgressTrackers.get(trackerClass));
         }
         return Collections.emptyList();
+    }
+
+    private void removeCompletedProgressTracker(ResourceLocation id)
+    {
+        IProgressTracker tracker = this.backpackToProgressTracker.get(id);
+        if(tracker != null && tracker.isComplete())
+        {
+            this.classToIncompleteProgressTrackers.get(tracker.getClass()).remove(tracker);
+        }
+    }
+
+    private void removeCompletedProgressTrackers()
+    {
+        for(ResourceLocation id : this.unlockedBackpacks)
+        {
+            this.removeCompletedProgressTracker(id);
+        }
     }
 
     public boolean unlockBackpack(ResourceLocation id)
@@ -82,6 +99,7 @@ public class UnlockTracker extends SyncedObject
         if(BackpackManager.instance().getBackpack(id) != null)
         {
             this.markDirty();
+            this.removeCompletedProgressTracker(id);
             return this.unlockedBackpacks.add(id);
         }
         return false;
@@ -127,6 +145,9 @@ public class UnlockTracker extends SyncedObject
                 progressTracker.read(dataTag);
             }
         });
+
+        tracker.removeCompletedProgressTrackers();
+
         return tracker;
     }
 
@@ -154,6 +175,7 @@ public class UnlockTracker extends SyncedObject
                 progressTracker.read(tag);
             }
         });
+        tracker.removeCompletedProgressTrackers();
         return tracker;
     }
 }

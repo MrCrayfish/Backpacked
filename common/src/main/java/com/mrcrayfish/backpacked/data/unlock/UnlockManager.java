@@ -113,9 +113,9 @@ public final class UnlockManager
         return Optional.ofNullable(ModSyncedDataKeys.UNLOCK_TRACKER.getValue(player));
     }
 
-    public static <T> List<T> getTrackers(Player player, Class<T> trackerClass)
+    public static <T> List<T> getIncompleteTrackers(Player player, Class<T> trackerClass)
     {
         UnlockTracker tracker = ModSyncedDataKeys.UNLOCK_TRACKER.getValue(player);
-        return tracker != null ? tracker.getProgressTrackers(trackerClass) : Collections.emptyList();
+        return tracker != null ? tracker.getIncompleteProgressTrackers(trackerClass) : Collections.emptyList();
     }
 }

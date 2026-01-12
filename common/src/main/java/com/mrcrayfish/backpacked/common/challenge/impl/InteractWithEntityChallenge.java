@@ -91,17 +91,16 @@ public class InteractWithEntityChallenge extends Challenge
         {
             // We want to test the entity before the interaction.
             BackpackedEvents.INTERACTED_WITH_ENTITY_CAPTURE.register((player, stack, entity, consumer) -> {
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete() && tracker.test(player, entity, stack)) {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(tracker.test(player, entity, stack)) {
                         consumer.accept(tracker.backpackId);
                     }
                 });
             });
 
             BackpackedEvents.INTERACTED_WITH_ENTITY.register((player, stack, entity, callbacks) -> {
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    // We don't need to test the predicates again
-                    if(!tracker.isComplete() && callbacks.contains(tracker.backpackId)) {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(callbacks.contains(tracker.backpackId)) {
                         tracker.increment(player);
                     }
                 });

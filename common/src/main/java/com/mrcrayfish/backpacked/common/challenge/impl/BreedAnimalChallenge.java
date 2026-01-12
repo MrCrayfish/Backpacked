@@ -73,8 +73,8 @@ public class BreedAnimalChallenge extends Challenge
         public static void registerEvent()
         {
             BackpackedEvents.BRED_ANIMAL.register((first, second, player) -> {
-                UnlockManager.getTrackers(player, BreedAnimalChallenge.Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete() && tracker.test(player, first, second)) {
+                UnlockManager.getIncompleteTrackers(player, BreedAnimalChallenge.Tracker.class).forEach(tracker -> {
+                    if(tracker.test(player, first, second)) {
                         tracker.increment(player);
                     }
                 });

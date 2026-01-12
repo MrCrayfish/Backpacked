@@ -70,9 +70,7 @@ public class CraftItemChallenge extends Challenge
             PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(tracker.isComplete())
-                        return;
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     if(tracker.predicate.map(p -> p.test(stack)).orElse(true)) {
                         tracker.increment(stack.getCount(), (ServerPlayer) player);
                     }

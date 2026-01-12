@@ -91,15 +91,15 @@ public class InteractWithBlockChallenge extends Challenge
         {
             // Only capture the compound tag of the block entity if we need to
             BackpackedEvents.INTERACTED_WITH_BLOCK_CAPTURE_TAG.register((state, stack, player) -> {
-                return UnlockManager.getTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
-                    return !tracker.isComplete() && tracker.test(state, stack, player);
+                return UnlockManager.getIncompleteTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
+                    return tracker.test(state, stack, player);
                 });
             });
 
             // If this event is called, we have successfully interacted with block. Now update tracker
             BackpackedEvents.INTERACTED_WITH_BLOCK.register((state, stack, tag, player) -> {
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete() && tracker.test(state, stack, player)) {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(tracker.test(state, stack, player)) {
                         tracker.increment(player);
                     }
                 });
