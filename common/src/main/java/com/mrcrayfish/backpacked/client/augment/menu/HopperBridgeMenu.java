@@ -1,10 +1,13 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
+import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
+import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkEditBox;
 import net.minecraft.ChatFormatting;
@@ -49,7 +52,12 @@ public class HopperBridgeMenu extends AugmentSettingsMenu
             layout.addChild(createOption(EXTRACT_LABEL, EXTRACT_TOOLTIP, BackpackButtons.onOff(() -> holder.get().extract(), value -> holder.update(holder.get().setExtract(value))).setSize(60, 18).build(), divider.getWidth()));
 
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
-            layout.addChild(new TitleWidget(FILTERS_LABEL, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
+            layout.addChild(new TitleWidget(() -> {
+                int filterCount = holder.get().filters().ids().size();
+                int maxFilters = Config.AUGMENTS.hopperBridge.maxFilters.get();
+                Component amount = Component.translatable("backpacked.gui.x_of_y", filterCount, maxFilters);
+                return ScreenUtil.join(" ", FILTERS_LABEL, amount);
+            }, Minecraft.getInstance().font)).setWidth(MIN_CONTENT_WIDTH);
             layout.addChild(Divider.horizontal(MIN_CONTENT_WIDTH).colour(0xFFE0CDB7));
 
             layout.addChild(createOption(FILTER_MODE_LABEL, FILTER_MODE_TOOLTIP, BackpackButtons.values(() -> holder.get().filterMode(), value -> holder.update(holder.get().setFilterMode(value)), filterMode -> {}).setSize(60, 18).build(), divider.getWidth()));

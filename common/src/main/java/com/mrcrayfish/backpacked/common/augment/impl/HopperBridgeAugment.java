@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.augment.impl;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.common.FilterableItems;
 import com.mrcrayfish.backpacked.common.ItemCollection;
@@ -39,7 +40,7 @@ public record HopperBridgeAugment(boolean insert, boolean extract, FilterMode fi
 
     public HopperBridgeAugment
     {
-        filters = filters.limit(128);
+        filters = filters.limit(Config.AUGMENTS.hopperBridge.maxFilters.get());
     }
 
     @Override
@@ -85,7 +86,7 @@ public record HopperBridgeAugment(boolean insert, boolean extract, FilterMode fi
     @Override
     public boolean isFilterFull()
     {
-        return this.filters.ids().size() >= 64;
+        return this.filters.ids().size() >= Config.AUGMENTS.hopperBridge.maxFilters.get();
     }
 
     public enum FilterMode implements StringRepresentable, LabelAndDescription
