@@ -19,7 +19,7 @@ public class LivingEntityMixin
     @ModifyExpressionValue(method = "checkTotemDeathProtection", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack backpacked$CheckBackpackForTotem(ItemStack original, @Local(ordinal = 0) InteractionHand hand)
     {
-        if(original.isEmpty() && hand == InteractionHand.OFF_HAND)
+        if(!original.is(Items.TOTEM_OF_UNDYING) && hand == InteractionHand.OFF_HAND)
         {
             LivingEntity entity = (LivingEntity) (Object) this;
             if(entity instanceof Player player)
