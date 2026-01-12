@@ -69,10 +69,8 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
         FrameworkPlayerEvents.CRAFTED_ITEM.register((player, stack, inventory) -> {
             if(player.level().isClientSide())
                 return;
-            UnlockManager.getTrackers(player, UniqueCraftingProgressTracker.class).forEach(tracker -> {
-                if(!tracker.isComplete()) {
-                    tracker.processCrafted(stack, (ServerPlayer) player);
-                }
+            UnlockManager.getIncompleteTrackers(player, UniqueCraftingProgressTracker.class).forEach(tracker -> {
+                tracker.processCrafted(stack, (ServerPlayer) player);
             });
         });
     }

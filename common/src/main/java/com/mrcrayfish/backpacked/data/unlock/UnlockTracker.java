@@ -53,12 +53,13 @@ public class UnlockTracker extends SyncedObject
                 });
             });
         });
+        unlockTracker.removeCompletedProgressTrackers();
         return unlockTracker;
     });
 
     private final HashSet<Identifier> unlockedBackpacks = new HashSet<>();
     private final Map<Identifier, IProgressTracker> backpackToProgressTracker;
-    private final Map<Class<?>, List<IProgressTracker>> classToProgressTrackers;
+    private final Map<Class<?>, List<IProgressTracker>> classToIncompleteProgressTrackers;
 
     public UnlockTracker()
     {
@@ -72,7 +73,7 @@ public class UnlockTracker extends SyncedObject
             }
         });
         this.backpackToProgressTracker = ImmutableMap.copyOf(backpackMap);
-        this.classToProgressTrackers = ImmutableMap.copyOf(classMap);
+        this.classToIncompleteProgressTrackers = ImmutableMap.copyOf(classMap);
     }
 
     public Set<Identifier> getUnlockedBackpacks()
@@ -100,13 +101,30 @@ public class UnlockTracker extends SyncedObject
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> getProgressTrackers(Class<T> trackerClass)
+    public <T> List<T> getIncompleteProgressTrackers(Class<T> trackerClass)
     {
-        if(this.classToProgressTrackers.containsKey(trackerClass))
+        if(this.classToIncompleteProgressTrackers.containsKey(trackerClass))
         {
-            return (List<T>) this.classToProgressTrackers.get(trackerClass);
+            return Collections.unmodifiableList((List<T>) this.classToIncompleteProgressTrackers.get(trackerClass));
         }
         return Collections.emptyList();
+    }
+
+    private void removeCompletedProgressTracker(Identifier id)
+    {
+        IProgressTracker tracker = this.backpackToProgressTracker.get(id);
+        if(tracker != null && tracker.isComplete())
+        {
+            this.classToIncompleteProgressTrackers.get(tracker.getClass()).remove(tracker);
+        }
+    }
+
+    private void removeCompletedProgressTrackers()
+    {
+        for(Identifier id : this.unlockedBackpacks)
+        {
+            this.removeCompletedProgressTracker(id);
+        }
     }
 
     public boolean unlockBackpack(Identifier id)
@@ -114,6 +132,7 @@ public class UnlockTracker extends SyncedObject
         if(BackpackManager.instance().getBackpack(id) != null)
         {
             this.markDirty();
+            this.removeCompletedProgressTracker(id);
             return this.unlockedBackpacks.add(id);
         }
         return false;
@@ -148,6 +167,7 @@ public class UnlockTracker extends SyncedObject
                 }
             }
         });
+        unlockTracker.removeCompletedProgressTrackers();
         return unlockTracker;
     }
 }

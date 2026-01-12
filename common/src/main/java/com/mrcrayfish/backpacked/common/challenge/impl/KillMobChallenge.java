@@ -90,9 +90,7 @@ public class KillMobChallenge extends Challenge
                 Entity cause = source.getEntity();
                 if(cause != null && cause.getType() == EntityType.PLAYER) {
                     ServerPlayer player = (ServerPlayer) cause;
-                    UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                        if(tracker.isComplete())
-                            return;
+                    UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                         ItemStack heldItem = player.getMainHandItem();
                         if(tracker.test(entity, heldItem, player)) {
                             tracker.increment(player);

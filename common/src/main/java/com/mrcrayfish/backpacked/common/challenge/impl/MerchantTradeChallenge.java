@@ -84,9 +84,7 @@ public class MerchantTradeChallenge extends Challenge
             BackpackedEvents.MERCHANT_TRADE.register((merchant, player, stack) -> {
                 if(player.level().isClientSide() || !(merchant instanceof Entity entity))
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(tracker.isComplete())
-                        return;
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
                     if(tracker.test(serverPlayer, entity, stack)) {
                         tracker.increment(serverPlayer);

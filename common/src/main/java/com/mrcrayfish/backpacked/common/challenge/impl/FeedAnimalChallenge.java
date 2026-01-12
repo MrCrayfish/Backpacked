@@ -76,9 +76,9 @@ public class FeedAnimalChallenge extends Challenge
             BackpackedEvents.FEED_ANIMAL.register((animal, player) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
-                    if(!tracker.isComplete() && tracker.test(serverPlayer, animal)) {
+                    if(tracker.test(serverPlayer, animal)) {
                         tracker.increment(serverPlayer);
                     }
                 });

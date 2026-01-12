@@ -77,9 +77,7 @@ public class TravelDistanceChallenge extends Challenge
         {
             BackpackedEvents.PLAYER_TRAVEL.register((player, distance, type) -> {
                 int distanceInCm = Math.round((float) Math.sqrt(distance) * 100);
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(tracker.isComplete())
-                        return;
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     if(tracker.movementTypes.map(types -> types.contains(type)).orElse(true)) {
                         if(PredicateUtils.match(tracker.player, player)) {
                             tracker.increment(distanceInCm, player);

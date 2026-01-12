@@ -93,9 +93,7 @@ public class MineBlockChallenge extends Challenge
             BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.register(player -> {
                 if(player.level().isClientSide())
                     return false;
-                return UnlockManager.getTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
-                    if(tracker.isComplete())
-                        return false;
+                return UnlockManager.getIncompleteTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
                     if(tracker.block.isPresent()) {
                         // Only capture tag if block nbt predicate is present
                         Optional<BlockPredicate> block = tracker.block.get().block();
@@ -109,11 +107,9 @@ public class MineBlockChallenge extends Challenge
             BackpackedEvents.MINED_BLOCK.register((snapshot, stack, player) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete()) {
-                        if(tracker.test(snapshot, stack, player)) {
-                            tracker.increment(player);
-                        }
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(tracker.test(snapshot, stack, player)) {
+                        tracker.increment(player);
                     }
                 });
             });

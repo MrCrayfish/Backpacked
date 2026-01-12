@@ -73,10 +73,8 @@ public class CraftingProgressTracker implements IProgressTracker
         FrameworkPlayerEvents.CRAFTED_ITEM.register((player, stack, inventory) -> {
             if(player.level().isClientSide())
                 return;
-            UnlockManager.getTrackers(player, CraftingProgressTracker.class).forEach(tracker -> {
-                if(!tracker.isComplete()) {
-                    tracker.processCrafted(stack, (ServerPlayer) player);
-                }
+            UnlockManager.getIncompleteTrackers(player, CraftingProgressTracker.class).forEach(tracker -> {
+                tracker.processCrafted(stack, (ServerPlayer) player);
             });
         });
     }

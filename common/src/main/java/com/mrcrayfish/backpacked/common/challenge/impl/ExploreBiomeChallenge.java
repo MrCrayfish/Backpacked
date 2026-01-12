@@ -132,10 +132,8 @@ public class ExploreBiomeChallenge extends Challenge
             BackpackedEvents.EXPLORE_UPDATE.register((key, player) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete()) {
-                        tracker.explore(key, (ServerPlayer) player);
-                    }
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    tracker.explore(key, (ServerPlayer) player);
                 });
             });
         }
