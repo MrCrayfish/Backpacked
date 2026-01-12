@@ -41,13 +41,18 @@ repositories {
         filter { includeGroupAndSubgroups("org.spongepowered") }
     }
     if(getGprUser() && getGprKey()) {
-        maven {
-            name = "MrCrayfish (GitHub)"
-            url = getPackagesRepo()
-            credentials {
-                username = getGprUser()
-                password = getGprKey()
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "MrCrayfish (GitHub)"
+                    url = getPackagesRepo()
+                    credentials {
+                        username = getGprUser()
+                        password = getGprKey()
+                    }
+                }
             }
+            filter { includeGroupAndSubgroups("com.mrcrayfish") }
         }
     }
     maven {
