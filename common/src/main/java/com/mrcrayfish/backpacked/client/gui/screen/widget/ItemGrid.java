@@ -134,6 +134,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
     {
         this.selectedOnly = selectedOnly;
         this.updateList();
+        this.clampScrollAmount();
     }
 
     @Override
@@ -154,9 +155,9 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
     {
         if(!this.searchQuery.equals(searchQuery))
         {
-            this.setClampedScrollAmount(0);
             this.searchQuery = searchQuery;
             this.updateList();
+            this.clampScrollAmount();
         }
     }
 
