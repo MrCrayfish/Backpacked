@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
@@ -13,6 +14,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.ScrollBar;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.CustomScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
 import com.mrcrayfish.backpacked.client.renderer.BakedModelRenderer;
@@ -29,6 +31,7 @@ import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -122,6 +125,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         Comparator<BackpackModelItem> compareLabel = Comparator.comparing(e -> e.label.getString());
         List<CosmeticItem> items = ClientRegistry.instance().getBackpacks()
                 .stream()
+                .filter(backpack -> !BackpackHelper.isCosmeticDisabled(backpack.getId()))
                 .map(backpack -> new BackpackModelItem(backpack, progressMap, completionMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -479,6 +483,12 @@ public class CustomiseBackpackScreen extends CustomScreen
         @Override
         protected void onMouseHover(Minecraft mc, int x, int y, int mouseX, int mouseY)
         {
+            if(Screen.hasControlDown())
+            {
+                CustomiseBackpackScreen.this.setTooltipForNextRenderPass(Component.literal(this.backpack.getId().toString()));
+                return;
+            }
+
             if(!this.backpack.isUnlocked(mc.player))
             {
                 int progressBarX = x + 24;
@@ -495,6 +505,13 @@ public class CustomiseBackpackScreen extends CustomScreen
         @Override
         protected boolean onMouseClicked(Minecraft mc)
         {
+            if(Screen.hasControlDown())
+            {
+                Minecraft.getInstance().keyboardHandler.setClipboard(this.backpack.getId().toString());
+                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Copied " + this.backpack.getId() + " to the clipboard"));
+                return true;
+            }
+
             if(this.backpack.isUnlocked(mc.player))
             {
                 if(!CustomiseBackpackScreen.this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(this.cosmeticId))

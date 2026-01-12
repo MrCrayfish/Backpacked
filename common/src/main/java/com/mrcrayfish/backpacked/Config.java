@@ -96,6 +96,15 @@ public class Config
                     complete the challenges. Side note, any progress to a challenge will not be
                     tracked while enabled.""")
             public final BoolProperty unlockAllCosmetics = BoolProperty.create(false);
+
+            @ConfigProperty(name = "disabledCosmetics", comment = """
+                A list that contains ids of backpack cosmetics that will be disabled. The default
+                cosmetic (as configured by defaultCosmetic) cannot be disabled even if added to this
+                list. You can grab the ID of backpacks by hovering them in the customisation screen
+                while holding down CTRL button on your keyboard, and clicking will copy the ID to
+                your clipboard.
+                Example: disabledCosmetics = ["backpacked:rocket", "backpacked:classic", "backpacked:honey_jar"]""")
+            public final ListProperty<String> disabledCosmetics = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator(""));
         }
 
         public static class Inventory

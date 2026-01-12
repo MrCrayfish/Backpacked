@@ -1,5 +1,7 @@
 package com.mrcrayfish.backpacked.network.play;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.augment.menu.RecallMenu;
@@ -52,7 +54,12 @@ public class ClientPlayHandler
             if(backpack != null)
             {
                 impl.unlockBackpack(message.cosmeticId());
-                mc.getToasts().addToast(new UnlockBackpackToast(backpack));
+
+                // Suppress toast if the cosmetic is disabled
+                if(!BackpackHelper.isCosmeticDisabled(backpack.getId()))
+                {
+                    mc.getToasts().addToast(new UnlockBackpackToast(backpack));
+                }
             }
         });
     }
