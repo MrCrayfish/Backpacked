@@ -2,11 +2,14 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -24,6 +27,7 @@ public class LivingEntityMixin
                 ItemStack stack = AugmentHandler.locateTotemOfUndying(player);
                 if(!stack.isEmpty())
                 {
+                    ModSyncedDataKeys.IMMORTAL_COOLDOWN.setValue(player, Config.AUGMENTS.immortal.cooldown.get());
                     return stack;
                 }
             }

@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.common.augment.data.Farmhand;
 import com.mrcrayfish.backpacked.common.augment.data.Recall;
 import com.mrcrayfish.backpacked.common.augment.impl.*;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.mixin.common.BlockItemInvoker;
@@ -282,6 +283,13 @@ public class AugmentHandler
 
     public static ItemStack locateTotemOfUndying(Player player)
     {
+        // If a cooldown is present, return an empty stack
+        int cooldown = ModSyncedDataKeys.IMMORTAL_COOLDOWN.getValue(player);
+        if(cooldown > 0)
+        {
+            return ItemStack.EMPTY;
+        }
+
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.IMMORTAL.get());
         for(var snapshot : snapshots)
         {

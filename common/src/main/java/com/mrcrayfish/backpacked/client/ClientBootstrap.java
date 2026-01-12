@@ -49,5 +49,6 @@ public class ClientBootstrap
         AugmentSettingsFactories.registerFactory(SeedflowAugment.TYPE, SeedflowMenu::new);
         AugmentSettingsFactories.registerFactory(HopperBridgeAugment.TYPE, HopperBridgeMenu::new);
         AugmentSettingsFactories.registerFactory(RecallAugment.TYPE, RecallMenu::new);
+        AugmentSettingsFactories.registerFactory(ImmortalAugment.TYPE, ImmortalMenu::new);
     }
 }

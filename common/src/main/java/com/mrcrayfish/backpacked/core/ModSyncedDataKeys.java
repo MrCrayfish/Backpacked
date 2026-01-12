@@ -71,4 +71,11 @@ public class ModSyncedDataKeys
             .syncMode(SyncedDataKey.SyncMode.TRACKING_ONLY)
             .saveToFile()
             .build();
+
+    public static final SyncedDataKey<Player, Integer> IMMORTAL_COOLDOWN = SyncedDataKey.builder(SyncedClassKey.PLAYER, Serializers.INTEGER)
+        .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "immortal_cooldown"))
+        .defaultValueSupplier(() -> 0)
+        .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
+        .saveToFile()
+        .build();
 }

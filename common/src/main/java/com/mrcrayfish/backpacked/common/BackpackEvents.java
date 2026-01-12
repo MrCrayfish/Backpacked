@@ -16,7 +16,10 @@ public class BackpackEvents
 {
     public static void init()
     {
-        FrameworkTickEvents.START_PLAYER.register(BackpackEvents::updateBackpackProperties);
+        FrameworkTickEvents.START_PLAYER.register(player -> {
+            BackpackEvents.updateBackpackProperties(player);
+            BackpackEvents.applyImmortalCooldown(player);
+        });
     }
 
     private static void updateBackpackProperties(Player player)
@@ -41,6 +44,18 @@ public class BackpackEvents
         else if(cosmeticProperties.isPresent())
         {
             ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(player, Optional.empty());
+        }
+    }
+
+    private static void applyImmortalCooldown(Player player)
+    {
+        if(player.level().isClientSide())
+            return;
+
+        int cooldown = ModSyncedDataKeys.IMMORTAL_COOLDOWN.getValue(player);
+        if(cooldown > 0)
+        {
+            ModSyncedDataKeys.IMMORTAL_COOLDOWN.setValue(player, cooldown - 1);
         }
     }
 }
