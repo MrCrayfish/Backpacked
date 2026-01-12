@@ -522,7 +522,17 @@ public class Config
         @ConfigProperty(name = "funnelling", comment = "Funnelling related properties")
         public final Funnelling funnelling = new Funnelling();
 
+        @ConfigProperty(name = "hopperBridge", comment = "Hopper Bridge related properties")
+        public final HopperBridge hopperBridge = new HopperBridge();
+
         public static class Funnelling
+        {
+            @ConfigProperty(name = "maxFilters", comment = """
+                    The maximum amount of filters that can be configured""")
+            public final IntProperty maxFilters = IntProperty.create(32, 1, 256);
+        }
+
+        public static class HopperBridge
         {
             @ConfigProperty(name = "maxFilters", comment = """
                     The maximum amount of filters that can be configured""")
