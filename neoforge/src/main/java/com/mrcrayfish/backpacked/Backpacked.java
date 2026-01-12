@@ -3,10 +3,11 @@ package com.mrcrayfish.backpacked;
 import com.mrcrayfish.backpacked.client.ClientBootstrap;
 import com.mrcrayfish.backpacked.common.WanderingTraderEvents;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
-import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
@@ -15,13 +16,20 @@ import com.mrcrayfish.framework.api.Environment;
 import com.mrcrayfish.framework.api.util.TaskRunner;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -33,9 +41,9 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -67,6 +75,7 @@ public class Backpacked
         NeoForge.EVENT_BUS.addListener(this::addReloadListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBlockDropLoot);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onLivingDrops);
+        NeoForge.EVENT_BUS.addListener(this::onEntityInvulnerabilityCheck);
         POI_TYPES.register(bus);
 
         if(ModList.get().isLoaded("yigd"))
@@ -166,5 +175,40 @@ public class Backpacked
         entity.setDeltaMovement(-Mth.sin(deltaZ) * deltaX, 0.2, Mth.cos(deltaZ) * deltaX);
         entity.setPickUpDelay(40);
         return entity;
+    }
+
+    private void onEntityInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event)
+    {
+        // Don't run logic if already invulnerable
+        if(event.isInvulnerable())
+            return;
+
+        if(event.getEntity().getType() == EntityType.ITEM)
+        {
+            ItemEntity entity = ((ItemEntity) event.getEntity());
+            ItemStack stack = entity.getItem();
+            if(stack.is(ModItems.BACKPACK.get()))
+            {
+                ImbuedHideAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.IMBUED_HIDE.get());
+                if(augment != null)
+                {
+                    if(this.isImbuedHideImmuneToDamageSource(entity.registryAccess(), event.getSource()))
+                    {
+                        event.setInvulnerable(true);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isImbuedHideImmuneToDamageSource(RegistryAccess access, DamageSource source)
+    {
+        Registry<DamageType> types = access.registryOrThrow(Registries.DAMAGE_TYPE);
+        ResourceLocation key = types.getKey(source.type());
+        if(key != null)
+        {
+            return Config.AUGMENTS.imbuedHide.invulnerableToDamageTypes.get().contains(key.toString());
+        }
+        return false;
     }
 }

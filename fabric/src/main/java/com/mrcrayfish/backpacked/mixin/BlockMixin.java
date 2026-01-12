@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,8 @@ import java.util.function.Supplier;
 @Mixin(Block.class)
 public class BlockMixin
 {
+    // START OF CAPTURING DROPS
+
     @Unique
     @Nullable
     private static WeakReference<ServerPlayer> backpacked$breaker;
@@ -83,4 +86,6 @@ public class BlockMixin
     {
         backpacked$breaker = null;
     }
+
+    // END OF CAPTURING DROPS
 }

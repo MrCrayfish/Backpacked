@@ -10,6 +10,7 @@ import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import com.mrcrayfish.framework.api.config.validate.Validator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageTypes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -525,6 +526,9 @@ public class Config
         @ConfigProperty(name = "hopperBridge", comment = "Hopper Bridge related properties")
         public final HopperBridge hopperBridge = new HopperBridge();
 
+        @ConfigProperty(name = "imbuedHide", comment = "Hopper Bridge related properties")
+        public final ImbuedHide imbuedHide = new ImbuedHide();
+
         public static class Funnelling
         {
             @ConfigProperty(name = "maxFilters", comment = """
@@ -537,6 +541,23 @@ public class Config
             @ConfigProperty(name = "maxFilters", comment = """
                     The maximum amount of filters that can be configured""")
             public final IntProperty maxFilters = IntProperty.create(32, 1, 256);
+        }
+
+        public static class ImbuedHide
+        {
+            @ConfigProperty(name = "fireImmunity", comment = """
+                    If enabled, Imbued Hide will make the backpack immune to fire regardless of the damage source""")
+            public final BoolProperty fireImmunity = BoolProperty.create(true);
+
+            @ConfigProperty(name = "invulnerableToDamageTypes", comment = """
+                    A list containing ids of damage types that the backpack will be invulnerable to when Imbued Hide is applied.
+                    You can discover all valid damage types in-game by pasting in the command (include all characters between the quotes): "/damage @s 1 "
+                    Example: invulnerableToDamageTypes = ["minecraft:cactus", "minecraft:explosion"]""")
+            public final ListProperty<String> invulnerableToDamageTypes = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Must be a valid damage type"), () -> List.of(
+                DamageTypes.CACTUS.location().toString(),
+                DamageTypes.EXPLOSION.location().toString(),
+                DamageTypes.SONIC_BOOM.location().toString()
+            ));
         }
     }
 

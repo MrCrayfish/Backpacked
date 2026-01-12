@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
@@ -26,7 +27,7 @@ public class ItemEntityMixin
         if(stack.is(ModItems.BACKPACK.get()))
         {
             ImbuedHideAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.IMBUED_HIDE.get());
-            if(augment != null)
+            if(augment != null && Config.AUGMENTS.imbuedHide.fireImmunity.get())
             {
                 cir.setReturnValue(true);
             }
