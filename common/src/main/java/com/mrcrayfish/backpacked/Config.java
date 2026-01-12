@@ -529,6 +529,9 @@ public class Config
         @ConfigProperty(name = "imbuedHide", comment = "Hopper Bridge related properties")
         public final ImbuedHide imbuedHide = new ImbuedHide();
 
+        @ConfigProperty(name = "immortal", comment = "Immortal related properties")
+        public final Immortal immortal = new Immortal();
+
         public static class Funnelling
         {
             @ConfigProperty(name = "maxFilters", comment = """
@@ -558,6 +561,14 @@ public class Config
                 DamageTypes.EXPLOSION.location().toString(),
                 DamageTypes.SONIC_BOOM.location().toString()
             ));
+        }
+
+        public static class Immortal
+        {
+            @ConfigProperty(name = "cooldown", comment = """
+                    The amount of ticks to wait after Immortal has been triggered for it to be able to be triggered again.
+                    By default, Immortal is set to 1 minute. Use the formula: ticks = 20 * <seconds>""")
+            public final IntProperty cooldown = IntProperty.create(20 * 60, 0, Integer.MAX_VALUE); // 1 minute
         }
     }
 
