@@ -62,6 +62,9 @@ public class BackpackLayer extends RenderLayer<AvatarRenderState, PlayerModel>
 
         poseStack.pushPose();
 
+        float giantScale = 1.0F + 0.5F * backpackRenderState.backpackScale;
+        poseStack.scale(giantScale, giantScale, giantScale);
+
         // Applies a bobbing animation when the player is walking
         if(backpackRenderState.bobbing)
         {

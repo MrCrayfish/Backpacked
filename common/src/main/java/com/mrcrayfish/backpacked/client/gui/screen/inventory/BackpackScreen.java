@@ -263,7 +263,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
                 }
                 new AugmentPopupMenu(this, this.menu::getAugments, augment -> {
                     Network.getPlay().sendToServer(new MessageChangeAugment(position, augment));
-                }).show(btn);
+                }, Minecraft.getInstance().hasShiftDown() && Minecraft.getInstance().hasControlDown() && Minecraft.getInstance().hasAltDown()).show(btn);
             }).setTooltip(btn -> {
                 if(!this.menu.getAugmentBayController().isSlotUnlocked(position.ordinal())) {
                     return null;

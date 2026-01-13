@@ -18,4 +18,5 @@ public class BackpackRenderState
     public double horizontalDelta;
     public LivingEntityDataState entityData;
     public LevelDataState levelData;
+    public int backpackScale;
 }

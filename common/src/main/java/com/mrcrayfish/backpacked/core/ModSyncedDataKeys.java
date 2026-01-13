@@ -78,4 +78,11 @@ public class ModSyncedDataKeys
         .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
         .saveToFile()
         .build();
+
+    public static final SyncedDataKey<Player, Integer> BACKPACK_SCALE = SyncedDataKey.builder(SyncedClassKey.PLAYER, Serializers.INTEGER)
+        .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack_scale"))
+        .defaultValueSupplier(() -> 0)
+        .syncMode(SyncedDataKey.SyncMode.ALL)
+        .resetOnDeath()
+        .build();
 }

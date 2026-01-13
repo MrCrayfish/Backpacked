@@ -233,6 +233,7 @@ public class ClientBackpacked
                 backpackRenderState.visible = Services.BACKPACK.isBackpackVisible(player);
                 backpackRenderState.cosmeticProperties = properties;
                 backpackRenderState.horizontalDelta = player.getDeltaMovement().horizontalDistance();
+                backpackRenderState.backpackScale = ModSyncedDataKeys.BACKPACK_SCALE.getValue(player);
                 state.setRenderData(BACKPACK_RENDER_STATE_KEY, backpackRenderState);
             }
         });

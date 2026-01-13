@@ -21,4 +21,5 @@ public class ModAugmentTypes
     public static final RegistryEntry<AugmentType<SeedflowAugment>> SEEDFLOW = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.id("seedflow"), () -> SeedflowAugment.TYPE);
     public static final RegistryEntry<AugmentType<HopperBridgeAugment>> HOPPER_BRIDGE = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.id("hopper_bridge"), () -> HopperBridgeAugment.TYPE);
     public static final RegistryEntry<AugmentType<RecallAugment>> RECALL = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.id("recall"), () -> RecallAugment.TYPE);
+    public static final RegistryEntry<AugmentType<GiantAugment>> GIANT = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.id("giant"), () -> GiantAugment.TYPE);
 }

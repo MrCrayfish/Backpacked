@@ -10,6 +10,8 @@
     "augment.backpacked.funnelling.mode.allow.tooltip": "Only items that are activated in the list will be funnelled into the backpack",
     "augment.backpacked.funnelling.mode.disallow": "Disallow",
     "augment.backpacked.funnelling.mode.disallow.tooltip": "All items except the items that are activated in the list will be funnelled into the backpack",
+    "augment.backpacked.giant": "Giant",
+    "augment.backpacked.giant.desc": "Why does the backpack feel heavier?",
     "augment.backpacked.hopper_bridge": "Hopper Bridge",
     "augment.backpacked.hopper_bridge.desc": "Allows hoppers to insert and extract items from the players worn backpack.\nThe player must stand either on top or in front the exit of the hopper.\nFilters can be applied to limit insertable and extractable items",
     "augment.backpacked.hopper_bridge.extract": "Extract Items",

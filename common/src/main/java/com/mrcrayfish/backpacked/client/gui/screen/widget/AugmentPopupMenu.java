@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
@@ -33,7 +34,7 @@ public class AugmentPopupMenu extends PopupMenu
 
     private final PaddedLinearLayout layout = (PaddedLinearLayout) new PaddedLinearLayout(LinearLayout.Orientation.VERTICAL).padding(8).spacing(2);
 
-    public AugmentPopupMenu(PopupMenuHandler handler, Supplier<Augments> selectedAugments, Consumer<Augment<?>> updater)
+    public AugmentPopupMenu(PopupMenuHandler handler, Supplier<Augments> selectedAugments, Consumer<Augment<?>> updater, boolean showHidden)
     {
         super(handler);
         this.setAlignment(Alignment.END_TOP);
@@ -42,6 +43,8 @@ public class AugmentPopupMenu extends PopupMenu
         AtomicInteger count = new AtomicInteger();
         AugmentType.stream().sorted().forEach(type -> {
             if(Config.getDisabledAugments().contains(type.id()))
+                return;
+            if(!showHidden && type == ModAugmentTypes.GIANT.get())
                 return;
             FrameworkButton augmentBtn = BackpackButtons.builder()
                 .setIcon(type.sprite(), 12, 12)

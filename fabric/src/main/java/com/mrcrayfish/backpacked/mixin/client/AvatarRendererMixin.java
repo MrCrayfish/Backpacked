@@ -50,6 +50,7 @@ public class AvatarRendererMixin
             backpackRenderState.visible = Services.BACKPACK.isBackpackVisible(player);
             backpackRenderState.cosmeticProperties = properties;
             backpackRenderState.horizontalDelta = player.getDeltaMovement().horizontalDistance();
+            backpackRenderState.backpackScale = ModSyncedDataKeys.BACKPACK_SCALE.getValue(player);
             state.setData(ClientHandler.BACKPACK_RENDER_STATE_KEY, backpackRenderState);
         }
     }
