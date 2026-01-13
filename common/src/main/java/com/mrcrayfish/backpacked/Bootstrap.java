@@ -27,6 +27,7 @@ public class Bootstrap
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.SELECTED_BACKPACK);
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS);
         FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.IMMORTAL_COOLDOWN);
+        FrameworkAPI.registerSyncedDataKey(ModSyncedDataKeys.BACKPACK_SCALE);
 
         Network.init();
         UnlockManager.instance();

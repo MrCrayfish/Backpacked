@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModDataComponents;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
@@ -19,6 +20,7 @@ public class BackpackEvents
         TickEvents.START_PLAYER.register(player -> {
             BackpackEvents.updateBackpackProperties(player);
             BackpackEvents.applyImmortalCooldown(player);
+            BackpackEvents.updateBackpackScale(player);
         });
     }
 
@@ -57,5 +59,14 @@ public class BackpackEvents
         {
             ModSyncedDataKeys.IMMORTAL_COOLDOWN.setValue(player, cooldown - 1);
         }
+    }
+
+    private static void updateBackpackScale(Player player)
+    {
+        if(player.level().isClientSide())
+            return;
+
+        int scale = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.GIANT.get()).size();
+        ModSyncedDataKeys.BACKPACK_SCALE.setValue(player, scale);
     }
 }

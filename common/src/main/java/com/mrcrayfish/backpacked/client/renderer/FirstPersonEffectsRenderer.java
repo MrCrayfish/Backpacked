@@ -128,6 +128,9 @@ public class FirstPersonEffectsRenderer
         int offset = !chestStack.isEmpty() ? 3 : 2;
         pose.translate(0, -0.06, offset * 0.0625);
 
+        float giantScale = 1.0F + 0.5F * ModSyncedDataKeys.BACKPACK_SCALE.getValue(player);
+        pose.scale(giantScale, giantScale, giantScale);
+
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         meta.renderer().ifPresent(renderer -> {
             renderer.render(new BackpackRenderContext(Scene.ON_ENTITY, RenderMode.EFFECTS_ONLY, pose, source, light, backpack, player, player.level(), partialTick, model -> {}, player.tickCount));
