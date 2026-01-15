@@ -26,14 +26,14 @@ public record ModelMeta(Vector3f shelfOffset, ItemTransforms display, Optional<B
     ).apply(builder, ItemTransform::new));
 
     public static final Codec<ItemTransforms> ITEM_TRANSFORMS_CODEC = RecordCodecBuilder.create(builder -> builder.group(
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.THIRD_PERSON_LEFT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.FIRST_PERSON_LEFT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.HEAD.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.THIRD_PERSON_LEFT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.thirdPersonLeftHand),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.thirdPersonRightHand),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.FIRST_PERSON_LEFT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.firstPersonLeftHand),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.firstPersonRightHand),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.HEAD.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.head),
         ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.GUI.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.GROUND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui),
-        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.FIXED.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.gui)
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.GROUND.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.ground),
+        ITEM_TRANSFORM_CODEC.optionalFieldOf(ItemDisplayContext.FIXED.getSerializedName(), ItemTransform.NO_TRANSFORM).forGetter(o -> o.fixed)
     ).apply(builder, ItemTransforms::new));
 
     public static final ModelMeta DEFAULT = new ModelMeta(new Vector3f(), ItemTransforms.NO_TRANSFORMS, Optional.empty(), true);
