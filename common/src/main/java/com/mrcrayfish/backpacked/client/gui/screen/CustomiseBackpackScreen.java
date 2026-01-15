@@ -333,7 +333,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         pose.mulPose(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
         pose.scale(16, 16, 16);
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
-        meta.guiDisplay().ifPresent(transform -> transform.apply(false, pose));
+        meta.display().gui.apply(false, pose);
         meta.renderer().ifPresentOrElse(renderer -> {
             BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, graphics.bufferSource(), 0xF000F0, backpack, mc.player, mc.level, partialTick, model -> {
                 BakedModelRenderer.drawBakedModel(model, pose, graphics.bufferSource(), MODEL_LIGHTING, OverlayTexture.NO_OVERLAY);

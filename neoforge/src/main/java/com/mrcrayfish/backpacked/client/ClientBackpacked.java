@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.packs.AddonRepositorySource;
 import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
 import net.minecraft.client.Minecraft;
@@ -36,6 +37,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 
@@ -57,6 +60,7 @@ public class ClientBackpacked
         bus.addListener(this::onAddLayers);
         bus.addListener(this::onRegisterAdditionalModels);
         bus.addListener(this::onFindPacks);
+        bus.addListener(this::onRegisterClientExtensions);
         NeoForge.EVENT_BUS.addListener(this::onRenderLevelStage);
     }
 
@@ -147,5 +151,10 @@ public class ClientBackpacked
         boolean frozen = mc.level.tickRateManager().isEntityFrozen(mc.player);
         float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(!frozen);
         FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);
+    }
+
+    private void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
+    {
+        event.registerItem(new BackpackItemExtensions(), ModItems.BACKPACK.get());
     }
 }

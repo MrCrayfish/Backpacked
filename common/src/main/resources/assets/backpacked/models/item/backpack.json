@@ -1,6 +1,4 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "backpacked:item/backpack"
-    }
+    "parent": "builtin/entity",
+    "gui_light": "side"
 }

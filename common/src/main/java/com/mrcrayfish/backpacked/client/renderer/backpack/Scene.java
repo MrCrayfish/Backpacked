@@ -4,7 +4,8 @@ public enum Scene
 {
     CUSTOMISATION_MENU,
     ON_ENTITY,
-    ON_SHELF;
+    ON_SHELF,
+    ITEM;
 
     public boolean isCustomisationMenu()
     {

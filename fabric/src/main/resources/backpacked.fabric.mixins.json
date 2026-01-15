@@ -15,6 +15,7 @@
         "ServerPacksSourceMixin"
     ],
     "client": [
+        "client.BlockEntityWithoutLevelRendererMixin",
         "client.CreateWorldScreenMixin"
     ],
     "injectors": {
