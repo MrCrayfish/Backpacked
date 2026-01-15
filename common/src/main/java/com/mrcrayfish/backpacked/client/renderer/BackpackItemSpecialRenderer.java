@@ -40,6 +40,7 @@ public class BackpackItemSpecialRenderer extends BlockEntityWithoutLevelRenderer
     {
         if(stack.is(ModItems.BACKPACK.get()))
         {
+            pose.translate(0.5F, 0.5F, 0.5F);
             CosmeticProperties properties = stack.getOrDefault(ModDataComponents.COSMETIC_PROPERTIES.get(), CosmeticProperties.DEFAULT);
             ResourceLocation cosmetic = properties.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic());
             ClientBackpack backpack = ClientRegistry.instance().getBackpackOrDefault(cosmetic);
@@ -49,7 +50,6 @@ public class BackpackItemSpecialRenderer extends BlockEntityWithoutLevelRenderer
                 int ticks = mc.player != null ? mc.player.tickCount : 0;
                 float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
                 ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
-                pose.translate(0.5, 0.5, 0);
                 meta.getItemTransform(display).apply(false, pose);
                 meta.renderer().ifPresentOrElse(renderer -> {
                     BackpackRenderContext context = new BackpackRenderContext(Scene.ITEM, RenderMode.MODELS_ONLY, pose, source, light, backpack, null, null, partialTick, model -> {
