@@ -1,10 +1,8 @@
 package com.mrcrayfish.backpacked.common;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 
 import java.util.function.Supplier;

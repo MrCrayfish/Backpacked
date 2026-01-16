@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.core;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.SavedAugments;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
@@ -9,7 +8,6 @@ import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * Author: MrCrayfish

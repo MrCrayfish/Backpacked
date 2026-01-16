@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.util;
 
-import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 

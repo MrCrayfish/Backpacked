@@ -1,11 +1,9 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack;
 
 import com.mojang.serialization.MapCodec;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.resources.ResourceLocation;
 
 public class DefaultRenderer implements BackpackRenderer
 {

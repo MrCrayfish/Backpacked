@@ -1,10 +1,8 @@
 package com.mrcrayfish.backpacked.core;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 /**

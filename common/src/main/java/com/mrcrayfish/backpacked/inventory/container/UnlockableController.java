@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.PaymentItem;
 import com.mrcrayfish.backpacked.common.PaymentType;
@@ -10,7 +9,6 @@ import com.mrcrayfish.backpacked.util.InventoryHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.ExperienceCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.ItemCostTooltip;
 import com.mrcrayfish.backpacked.client.gui.particle.Particle2D;
@@ -28,7 +27,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;

@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.mixin;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
-import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import net.minecraft.core.NonNullList;

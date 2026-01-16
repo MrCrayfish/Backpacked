@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;

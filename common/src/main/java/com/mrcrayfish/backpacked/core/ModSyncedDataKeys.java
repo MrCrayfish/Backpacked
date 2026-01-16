@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.core;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.CustomDataSerializers;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
@@ -11,7 +10,6 @@ import com.mrcrayfish.framework.api.sync.Serializers;
 import com.mrcrayfish.framework.api.sync.SyncedClassKey;
 import com.mrcrayfish.framework.api.sync.SyncedDataKey;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

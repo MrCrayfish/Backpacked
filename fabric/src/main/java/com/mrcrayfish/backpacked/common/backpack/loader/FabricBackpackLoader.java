@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.common.backpack.loader;
 
 import com.google.gson.JsonElement;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.core.HolderLookup;
@@ -9,9 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Author: MrCrayfish

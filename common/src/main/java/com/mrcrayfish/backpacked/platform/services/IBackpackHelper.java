@@ -1,8 +1,8 @@
 package com.mrcrayfish.backpacked.platform.services;
 
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.Pagination;
+import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.core.BlockPos;

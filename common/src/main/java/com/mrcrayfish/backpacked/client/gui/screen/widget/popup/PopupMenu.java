@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
