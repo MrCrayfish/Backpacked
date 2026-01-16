@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.inventory.container;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.blockentity.BackpackDockBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.Pagination;
@@ -192,15 +193,27 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
 
     private ItemStack getBackpackStack()
     {
-        if(this.backpackInventory instanceof ShelfBlockEntity.BackpackShelfContainer container)
+        if(this.backpackInventory instanceof BackpackDockBlockEntity.ItemStackContainer container)
         {
-            return container.getBlockEntity().getBackpack();
+            return container.getBackpackStack();
         }
         if(this.backpackInventory instanceof BackpackInventory inventory)
         {
             return inventory.getBackpackStack();
         }
         return ItemStack.EMPTY;
+    }
+
+    private void sendChanged()
+    {
+        if(this.backpackInventory instanceof BackpackDockBlockEntity.ItemStackContainer container)
+        {
+            container.setChanged();
+        }
+        else if(this.backpackInventory instanceof BackpackInventory inventory)
+        {
+            inventory.setChanged();
+        }
     }
 
     public void openManagement(ServerPlayer player)
@@ -262,6 +275,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
             if(!backpack.isEmpty())
             {
                 backpack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
+                this.menu.sendChanged();
             }
         }
 
@@ -320,6 +334,7 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
             if(!backpack.isEmpty())
             {
                 backpack.set(ModDataComponents.UNLOCKABLE_AUGMENT_BAYS.get(), slots);
+                this.menu.sendChanged();
             }
         }
 

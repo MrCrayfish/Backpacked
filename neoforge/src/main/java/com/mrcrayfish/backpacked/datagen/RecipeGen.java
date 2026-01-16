@@ -25,6 +25,6 @@ public class RecipeGen extends RecipeProvider
     @Override
     protected void buildRecipes(RecipeOutput output)
     {
-        CommonRecipeGen.generate(output, RecipeProvider::has);
+        CommonRecipeGen.generate(output, RecipeProvider::has, RecipeProvider::has);
     }
 }

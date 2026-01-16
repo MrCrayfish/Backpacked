@@ -6,6 +6,10 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
@@ -16,18 +20,19 @@ import java.util.function.Function;
  */
 public class CommonRecipeGen
 {
-    public static void generate(RecipeOutput output, Function<ItemLike, Criterion<?>> has)
+    public static void generate(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag)
     {
-        backpack(output, has);
-        backpackShelf(output, has, Items.OAK_LOG, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.SPRUCE_LOG, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.BIRCH_LOG, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.JUNGLE_LOG, Items.JUNGLE_SLAB, ModBlocks.JUNGLE_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.DARK_OAK_LOG, Items.DARK_OAK_SLAB, ModBlocks.DARK_OAK_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.ACACIA_LOG, Items.ACACIA_SLAB, ModBlocks.ACACIA_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
-        backpackShelf(output, has, Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
+        backpack(output, hasItem);
+        backpackShelf(output, hasItem, Items.OAK_LOG, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.SPRUCE_LOG, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.BIRCH_LOG, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.JUNGLE_LOG, Items.JUNGLE_SLAB, ModBlocks.JUNGLE_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.DARK_OAK_LOG, Items.DARK_OAK_SLAB, ModBlocks.DARK_OAK_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.ACACIA_LOG, Items.ACACIA_SLAB, ModBlocks.ACACIA_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
+        backpackShelf(output, hasItem, Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
+        backpackDock(output, hasItem, hasTag);
     }
 
     private static void backpack(RecipeOutput output, Function<ItemLike, Criterion<?>> has)
@@ -55,6 +60,21 @@ public class CommonRecipeGen
                 .define('S', Items.STICK)
                 .unlockedBy("has_slab", has.apply(slab))
                 .unlockedBy("has_stick", has.apply(Items.STICK))
+                .save(output);
+    }
+
+    private static void backpackDock(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag)
+    {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BACKPACK_DOCK.get())
+                .pattern("PCP")
+                .pattern("CHC")
+                .pattern("PCP")
+                .define('P', ItemTags.PLANKS)
+                .define('C', Items.COPPER_INGOT)
+                .define('H', Items.HOPPER)
+                .unlockedBy("has_planks", hasTag.apply(ItemTags.PLANKS))
+                .unlockedBy("has_copper_ingot", hasItem.apply(Items.COPPER_INGOT))
+                .unlockedBy("has_hopper", hasItem.apply(Items.HOPPER))
                 .save(output);
     }
 }

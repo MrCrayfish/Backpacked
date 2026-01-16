@@ -25,6 +25,6 @@ public class RecipeGen extends FabricRecipeProvider
     @Override
     public void buildRecipes(RecipeOutput output)
     {
-        CommonRecipeGen.generate(output, RecipeProvider::has);
+        CommonRecipeGen.generate(output, RecipeProvider::has, RecipeProvider::has);
     }
 }
