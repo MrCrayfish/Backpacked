@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 @RegistryContainer
 public class ModBlockEntities
 {
-    public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> SHELF = RegistryEntry.blockEntity(
+    public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> BACKPACK_SHELF = RegistryEntry.blockEntity(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "shelf"),
         Services.BACKPACK::createShelfBlockEntityType,
         () -> new Block[] {
@@ -30,7 +30,7 @@ public class ModBlockEntities
             ModBlocks.WARPED_BACKPACK_SHELF.get(),
             ModBlocks.CHERRY_BACKPACK_SHELF.get()
         });
-    public static final RegistryEntry<BlockEntityType<BackpackDockBlockEntity>> BACKPACK_ACCESS = RegistryEntry.blockEntity(
+    public static final RegistryEntry<BlockEntityType<BackpackDockBlockEntity>> BACKPACK_DOCK = RegistryEntry.blockEntity(
         ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_dock"),
         BackpackDockBlockEntity::new,
         () -> new Block[] {

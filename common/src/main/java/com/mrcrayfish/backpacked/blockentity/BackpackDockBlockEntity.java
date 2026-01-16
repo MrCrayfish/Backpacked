@@ -43,7 +43,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
 
     public BackpackDockBlockEntity(BlockPos pos, BlockState state)
     {
-        super(ModBlockEntities.BACKPACK_ACCESS.get(), pos, state);
+        super(ModBlockEntities.BACKPACK_DOCK.get(), pos, state);
     }
 
     @Override

@@ -43,8 +43,8 @@ public class ClientHandler implements ClientModInitializer
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
         MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
         MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
-        BlockEntityRenderers.register(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.BACKPACK_ACCESS.get(), BackpackDockRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BACKPACK_SHELF.get(), ShelfRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BACKPACK_DOCK.get(), BackpackDockRenderer::new);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BACKPACK_DOCK.get(), RenderType.cutout());
 
         // Add backpack layers for player and wandering trader

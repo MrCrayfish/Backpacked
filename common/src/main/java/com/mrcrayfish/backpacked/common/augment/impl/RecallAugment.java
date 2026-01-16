@@ -63,7 +63,7 @@ public record RecallAugment(Optional<ShelfKey> shelfKey) implements Augment<Reca
                 {
                     updated = updated.setShelfKey(null);
                 }
-                else if(level.getBlockEntity(pos, ModBlockEntities.SHELF.get()).isEmpty())
+                else if(level.getBlockEntity(pos, ModBlockEntities.BACKPACK_SHELF.get()).isEmpty())
                 {
                     updated = updated.setShelfKey(null);
                 }

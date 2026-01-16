@@ -74,7 +74,7 @@ public class ShelfBlockEntity extends BlockEntity
 
     public ShelfBlockEntity(BlockPos pos, BlockState state)
     {
-        super(ModBlockEntities.SHELF.get(), pos, state);
+        super(ModBlockEntities.BACKPACK_SHELF.get(), pos, state);
     }
 
     public SimpleContainer getContainer()

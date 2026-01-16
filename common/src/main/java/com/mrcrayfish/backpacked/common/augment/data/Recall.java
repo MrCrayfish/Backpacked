@@ -237,7 +237,7 @@ public final class Recall extends SavedData
                 if(!this.force && !this.level.isLoaded(pos))
                     continue;
 
-                var shelfOptional = this.level.getBlockEntity(pos, ModBlockEntities.SHELF.get());
+                var shelfOptional = this.level.getBlockEntity(pos, ModBlockEntities.BACKPACK_SHELF.get());
                 if(shelfOptional.isEmpty() || !this.isShelfAtBlockPos(pos))
                 {
                     ShelfQueue queue = relativeEntry.getValue();
