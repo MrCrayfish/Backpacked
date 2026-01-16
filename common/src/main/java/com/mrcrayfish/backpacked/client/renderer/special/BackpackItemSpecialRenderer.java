@@ -38,9 +38,9 @@ public class BackpackItemSpecialRenderer implements SpecialModelRenderer<Backpac
         if(data == null)
             return;
 
-        pose.translate(0.5, 0.5, 0);
+        pose.translate(0.5, 0.5, 0.5);
         data.display.getTransform(display).apply(false, pose.last());
-        pose.translate(0.5F, 0.5F, 0.5F);
+        pose.translate(0.5, 0.5, 0.5);
 
         BackpackRenderer renderer = data.renderer;
         if(renderer != null)
