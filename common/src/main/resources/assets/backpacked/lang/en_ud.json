@@ -175,6 +175,7 @@
     "backpacked.gui.hold_to_unlock": "Hold to Unlock",
     "backpacked.gui.locked": "Locked",
     "backpacked.gui.manage_backpacks": "Manage Backpacks",
+    "backpacked.gui.missing_backpack": "Place a Backpack into the Dock first",
     "backpacked.gui.missing_items": "Missing Items",
     "backpacked.gui.no_backpack_equipped": "No backpack equipped",
     "backpacked.gui.no_backpack_equipped.plural": "No backpacks equipped",
@@ -208,6 +209,7 @@
     "backpacked.unlockable_slot_mode.enabled": "Enabled",
     "backpacked.unlockable_slot_mode.purchasable": "Purchasable",
     "block.backpacked.acacia_backpack_shelf": "Acacia Backpack Shelf",
+    "block.backpacked.backpack_dock": "Backpack Dock",
     "block.backpacked.birch_backpack_shelf": "Birch Backpack Shelf",
     "block.backpacked.cherry_backpack_shelf": "Cherry Backpack Shelf",
     "block.backpacked.crimson_backpack_shelf": "Crimson Backpack Shelf",
@@ -225,6 +227,9 @@
     "item.backpacked.unlock_token": "Unlock Token",
     "itemGroup.backpacked": "Backpacked",
     "key.backpack": "ʞɔɐdʞɔɐᗺ uǝdO",
+    "key.backpacked.open_backpack": "Open Backpack",
+    "key.backpacked.open_management": "Open Management",
+    "key.categories.backpacked": "Backpacked",
     "message.backpacked.occupied_back_slot": "Back slot is occupied by another item",
     "message.backpacked.player_opened": "A player has opened your backpack"
 }
