@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.util;
 
+import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 
@@ -15,6 +16,6 @@ public class Utils
      */
     public static ResourceLocation rl(String path)
     {
-        return Utils.rl(path);
+        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, path);
     }
 }
