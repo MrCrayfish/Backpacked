@@ -324,7 +324,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         assert mc.player != null && mc.level != null;
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
         GuiBackpackRenderState state = new GuiBackpackRenderState(
-            meta.guiDisplay().orElse(null),
+            meta.display().gui(),
             meta.renderer().orElse(null),
             LivingEntityDataState.create(mc.player, partialTick),
             LevelDataState.create(mc.level, partialTick),

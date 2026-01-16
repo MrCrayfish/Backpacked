@@ -19,6 +19,7 @@ import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
+import com.mrcrayfish.backpacked.client.renderer.special.BackpackItemSpecialRenderer;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
@@ -87,6 +88,7 @@ public class ClientBackpacked
         bus.addListener(this::onRegisterModifyRenderState);
         bus.addListener(this::onRegisterParticleGroup);
         bus.addListener(this::onRegisterPipRenderers);
+        bus.addListener(this::onRegisterSpecialRenderers);
         NeoForge.EVENT_BUS.addListener(this::onRenderLevelStage);
     }
 
@@ -247,5 +249,10 @@ public class ClientBackpacked
     private void onRegisterPipRenderers(RegisterPictureInPictureRenderersEvent event)
     {
         event.register(GuiBackpackRenderState.class, GuiBackpackRenderer::new);
+    }
+
+    private void onRegisterSpecialRenderers(RegisterSpecialModelRendererEvent event)
+    {
+        event.register(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
     }
 }

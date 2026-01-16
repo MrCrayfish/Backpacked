@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
+import com.mrcrayfish.backpacked.client.renderer.special.BackpackItemSpecialRenderer;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
@@ -31,6 +32,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.entity.EntityType;
 
@@ -52,6 +54,7 @@ public class ClientHandler implements ClientModInitializer
         MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
         BlockEntityRenderers.register(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
         ParticleRendererRegistry.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
+        SpecialModelRenderers.ID_MAPPER.put(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
 
         // Add backpack layers for player and wandering trader
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {

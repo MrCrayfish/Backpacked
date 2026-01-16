@@ -4,6 +4,8 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
 import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +18,8 @@ public class BackpackRenderState
     public Identifier baseModel;
     public Identifier strapsModel;
     public double horizontalDelta;
-    public LivingEntityDataState entityData;
-    public LevelDataState levelData;
+    public @Nullable LivingEntityDataState entityData;
+    public @Nullable LevelDataState levelData;
     public int backpackScale;
+    public @Nullable ItemTransforms transforms;
 }
