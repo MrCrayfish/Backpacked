@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.block.BackpackDockBlock;
 import com.mrcrayfish.backpacked.block.ShelfBlock;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
@@ -23,4 +24,5 @@ public final class ModBlocks
     public static final RegistryEntry<Block> CRIMSON_BACKPACK_SHELF = RegistryEntry.blockWithItem(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "crimson_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.CRIMSON_PLANKS));
     public static final RegistryEntry<Block> WARPED_BACKPACK_SHELF = RegistryEntry.blockWithItem(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "warped_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.WARPED_PLANKS));
     public static final RegistryEntry<Block> CHERRY_BACKPACK_SHELF = RegistryEntry.blockWithItem(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "cherry_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.CHERRY_PLANKS));
+    public static final RegistryEntry<Block> BACKPACK_DOCK = RegistryEntry.blockWithItem(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack_dock"), BackpackDockBlock::new, () -> Block.Properties.ofFullCopy(Blocks.OAK_PLANKS));
 }

@@ -7,18 +7,21 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
 import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticleGroup;
 import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
+import com.mrcrayfish.backpacked.client.renderer.blockentity.BackpackDockRenderer;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.client.renderer.special.BackpackItemSpecialRenderer;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModContainers;
 import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
@@ -29,6 +32,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -53,8 +57,10 @@ public class ClientHandler implements ClientModInitializer
         MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
         MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
         BlockEntityRenderers.register(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BACKPACK_ACCESS.get(), BackpackDockRenderer::new);
         ParticleRendererRegistry.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
         SpecialModelRenderers.ID_MAPPER.put(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
+        BlockRenderLayerMap.putBlock(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
 
         // Add backpack layers for player and wandering trader
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {

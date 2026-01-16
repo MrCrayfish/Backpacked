@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.blockentity.BackpackDockBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
@@ -15,5 +16,24 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 @RegistryContainer
 public class ModBlockEntities
 {
-    public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> SHELF = RegistryEntry.blockEntity(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "shelf"), Services.BACKPACK::createShelfBlockEntityType, () -> new Block[]{ModBlocks.OAK_BACKPACK_SHELF.get(), ModBlocks.SPRUCE_BACKPACK_SHELF.get(), ModBlocks.BIRCH_BACKPACK_SHELF.get(), ModBlocks.JUNGLE_BACKPACK_SHELF.get(), ModBlocks.DARK_OAK_BACKPACK_SHELF.get(), ModBlocks.ACACIA_BACKPACK_SHELF.get(), ModBlocks.CRIMSON_BACKPACK_SHELF.get(), ModBlocks.WARPED_BACKPACK_SHELF.get(), ModBlocks.CHERRY_BACKPACK_SHELF.get()});
+    public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> SHELF = RegistryEntry.blockEntity(
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "shelf"),
+        Services.BACKPACK::createShelfBlockEntityType,
+        () -> new Block[] {
+            ModBlocks.OAK_BACKPACK_SHELF.get(),
+            ModBlocks.SPRUCE_BACKPACK_SHELF.get(),
+            ModBlocks.BIRCH_BACKPACK_SHELF.get(),
+            ModBlocks.JUNGLE_BACKPACK_SHELF.get(),
+            ModBlocks.DARK_OAK_BACKPACK_SHELF.get(),
+            ModBlocks.ACACIA_BACKPACK_SHELF.get(),
+            ModBlocks.CRIMSON_BACKPACK_SHELF.get(),
+            ModBlocks.WARPED_BACKPACK_SHELF.get(),
+            ModBlocks.CHERRY_BACKPACK_SHELF.get()
+        });
+    public static final RegistryEntry<BlockEntityType<BackpackDockBlockEntity>> BACKPACK_ACCESS = RegistryEntry.blockEntity(
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack_dock"),
+        BackpackDockBlockEntity::new,
+        () -> new Block[] {
+            ModBlocks.BACKPACK_DOCK.get()
+        });
 }

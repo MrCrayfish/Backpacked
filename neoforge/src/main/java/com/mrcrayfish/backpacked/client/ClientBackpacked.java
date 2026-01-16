@@ -15,6 +15,7 @@ import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticleGroup;
 import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
 import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
+import com.mrcrayfish.backpacked.client.renderer.blockentity.BackpackDockRenderer;
 import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
@@ -22,10 +23,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderStat
 import com.mrcrayfish.backpacked.client.renderer.special.BackpackItemSpecialRenderer;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
-import com.mrcrayfish.backpacked.core.ModBlockEntities;
-import com.mrcrayfish.backpacked.core.ModContainers;
-import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
+import com.mrcrayfish.backpacked.core.*;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.packs.AddonRepositorySource;
 import com.mrcrayfish.backpacked.platform.Services;
@@ -34,9 +32,10 @@ import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.NeoForgeModelResource;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
@@ -46,7 +45,6 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.context.ContextKey;
-import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.PlayerModelType;
@@ -117,6 +115,8 @@ public class ClientBackpacked
     private void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
         event.registerBlockEntityRenderer(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_ACCESS.get(), BackpackDockRenderer::new);
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
     }
 
     private void onAddLayers(EntityRenderersEvent.AddLayers event)

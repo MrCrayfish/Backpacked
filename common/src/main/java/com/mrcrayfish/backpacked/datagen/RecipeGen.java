@@ -10,6 +10,9 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
@@ -39,6 +42,7 @@ public class RecipeGen extends RecipeProvider
         this.backpackShelf(Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         this.backpackShelf(Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
         this.backpackShelf(Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
+        this.backpackDock();
     }
 
     private void backpack()
@@ -66,6 +70,21 @@ public class RecipeGen extends RecipeProvider
             .define('S', Items.STICK)
             .unlockedBy("has_slab", this.has(slab))
             .unlockedBy("has_stick", this.has(Items.STICK))
+            .save(this.output);
+    }
+
+    private void backpackDock()
+    {
+        this.shaped(RecipeCategory.DECORATIONS, ModBlocks.BACKPACK_DOCK.get())
+            .pattern("PCP")
+            .pattern("CHC")
+            .pattern("PCP")
+            .define('P', ItemTags.PLANKS)
+            .define('C', Items.COPPER_INGOT)
+            .define('H', Items.HOPPER)
+            .unlockedBy("has_planks", this.has(ItemTags.PLANKS))
+            .unlockedBy("has_copper_ingot", this.has(Items.COPPER_INGOT))
+            .unlockedBy("has_hopper", this.has(Items.HOPPER))
             .save(this.output);
     }
 
