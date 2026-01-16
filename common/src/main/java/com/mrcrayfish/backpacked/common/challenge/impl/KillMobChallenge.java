@@ -8,6 +8,7 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.event.EntityEvents;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -28,7 +29,7 @@ import java.util.Optional;
 public class KillMobChallenge extends Challenge
 {
     public static final ChallengeSerializer<KillMobChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "kill_mob"),
+        Utils.rl("kill_mob"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("mob").forGetter(challenge -> {
                 return challenge.entity;

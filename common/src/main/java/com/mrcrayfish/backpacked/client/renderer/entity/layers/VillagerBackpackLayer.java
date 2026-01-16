@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;
 import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class VillagerBackpackLayer<T extends AbstractVillager, M extends VillagerModel<T>> extends RenderLayer<T, M>
 {
-    private static final ResourceLocation WANDERING_BACKPACK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "wandering_bag");
+    private static final ResourceLocation WANDERING_BACKPACK = Utils.rl("wandering_bag");
 
     private final ItemStack displayStack = new ItemStack(ModItems.BACKPACK.get());
     private final ItemRenderer itemRenderer;

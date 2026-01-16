@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +27,7 @@ import java.util.Optional;
 public class MerchantTradeChallenge extends Challenge
 {
     public static final ChallengeSerializer<MerchantTradeChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "merchant_trade"),
+        Utils.rl("merchant_trade"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("merchant").forGetter(o -> {
                 return o.entity;

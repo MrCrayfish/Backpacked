@@ -27,6 +27,7 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -59,20 +60,20 @@ import java.util.stream.Collectors;
  */
 public class CustomiseBackpackScreen extends CustomScreen
 {
-    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
-    private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
-    private static final ResourceLocation ROUNDED_BOX = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rounded_box");
-    private static final ResourceLocation LIST_ITEM = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item");
-    private static final ResourceLocation LIST_ITEM_FOCUSED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_focused");
-    private static final ResourceLocation LIST_ITEM_SELECTED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_selected");
-    private static final ResourceLocation LIST_ITEM_LOCKED = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
-    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final ResourceLocation UNLOCK_PROGRESS_BAR = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
-    private static final ResourceLocation UNLOCK_PROGRESS_BAR_INNER = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
-    private static final ResourceLocation SETTINGS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/settings");
-    private static final ResourceLocation ARROW_LEFT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_left");
+    private static final ResourceLocation BACKPACK_BACKGROUND = Utils.rl("backpack/background");
+    private static final ResourceLocation LABEL_BACKGROUND = Utils.rl("backpack/label");
+    private static final ResourceLocation CHECKERS = Utils.rl("backpack/checkers");
+    private static final ResourceLocation LABEL_WARNING_BACKGROUND = Utils.rl("backpack/label_warning");
+    private static final ResourceLocation ROUNDED_BOX = Utils.rl("backpack/rounded_box");
+    private static final ResourceLocation LIST_ITEM = Utils.rl("backpack/list_item");
+    private static final ResourceLocation LIST_ITEM_FOCUSED = Utils.rl("backpack/list_item_focused");
+    private static final ResourceLocation LIST_ITEM_SELECTED = Utils.rl("backpack/list_item_selected");
+    private static final ResourceLocation LIST_ITEM_LOCKED = Utils.rl("backpack/list_item_locked");
+    private static final ResourceLocation ICON_LOCK = Utils.rl("backpack/lock");
+    private static final ResourceLocation UNLOCK_PROGRESS_BAR = Utils.rl("backpack/unlock_progress_bar");
+    private static final ResourceLocation UNLOCK_PROGRESS_BAR_INNER = Utils.rl("backpack/unlock_progress_bar_inner");
+    private static final ResourceLocation SETTINGS = Utils.rl("backpack/settings");
+    private static final ResourceLocation ARROW_LEFT = Utils.rl("backpack/arrow_left");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_PARTICLES = Component.translatable("backpacked.button.show_particles");

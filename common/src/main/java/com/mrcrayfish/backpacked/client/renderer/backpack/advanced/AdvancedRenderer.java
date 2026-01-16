@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.BaseFunction;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 public record AdvancedRenderer(List<BaseFunction> functions) implements BackpackRenderer
 {
     public static final Type TYPE = new Type(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "advanced"),
+        Utils.rl("advanced"),
         RecordCodecBuilder.<AdvancedRenderer>mapCodec(builder -> builder.group(
             BaseFunction.CODEC.listOf().fieldOf("functions").forGetter(o -> o.functions)
         ).apply(builder, AdvancedRenderer::new))

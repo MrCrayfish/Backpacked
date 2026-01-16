@@ -16,6 +16,6 @@ public class Utils
      */
     public static ResourceLocation rl(String path)
     {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, path);
+        return Utils.rl(path);
     }
 }

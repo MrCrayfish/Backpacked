@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,11 +12,11 @@ import net.minecraft.world.inventory.Slot;
 
 public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelfMenu>
 {
-    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final ResourceLocation INVENTORY_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final ResourceLocation SHELF = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/shelf");
+    private static final ResourceLocation BACKPACK_BACKGROUND = Utils.rl("backpack/background");
+    private static final ResourceLocation BACKPACK_SLOT = Utils.rl("backpack/slot");
+    private static final ResourceLocation INVENTORY_BACKGROUND = Utils.rl("backpack/inventory");
+    private static final ResourceLocation INVENTORY_SLOT = Utils.rl("backpack/inventory_slot");
+    private static final ResourceLocation SHELF = Utils.rl("backpack/shelf");
 
     public BackpackShelfScreen(BackpackShelfMenu menu, Inventory playerInventory, Component title)
     {

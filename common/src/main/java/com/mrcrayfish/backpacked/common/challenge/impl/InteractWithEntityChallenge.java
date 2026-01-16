@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class InteractWithEntityChallenge extends Challenge
 {
     public static final ChallengeSerializer<InteractWithEntityChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "interact_with_entity"),
+        Utils.rl("interact_with_entity"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(challenge -> {
                 return challenge.entity;

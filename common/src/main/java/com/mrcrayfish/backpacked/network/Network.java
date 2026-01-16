@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.network;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.network.message.*;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.FrameworkNetwork;
 import net.minecraft.network.protocol.PacketFlow;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Network
 {
     public static final FrameworkNetwork PLAY = FrameworkAPI
-        .createNetworkBuilder(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "play"), 1)
+        .createNetworkBuilder(Utils.rl("play"), 1)
         .registerConfigurationMessage("sync_backpacks", MessageSyncBackpacks.class, MessageSyncBackpacks.STREAM_CODEC, MessageSyncBackpacks::handle, () -> List.of(BackpackManager.instance().getSyncMessage()))
         .registerPlayMessage("open_backpack", MessageOpenBackpack.class, MessageOpenBackpack.STREAM_CODEC, MessageOpenBackpack::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("pickpocket_backpack", MessagePickpocketBackpack.class, MessagePickpocketBackpack.STREAM_CODEC, MessagePickpocketBackpack::handle, PacketFlow.SERVERBOUND)

@@ -93,8 +93,8 @@ public class FunnellingMenu extends AugmentSettingsMenu
                 .setLabel(ACTIVE_LABEL)
                 .setTooltip(btn -> Tooltip.create(selectedOnly ? ACTIVATED_ONLY_LABEL : SHOW_ALL_LABEL))
                 .setTexture(new WidgetSprites(
-                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+                    Utils.rl("backpack/button_enabled"),
+                    Utils.rl("backpack/button_enabled_focused")
                 )).build());
             layout.addChild(header);
 

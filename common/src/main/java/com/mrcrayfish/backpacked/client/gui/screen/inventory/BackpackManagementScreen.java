@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -22,14 +23,14 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     private static final Component LABEL_NO_BACKPACK_PLURAL = Component.translatable("backpacked.gui.no_backpack_equipped.plural");
     private static final Component LABEL_OPEN_BACKPACK_INVENTORY = Component.translatable("backpacked.gui.open_backpack_inventory");
 
-    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final ResourceLocation INVENTORY_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final ResourceLocation LABEL_WARNING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
-    private static final ResourceLocation ARROW_RIGHT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_right");
+    private static final ResourceLocation BACKPACK_BACKGROUND = Utils.rl("backpack/background");
+    private static final ResourceLocation BACKPACK_SLOT = Utils.rl("backpack/slot");
+    private static final ResourceLocation INVENTORY_BACKGROUND = Utils.rl("backpack/inventory");
+    private static final ResourceLocation INVENTORY_SLOT = Utils.rl("backpack/inventory_slot");
+    private static final ResourceLocation LABEL_BACKGROUND = Utils.rl("backpack/label");
+    private static final ResourceLocation LABEL_WARNING_BACKGROUND = Utils.rl("backpack/label_warning");
+    private static final ResourceLocation CHECKERS = Utils.rl("backpack/checkers");
+    private static final ResourceLocation ARROW_RIGHT = Utils.rl("backpack/arrow_right");
 
     private @Nullable FrameworkButton backButton;
 

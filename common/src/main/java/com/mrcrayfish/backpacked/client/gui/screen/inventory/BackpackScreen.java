@@ -79,20 +79,20 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component NOT_ENOUGH_EXP = Component.translatable("backpacked.gui.not_enough_exp");
     private static final Component MISSING_ITEMS = Component.translatable("backpacked.gui.missing_items");
 
-    private static final ResourceLocation BACKPACK_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final ResourceLocation BACKPACK_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final ResourceLocation INVENTORY_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final ResourceLocation INVENTORY_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final ResourceLocation LABEL_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final ResourceLocation ICON_MANAGEMENT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/management");
-    private static final ResourceLocation ICON_CUSTOMISE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
-    private static final ResourceLocation ICON_CONFIG = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
-    private static final ResourceLocation ICON_PREVIOUS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
-    private static final ResourceLocation ICON_NEXT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
-    private static final ResourceLocation ICON_RENAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
-    private static final ResourceLocation ICON_SORT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
-    private static final ResourceLocation ICON_LOCK = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final ResourceLocation BACKPACK_BACKGROUND = Utils.rl("backpack/background");
+    private static final ResourceLocation BACKPACK_SLOT = Utils.rl("backpack/slot");
+    private static final ResourceLocation INVENTORY_SPRITE = Utils.rl("backpack/inventory");
+    private static final ResourceLocation INVENTORY_SLOT = Utils.rl("backpack/inventory_slot");
+    private static final ResourceLocation LABEL_BACKGROUND = Utils.rl("backpack/label");
+    private static final ResourceLocation ICON_MANAGEMENT = Utils.rl("backpack/management");
+    private static final ResourceLocation ICON_CUSTOMISE = Utils.rl("backpack/customise");
+    private static final ResourceLocation ICON_CONFIG = Utils.rl("backpack/config");
+    private static final ResourceLocation ICON_PREVIOUS = Utils.rl("backpack/previous");
+    private static final ResourceLocation ICON_NEXT = Utils.rl("backpack/next");
+    private static final ResourceLocation ICON_RENAME = Utils.rl("backpack/rename");
+    private static final ResourceLocation ICON_SORT = Utils.rl("backpack/sort");
+    private static final ResourceLocation ICON_LOCK = Utils.rl("backpack/lock");
+    private static final ResourceLocation CHECKERS = Utils.rl("backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
         Utils.rl("backpack/augment_toggle_on"),
@@ -106,13 +106,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         Utils.rl("backpack/augment_settings_focused")
     );
     private static final WidgetSprites BUTTON_TEXTURES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+        Utils.rl("backpack/button_enabled"),
+        Utils.rl("backpack/button_disabled"),
+        Utils.rl("backpack/button_enabled_focused")
     );
     private static final WidgetSprites DISABLED_BUTTON_TEXTURES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled")
+        Utils.rl("backpack/button_disabled"),
+        Utils.rl("backpack/button_disabled")
     );
 
     private static final int TITLE_LABEL_WIDTH = 110;

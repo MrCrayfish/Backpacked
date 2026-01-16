@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class CraftItemChallenge extends Challenge
 {
     public static final ChallengeSerializer<CraftItemChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "craft_item"),
+        Utils.rl("craft_item"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(CraftedItemPredicate.CODEC.optionalFieldOf("crafted_item").forGetter(challenge -> {
                 return challenge.predicate;

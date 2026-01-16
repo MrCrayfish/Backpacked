@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -29,7 +30,7 @@ import java.util.Optional;
 public class MineBlockChallenge extends Challenge
 {
     public static final ChallengeSerializer<MineBlockChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "mine_block"),
+        Utils.rl("mine_block"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(BlockSnapshotPredicate.CODEC.optionalFieldOf("mined_block").forGetter(challenge -> {
                 return challenge.block;

@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -9,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ExperienceCostTooltip implements ClientTooltipComponent
 {
-    private static final ResourceLocation ICON_ORB = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
+    private static final ResourceLocation ICON_ORB = Utils.rl("backpack/exp_orb");
 
     private final Component label;
 

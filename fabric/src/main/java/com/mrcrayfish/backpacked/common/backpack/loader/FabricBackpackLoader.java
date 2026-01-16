@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.common.backpack.loader;
 
 import com.google.gson.JsonElement;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +18,7 @@ import java.util.Objects;
  */
 public class FabricBackpackLoader extends BackpackLoader implements IdentifiableResourceReloadListener
 {
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_loader");
+    public static final ResourceLocation ID = Utils.rl("backpack_loader");
 
     public FabricBackpackLoader(HolderLookup.Provider provider)
     {

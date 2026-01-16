@@ -11,6 +11,7 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
@@ -26,7 +27,7 @@ import java.util.Optional;
 public class TravelDistanceChallenge extends Challenge
 {
     public static final ChallengeSerializer<TravelDistanceChallenge> SERIALIZER = new ChallengeSerializer<>(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "travel_distance"),
+        Utils.rl("travel_distance"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).optionalFieldOf("movement").forGetter(challenge -> {
                 return challenge.movementTypes;

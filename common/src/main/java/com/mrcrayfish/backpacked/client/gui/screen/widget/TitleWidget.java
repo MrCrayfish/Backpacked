@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
 
 public class TitleWidget extends AbstractWidget
 {
-    private static final ResourceLocation CHECKERS = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final ResourceLocation CHECKERS = Utils.rl("backpack/checkers");
 
     private final Supplier<FormattedCharSequence> display;
     private final Font font;

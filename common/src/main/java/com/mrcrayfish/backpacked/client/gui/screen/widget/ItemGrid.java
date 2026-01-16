@@ -35,12 +35,12 @@ import java.util.function.Supplier;
 
 public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelectionList
 {
-    private static final ResourceLocation LIST_BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/background");
+    private static final ResourceLocation LIST_BACKGROUND_SPRITE = Utils.rl("backpack/list/background");
     private static final StateSprites ITEM_SPRITES = new StateSprites(
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_hovered"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected"),
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list/item_selected")
+        Utils.rl("backpack/list/item"),
+        Utils.rl("backpack/list/item_hovered"),
+        Utils.rl("backpack/list/item_selected"),
+        Utils.rl("backpack/list/item_selected")
     );
     private static final ScrollerSprites SCROLLER_SPRITES = ScrollerSprites.of(
         Utils.rl("backpack/list/scroll_bar"),

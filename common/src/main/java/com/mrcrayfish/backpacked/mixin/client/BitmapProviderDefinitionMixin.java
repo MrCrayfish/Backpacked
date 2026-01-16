@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.mixin.client;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.font.providers.BitmapProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +23,7 @@ public abstract class BitmapProviderDefinitionMixin
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void backpacked$DefinitionInit(ResourceLocation file, int height, int ascent, int[][] map, CallbackInfo ci)
     {
-        this.backpacked$removeOnePixel = file.equals(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "gui/icons.png"));
+        this.backpacked$removeOnePixel = file.equals(Utils.rl("gui/icons.png"));
     }
 
     /* Thirdly, while init the glyph, remove the extra pixel space that is added to the real width */
