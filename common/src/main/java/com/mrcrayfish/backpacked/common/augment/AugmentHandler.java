@@ -127,8 +127,12 @@ public class AugmentHandler
         ItemStack stack = arrow.getPickupItemStackOrigin().copy();
         FunnelResult result = funnelItemStackIntoBackpack(player, stack);
 
-        // If entire stack was funnelled, return true and prevent vanilla handling
-        if(!result.hasRemaining())
+        // Give logic back to vanilla if a result is ignored
+        if(result == FunnelResult.IGNORE)
+            return false;
+
+        // If the entire stack was funnelled, return true and prevent vanilla handling
+        if(!result.hasRemaining() && result.funnelCount() > 0)
             return true;
 
         // Rare case the stack is partially funnelled. Arrows in vanilla have a count of 1 but some mods might do weird stuff
