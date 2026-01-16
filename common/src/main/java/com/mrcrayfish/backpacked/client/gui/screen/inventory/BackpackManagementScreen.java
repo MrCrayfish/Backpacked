@@ -136,9 +136,9 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     @Override
     public boolean keyPressed(int key, int scanCode, int action)
     {
-        if(Keys.KEY_BACKPACK.matches(key, scanCode))
+        if(Keys.KEY_BACKPACK.matches(key, scanCode) && this.menu.getContainer().hasAnyMatching(stack -> !stack.isEmpty()))
         {
-            this.onClose();
+            Network.getPlay().sendToServer(new MessageOpenBackpack());
             return true;
         }
         if(Keys.KEY_MANAGEMENT.matches(key, scanCode))

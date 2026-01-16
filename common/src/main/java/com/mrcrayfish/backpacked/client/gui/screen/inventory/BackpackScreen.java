@@ -603,6 +603,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             this.onClose();
             return true;
         }
+        if(!this.hasPopupMenu() && this.owner && Keys.KEY_MANAGEMENT.matches(key, scanCode))
+        {
+            Network.getPlay().sendToServer(new MessageRequestManagement());
+            return true;
+        }
         return super.keyPressed(key, scanCode, action);
     }
 
