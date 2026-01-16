@@ -1,14 +1,13 @@
 package com.mrcrayfish.backpacked.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
-import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
-import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderState;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.PlayerDisplay;
@@ -17,6 +16,8 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.Alignment;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.CustomScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DropdownMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item.CheckboxItem;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.network.Network;
@@ -121,6 +122,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         Comparator<BackpackModelItem> compareLabel = Comparator.comparing(e -> e.label.getString());
         List<CosmeticItem> items = ClientRegistry.instance().getBackpacks()
                 .stream()
+                .filter(backpack -> !BackpackHelper.isCosmeticDisabled(backpack.getId()))
                 .map(backpack -> new BackpackModelItem(backpack, progressMap, completionMap))
                 .sorted(compareUnlock.thenComparing(compareLabel))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -475,6 +477,12 @@ public class CustomiseBackpackScreen extends CustomScreen
         @Override
         protected void onMouseHover(GuiGraphics graphics, Minecraft mc, int x, int y, int mouseX, int mouseY)
         {
+            if(Minecraft.getInstance().hasControlDown())
+            {
+                graphics.setTooltipForNextFrame(mc.font, Component.literal(this.backpack.getId().toString()), mouseX, mouseY);
+                return;
+            }
+
             if(!this.backpack.isUnlocked(mc.player))
             {
                 int progressBarX = x + 24;
@@ -491,6 +499,13 @@ public class CustomiseBackpackScreen extends CustomScreen
         @Override
         protected boolean onMouseClicked(MouseButtonEvent event, Minecraft mc)
         {
+            if(Minecraft.getInstance().hasControlDown())
+            {
+                Minecraft.getInstance().keyboardHandler.setClipboard(this.backpack.getId().toString());
+                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Copied " + this.backpack.getId() + " to the clipboard"));
+                return true;
+            }
+
             if(event.button() == 0 && this.backpack.isUnlocked(mc.player))
             {
                 if(!CustomiseBackpackScreen.this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(this.cosmeticId))

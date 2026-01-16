@@ -16,6 +16,7 @@ import com.mrcrayfish.backpacked.util.InventoryHelper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -343,5 +344,10 @@ public class BackpackHelper
                 return null;
             return new InventoryAugmentSnapshot.Two<>(inventory, firstAugment, secondAugment);
         }).filter(Objects::nonNull).toList();
+    }
+
+    public static boolean isCosmeticDisabled(Identifier id)
+    {
+        return Config.BACKPACK.cosmetics.disabledCosmetics.get().contains(id.toString());
     }
 }

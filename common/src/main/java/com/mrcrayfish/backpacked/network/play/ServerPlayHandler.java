@@ -71,6 +71,9 @@ public class ServerPlayHandler
             if(backpack == null)
                 return;
 
+            if(BackpackHelper.isCosmeticDisabled(backpack.getId()))
+                return;
+
             if(!backpack.isUnlocked(player) && !Config.BACKPACK.cosmetics.unlockAllCosmetics.get())
                 return;
         }
@@ -179,6 +182,8 @@ public class ServerPlayHandler
         Map<Identifier, Double> completionMap = new HashMap<>();
         UnlockManager.getTracker(player).ifPresent(unlockTracker -> {
             for(Backpack backpack : BackpackManager.instance().getBackpacks()) {
+                if(BackpackHelper.isCosmeticDisabled(backpack.getId()))
+                    continue;
                 if(!unlockTracker.isUnlocked(backpack.getId())) {
                     unlockTracker.getProgressTracker(backpack.getId()).ifPresent(progressTracker -> {
                         labelMap.put(backpack.getId(), progressTracker.getDisplayComponent());
