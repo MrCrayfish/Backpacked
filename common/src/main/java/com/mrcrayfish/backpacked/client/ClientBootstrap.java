@@ -18,7 +18,10 @@ public class ClientBootstrap
 {
     public static void earlyInit()
     {
-        InputEvents.REGISTER_KEY_MAPPING.register(consumer -> consumer.accept(Keys.KEY_BACKPACK));
+        InputEvents.REGISTER_KEY_MAPPING.register(consumer -> {
+            consumer.accept(Keys.KEY_BACKPACK);
+            consumer.accept(Keys.KEY_MANAGEMENT);
+        });
         RendererTypes.register(DefaultRenderer.TYPE);
         RendererTypes.register(AdvancedRenderer.TYPE);
         FunctionTypes.register(PushMatrixFunction.TYPE);

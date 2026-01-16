@@ -141,6 +141,11 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
             this.onClose();
             return true;
         }
+        if(Keys.KEY_MANAGEMENT.matches(key, scanCode))
+        {
+            this.onClose();
+            return true;
+        }
         return super.keyPressed(key, scanCode, action);
     }
 

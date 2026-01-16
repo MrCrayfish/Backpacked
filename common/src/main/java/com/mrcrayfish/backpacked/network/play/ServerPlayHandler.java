@@ -201,6 +201,8 @@ public class ServerPlayHandler
         context.getPlayer().ifPresent(player -> {
             if(player.containerMenu instanceof BackpackContainerMenu menu) {
                 menu.openManagement((ServerPlayer) player);
+            } else {
+                BackpackItem.openBackpackManagement((ServerPlayer) player, true);
             }
         });
     }
