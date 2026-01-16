@@ -114,8 +114,8 @@ public class ClientBackpacked
 
     private void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
-        event.registerBlockEntityRenderer(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_ACCESS.get(), BackpackDockRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_SHELF.get(), ShelfRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_DOCK.get(), BackpackDockRenderer::new);
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
     }
 

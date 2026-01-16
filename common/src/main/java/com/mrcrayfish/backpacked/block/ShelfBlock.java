@@ -194,7 +194,7 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
     {
-        return level.isClientSide() ? ticker(type, ModBlockEntities.SHELF.get(), ShelfBlockEntity::clientTick) : null;
+        return level.isClientSide() ? ticker(type, ModBlockEntities.BACKPACK_SHELF.get(), ShelfBlockEntity::clientTick) : null;
     }
 
     @Nullable
