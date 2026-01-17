@@ -25,7 +25,7 @@ public class TextInputMenu extends PopupMenu
         super(handler);
         this.setAlignment(Alignment.CENTERED);
         this.setBackground(Utils.rl("augment/menu_background"));
-        TitleWidget title = new TitleWidget(Component.literal("Rename"), Minecraft.getInstance().font);
+        TitleWidget title = new TitleWidget(Component.translatable("backpacked.gui.rename"), Minecraft.getInstance().font);
         title.setWidth(WIDTH);
         this.layout.addChild(title);
         this.layout.addChild(Divider.horizontal(WIDTH).colour(0xFFE0CDB7));
@@ -41,7 +41,7 @@ public class TextInputMenu extends PopupMenu
         );
         this.layout.addChild(BackpackButtons.builder()
             .setSize(WIDTH / 3, 18)
-            .setLabel(Component.literal("Save"))
+            .setLabel(Component.translatable("backpacked.button.save"))
             .setAction(btn -> {
                 onSave.accept(editBox.getText());
             }).build(), LayoutSettings::alignHorizontallyRight);
