@@ -84,7 +84,7 @@ public class Backpacked
         event.enqueueWork(Bootstrap::init);
     }
 
-    private void onGatherData(GatherDataEvent.Server event)
+    private void onGatherData(GatherDataEvent.Client event)
     {
         event.createProvider(LootTableGen::new);
         event.createProvider(RecipeGen.Runner::new);
