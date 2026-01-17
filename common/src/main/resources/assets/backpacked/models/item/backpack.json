@@ -2,5 +2,14 @@
     "parent": "item/generated",
     "textures": {
         "layer0": "backpacked:item/backpack"
+    },
+    "display": {
+        "thirdperson_righthand": {},
+        "firstperson_righthand": {},
+        "ground": {},
+        "gui": {},
+        "head": {},
+        "fixed": {},
+        "on_shelf": {}
     }
 }

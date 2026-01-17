@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
@@ -83,7 +84,13 @@ public class BackpackItemSpecialRenderer implements SpecialModelRenderer<Backpac
     }
 
     @Override
-    public void getExtents(Consumer<Vector3fc> consumer) {}
+    public void getExtents(Consumer<Vector3fc> consumer)
+    {
+        // Restores the old offset for items rendered on the ground
+        // This means the backpack will match the Blockbench preview
+        float offset = 0.3125F;
+        consumer.accept(new Vector3f(0, offset, 0));
+    }
 
     @Override
     public @Nullable CosmeticData extractArgument(ItemStack stack)
@@ -94,7 +101,7 @@ public class BackpackItemSpecialRenderer implements SpecialModelRenderer<Backpac
         if(backpack == null)
             return null;
 
-        // TODO This is safe for now, check back on this in a future update
+        // TODO This is safe for now since it runs on main thread, check back on this in a future update
         Minecraft minecraft = Minecraft.getInstance();
         float partialTick = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
         int tickCount = minecraft.player != null ? minecraft.player.tickCount : 0;
