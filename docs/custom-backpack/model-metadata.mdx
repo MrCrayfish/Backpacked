@@ -57,7 +57,7 @@ This is an object that holds the display transforms for the model. This is used 
 
 #### How to Configure
 
-Open Blocbench and load the project for your backpack model. Disable the visibility of the `Straps` and `Player Model`, so only the `Backpack` elements are visible. Navigate to the **Display** tab at the top right, and you will see a **Slot** section in the leftside bar. This section contains different scenarios where the backpack may be drawn. If you're using the backpack template, this will come preconfigured with default settings. Go through all the different slot options (**Thirdperson Right**, **Ground**, **GUI**, etc) and tweak them as you need.
+Open Blockbench and load the project for your backpack model. Disable the visibility of the `Straps` and `Player Model` groups, so only the `Backpack` group is visible. Navigate to the **Display** tab at the top right, and you will see a **Slot** section in the leftside bar. This section contains different scenarios where the backpack may be drawn. If you're using the backpack template, this will come preconfigured with default settings. Go through all the different slot options (**Thirdperson Right**, **Ground**, **GUI**, etc) and tweak them as you need.
 
 :::info
 It is not necessary to configure the **Thridperson Left** and **Firstperson Left** as these slots will be automatically inferred by the **Thridperson Right** and **Firstperson Right** slots. To ensure they are not configured, press the reset button for each transform (Rotation, Translation, and Scale) while selected on **Thridperson Left** slot, and repeat for the **Firstperson Left** slot. The backpack template will not have these slots configured by default.
@@ -67,7 +67,7 @@ It is not necessary to configure the **Thridperson Left** and **Firstperson Left
 
 Once you've configured all your display transforms, export your model as a `Block/Item Model` to a temporary file (this can be deleted afterwards). Open the newly exported file (which should be a JSON file), and locate the `display` object. Copy the entire `display` object and replace the `display` object in your backpacks meta file.
 
-Before replacing:
+**Before replacing:**
 ```json title="<your_backpack_name>.json"
 {
     "shelf_offset": [0, 0, 0],
@@ -77,7 +77,7 @@ Before replacing:
 }
 ```
 
-After replacing (your values may be different):
+**After replacing (your values may be different):**
 ```json title="<your_backpack_name>.json"
 {
     "shelf_offset": [0, 0, 0],
