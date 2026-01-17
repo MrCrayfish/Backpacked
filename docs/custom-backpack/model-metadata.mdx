@@ -22,14 +22,12 @@ For clarification, the directory is named `backpacked` and not `backpack`. This 
 
 In the model meta directory, as created in the previous section, create a new JSON file with name of your backpack. The name must be the same as when you [registered the backpack](./register-the-backpack.md#registering), e.g. `<your_backpack_name>.json`. 
 
-Inside the newly created file, copy and paste in the following contents:
+Inside the newly created file, copy and paste in the following contents. The will act as a template for your backpack.
 ```json title="<your_backpack_name>.json"
 {
     "shelf_offset": [0, 0, 0],
-    "gui_display": {
-        "rotation": [0, 0, 0],
-        "translation": [0, 0, 0],
-        "scale": [1.0, 1.0, 1.0]
+    "display": {
+        ...
     }
 }
 ```
@@ -51,33 +49,75 @@ Inside the newly created file, copy and paste in the following contents:
 
 <div className="code-block">
 
-### Property: `gui_display`
+### Property: `display`
 
-This is an object that holds a GUI transform. This is applied when rendering the backpack model in list of available cosmetics.
-    - `rotation` is an array that contains a local XYZ rotation for the model
-    - `translation` is an array that contains a local XYZ translation for the model.
-    - `scale` is an array that contains an XYZ scale for the model.
+This is an object that holds the display transforms for the model. This is used when rendering the backpack in the customisation menu and when rendering the backpack as an item. Luckily this is very easy to configure since it is exactly the same as configuring the display transforms for an item.
 
 ![Test](/img/breakdown_gui_display.png)
 
 #### How to Configure
 
-Open Blocbench and load the project for your backpack model. Disable the visibility of the `Straps` and `Player Model`, so only the `Backpack` elements are visible. Navigate to the **Display** tab at the top right, and under the **Slot** in the left sidebar, click the **GUI** icon. Configure your backpack to fit nicely into the GUI slot preview. Try to fill it without going outside the slot borders and set the `X` and `Y` rotation to `30` for convention. Then simply copy the values shown in Bloclbench to the `gui_display` property as shown below.
+Open Blocbench and load the project for your backpack model. Disable the visibility of the `Straps` and `Player Model`, so only the `Backpack` elements are visible. Navigate to the **Display** tab at the top right, and you will see a **Slot** section in the leftside bar. This section contains different scenarios where the backpack may be drawn. If you're using the backpack template, this will come preconfigured with default settings. Go through all the different slot options (**Thirdperson Right**, **Ground**, **GUI**, etc) and tweak them as you need.
 
-These display settings:
+:::info
+It is not necessary to configure the **Thridperson Left** and **Firstperson Left** as these slots will be automatically inferred by the **Thridperson Right** and **Firstperson Right** slots. To ensure they are not configured, press the reset button for each transform (Rotation, Translation, and Scale) while selected on **Thridperson Left** slot, and repeat for the **Firstperson Left** slot. The backpack template will not have these slots configured by default.
+:::
 
-![Test](/img/display_settings.png)
+![Test](/img/configured_displays.png)
 
-Converts into:
-```json
+Once you've configured all your display transforms, export your model as a `Block/Item Model` to a temporary file (this can be deleted afterwards). Open the newly exported file (which should be a JSON file), and locate the `display` object. Copy the entire `display` object and replace the `display` object in your backpacks meta file.
+
+Before replacing:
+```json title="<your_backpack_name>.json"
 {
-    "gui_display": {
-        "rotation": [30, 30, 0],
-        "translation": [-1.75, 5.25, 0],
-        "scale": [1.4, 1.4, 1.4]
+    "shelf_offset": [0, 0, 0],
+    "display": {
+        ...
     }
 }
 ```
+
+After replacing (your values may be different):
+```json title="<your_backpack_name>.json"
+{
+    "shelf_offset": [0, 0, 0],
+    "display": {
+		"thirdperson_righthand": {
+			"rotation": [75, -45, 0],
+			"translation": [0.75, 5.75, 3.25]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, -45, 0],
+			"translation": [-0.5, 4.5, 0.5],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 4.75, -2]
+		},
+		"gui": {
+			"rotation": [30, 35, 0],
+			"translation": [-1.25, 4.25, 0],
+			"scale": [1.1, 1.1, 1.1]
+		},
+		"head": {
+			"rotation": [0, -180, 0],
+			"translation": [0, 14.5, 2.5]
+		},
+		"fixed": {
+			"rotation": [0, -180, 0],
+			"translation": [0, 3.5, 1]
+		},
+		"on_shelf": {
+			"translation": [0, 1.25, -4]
+		}
+	}
+}
+```
+
+:::note
+Please note that `on_shelf` property is only applicable for addons in Minecraft 1.21.9 or above; however it can be safely left in the file even if on a lower version.
+:::
+
 </div>
 
 ## Advanced Rendering 
