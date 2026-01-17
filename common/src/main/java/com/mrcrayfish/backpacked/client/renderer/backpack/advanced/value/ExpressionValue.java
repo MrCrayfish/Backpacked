@@ -30,7 +30,7 @@ public record ExpressionValue(List<Operation> operations) implements Value
         {
             result = op.operator().function().apply(result, op.source().get(context));
         }
-        return 0;
+        return result;
     }
 
     public record Operation(Value source, Operator operator)
