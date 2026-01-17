@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;

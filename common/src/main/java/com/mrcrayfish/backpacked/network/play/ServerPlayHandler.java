@@ -26,7 +26,6 @@ import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import com.mrcrayfish.framework.api.network.ConfigurationMessageContext;
 import com.mrcrayfish.framework.api.network.PlayMessageContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;

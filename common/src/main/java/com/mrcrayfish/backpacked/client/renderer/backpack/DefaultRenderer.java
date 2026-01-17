@@ -1,12 +1,10 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack;
 
 import com.mojang.serialization.MapCodec;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.StandaloneModels;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
-import net.minecraft.resources.Identifier;
 
 public class DefaultRenderer implements BackpackRenderer
 {

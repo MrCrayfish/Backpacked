@@ -6,9 +6,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.LevelDataState;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.level.Level;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public record LevelDataValue(Property property) implements Value

@@ -6,7 +6,6 @@ import com.mrcrayfish.framework.api.network.ConfigurationMessageContext;
 import com.mrcrayfish.framework.api.network.FrameworkResponse;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
 
 /**
  * Author: MrCrayfish

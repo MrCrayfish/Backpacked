@@ -2,12 +2,10 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.BaseFunction;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.resources.Identifier;
 
 import java.util.List;
 

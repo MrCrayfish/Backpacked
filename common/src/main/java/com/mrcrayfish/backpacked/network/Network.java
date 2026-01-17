@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.network;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.backpacked.util.Utils;
@@ -8,7 +7,6 @@ import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.FrameworkNetwork;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.resources.Identifier;
 
 import java.util.List;
 

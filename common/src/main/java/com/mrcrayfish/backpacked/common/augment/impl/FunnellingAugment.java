@@ -16,7 +16,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.*;
+import java.util.Locale;
 
 public record FunnellingAugment(ItemCollection filters, Mode mode) implements Augment<FunnellingAugment>, FilterableItems<FunnellingAugment>
 {

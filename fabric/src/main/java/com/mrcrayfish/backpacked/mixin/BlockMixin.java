@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import net.minecraft.core.BlockPos;

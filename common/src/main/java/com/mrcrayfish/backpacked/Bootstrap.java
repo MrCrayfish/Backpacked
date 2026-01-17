@@ -7,10 +7,8 @@ import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import com.mrcrayfish.backpacked.common.tracker.impl.CraftingProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.impl.UniqueCraftingProgressTracker;
 import com.mrcrayfish.backpacked.core.ModCommands;
-import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.framework.api.FrameworkAPI;
 
 /**
  * Author: MrCrayfish

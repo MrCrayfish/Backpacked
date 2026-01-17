@@ -1,10 +1,12 @@
 package com.mrcrayfish.backpacked.client.augment.menu;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.client.LabelAndDescription;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsMenu;
-import com.mrcrayfish.backpacked.client.gui.screen.widget.*;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.BackpackButtons;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.Divider;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.ItemGrid;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.TitleWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.HopperBridgeAugment;
 import com.mrcrayfish.backpacked.util.ScreenUtil;

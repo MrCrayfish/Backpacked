@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.Icons;
 import com.mrcrayfish.backpacked.client.augment.AugmentHolder;
 import com.mrcrayfish.backpacked.client.augment.AugmentSettingsFactories;

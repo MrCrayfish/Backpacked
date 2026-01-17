@@ -2,11 +2,9 @@ package com.mrcrayfish.backpacked.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.client.StandaloneModels;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
-import com.mrcrayfish.backpacked.client.backpack.ModelMeta;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderer;
 import com.mrcrayfish.backpacked.client.renderer.backpack.RenderMode;

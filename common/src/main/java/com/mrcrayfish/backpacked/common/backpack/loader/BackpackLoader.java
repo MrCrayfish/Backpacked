@@ -1,6 +1,8 @@
 package com.mrcrayfish.backpacked.common.backpack.loader;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mrcrayfish.backpacked.Constants;
@@ -10,8 +12,8 @@ import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;

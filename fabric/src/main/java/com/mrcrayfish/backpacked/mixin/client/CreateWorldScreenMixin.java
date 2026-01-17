@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.packs.AddonRepositorySource;
 import com.mrcrayfish.backpacked.packs.PackRepositoryHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldCallback;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContextMapper;

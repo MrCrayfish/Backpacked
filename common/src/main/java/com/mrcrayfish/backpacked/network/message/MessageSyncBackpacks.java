@@ -8,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Author: MrCrayfish

@@ -2,8 +2,8 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
+import com.mrcrayfish.backpacked.client.renderer.backpack.LivingEntityDataState;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.util.StringRepresentable;
 

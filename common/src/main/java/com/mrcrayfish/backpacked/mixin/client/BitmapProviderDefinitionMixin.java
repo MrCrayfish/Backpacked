@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.mixin.client;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.font.providers.BitmapProvider;
 import net.minecraft.resources.Identifier;

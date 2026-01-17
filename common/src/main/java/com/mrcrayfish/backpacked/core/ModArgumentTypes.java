@@ -1,12 +1,10 @@
 package com.mrcrayfish.backpacked.core;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.command.arguments.BackpackArgument;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish

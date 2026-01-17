@@ -6,8 +6,6 @@ import com.mrcrayfish.backpacked.common.CostModel;
 import com.mrcrayfish.backpacked.common.InterpolateFunction;
 import com.mrcrayfish.backpacked.common.SelectionFunction;
 import com.mrcrayfish.framework.api.sync.DataSerializer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

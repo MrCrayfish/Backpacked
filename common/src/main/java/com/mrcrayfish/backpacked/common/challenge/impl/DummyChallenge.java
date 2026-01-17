@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
 import com.mojang.serialization.MapCodec;
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;

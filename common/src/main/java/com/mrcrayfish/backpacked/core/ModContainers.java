@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.core;
 
-import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
@@ -9,7 +8,6 @@ import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerDat
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MenuType;
 
 /**
