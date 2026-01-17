@@ -13,10 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.client.renderer.special.BackpackItemSpecialRenderer;
-import com.mrcrayfish.backpacked.core.ModBlockEntities;
-import com.mrcrayfish.backpacked.core.ModBlocks;
-import com.mrcrayfish.backpacked.core.ModContainers;
-import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
+import com.mrcrayfish.backpacked.core.*;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -27,6 +24,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.player.PlayerModel;
@@ -61,6 +59,7 @@ public class ClientHandler implements ClientModInitializer
         ParticleRendererRegistry.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
         SpecialModelRenderers.ID_MAPPER.put(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
         BlockRenderLayerMap.putBlock(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
+        KeyMapping.Category.register(ModKeyMappings.CATEGORY.id());
 
         // Add backpack layers for player and wandering trader
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {

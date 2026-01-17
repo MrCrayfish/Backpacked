@@ -87,6 +87,7 @@ public class ClientBackpacked
         bus.addListener(this::onRegisterParticleGroup);
         bus.addListener(this::onRegisterPipRenderers);
         bus.addListener(this::onRegisterSpecialRenderers);
+        bus.addListener(this::onRegisterKeyMappings);
         NeoForge.EVENT_BUS.addListener(this::onRenderLevelStage);
     }
 
@@ -254,5 +255,10 @@ public class ClientBackpacked
     private void onRegisterSpecialRenderers(RegisterSpecialModelRendererEvent event)
     {
         event.register(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
+    }
+
+    private void onRegisterKeyMappings(RegisterKeyMappingsEvent event)
+    {
+        event.registerCategory(ModKeyMappings.CATEGORY);
     }
 }

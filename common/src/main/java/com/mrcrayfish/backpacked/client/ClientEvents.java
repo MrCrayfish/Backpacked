@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.network.message.MessagePickpocketBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.event.client.FrameworkClientConnectionEvents;
 import com.mrcrayfish.framework.api.event.client.FrameworkClientTickEvents;
@@ -57,6 +58,10 @@ public class ClientEvents
             if(ModKeyMappings.KEY_BACKPACK.isDown() && ModKeyMappings.KEY_BACKPACK.consumeClick())
             {
                 Network.getPlay().sendToServer(new MessageOpenBackpack());
+            }
+            if(ModKeyMappings.KEY_MANAGEMENT.isDown() && ModKeyMappings.KEY_MANAGEMENT.consumeClick())
+            {
+                Network.getPlay().sendToServer(new MessageRequestManagement());
             }
         }
     }
