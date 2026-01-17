@@ -14,6 +14,7 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.Scene;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.renderer.StandaloneModelRenderer;
@@ -33,7 +34,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class VillagerBackpackLayer extends RenderLayer<VillagerRenderState, VillagerModel>
 {
-    public static final Identifier WANDERING_BACKPACK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "wandering_bag");
+    public static final Identifier WANDERING_BACKPACK = Utils.id("wandering_bag");
 
     private final ItemStack displayStack = new ItemStack(ModItems.BACKPACK.get());
     private final ItemModelResolver itemModelResolver;

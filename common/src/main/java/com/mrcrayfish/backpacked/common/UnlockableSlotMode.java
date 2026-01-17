@@ -2,14 +2,15 @@ package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.SpriteProvider;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
 
 public enum UnlockableSlotMode implements SpriteProvider
 {
-    ENABLED(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_enabled"), ChatFormatting.GREEN, "backpacked.unlockable_slot_mode.enabled"),
-    PURCHASABLE(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_purchasable"), ChatFormatting.GOLD, "backpacked.unlockable_slot_mode.purchasable"),
-    DISABLED(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_disabled"), ChatFormatting.RED, "backpacked.unlockable_slot_mode.disabled");
+    ENABLED(Utils.id("backpack/lock_enabled"), ChatFormatting.GREEN, "backpacked.unlockable_slot_mode.enabled"),
+    PURCHASABLE(Utils.id("backpack/lock_purchasable"), ChatFormatting.GOLD, "backpacked.unlockable_slot_mode.purchasable"),
+    DISABLED(Utils.id("backpack/lock_disabled"), ChatFormatting.RED, "backpacked.unlockable_slot_mode.disabled");
 
     private final Identifier texture;
     private final ChatFormatting format;

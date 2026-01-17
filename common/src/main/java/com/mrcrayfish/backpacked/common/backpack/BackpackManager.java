@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncBackpacks;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockBackpack;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +22,7 @@ import java.util.Map;
  */
 public final class BackpackManager
 {
-    private static final Identifier FALLBACK_MODEL = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "vintage");
+    private static final Identifier FALLBACK_MODEL = Utils.id("vintage");
     private static Identifier defaultCosmetic;
     private static BackpackManager instance;
 

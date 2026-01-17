@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerDat
 import com.mrcrayfish.backpacked.inventory.container.slot.ConditionalSlot;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class BackpackShelfMenu extends CustomContainerMenu
 {
-    private static final Identifier EMPTY_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_backpack_slot");
+    private static final Identifier EMPTY_SLOT = Utils.id("item/empty_backpack_slot");
     private final Container managementContainer;
     private final Container shelfContainer;
 

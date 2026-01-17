@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -20,13 +21,13 @@ import java.util.function.Consumer;
 public class Stepper extends AbstractWidget
 {
     private static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+        Utils.id("backpack/button_enabled"),
+        Utils.id("backpack/button_disabled"),
+        Utils.id("backpack/button_enabled_focused")
     );
-    private static final Identifier BACKGROUND_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_background");
-    private static final Identifier INCREMENT_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_increment");
-    private static final Identifier DECREMENT_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/stepper_decrement");
+    private static final Identifier BACKGROUND_SPRITE = Utils.id("backpack/stepper_background");
+    private static final Identifier INCREMENT_SPRITE = Utils.id("backpack/stepper_increment");
+    private static final Identifier DECREMENT_SPRITE = Utils.id("backpack/stepper_decrement");
     private static final IntRange DEFAULT_RANGE = new IntRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
 
     private final IntRange range;

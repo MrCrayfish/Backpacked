@@ -5,6 +5,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -29,7 +30,7 @@ import java.util.function.Supplier;
 
 public class PlayerDisplay extends AbstractWidget
 {
-    private static final Identifier FRAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/frame");
+    private static final Identifier FRAME = Utils.id("backpack/frame");
     private static final int FRAME_OFFSET = 4;
 
     private final Player player;

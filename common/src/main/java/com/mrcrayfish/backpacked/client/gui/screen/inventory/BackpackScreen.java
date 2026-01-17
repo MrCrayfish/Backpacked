@@ -79,20 +79,20 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final Component NOT_ENOUGH_EXP = Component.translatable("backpacked.gui.not_enough_exp");
     private static final Component MISSING_ITEMS = Component.translatable("backpacked.gui.missing_items");
 
-    private static final Identifier BACKPACK_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final Identifier BACKPACK_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final Identifier INVENTORY_SPRITE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final Identifier INVENTORY_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final Identifier LABEL_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final Identifier ICON_MANAGEMENT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/management");
-    private static final Identifier ICON_CUSTOMISE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/customise");
-    private static final Identifier ICON_CONFIG = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/config");
-    private static final Identifier ICON_PREVIOUS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/previous");
-    private static final Identifier ICON_NEXT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/next");
-    private static final Identifier ICON_RENAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rename");
-    private static final Identifier ICON_SORT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/sort");
-    private static final Identifier ICON_LOCK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final Identifier CHECKERS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
+    private static final Identifier BACKPACK_BACKGROUND = Utils.id("backpack/background");
+    private static final Identifier BACKPACK_SLOT = Utils.id("backpack/slot");
+    private static final Identifier INVENTORY_SPRITE = Utils.id("backpack/inventory");
+    private static final Identifier INVENTORY_SLOT = Utils.id("backpack/inventory_slot");
+    private static final Identifier LABEL_BACKGROUND = Utils.id("backpack/label");
+    private static final Identifier ICON_MANAGEMENT = Utils.id("backpack/management");
+    private static final Identifier ICON_CUSTOMISE = Utils.id("backpack/customise");
+    private static final Identifier ICON_CONFIG = Utils.id("backpack/config");
+    private static final Identifier ICON_PREVIOUS = Utils.id("backpack/previous");
+    private static final Identifier ICON_NEXT = Utils.id("backpack/next");
+    private static final Identifier ICON_RENAME = Utils.id("backpack/rename");
+    private static final Identifier ICON_SORT = Utils.id("backpack/sort");
+    private static final Identifier ICON_LOCK = Utils.id("backpack/lock");
+    private static final Identifier CHECKERS = Utils.id("backpack/checkers");
 
     private static final WidgetSprites AUGMENT_TOGGLE_SPRITES = new WidgetSprites(
         Utils.id("backpack/augment_toggle_on"),
@@ -106,13 +106,13 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         Utils.id("backpack/augment_settings_focused")
     );
     private static final WidgetSprites BUTTON_TEXTURES = new WidgetSprites(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled"),
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_enabled_focused")
+        Utils.id("backpack/button_enabled"),
+        Utils.id("backpack/button_disabled"),
+        Utils.id("backpack/button_enabled_focused")
     );
     private static final WidgetSprites DISABLED_BUTTON_TEXTURES = new WidgetSprites(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled"),
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/button_disabled")
+        Utils.id("backpack/button_disabled"),
+        Utils.id("backpack/button_disabled")
     );
 
     private static final int TITLE_LABEL_WIDTH = 110;

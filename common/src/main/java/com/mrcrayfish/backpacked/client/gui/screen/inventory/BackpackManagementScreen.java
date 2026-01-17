@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.core.ModKeyMappings;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -24,14 +25,14 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
     private static final Component LABEL_NO_BACKPACK_PLURAL = Component.translatable("backpacked.gui.no_backpack_equipped.plural");
     private static final Component LABEL_OPEN_BACKPACK_INVENTORY = Component.translatable("backpacked.gui.open_backpack_inventory");
 
-    private static final Identifier BACKPACK_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final Identifier BACKPACK_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final Identifier INVENTORY_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final Identifier INVENTORY_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final Identifier LABEL_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final Identifier LABEL_WARNING_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
-    private static final Identifier CHECKERS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
-    private static final Identifier ARROW_RIGHT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_right");
+    private static final Identifier BACKPACK_BACKGROUND = Utils.id("backpack/background");
+    private static final Identifier BACKPACK_SLOT = Utils.id("backpack/slot");
+    private static final Identifier INVENTORY_BACKGROUND = Utils.id("backpack/inventory");
+    private static final Identifier INVENTORY_SLOT = Utils.id("backpack/inventory_slot");
+    private static final Identifier LABEL_BACKGROUND = Utils.id("backpack/label");
+    private static final Identifier LABEL_WARNING_BACKGROUND = Utils.id("backpack/label_warning");
+    private static final Identifier CHECKERS = Utils.id("backpack/checkers");
+    private static final Identifier ARROW_RIGHT = Utils.id("backpack/arrow_right");
 
     private @Nullable FrameworkButton backButton;
 

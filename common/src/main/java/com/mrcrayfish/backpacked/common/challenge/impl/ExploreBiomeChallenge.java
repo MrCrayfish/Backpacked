@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -40,7 +41,7 @@ public class ExploreBiomeChallenge extends Challenge
         return keys.isEmpty() ? DataResult.error(() -> "Must specify at least one biome") : DataResult.success(keys);
     });
     public static final ChallengeSerializer<ExploreBiomeChallenge> SERIALIZER = new ChallengeSerializer<>(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "explore_biome"),
+        Utils.id("explore_biome"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
                 return challenge.biomes;

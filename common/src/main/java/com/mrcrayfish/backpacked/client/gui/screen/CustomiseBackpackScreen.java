@@ -25,6 +25,7 @@ import com.mrcrayfish.backpacked.network.message.MessageBackpackCosmetics;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -56,20 +57,20 @@ import java.util.stream.Collectors;
  */
 public class CustomiseBackpackScreen extends CustomScreen
 {
-    private static final Identifier BACKPACK_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final Identifier LABEL_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label");
-    private static final Identifier CHECKERS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/checkers");
-    private static final Identifier LABEL_WARNING_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/label_warning");
-    private static final Identifier ROUNDED_BOX = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/rounded_box");
-    private static final Identifier LIST_ITEM = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item");
-    private static final Identifier LIST_ITEM_FOCUSED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_focused");
-    private static final Identifier LIST_ITEM_SELECTED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_selected");
-    private static final Identifier LIST_ITEM_LOCKED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/list_item_locked");
-    private static final Identifier ICON_LOCK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final Identifier UNLOCK_PROGRESS_BAR = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar");
-    private static final Identifier UNLOCK_PROGRESS_BAR_INNER = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/unlock_progress_bar_inner");
-    private static final Identifier SETTINGS = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/settings");
-    private static final Identifier ARROW_LEFT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/arrow_left");
+    private static final Identifier BACKPACK_BACKGROUND = Utils.id("backpack/background");
+    private static final Identifier LABEL_BACKGROUND = Utils.id("backpack/label");
+    private static final Identifier CHECKERS = Utils.id("backpack/checkers");
+    private static final Identifier LABEL_WARNING_BACKGROUND = Utils.id("backpack/label_warning");
+    private static final Identifier ROUNDED_BOX = Utils.id("backpack/rounded_box");
+    private static final Identifier LIST_ITEM = Utils.id("backpack/list_item");
+    private static final Identifier LIST_ITEM_FOCUSED = Utils.id("backpack/list_item_focused");
+    private static final Identifier LIST_ITEM_SELECTED = Utils.id("backpack/list_item_selected");
+    private static final Identifier LIST_ITEM_LOCKED = Utils.id("backpack/list_item_locked");
+    private static final Identifier ICON_LOCK = Utils.id("backpack/lock");
+    private static final Identifier UNLOCK_PROGRESS_BAR = Utils.id("backpack/unlock_progress_bar");
+    private static final Identifier UNLOCK_PROGRESS_BAR_INNER = Utils.id("backpack/unlock_progress_bar_inner");
+    private static final Identifier SETTINGS = Utils.id("backpack/settings");
+    private static final Identifier ARROW_LEFT = Utils.id("backpack/arrow_left");
 
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_PARTICLES = Component.translatable("backpacked.button.show_particles");

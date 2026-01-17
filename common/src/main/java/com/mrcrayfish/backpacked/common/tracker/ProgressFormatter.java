@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -27,7 +28,7 @@ public record ProgressFormatter(Identifier id, BiFunction<Integer, Integer, Comp
 
     private static ProgressFormatter register(String name, BiFunction<Integer, Integer, Component> function)
     {
-        Identifier id = Identifier.fromNamespaceAndPath(Constants.MOD_ID, name);
+        Identifier id = Utils.id(name);
         ProgressFormatter formatter = new ProgressFormatter(id, function);
         REGISTERED_FORMATTERS.put(id, formatter);
         return formatter;

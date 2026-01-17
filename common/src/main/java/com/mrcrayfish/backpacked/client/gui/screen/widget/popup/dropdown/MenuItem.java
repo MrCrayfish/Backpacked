@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,8 +16,8 @@ import net.minecraft.resources.Identifier;
 public abstract class MenuItem extends AbstractWidget
 {
     protected static final WidgetSprites SPRITES = new WidgetSprites(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item"),
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/dropdown/menu_item_hovered")
+        Utils.id("backpack/dropdown/menu_item"),
+        Utils.id("backpack/dropdown/menu_item_hovered")
     );
 
     DropdownMenu owner;

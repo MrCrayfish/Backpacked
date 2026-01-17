@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.core;
 
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.Registration;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.ItemLike;
 @RegistryContainer
 public class ModCreativeTabs
 {
-    public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "creative_tab"), builder -> {
+    public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(Utils.id("creative_tab"), builder -> {
         builder.title(Component.translatable("itemGroup." + Constants.MOD_ID));
         builder.icon(() -> new ItemStack(ModItems.BACKPACK.get()));
         builder.displayItems((params, output) -> {

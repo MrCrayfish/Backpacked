@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +25,7 @@ import java.util.Optional;
 public class FeedAnimalChallenge extends Challenge
 {
     public static final ChallengeSerializer<FeedAnimalChallenge> SERIALIZER = new ChallengeSerializer<>(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "feed_animal"),
+        Utils.id("feed_animal"),
         RecordCodecBuilder.mapCodec(builder -> {
             return builder.group(EntityPredicate.CODEC.optionalFieldOf("animal").forGetter(challenge -> {
                 return challenge.entity;

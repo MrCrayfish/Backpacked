@@ -6,6 +6,7 @@ import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockTracker;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.sync.Serializers;
 import com.mrcrayfish.framework.api.sync.SyncedClassKey;
@@ -25,62 +26,62 @@ import java.util.Optional;
 public class ModSyncedDataKeys
 {
     public static final SyncedDataKey<Player, Integer> SELECTED_BACKPACK = SyncedDataKey.builder(SyncedClassKey.PLAYER, Serializers.INTEGER)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "selected_backpack"))
+            .id(Utils.id("selected_backpack"))
             .defaultValueSupplier(() -> 0)
             .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
             .saveToFile()
             .build();
 
     public static final SyncedDataKey<Player, ItemStack> BACKPACK = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.ITEM_STACK)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack"))
+            .id(Utils.id("backpack"))
             .defaultValueSupplier(() -> ItemStack.EMPTY)
             .syncMode(SyncedDataKey.SyncMode.NONE)
             .saveToFile()
             .build();
 
     public static final SyncedDataKey<Player, NonNullList<ItemStack>> BACKPACKS = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.BACKPACKS)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpacks"))
+            .id(Utils.id("backpacks"))
             .defaultValueSupplier(() -> NonNullList.withSize(1, ItemStack.EMPTY))
             .syncMode(SyncedDataKey.SyncMode.NONE)
             .saveToFile()
             .build();
 
     public static final SyncedDataKey<Player, Optional<CosmeticProperties>> COSMETIC_PROPERTIES = SyncedDataKey.builder(SyncedClassKey.PLAYER, CustomDataSerializers.OPTIONAL_COSMETIC_PROPERTIES)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "cosmetic_backpack"))
+            .id(Utils.id("cosmetic_backpack"))
             .defaultValueSupplier(Optional::empty)
             .syncMode(SyncedDataKey.SyncMode.ALL)
             .build();
 
     public static final SyncedDataKey<Player, UnlockTracker> UNLOCK_TRACKER = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockTracker.SERIALIZER)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "unlock_tracker"))
+            .id(Utils.id("unlock_tracker"))
             .defaultValueSupplier(UnlockTracker::new)
             .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
             .saveToFile()
             .build();
 
     public static final SyncedDataKey<Player, UnlockableSlots> UNLOCKABLE_BACKPACK_SLOTS = SyncedDataKey.builder(SyncedClassKey.PLAYER, UnlockableSlots.SERIALIZER)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "unlockable_backpack_slots"))
+            .id(Utils.id("unlockable_backpack_slots"))
             .defaultValueSupplier(() -> new UnlockableSlots(1))
             .syncMode(SyncedDataKey.SyncMode.NONE)
             .saveToFile()
             .build();
 
     public static final SyncedDataKey<WanderingTrader, TraderPickpocketing> TRADER_PICKPOCKETING = SyncedDataKey.builder(SyncedClassKey.WANDERING_TRADER, TraderPickpocketing.SERIALIZER)
-            .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "trader_pickpocketing"))
+            .id(Utils.id("trader_pickpocketing"))
             .defaultValueSupplier(TraderPickpocketing::new)
             .syncMode(SyncedDataKey.SyncMode.TRACKING_ONLY)
             .saveToFile()
             .build();
 
     public static final SyncedDataKey<Player, Integer> IMMORTAL_COOLDOWN = SyncedDataKey.builder(SyncedClassKey.PLAYER, Serializers.INTEGER)
-        .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "immortal_cooldown"))
+        .id(Utils.id("immortal_cooldown"))
         .defaultValueSupplier(() -> 0)
         .syncMode(SyncedDataKey.SyncMode.SELF_ONLY)
         .saveToFile()
         .build();
 
     public static final SyncedDataKey<Player, Integer> BACKPACK_SCALE = SyncedDataKey.builder(SyncedClassKey.PLAYER, Serializers.INTEGER)
-        .id(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack_scale"))
+        .id(Utils.id("backpack_scale"))
         .defaultValueSupplier(() -> 0)
         .syncMode(SyncedDataKey.SyncMode.ALL)
         .resetOnDeath()

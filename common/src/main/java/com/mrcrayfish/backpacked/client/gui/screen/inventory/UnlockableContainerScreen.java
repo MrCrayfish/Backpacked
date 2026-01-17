@@ -12,6 +12,7 @@ import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageUnlockSlot;
 import com.mrcrayfish.backpacked.platform.ClientServices;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -41,9 +42,9 @@ import java.util.Set;
 public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends CustomContainerScreen<T>
 {
     private static final Component HOLD_TO_UNLOCK = Component.translatable("backpacked.gui.hold_to_unlock");
-    private static final Identifier ICON_LOCK = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock");
-    private static final Identifier ICON_LOCK_OUTLINED = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/lock_outlined");
-    private static final Identifier EXP_ORB = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/exp_orb");
+    private static final Identifier ICON_LOCK = Utils.id("backpack/lock");
+    private static final Identifier ICON_LOCK_OUTLINED = Utils.id("backpack/lock_outlined");
+    private static final Identifier EXP_ORB = Utils.id("backpack/exp_orb");
     private static final int UNLOCK_TIME = 20;
 
     private final ScreenParticles screenParticles = new ScreenParticles();

@@ -4,6 +4,7 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.blockentity.BackpackDockBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
 import net.minecraft.resources.Identifier;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 public class ModBlockEntities
 {
     public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> BACKPACK_SHELF = RegistryEntry.blockEntity(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "shelf"),
+        Utils.id("shelf"),
         Services.BACKPACK::createShelfBlockEntityType,
         () -> new Block[] {
             ModBlocks.OAK_BACKPACK_SHELF.get(),
@@ -31,7 +32,7 @@ public class ModBlockEntities
             ModBlocks.CHERRY_BACKPACK_SHELF.get()
         });
     public static final RegistryEntry<BlockEntityType<BackpackDockBlockEntity>> BACKPACK_DOCK = RegistryEntry.blockEntity(
-        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack_dock"),
+        Utils.id("backpack_dock"),
         BackpackDockBlockEntity::new,
         () -> new Block[] {
             ModBlocks.BACKPACK_DOCK.get()

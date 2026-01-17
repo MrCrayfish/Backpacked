@@ -9,7 +9,7 @@ public class Utils
     public static final RandomSource RANDOM = RandomSource.create();
 
     /**
-     * Shortcut method to create a Identifier using "backpacked" as the namespace
+     * Shortcut method to create an Identifier using "backpacked" as the namespace
      *
      * @param path the path for the Identifier
      * @return a new Identifier instance

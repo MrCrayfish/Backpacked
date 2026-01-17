@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.common;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -12,7 +13,7 @@ public record PointOfInterest(ResourceKey<PoiType> key, Supplier<PoiType> suppli
 {
     public PointOfInterest(String name, Supplier<PoiType> supplier)
     {
-        this(ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, Identifier.fromNamespaceAndPath(Constants.MOD_ID, name)), supplier);
+        this(ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, Utils.id(name)), supplier);
     }
 
     public PoiType value()

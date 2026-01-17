@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -12,11 +13,11 @@ import net.minecraft.world.inventory.Slot;
 
 public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelfMenu>
 {
-    private static final Identifier BACKPACK_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/background");
-    private static final Identifier BACKPACK_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/slot");
-    private static final Identifier INVENTORY_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory");
-    private static final Identifier INVENTORY_SLOT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/inventory_slot");
-    private static final Identifier SHELF = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "backpack/shelf");
+    private static final Identifier BACKPACK_BACKGROUND = Utils.id("backpack/background");
+    private static final Identifier BACKPACK_SLOT = Utils.id("backpack/slot");
+    private static final Identifier INVENTORY_BACKGROUND = Utils.id("backpack/inventory");
+    private static final Identifier INVENTORY_SLOT = Utils.id("backpack/inventory_slot");
+    private static final Identifier SHELF = Utils.id("backpack/shelf");
 
     public BackpackShelfScreen(BackpackShelfMenu menu, Inventory playerInventory, Component title)
     {
