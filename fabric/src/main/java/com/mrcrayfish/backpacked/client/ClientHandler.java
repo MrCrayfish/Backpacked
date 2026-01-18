@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
+import com.mrcrayfish.backpacked.client.gui.pip.GuiBackpackRenderer;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
@@ -21,11 +22,14 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
+import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.impl.client.rendering.SpecialGuiElementRegistryImpl;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -60,6 +64,7 @@ public class ClientHandler implements ClientModInitializer
         SpecialModelRenderers.ID_MAPPER.put(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
         BlockRenderLayerMap.putBlock(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
         KeyMapping.Category.register(ModKeyMappings.CATEGORY.id());
+        SpecialGuiElementRegistryImpl.register(ctx -> new GuiBackpackRenderer(ctx.vertexConsumers()));
 
         // Add backpack layers for player and wandering trader
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
