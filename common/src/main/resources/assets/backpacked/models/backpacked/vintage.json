@@ -1,6 +1,7 @@
 {
-	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
-	"loader": "framework:open_model",
+    "credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+    "loader": "framework:open_model",
+    "fabric:type": "framework:open_model",
 	"texture_size": [32, 32],
 	"textures": {
 		"vintage": "backpacked:backpack/vintage"

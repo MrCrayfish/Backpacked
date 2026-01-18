@@ -1,6 +1,7 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
-	"loader": "framework:open_model",
+    "loader": "framework:open_model",
+    "fabric:type": "framework:open_model",
 	"textures": {
 		"sheep": "backpacked:backpack/sheep"
 	},
