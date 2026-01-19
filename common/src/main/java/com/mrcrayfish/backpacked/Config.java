@@ -136,7 +136,7 @@ public class Config
                     The number of slots that will automatically be unlocked by default and for free.
                     Please note that the cost model will still factor these free slots into the calculation
                     for unlocking the next locked slot. The slots also cannot be revoked once unlocked.""")
-                public final IntProperty initialUnlockedSlots = IntProperty.create(0, 0, BackpackContainerMenu.MAX_COLUMNS * BackpackContainerMenu.MAX_ROWS);
+                public final IntProperty initialUnlockedSlots = IntProperty.create(9, 0, BackpackContainerMenu.MAX_COLUMNS * BackpackContainerMenu.MAX_ROWS);
 
                 @ConfigProperty(name = "allowUnlockingUsingUnlockToken", comment = """
                     If set to true, backpack slots may be unlocked using Unlock Tokens""")
