@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
@@ -15,6 +16,7 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.FrameworkAPI;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +40,7 @@ public class BackpackItem extends Item
 {
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
     public static final Component BACKPACK_MANAGEMENT_TRANSLATION = Component.translatable("container.backpack_management");
+    public static final Component BACKPACK_EQUIPPED_TRANSLATION = Component.translatable("backpacked.gui.backpacked_equipped").withStyle(ChatFormatting.GOLD);
 
     public BackpackItem(Properties properties)
     {
@@ -57,6 +60,11 @@ public class BackpackItem extends Item
         {
             if(BackpackHelper.equipBackpack(player, stack))
             {
+                player.displayClientMessage(Component.translatable("backpacked.gui.after_equipped_message",
+                    BACKPACK_EQUIPPED_TRANSLATION,
+                    Keys.KEY_BACKPACK.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW),
+                    Keys.KEY_MANAGEMENT.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW)
+                ), true);
                 level.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
                 return InteractionResult.SUCCESS;
             }
