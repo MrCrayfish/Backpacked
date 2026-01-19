@@ -135,7 +135,7 @@ public class Config
                 public final BoolProperty allowUnlockingUsingUnlockToken = BoolProperty.create(true);
 
                 @ConfigProperty(name = "unlockCost", comment = "Cost related properties for inventory slots")
-                public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.CUBIC, 1, 50);
+                public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.CUBIC, 1, 20);
             }
 
             public static class Size
