@@ -30,7 +30,8 @@
         "common.ServerPlayerMixin"
     ],
     "client": [
-        "client.BitmapProviderDefinitionMixin"
+        "client.BitmapProviderDefinitionMixin",
+        "client.GuiMixin"
     ],
     "injectors": {
         "defaultRequire": 1,
