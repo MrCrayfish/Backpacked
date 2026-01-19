@@ -41,6 +41,7 @@ public class BackpackItem extends Item
     public static final Component BACKPACK_TRANSLATION = Component.translatable("container.backpack");
     public static final Component BACKPACK_MANAGEMENT_TRANSLATION = Component.translatable("container.backpack_management");
     public static final Component BACKPACK_EQUIPPED_TRANSLATION = Component.translatable("backpacked.gui.backpacked_equipped").withStyle(ChatFormatting.GOLD);
+    public static final Component NO_MORE_BACKPACK_SLOTS_TRANSLATION = Component.translatable("backpacked.gui.no_more_backpack_slots");
 
     public BackpackItem(Properties properties)
     {
@@ -67,6 +68,10 @@ public class BackpackItem extends Item
                 ), true);
                 level.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
                 return InteractionResult.SUCCESS;
+            }
+            else
+            {
+                player.displayClientMessage(NO_MORE_BACKPACK_SLOTS_TRANSLATION, true);
             }
         }
         return InteractionResult.SUCCESS;
