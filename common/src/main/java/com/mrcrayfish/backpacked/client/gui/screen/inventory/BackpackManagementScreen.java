@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -42,6 +43,19 @@ public class BackpackManagementScreen extends UnlockableContainerScreen<Backpack
         int slotsWidth = menu.getContainer().getContainerSize() * 18;
         this.imageWidth = Math.max(this.imageWidth, 11 + slotsWidth + 11);
         this.inventoryLabelY = this.imageHeight - 94;
+    }
+
+    // Note: For JEI extra areas
+    @Nullable
+    public ScreenRectangle getBackButtonArea()
+    {
+        if(this.backButton != null)
+        {
+            int x = this.backButton.getX() - 28;
+            int y = this.backButton.getY() - 5;
+            return new ScreenRectangle(x, y, 50, 26);
+        }
+        return null;
     }
 
     @Override

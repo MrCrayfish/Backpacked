@@ -36,6 +36,10 @@ dependencies {
     modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
     modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
 
+    // JEI
+    modCompileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
+    modRuntimeOnly "mezz.jei:jei-${jei_minecraft_version}-fabric-api:${jei_version}"
+
     // Integrations
     modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684160"
 }

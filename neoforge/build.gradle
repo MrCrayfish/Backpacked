@@ -44,6 +44,10 @@ dependencies {
     implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
     runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
 
+    // JEI
+    compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}"
+
     // Integrations
     //runtimeOnly "curse.maven:gravestone-mod-238551:5794085"
     compileOnly "curse.maven:youre-in-grave-danger-544912:6684166"

@@ -22,6 +22,9 @@
         ],
         "fabric-datagen": [
             "com.mrcrayfish.backpacked.datagen.DataGeneration"
+        ],
+        "jei_mod_plugin": [
+            "com.mrcrayfish.backpacked.integrations.jei.Plugin"
         ]
     },
     "mixins": [
