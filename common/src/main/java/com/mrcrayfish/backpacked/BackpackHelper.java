@@ -17,10 +17,12 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -164,12 +166,36 @@ public class BackpackHelper
             slots = slots.setMaxSlots(ManagementInventory.getMaxEquipable());
             ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
         }
-        if(Config.BACKPACK.equipable.unlockFirstEquipableSlot.get())
+
+        int initialUnlocked = Config.BACKPACK.equipable.initialUnlockedEquipableSlots.get();
+        UnlockableSlots before = slots;
+        slots = unlockInitialSlots(slots, initialUnlocked);
+        if(before != slots)
         {
-            if(!slots.isUnlocked(0))
+            ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
+        }
+
+        return slots;
+    }
+
+    public static UnlockableSlots unlockInitialSlots(UnlockableSlots slots, int initialCount)
+    {
+        initialCount = Mth.clamp(initialCount, 0, slots.getMaxSlots()); // Clamp to avoid unnecessary runs
+        if(initialCount > 0 && slots.getUnlockCount() < initialCount)
+        {
+            int unlockCount = slots.getUnlockCount();
+            List<Integer> unlockSlots = new ArrayList<>();
+            for(int i = 0; i < slots.getMaxSlots() && unlockCount < initialCount; i++)
             {
-                slots = slots.unlockSlot(0);
-                ModSyncedDataKeys.UNLOCKABLE_BACKPACK_SLOTS.setValue(player, slots);
+                if(!slots.isUnlocked(i))
+                {
+                    unlockSlots.add(i);
+                    unlockCount++;
+                }
+            }
+            if(!unlockSlots.isEmpty())
+            {
+                return slots.unlockSlots(unlockSlots);
             }
         }
         return slots;
