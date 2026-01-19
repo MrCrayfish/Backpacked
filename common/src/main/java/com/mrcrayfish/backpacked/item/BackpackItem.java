@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.item;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.client.Keys;
+import com.mrcrayfish.backpacked.core.ModKeyMappings;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
@@ -63,8 +63,8 @@ public class BackpackItem extends Item
             {
                 player.displayClientMessage(Component.translatable("backpacked.gui.after_equipped_message",
                     BACKPACK_EQUIPPED_TRANSLATION,
-                    Keys.KEY_BACKPACK.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW),
-                    Keys.KEY_MANAGEMENT.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW)
+                    ModKeyMappings.KEY_BACKPACK.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW),
+                    ModKeyMappings.KEY_MANAGEMENT.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW)
                 ), true);
                 level.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
                 return InteractionResult.SUCCESS;

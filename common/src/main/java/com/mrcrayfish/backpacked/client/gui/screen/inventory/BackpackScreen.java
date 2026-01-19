@@ -123,7 +123,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     private static final int GAP = 3;
     private static final int INVENTORY_WIDTH = 176;
     private static final int INVENTORY_HEIGHT = 101;
-    private static final int LABEL_PADDING = 5;
+    public static final int LABEL_PADDING = 5;
 
     private static ItemSorting sorting = ItemSorting.ALPHABETICAL;
 
@@ -660,6 +660,12 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
 
         return true;
+    }
+
+    // Note: For JEI extra areas
+    public List<Layout> getLayouts()
+    {
+        return this.layouts;
     }
 
     private static class AugmentIcon extends Icon
