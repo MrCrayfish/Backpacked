@@ -77,7 +77,7 @@ public class Config
             public final BoolProperty allowUnlockingUsingUnlockToken = BoolProperty.create(false);
 
             @ConfigProperty(name = "unlockCost", comment = "Cost related properties for equipable slots")
-            public final UnlockCost unlockCost = new UnlockCost(InterpolateFunction.LINEAR, 30, 30);
+            public final UnlockCost unlockCost = new UnlockCost(List.of(30, 30, 30, 40), SelectionFunction.INDEX_WITH_CLAMP);
         }
 
         public static class Cosmetics
