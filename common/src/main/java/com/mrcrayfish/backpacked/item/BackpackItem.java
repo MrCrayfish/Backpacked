@@ -154,6 +154,14 @@ public class BackpackItem extends Item
             stack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
         }
 
+        int initialUnlocked = Config.BACKPACK.inventory.slots.initialUnlockedSlots.get();
+        UnlockableSlots before = slots;
+        slots = BackpackHelper.unlockInitialSlots(slots, initialUnlocked);
+        if(before != slots)
+        {
+            stack.set(ModDataComponents.UNLOCKABLE_SLOTS.get(), slots);
+        }
+
         return slots;
     }
 

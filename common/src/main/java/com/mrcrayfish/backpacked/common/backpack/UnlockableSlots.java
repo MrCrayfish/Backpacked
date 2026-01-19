@@ -10,6 +10,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ public final class UnlockableSlots
     private final Set<Integer> slots;
     private final int maxSlots;
     private final int nextCount;
+    private @Nullable Integer hash;
 
     private UnlockableSlots()
     {
@@ -72,6 +74,14 @@ public final class UnlockableSlots
     }
 
     /**
+     * @return The count of slots unlocked
+     */
+    public int getUnlockCount()
+    {
+        return this.slots.size();
+    }
+
+    /**
      * Determines if the slot at the given index has been unlocked. This method includes a special
      * case where if the instance of UnlockableSlots is {@link #ALL}, then it will always return true.
      * Otherwise, it will look at the set of currently unlocked slot indexes.
@@ -101,6 +111,28 @@ public final class UnlockableSlots
             return this;
         Set<Integer> newSlots = new HashSet<>(this.slots);
         newSlots.add(slot);
+        return new UnlockableSlots(newSlots, this.maxSlots);
+    }
+
+    /**
+     * Unlocks the slots at the given indexes. Keep in mind that this method returns a new immutable
+     * UnlockableSlots. If a slot cannot be unlocked or is already unlocked, it will simply be skipped.
+     * There is a special case where if this UnlockableSlots is {@link #ALL}, it will always return
+     * {@link #ALL}.
+     *
+     * @param slots a list of slot indexes
+     * @return a new UnlockableSlots instance, or the same UnlockableSlots if unable to unlock
+     */
+    public UnlockableSlots unlockSlots(List<Integer> slots)
+    {
+        if(this.maxSlots == -1)
+            return this;
+        Set<Integer> newSlots = new HashSet<>(this.slots);
+        slots.forEach(slot -> {
+            if(this.isUnlockable(slot)) {
+                newSlots.add(slot);
+            }
+        });
         return new UnlockableSlots(newSlots, this.maxSlots);
     }
 
@@ -226,7 +258,11 @@ public final class UnlockableSlots
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.slots, this.maxSlots);
+        if(this.hash == null)
+        {
+            this.hash = Objects.hash(this.slots, this.maxSlots);
+        }
+        return this.hash;
     }
 
     @Override

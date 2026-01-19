@@ -62,9 +62,11 @@ public class Config
                     effectively useless.""")
             public final BoolProperty keepOnDeath = BoolProperty.create(false);
 
-            @ConfigProperty(name = "unlockFirstEquipableSlot", comment = """
-                    If true, the first slot will automatically be unlocked by default and for free.""")
-            public final BoolProperty unlockFirstEquipableSlot = BoolProperty.create(true);
+            @ConfigProperty(name = "initialUnlockedEquipableSlots", comment = """
+                    The number of equippable slots that will automatically be unlocked by default and for free.
+                    Please note that the cost model will still factor these free slots into the calculation
+                    for unlocking the next locked slot. The slots also cannot be revoked once unlocked.""")
+            public final IntProperty initialUnlockedEquipableSlots = IntProperty.create(1, 0, MAX_EQUIPPABLE_BACKPACKS);
 
             @ConfigProperty(name = "unlockAllEquipableSlots", comment = """
                     If set to true, all equipable slots will be unlocked by default.
@@ -129,6 +131,12 @@ public class Config
                         WARNING: Reverting the option from true to false will cause items to be dropped
                         into the world if the slot they are in is now locked. You have been warned.""")
                 public final BoolProperty unlockAllSlots = BoolProperty.create(false);
+
+                @ConfigProperty(name = "initialUnlockedSlots", comment = """
+                    The number of slots that will automatically be unlocked by default and for free.
+                    Please note that the cost model will still factor these free slots into the calculation
+                    for unlocking the next locked slot. The slots also cannot be revoked once unlocked.""")
+                public final IntProperty initialUnlockedSlots = IntProperty.create(0, 0, BackpackContainerMenu.MAX_COLUMNS * BackpackContainerMenu.MAX_ROWS);
 
                 @ConfigProperty(name = "allowUnlockingUsingUnlockToken", comment = """
                     If set to true, backpack slots may be unlocked using Unlock Tokens""")
