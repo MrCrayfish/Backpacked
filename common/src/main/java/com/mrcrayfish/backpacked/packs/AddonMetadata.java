@@ -78,7 +78,11 @@ public record AddonMetadata(Component name, Component description, Component aut
         {
             try(InputStream is = supplier.get())
             {
-                return Optional.of(Optional.ofNullable(AbstractPackResources.getMetadataFromStream(AddonMetadataSection.TYPE, is, info)));
+                // See: https://github.com/UnlikePaladin/paladins-furniture/issues/241
+                if(is != null)
+                {
+                    return Optional.of(Optional.ofNullable(AbstractPackResources.getMetadataFromStream(AddonMetadataSection.TYPE, is, info)));
+                }
             }
         }
         return Optional.empty();
