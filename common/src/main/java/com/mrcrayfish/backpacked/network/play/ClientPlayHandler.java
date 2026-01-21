@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.network.play;
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
+import com.mrcrayfish.backpacked.client.Keys;
 import com.mrcrayfish.backpacked.client.augment.menu.RecallMenu;
 import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
@@ -17,10 +18,12 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -220,5 +223,18 @@ public class ClientPlayHandler
         {
             screen.onAugmentBayUnlocked(message.position());
         }
+    }
+
+    public static void handleMessageShowEquipHint(MessageShowEquipHint message, MessageContext context)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.player == null)
+            return;
+
+        minecraft.player.displayClientMessage(Component.translatable("backpacked.gui.after_equipped_message",
+            Component.translatable("backpacked.gui.backpacked_equipped").withStyle(ChatFormatting.GOLD),
+            Keys.KEY_BACKPACK.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW),
+            Keys.KEY_MANAGEMENT.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW)
+        ), true);
     }
 }
