@@ -10,6 +10,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.UnlockableContainerScreen;
 import com.mrcrayfish.backpacked.client.gui.toasts.UnlockBackpackToast;
 import com.mrcrayfish.backpacked.client.particle.FarmhandPlantParticle;
+import com.mrcrayfish.backpacked.core.ModKeyMappings;
 import com.mrcrayfish.backpacked.core.ModSounds;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
@@ -17,11 +18,13 @@ import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
 import com.mrcrayfish.backpacked.inventory.container.slot.UnlockableSlot;
 import com.mrcrayfish.backpacked.network.message.*;
 import com.mrcrayfish.framework.api.network.MessageContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ItemPickupParticle;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -222,5 +225,18 @@ public class ClientPlayHandler
         {
             screen.onAugmentBayUnlocked(message.position());
         }
+    }
+
+    public static void handleMessageShowEquipHint(MessageShowEquipHint message, MessageContext context)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.player == null)
+            return;
+
+        minecraft.player.displayClientMessage(Component.translatable("backpacked.gui.after_equipped_message",
+            Component.translatable("backpacked.gui.backpacked_equipped").withStyle(ChatFormatting.GOLD),
+            ModKeyMappings.KEY_BACKPACK.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW),
+            ModKeyMappings.KEY_MANAGEMENT.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW)
+        ), true);
     }
 }

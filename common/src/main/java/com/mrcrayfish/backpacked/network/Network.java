@@ -44,6 +44,7 @@ public class Network
         .registerPlayMessage("response_shelf_key", MessageResponseShelfKey.class, MessageResponseShelfKey.STREAM_CODEC, MessageResponseShelfKey::handle, PacketFlow.CLIENTBOUND)
         .registerPlayMessage("unlock_augment_bat", MessageUnlockAugmentBay.class, MessageUnlockAugmentBay.STREAM_CODEC, MessageUnlockAugmentBay::handle, PacketFlow.SERVERBOUND)
         .registerPlayMessage("sync_unlock_augment_bay", MessageSyncUnlockAugmentBay.class, MessageSyncUnlockAugmentBay.STREAM_CODEC, MessageSyncUnlockAugmentBay::handle, PacketFlow.CLIENTBOUND)
+        .registerPlayMessage("show_equip_hint", MessageShowEquipHint.class, MessageShowEquipHint.STREAM_CODEC, MessageShowEquipHint::handle, PacketFlow.CLIENTBOUND)
         .build();
 
     public static void init() {}
