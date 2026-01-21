@@ -151,14 +151,12 @@ public class UnlockTracker extends SyncedObject
         unlockTracker.unlockedBackpacks.addAll(buf.readCollection(HashSet::new, FriendlyByteBuf::readIdentifier));
         IntStream.range(0, buf.readVarInt()).forEach(value -> {
             Identifier id = buf.readIdentifier();
+            CompoundTag tag = buf.readNbt();
             IProgressTracker progressTracker = unlockTracker.backpackToProgressTracker.get(id);
-            if(progressTracker != null) {
-                CompoundTag tag = buf.readNbt();
-                if(tag != null) {
-                    ProblemReporter.Collector collector = new ProblemReporter.Collector();
-                    ValueInput input = TagValueInput.create(collector, buf.registryAccess(), tag);
-                    progressTracker.read(input);
-                }
+            if(progressTracker != null && tag != null) {
+                ProblemReporter.Collector collector = new ProblemReporter.Collector();
+                ValueInput input = TagValueInput.create(collector, buf.registryAccess(), tag);
+                progressTracker.read(input);
             }
         });
         unlockTracker.removeCompletedProgressTrackers();
