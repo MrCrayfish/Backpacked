@@ -2,4 +2,4 @@
 * text=auto
 *.png binary
 *.zip binary
-*.bbmodel binary
+*.bbmodel json
