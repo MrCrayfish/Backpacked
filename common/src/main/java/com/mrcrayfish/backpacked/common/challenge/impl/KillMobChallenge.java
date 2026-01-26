@@ -14,6 +14,7 @@ import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -81,24 +82,21 @@ public class KillMobChallenge extends Challenge
             return this.entityPredicate.map(p -> p.matches(player, entity)).orElse(true) && this.itemPredicate.map(p -> p.test(stack)).orElse(true);
         }
 
-        public static void registerEvent()
+        // Called via LivingEntityMixin and ServerPlayerMixin
+        public static void onLivingEntityDeath(LivingEntity entity, DamageSource source)
         {
-            FrameworkEntityEvents.LIVING_ENTITY_DEATH.register((entity, source) -> {
-                if(entity.level().isClientSide())
-                    return false;
-
-                Entity cause = source.getEntity();
-                if(cause != null && cause.getType() == EntityType.PLAYER) {
-                    ServerPlayer player = (ServerPlayer) cause;
-                    UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
-                        ItemStack heldItem = player.getMainHandItem();
-                        if(tracker.test(entity, heldItem, player)) {
-                            tracker.increment(player);
-                        }
-                    });
-                }
-                return false;
-            });
+            Entity cause = source.getEntity();
+            if(cause != null && cause.getType() == EntityType.PLAYER)
+            {
+                ServerPlayer player = (ServerPlayer) cause;
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    ItemStack heldItem = player.getMainHandItem();
+                    if(tracker.test(entity, heldItem, player))
+                    {
+                        tracker.increment(player);
+                    }
+                });
+            }
         }
     }
 }

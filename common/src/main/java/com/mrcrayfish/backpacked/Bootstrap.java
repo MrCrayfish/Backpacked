@@ -32,7 +32,6 @@ public class Bootstrap
         InteractWithBlockChallenge.Tracker.registerEvent();
         InteractWithEntityChallenge.Tracker.registerEvent();
         TravelDistanceChallenge.Tracker.registerEvent();
-        KillMobChallenge.Tracker.registerEvent();
         MineBlockChallenge.Tracker.registerEvent();
         CraftItemChallenge.Tracker.registerEvent();
         MerchantTradeChallenge.Tracker.registerEvent();

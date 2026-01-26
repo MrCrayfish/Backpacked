@@ -2,12 +2,14 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.common.MovementType;
 import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
+import com.mrcrayfish.backpacked.common.challenge.impl.KillMobChallenge;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -117,5 +119,12 @@ public abstract class ServerPlayerMixin implements BackpackedInteractAccess
             return;
         int brightness = level.getMaxLocalRawBrightness(pos);
         AugmentHandler.onPlayerChangedBlockPos(player, level, pos, brightness);
+    }
+
+    @Inject(method = "die", at = @At(value = "TAIL"))
+    private void backpacked$OnDeath(DamageSource source, CallbackInfo ci)
+    {
+        ServerPlayer player = (ServerPlayer) (Object) this;
+        KillMobChallenge.Tracker.onLivingEntityDeath(player, source);
     }
 }
