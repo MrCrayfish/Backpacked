@@ -29,7 +29,6 @@ public class ModCreativeTabs
             Registration.get(Registries.ITEM).stream().filter(entry -> entry.getId().getNamespace().equals(Constants.MOD_ID)).forEach(entry -> {
                 output.accept((ItemLike) entry.get());
             });
-            HolderLookup.RegistryLookup<Enchantment> lookup = params.holders().lookupOrThrow(Registries.ENCHANTMENT);
         });
     });
 }
