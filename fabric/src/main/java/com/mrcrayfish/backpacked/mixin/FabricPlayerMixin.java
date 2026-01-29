@@ -54,7 +54,7 @@ public class FabricPlayerMixin
             {
                 RecallAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.RECALL.get());
                 if(augment != null && AugmentHandler.recallBackpack(serverPlayer, index, stack, augment)) {
-                    return;
+                    continue;
                 }
                 player.drop(stack, true, false);
             }
