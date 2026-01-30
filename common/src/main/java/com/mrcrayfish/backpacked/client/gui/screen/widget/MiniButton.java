@@ -1,22 +1,26 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mrcrayfish.framework.api.client.screen.widget.texture.FrameworkTexture;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 
-public class MiniButton extends Button
+public class MiniButton extends Button // TODO DONE
 {
-    private final int u, v;
-    private final ResourceLocation texture;
+    private final FrameworkTexture icon;
 
-    public MiniButton(int x, int y, int u, int v, ResourceLocation texture, OnPress onPress)
+    public MiniButton(int x, int y, FrameworkTexture icon, OnPress onPress)
     {
         super(x, y, 10, 10, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
-        this.u = u;
-        this.v = v;
-        this.texture = texture;
+        this.icon = icon;
+    }
+
+    public MiniButton(int x, int y, int width, int height, FrameworkTexture icon, OnPress onPress)
+    {
+        super(x, y, width, height, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
+        this.icon = icon;
     }
 
     @Override
@@ -25,10 +29,10 @@ public class MiniButton extends Button
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        graphics.blit(this.texture, this.getX(), this.getY(), this.u, this.v, this.width, this.height);
+        this.icon.draw(graphics, this.getX(), this.getY(), this.width, this.height);
         if(this.isHovered)
         {
-            graphics.fillGradient(this.getX(), this.getY(), this.getX() + 10, this.getY() + 10, -2130706433, -2130706433);
+            graphics.fillGradient(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, -2130706433, -2130706433);
         }
     }
 }

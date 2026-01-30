@@ -35,20 +35,6 @@ description="${mod_desc}"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies."${mod_id}"]]
-    modId="curios"
-    mandatory=true
-    versionRange="[${curios_version},)"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies."${mod_id}"]]
-    modId="controllable"
-    mandatory=false
-    versionRange="[0.17.0,)"
-    ordering="AFTER"
-    side="CLIENT"
-
 [modproperties."${mod_id}"]
     catalogueImageIcon="${mod_id}_icon.png"
     configuredBackground="minecraft:textures/block/stone.png"

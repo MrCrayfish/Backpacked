@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface InteractedWithEntity extends IFrameworkEvent
+public interface InteractedWithEntity extends IFrameworkEvent // TODO DONE
 {
     void handle(ServerPlayer player, ItemStack stack, Entity entity, List<ResourceLocation> callbacks);
 

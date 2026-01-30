@@ -22,7 +22,7 @@ import java.util.function.Predicate;
  * Author: MrCrayfish
  */
 @Mixin(ModelBakery.class)
-public class ModelBakeryMixin
+public class ModelBakeryMixin // TODO DONE
 {
     @Unique
     private static final Predicate<ResourceLocation> BACKPACKED_MODEL_TEST = location -> location.getPath().startsWith("models/backpacked");

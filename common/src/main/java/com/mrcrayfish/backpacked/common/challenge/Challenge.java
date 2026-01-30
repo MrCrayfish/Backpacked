@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
+import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
@@ -14,10 +15,8 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public abstract class Challenge
+public abstract class Challenge // TODO DONE
 {
-    public static final Challenge DUMMY = new Dummy();
-
     private final ResourceLocation id;
 
     protected Challenge(ResourceLocation id)
@@ -25,8 +24,13 @@ public abstract class Challenge
         this.id = id;
     }
 
+    public ResourceLocation getId()
+    {
+        return this.id;
+    }
+
     @SuppressWarnings({"rawtypes"})
-    public static Optional<Challenge> deserialize(@Nullable JsonElement element)
+    public static Optional<Challenge> deserialize(@Nullable JsonElement element) throws JsonParseException
     {
         if(element != null && element.isJsonObject())
         {
@@ -41,32 +45,5 @@ public abstract class Challenge
 
     public abstract ChallengeSerializer<?> getSerializer();
 
-    public abstract IProgressTracker createProgressTracker(ResourceLocation backpackId);
-
-    private static class Dummy extends Challenge
-    {
-        protected Dummy()
-        {
-            super(new ResourceLocation(Constants.MOD_ID, "empty"));
-        }
-
-        @Override
-        public ChallengeSerializer<?> getSerializer()
-        {
-            return new ChallengeSerializer<>()
-            {
-                @Override
-                public Challenge deserialize(JsonObject object)
-                {
-                    return Challenge.DUMMY;
-                }
-            };
-        }
-
-        @Override
-        public IProgressTracker createProgressTracker(ResourceLocation backpackId)
-        {
-            return null;
-        }
-    }
+    public abstract IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId);
 }

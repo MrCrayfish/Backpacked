@@ -19,20 +19,18 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType") // TODO DONE
 public class FeedAnimalChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "feed_animal");
     public static final Serializer SERIALIZER = new Serializer();
 
-    private final ProgressFormatter formatter;
     private final Optional<EntityPredicate> entity;
     private final int count;
 
-    public FeedAnimalChallenge(ProgressFormatter formatter, Optional<EntityPredicate> entity, int count)
+    public FeedAnimalChallenge(Optional<EntityPredicate> entity, int count)
     {
         super(ID);
-        this.formatter = formatter;
         this.entity = entity;
         this.count = count;
     }
@@ -44,9 +42,9 @@ public class FeedAnimalChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.formatter, this.entity);
+        return new Tracker(this.count, formatter, this.entity);
     }
 
     public static class Serializer extends ChallengeSerializer<FeedAnimalChallenge>
@@ -54,10 +52,9 @@ public class FeedAnimalChallenge extends Challenge
         @Override
         public FeedAnimalChallenge deserialize(JsonObject object)
         {
-            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.FED_X_OF_X);
             Optional<EntityPredicate> predicate = object.has("animal") ? Optional.of(EntityPredicate.fromJson(object.get("animal"))) : Optional.empty();
             int count = readCount(object, 1);
-            return new FeedAnimalChallenge(formatter, predicate, count);
+            return new FeedAnimalChallenge(predicate, count);
         }
     }
 
@@ -81,7 +78,7 @@ public class FeedAnimalChallenge extends Challenge
             BackpackedEvents.FEED_ANIMAL.register((animal, player) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
                     if(!tracker.isComplete() && tracker.test(serverPlayer, animal)) {
                         tracker.increment(serverPlayer);

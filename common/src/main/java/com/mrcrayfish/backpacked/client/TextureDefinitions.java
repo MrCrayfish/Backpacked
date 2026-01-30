@@ -1,0 +1,76 @@
+package com.mrcrayfish.backpacked.client;
+
+import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.gui.screen.widget.texture.TiledTexture;
+import com.mrcrayfish.framework.api.client.screen.widget.layout.Border;
+import com.mrcrayfish.framework.api.client.screen.widget.texture.FrameworkTexture;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+
+public final class TextureDefinitions
+{
+    public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/widgets.png");
+
+    public static final FrameworkTexture MISSING_TEXTURE = FrameworkTexture.subImage(MissingTextureAtlasSprite.getLocation(), 0, 0, 16, 16, 16, 16);
+    public static final FrameworkTexture BUTTON_ENABLED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 20, 56, 20, 20, Border.of(6));
+    public static final FrameworkTexture BUTTON_DISABLED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 0, 56, 20, 20, Border.of(6));
+    public static final FrameworkTexture BUTTON_ENABLED_HOVERED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 40, 56, 20, 20, Border.of(6));
+    public static final FrameworkTexture EDIT_BOX_ENABLED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 0, 24, 64, 16, Border.of(3));
+    public static final FrameworkTexture EDIT_BOX_DISABLED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 0, 8, 64, 16, Border.of(3));
+    public static final FrameworkTexture EDIT_BOX_ENABLED_HOVERED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 0, 40, 64, 16, Border.of(3));
+    public static final FrameworkTexture SEARCH_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 64, 8, 10, 10);
+    public static final FrameworkTexture TOGGLE_OFF = FrameworkTexture.subImage(WIDGETS_LOCATION, 17, 0, 6, 6);
+    public static final FrameworkTexture TOGGLE_ON = FrameworkTexture.subImage(WIDGETS_LOCATION, 23, 0, 6, 6);
+    public static final FrameworkTexture BACKPACK_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 128, 0, 128, 128, Border.of(11));
+    public static final FrameworkTexture BACKPACK_SLOT = TiledTexture.create(WIDGETS_LOCATION, 238, 128, 18, 18);
+    public static final FrameworkTexture INVENTORY_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 66, 31, 15, 15, Border.of(4));
+    public static final FrameworkTexture INVENTORY_SLOT = TiledTexture.create(WIDGETS_LOCATION, 81, 31, 18, 18);
+    public static final FrameworkTexture LABEL_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 74, 14, 15, 15, Border.of(4));
+    public static final FrameworkTexture LABEL_WARNING_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 89, 14, 15, 15, Border.of(4));
+    public static final FrameworkTexture CHECKERS = TiledTexture.create(WIDGETS_LOCATION, 222, 128, 16, 16);
+    public static final FrameworkTexture ARROW_RIGHT = FrameworkTexture.subImage(WIDGETS_LOCATION, 29, 0, 4, 6);
+    public static final FrameworkTexture ARROW_LEFT = FrameworkTexture.subImage(WIDGETS_LOCATION, 33, 0, 4, 6);
+    public static final FrameworkTexture LOCK = FrameworkTexture.subImage(WIDGETS_LOCATION, 244, 146, 12, 12);
+    public static final FrameworkTexture LOCK_OUTLINED = FrameworkTexture.subImage(WIDGETS_LOCATION, 242, 158, 14, 14);
+    public static final FrameworkTexture MANAGE_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 128, 10, 10);
+    public static final FrameworkTexture CUSTOMISE_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 202, 128, 10, 10);
+    public static final FrameworkTexture CONFIG_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 192, 128, 10, 10);
+    public static final FrameworkTexture RENAME_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 182, 128, 10, 10);
+    public static final FrameworkTexture SORT_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 172, 128, 10, 10);
+    public static final FrameworkTexture SETTINGS_ICON = FrameworkTexture.subImage(WIDGETS_LOCATION, 64, 18, 10, 10);
+    public static final FrameworkTexture AUGMENT_DISABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 138, 10, 10);
+    public static final FrameworkTexture AUGMENT_DISABLED_HOVERED = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 148, 10, 10);
+    public static final FrameworkTexture AUGMENT_ENABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 202, 138, 10, 10);
+    public static final FrameworkTexture AUGMENT_ENABLED_HOVERED = FrameworkTexture.subImage(WIDGETS_LOCATION, 202, 148, 10, 10);
+    public static final FrameworkTexture AUGMENT_SETTINGS_ENABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 202, 158, 10, 10);
+    public static final FrameworkTexture AUGMENT_SETTINGS_ENABLED_HOVERED = FrameworkTexture.subImage(WIDGETS_LOCATION, 202, 178, 10, 10);
+    public static final FrameworkTexture AUGMENT_SETTINGS_DISABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 202, 168, 10, 10);
+    public static final FrameworkTexture AUGMENT_MENU_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 64, 49, 64, 64, Border.of(5));
+    public static final FrameworkTexture NEXT_BACKPACK_BUTTON = FrameworkTexture.subImage(WIDGETS_LOCATION, 190, 138, 12, 12);
+    public static final FrameworkTexture PREVIOUS_BACKPACK_BUTTON = FrameworkTexture.subImage(WIDGETS_LOCATION, 178, 138, 12, 12);
+    public static final FrameworkTexture EXPERIENCE_ORB = FrameworkTexture.subImage(WIDGETS_LOCATION, 117, 1, 9, 9);
+    public static final FrameworkTexture SHELF = FrameworkTexture.subImage(WIDGETS_LOCATION, 182, 188, 74, 33);
+    public static final FrameworkTexture DROPDOWN_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 0, 76, 16, 16, Border.of(4));
+    public static final FrameworkTexture DROPDOWN_ITEM = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 16, 76, 16, 16, Border.of(6));
+    public static final FrameworkTexture DROPDOWN_ITEM_HOVERED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 32, 76, 16, 16, Border.of(6));
+    public static final FrameworkTexture LIST_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 64, 113, 64, 64, Border.of(6));
+    public static final FrameworkTexture LIST_ITEM = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 64, 177, 16, 16, Border.of(6));
+    public static final FrameworkTexture LIST_ITEM_HOVERED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 80, 177, 16, 16, Border.of(6));
+    public static final FrameworkTexture LIST_ITEM_SELECTED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 112, 177, 16, 16, Border.of(6));
+    public static final FrameworkTexture LIST_ITEM_LOCKED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 96, 177, 16, 16, Border.of(6));
+    public static final FrameworkTexture LIST_SCROLLER = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 107, 17, 6, 10, Border.of(2, 3, 2, 3));
+    public static final FrameworkTexture LIST_SCROLLER_HOVERED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 113, 17, 6, 10, Border.of(2, 3, 2, 3));
+    public static final FrameworkTexture LIST_SCROLLER_SELECTED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 119, 17, 6, 10, Border.of(2, 3, 2, 3));
+    public static final FrameworkTexture PLAYER_DISPLAY_FRAME = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 128, 144, 16, 16, Border.of(4));
+    public static final FrameworkTexture SCROLLER = FrameworkTexture.subImage(WIDGETS_LOCATION, 99, 34, 12, 15);
+    public static final FrameworkTexture SCROLLER_DISABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 111, 34, 12, 15);
+    public static final FrameworkTexture ROUNDED_BOX = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 128, 128, 16, 16, Border.of(4));
+    public static final FrameworkTexture UNLOCK_PROGRESS_BAR_BACKGROUND = FrameworkTexture.subImage(WIDGETS_LOCATION, 64, 195, 89, 5);
+    public static final FrameworkTexture UNLOCK_PROGRESS_BAR_FOREGROUND = TiledTexture.create(WIDGETS_LOCATION, 65, 200, 87, 3);
+    public static final FrameworkTexture STEPPER_BACKGROUND = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 144, 128, 16, 16, Border.of(4));
+    public static final FrameworkTexture STEPPER_PREVIOUS = FrameworkTexture.subImage(WIDGETS_LOCATION, 161, 129, 4, 6);
+    public static final FrameworkTexture STEPPER_NEXT = FrameworkTexture.subImage(WIDGETS_LOCATION, 166, 129, 4, 6);
+    public static final FrameworkTexture SLOT_MODE_ENABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 158, 10, 10);
+    public static final FrameworkTexture SLOT_MODE_PURCHASABLE = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 178, 10, 10);
+    public static final FrameworkTexture SLOT_MODE_DISABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 168, 10, 10);
+}

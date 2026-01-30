@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.event.block;
 
+import com.mrcrayfish.backpacked.common.BlockSnapshot;
 import com.mrcrayfish.framework.api.event.IFrameworkEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,13 +13,13 @@ import org.jetbrains.annotations.Nullable;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface MinedBlock extends IFrameworkEvent
+public interface MinedBlock extends IFrameworkEvent // TODO DONE
 {
-    void handle(BlockState state, ItemStack stack, @Nullable CompoundTag tag, Player player);
+    void handle(BlockSnapshot snapshot, ItemStack stack, ServerPlayer player);
 
     @FunctionalInterface
     interface CaptureTag extends IFrameworkEvent
     {
-        boolean handle(BlockState state, ItemStack stack, Player player);
+        boolean handle(ServerPlayer player);
     }
 }

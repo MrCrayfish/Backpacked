@@ -5,7 +5,6 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncUnlockTracker;
 import com.mrcrayfish.framework.api.event.PlayerEvents;
-import com.mrcrayfish.framework.api.event.ServerEvents;
 import com.mrcrayfish.framework.api.event.TickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -24,7 +23,7 @@ import java.util.Set;
 /**
  * Author: MrCrayfish
  */
-public final class UnlockManager
+public final class UnlockManager // TODO DONE
 {
     private static UnlockManager instance;
 
@@ -118,9 +117,9 @@ public final class UnlockManager
         return Optional.ofNullable(ModSyncedDataKeys.UNLOCK_TRACKER.getValue(player));
     }
 
-    public static <T> List<T> getTrackers(Player player, Class<T> trackerClass)
+    public static <T> List<T> getIncompleteTrackers(Player player, Class<T> trackerClass)
     {
         UnlockTracker tracker = ModSyncedDataKeys.UNLOCK_TRACKER.getValue(player);
-        return tracker != null ? tracker.getProgressTrackers(trackerClass) : Collections.emptyList();
+        return tracker != null ? tracker.getIncompleteProgressTrackers(trackerClass) : Collections.emptyList();
     }
 }

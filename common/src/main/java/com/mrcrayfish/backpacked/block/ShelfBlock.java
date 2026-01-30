@@ -2,11 +2,15 @@ package com.mrcrayfish.backpacked.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
+import com.mrcrayfish.backpacked.common.augment.data.Recall;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,19 +26,19 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
-/**
- * Author: MrCrayfish
- */
-public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBlock
+public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBlock // TODO DONE
 {
     private static final Map<Direction, VoxelShape> EMPTY_SHAPES = Maps.newEnumMap(ImmutableMap.of(
         Direction.NORTH, Block.box(2, 3, 7, 14, 5, 16),
@@ -44,10 +48,10 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     );
 
     private static final Map<Direction, VoxelShape> SHELVED_SHAPES = Maps.newEnumMap(ImmutableMap.of(
-            Direction.NORTH, Block.box(2, 3, 7, 14, 14, 16),
-            Direction.SOUTH, Block.box(2, 3, 0, 14, 14, 9),
-            Direction.WEST, Block.box(7, 3, 2, 16, 14, 14),
-            Direction.EAST, Block.box(0, 3, 2, 9, 14, 14))
+        Direction.NORTH, Block.box(2, 3, 7, 14, 14, 16),
+        Direction.SOUTH, Block.box(2, 3, 0, 14, 14, 9),
+        Direction.WEST, Block.box(7, 3, 2, 16, 14, 14),
+        Direction.EAST, Block.box(0, 3, 2, 9, 14, 14))
     );
 
     public ShelfBlock(Properties properties)
@@ -55,14 +59,42 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
         super(properties);
     }
 
+    private boolean isInteractionTargetingShelf(BlockPos pos, BlockHitResult result)
+    {
+        Vec3 localHit = result.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
+        return localHit.y <= 0.3125;
+    }
+
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
     {
-        if(!level.isClientSide())
+        ItemStack stack = player.getItemInHand(hand);
+        if(stack.getItem() instanceof BackpackItem)
         {
-            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
             {
-                return shelfBlockEntity.interact(player);
+                if(shelf.getBackpack().isEmpty())
+                {
+                    shelf.setBackpack(stack.copyAndClear());
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+        else if(!level.isClientSide())
+        {
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
+            {
+                if(this.isInteractionTargetingShelf(pos, result))
+                {
+                    if(player instanceof ServerPlayer serverPlayer)
+                    {
+                        shelf.openShelfManagement(serverPlayer);
+                    }
+                }
+                else if(!player.isCrouching() && !shelf.getBackpack().isEmpty())
+                {
+                    shelf.popBackpack(player);
+                }
             }
         }
         return InteractionResult.SUCCESS;
@@ -121,9 +153,9 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos)
     {
-        if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+        if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
         {
-            return AbstractContainerMenu.getRedstoneSignalFromContainer(shelfBlockEntity);
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(shelf.getContainer());
         }
         return 0;
     }
@@ -133,12 +165,14 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     {
         if(!state.is(newState.getBlock()))
         {
-            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelfBlockEntity)
+            if(level.getBlockEntity(pos) instanceof ShelfBlockEntity shelf)
             {
-                boolean dropsContents = Config.SERVER.backpack.dropContentsFromShelf.get();
-                ItemStack stack = dropsContents ? shelfBlockEntity.getBackpack() : shelfBlockEntity.getBackpackWithContents();
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
-                if(dropsContents) Containers.dropContents(level, pos, shelfBlockEntity);
+                if(level instanceof ServerLevel serverLevel)
+                {
+                    ((Recall.Access) serverLevel).backpacked$getRecall().onShelfBroken(shelf);
+                }
+                ItemStack stack = shelf.getBackpack();
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack.copyAndClear());
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, unknown);
@@ -156,5 +190,19 @@ public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBloc
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
     {
         return Services.BACKPACK.createShelfBlockEntityType(pos, state);
+    }
+
+    @Override
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
+    {
+        return level.isClientSide() ? ticker(type, ModBlockEntities.SHELF.get(), ShelfBlockEntity::clientTick) : null;
+    }
+
+    @Nullable
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> ticker(BlockEntityType<A> givenType, BlockEntityType<E> expectedType, BlockEntityTicker<? super E> ticker)
+    {
+        //noinspection unchecked
+        return expectedType == givenType ? (BlockEntityTicker<A>) ticker : null;
     }
 }

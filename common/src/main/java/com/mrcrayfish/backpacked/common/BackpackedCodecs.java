@@ -3,11 +3,14 @@ package com.mrcrayfish.backpacked.common;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mrcrayfish.backpacked.Config;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,14 +20,8 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public class BackpackedCodecs
+public class BackpackedCodecs // TODO DONE
 {
-    public static final Codec<ImmutableList<EntityType<?>>> ENTITY_TYPE_LIST = Codec
-        .either(BuiltInRegistries.ENTITY_TYPE.byNameCodec().listOf(), BuiltInRegistries.ENTITY_TYPE.byNameCodec()).xmap(
-            either -> either.map(ImmutableList::copyOf, ImmutableList::of),
-            list -> list.size() == 1 ? Either.right(list.get(0)) : Either.left(list)
-        );
-
     public static final Codec<Set<String>> STRING_SET = Codec.either(Codec.STRING, Codec.STRING.listOf()).xmap(either -> {
         return either.map(List::of, Function.identity());
     }, list -> {
@@ -32,4 +29,13 @@ public class BackpackedCodecs
     }).xmap(HashSet::new, List::copyOf);
 
     public static final Codec<HolderSet<Item>> ITEMS = BuiltInRegistries.ITEM.holderByNameCodec().listOf().xmap(HolderSet::direct, set -> set.stream().toList());
+
+    public static final Codec<NonNullList<ItemStack>> BACKPACK_LIST = ItemStack.CODEC.listOf().xmap(list -> {
+        NonNullList<ItemStack> items = NonNullList.withSize(Math.min(list.size(), Config.MAX_EQUIPPABLE_BACKPACKS), ItemStack.EMPTY);
+        for(int i = 0; i < list.size(); i++) {
+            ItemStack stack = list.get(i);
+            items.set(i, stack == null ? ItemStack.EMPTY : stack);
+        }
+        return items;
+    }, Function.identity());
 }

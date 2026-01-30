@@ -1,25 +1,28 @@
 package com.mrcrayfish.backpacked.platform;
 
-import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
-import com.mrcrayfish.backpacked.integration.Trinkets;
+import com.mrcrayfish.backpacked.common.Pagination;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
+import com.mrcrayfish.backpacked.inventory.container.data.BackpackContainerData;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import com.mrcrayfish.backpacked.platform.services.IBackpackHelper;
+import com.mrcrayfish.framework.api.FrameworkAPI;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -28,30 +31,9 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FabricBackpackHelper implements IBackpackHelper
 {
     @Override
-    public ItemStack getStackInBackpackSlot(Player player)
+    public Item createBackpackItem(Item.Properties properties)
     {
-        return Trinkets.getStackInBackpackSlot(player);
-    }
-
-    @Override
-    public ItemStack getBackpackStack(Player player)
-    {
-        return Trinkets.getBackpackStack(player);
-    }
-
-    @Override
-    public boolean setBackpackStack(Player player, ItemStack stack)
-    {
-        if(!(stack.getItem() instanceof BackpackItem) && !stack.isEmpty())
-            return false;
-        Trinkets.setBackpackStack(player, stack);
-        return true;
-    }
-
-    @Override
-    public EnchantmentCategory getEnchantmentCategory()
-    {
-        return Backpacked.ENCHANTMENT_TYPE.get();
+        return new BackpackItem(properties);
     }
 
     @Override
@@ -67,37 +49,16 @@ public class FabricBackpackHelper implements IBackpackHelper
     }
 
     @Override
-    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int cols, int rows, boolean owner, Component title)
+    public void openBackpackScreen(ServerPlayer openingPlayer, Container inventory, int ownerId, int backpackIndex, int cols, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments, Component title, UnlockableSlots bays)
     {
-        openingPlayer.openMenu(new BackpackScreenFactory(inventory, cols, rows, owner, title));
+        FrameworkAPI.openMenuWithData(openingPlayer, new SimpleMenuProvider((id, playerInventory, entity) -> {
+            return new BackpackContainerMenu(id, openingPlayer.getInventory(), inventory, ownerId, backpackIndex, cols, rows, owner, slots, pagination, augments, bays);
+        }, title), buf -> new BackpackContainerData(backpackIndex, cols, rows, owner, slots, pagination, augments, bays).encode(buf));
     }
 
     @Override
-    public BackpackItem createBackpackItem(Item.Properties properties)
+    public NonNullList<ItemStack> getSimpleContainerItems(SimpleContainer container)
     {
-        return Trinkets.createTrinketBackpack(properties);
-    }
-
-    private record BackpackScreenFactory(Container inventory, int cols, int rows, boolean owner, Component title) implements ExtendedScreenHandlerFactory
-    {
-        @Override
-        public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf)
-        {
-            buf.writeVarInt(this.cols);
-            buf.writeVarInt(this.rows);
-            buf.writeBoolean(this.owner);
-        }
-
-        @Override
-        public Component getDisplayName()
-        {
-            return this.title;
-        }
-
-        @Override
-        public AbstractContainerMenu createMenu(int windowId, Inventory inventory, Player player)
-        {
-            return new BackpackContainerMenu(windowId, player.getInventory(), this.inventory, this.cols, this.rows, this.owner);
-        }
+        return container.items;
     }
 }

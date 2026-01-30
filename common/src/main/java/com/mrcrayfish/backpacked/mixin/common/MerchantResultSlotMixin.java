@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Author: MrCrayfish
  */
 @Mixin(MerchantResultSlot.class)
-public class MerchantResultSlotMixin
+public class MerchantResultSlotMixin // TODO DONE
 {
     @Shadow
     @Final

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.toasts;
 
+import com.mrcrayfish.backpacked.client.backpack.ClientBackpack;
 import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.core.ModItems;
@@ -15,15 +16,15 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Author: MrCrayfish
  */
-public class UnlockBackpackToast implements Toast
+public class UnlockBackpackToast implements Toast // TODO DONE
 {
     private static final ResourceLocation BACKGROUND_SPRITE = new ResourceLocation("toast/recipe");
     private static final Component TITLE = Component.translatable("backpacked.toast.unlocked_backpack").withStyle(ChatFormatting.YELLOW);
 
-    private final Backpack backpack;
+    private final ClientBackpack backpack;
     private final Component name;
 
-    public UnlockBackpackToast(Backpack backpack)
+    public UnlockBackpackToast(ClientBackpack backpack)
     {
         this.backpack = backpack;
         this.name = Component.translatable(backpack.getTranslationKey()).withStyle(ChatFormatting.DARK_GRAY);
@@ -32,10 +33,12 @@ public class UnlockBackpackToast implements Toast
     @Override
     public Visibility render(GuiGraphics graphics, ToastComponent gui, long delta)
     {
-        graphics.blit(TEXTURE, 0, 0, 0, 0, 160, 32);
+        graphics.blit(BACKGROUND_SPRITE, 0, 0, 0, 0, 160, 32);
         graphics.drawString(gui.getMinecraft().font, TITLE, 35, 7, 0xFFFFFF, false);
         graphics.drawString(gui.getMinecraft().font, this.name, 35, 18, 0xFFFFFF, false);
-        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, new ItemStack(ModItems.BACKPACK.get()), this.backpack, 18, 16, 0);
+        int tickCount = Math.toIntExact(delta / 50L);
+        float partialTick = (float) (delta % 50L) / 50F;
+        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, this.backpack, 18, 16, partialTick, tickCount);
         return delta >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
 }

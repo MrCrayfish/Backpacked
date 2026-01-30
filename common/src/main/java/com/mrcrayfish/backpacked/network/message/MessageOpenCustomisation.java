@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.network.message;
 
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.network.play.ClientPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
@@ -13,39 +14,66 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public class MessageOpenCustomisation extends PlayMessage<MessageOpenCustomisation>
+public final class MessageOpenCustomisation extends PlayMessage<MessageOpenCustomisation> // TODO DONE
 {
-    private Map<ResourceLocation, Component> map;
+    private int backpackIndex;
+    private Map<ResourceLocation, Component> progressMap;
+    private CosmeticProperties properties;
+    private boolean showCosmeticWarning;
+    private Map<ResourceLocation, Double> completionProgressMap;
 
     public MessageOpenCustomisation() {}
 
-    public MessageOpenCustomisation(Map<ResourceLocation, Component> map)
+    public MessageOpenCustomisation(int backpackIndex, Map<ResourceLocation, Component> progressMap, CosmeticProperties properties, boolean showCosmeticWarning, Map<ResourceLocation, Double> completionProgressMap)
     {
-        this.map = map;
+        this.backpackIndex = backpackIndex;
+        this.progressMap = progressMap;
+        this.properties = properties;
+        this.showCosmeticWarning = showCosmeticWarning;
+        this.completionProgressMap = completionProgressMap;
     }
 
     @Override
-    public void encode(MessageOpenCustomisation message, FriendlyByteBuf buffer)
+    public void encode(MessageOpenCustomisation message, FriendlyByteBuf buf)
     {
-        buffer.writeInt(message.map.size());
-        message.map.forEach((location, formattedProgress) -> {
-            buffer.writeResourceLocation(location);
-            buffer.writeComponent(formattedProgress);
+        buf.writeInt(message.backpackIndex);
+        buf.writeVarInt(message.progressMap.size());
+        message.progressMap.forEach((location, formattedProgress) -> {
+            buf.writeResourceLocation(location);
+            buf.writeComponent(formattedProgress);
+        });
+        message.properties.encode(buf);
+        buf.writeBoolean(message.showCosmeticWarning);
+        buf.writeVarInt(message.completionProgressMap.size());
+        message.completionProgressMap.forEach((location, value) -> {
+            buf.writeResourceLocation(location);
+            buf.writeDouble(value);
         });
     }
 
     @Override
-    public MessageOpenCustomisation decode(FriendlyByteBuf buffer)
+    public MessageOpenCustomisation decode(FriendlyByteBuf buf)
     {
-        Map<ResourceLocation, Component> map = new HashMap<>();
-        int size = buffer.readInt();
+        int backpackIndex = buf.readInt();
+        Map<ResourceLocation, Component> progressMap = new HashMap<>();
+        int size = buf.readVarInt();
         for(int i = 0; i < size; i++)
         {
-            ResourceLocation id = buffer.readResourceLocation();
-            Component formattedProgress = buffer.readComponent();
-            map.put(id, formattedProgress);
+            ResourceLocation id = buf.readResourceLocation();
+            Component formattedProgress = buf.readComponent();
+            progressMap.put(id, formattedProgress);
         }
-        return new MessageOpenCustomisation(map);
+        CosmeticProperties properties = CosmeticProperties.decode(buf);
+        boolean showCosmeticWarning = buf.readBoolean();
+        Map<ResourceLocation, Double> completionProgressMap = new HashMap<>();
+        size = buf.readVarInt();
+        for(int i = 0; i < size; i++)
+        {
+            ResourceLocation id = buf.readResourceLocation();
+            double value = buf.readDouble();
+            completionProgressMap.put(id, value);
+        }
+        return new MessageOpenCustomisation(backpackIndex, progressMap, properties, showCosmeticWarning, completionProgressMap);
     }
 
     @Override
@@ -55,8 +83,28 @@ public class MessageOpenCustomisation extends PlayMessage<MessageOpenCustomisati
         context.setHandled(true);
     }
 
+    public int backpackIndex()
+    {
+        return this.backpackIndex;
+    }
+
     public Map<ResourceLocation, Component> progressMap()
     {
-        return this.map;
+        return this.progressMap;
+    }
+
+    public CosmeticProperties properties()
+    {
+        return this.properties;
+    }
+
+    public boolean showCosmeticWarning()
+    {
+        return this.showCosmeticWarning;
+    }
+
+    public Map<ResourceLocation, Double> completionProgressMap()
+    {
+        return this.completionProgressMap;
     }
 }

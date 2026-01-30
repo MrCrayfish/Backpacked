@@ -53,12 +53,14 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
     modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
-    modImplementation "dev.emi:trinkets:${trinkets_version}"
-    include library("com.github.Chocohead:Fabric-ASM:v2.3") {
-        exclude (group: "net.fabricmc.fabric-api")
-    }
+
+    // JEI
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    modRuntimeOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+
+    // Integrations
+    modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684120"
+
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation project(":common")
 }

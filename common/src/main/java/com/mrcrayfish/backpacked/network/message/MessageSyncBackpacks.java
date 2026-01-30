@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.network.message;
 
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
 import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.framework.api.network.MessageContext;
@@ -14,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Author: MrCrayfish
  */
-public class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks>
+public final class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks> // TODO DONE
 {
     private List<Backpack> backpacks;
 
@@ -33,13 +34,13 @@ public class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks>
     }
 
     @Override
-    public MessageSyncBackpacks decode(FriendlyByteBuf buffer)
+    public MessageSyncBackpacks decode(FriendlyByteBuf buf)
     {
         List<Backpack> backpacks = new ArrayList<>();
-        int size = buffer.readVarInt();
+        int size = buf.readVarInt();
         for(int i = 0; i < size; i++)
         {
-            backpacks.add(new Backpack(buffer));
+            backpacks.add(new Backpack(buf));
         }
         return new MessageSyncBackpacks(backpacks);
     }
@@ -49,7 +50,7 @@ public class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks>
     {
         CountDownLatch latch = new CountDownLatch(1);
         context.execute(() -> {
-            BackpackManager.instance().updateClientBackpacks(message.backpacks);
+            ClientRegistry.instance().updateBackpacks(message.backpacks);
             latch.countDown();
         });
         try

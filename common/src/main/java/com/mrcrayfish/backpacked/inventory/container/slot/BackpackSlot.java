@@ -1,44 +1,17 @@
 package com.mrcrayfish.backpacked.inventory.container.slot;
 
-import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.item.BackpackItem;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import com.mrcrayfish.backpacked.inventory.BackpackInventory;
+import com.mrcrayfish.backpacked.inventory.container.UnlockableController;
 import net.minecraft.world.Container;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackSlot extends Slot
+public class BackpackSlot extends UnlockableSlot // TODO DONE
 {
-    public BackpackSlot(Container inventoryIn, int index, int xPosition, int yPosition)
+    public BackpackSlot(UnlockableController controller, Container container, int index, int x, int y)
     {
-        super(inventoryIn, index, xPosition, yPosition);
-    }
-
-    @Override
-    public boolean mayPlace(ItemStack stack)
-    {
-        return !isBannedItem(stack);
-    }
-
-    public static boolean isBannedItem(ItemStack stack)
-    {
-        // Special case for bundles
-        if(stack.getItem() == Items.BUNDLE)
-        {
-            return true;
-        }
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        if(Config.getBannedItemsList().contains(id))
-        {
-            return true;
-        }
-        return !stack.getItem().canFitInsideContainerItems();
+        super(controller, container, index, x, y);
+        this.setPredicate(BackpackInventory::isAllowedItem);
     }
 }

@@ -1,15 +1,23 @@
 package com.mrcrayfish.backpacked.client;
 
-import com.mrcrayfish.backpacked.Backpacked;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.client.backpack.loader.ModelMetaLoader;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
+import com.mrcrayfish.backpacked.client.renderer.FirstPersonEffectsRenderer;
+import com.mrcrayfish.backpacked.client.renderer.blockentity.BackpackDockRenderer;
+import com.mrcrayfish.backpacked.client.renderer.blockentity.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
-import com.mrcrayfish.backpacked.client.renderer.entity.layers.ShelfRenderer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
-import com.mrcrayfish.backpacked.common.backpack.loader.ModelMetaLoader;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModContainers;
-import com.mrcrayfish.backpacked.integration.Controllable;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
@@ -17,6 +25,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -28,16 +37,15 @@ public class ClientHandler
     public static void init()
     {
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
-
-        if(Backpacked.isControllableLoaded())
-        {
-            Controllable.init();
-        }
+        MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
+        MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
 
         if(!FMLLoader.isProduction())
         {
             MinecraftForge.EVENT_BUS.register(new ForgeDebugClientEvents());
         }
+
+        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRenderLevelStage);
     }
 
     public static void onRegisterClientLoaders(RegisterClientReloadListenersEvent event)
@@ -45,10 +53,11 @@ public class ClientHandler
         event.registerReloadListener(new ModelMetaLoader());
     }
 
-    //Check
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
         event.registerBlockEntityRenderer(ModBlockEntities.SHELF.get(), ShelfRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_DOCK.get(), BackpackDockRenderer::new);
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BACKPACK_DOCK.get(), RenderType.cutout());
     }
 
     public static void onAddLayers(EntityRenderersEvent.AddLayers event)
@@ -69,5 +78,23 @@ public class ClientHandler
         {
             playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, itemRenderer));
         }
+    }
+
+    private static void onRenderLevelStage(RenderLevelStageEvent event)
+    {
+        if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.player == null || mc.level == null)
+            return;
+
+        if(!mc.options.getCameraType().isFirstPerson())
+            return;
+
+        PoseStack stack = event.getPoseStack();
+        MultiBufferSource source = mc.renderBuffers().bufferSource();
+        float partialTick = event.getPartialTick();
+        FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);
     }
 }

@@ -5,13 +5,16 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "backpacked.refmap.json",
     "mixins": [
-        "BlockMixin",
-        "EnchantmentCategoryMixin",
-        "EntityMixin",
-        "FabricPlayerMixin",
-        "LivingEntityMixin"
+        "common.FabricEntityMixin",
+        "common.FabricItemEntityMixin",
+        "common.FabricPlayerMixin",
+        "common.FabricLivingEntityMixin",
+        "common.PoiTypesAccessor"
     ],
-    "client": [ ],
+    "client": [
+        "client.BlockEntityWithoutLevelRendererMixin",
+        "client.CreateWorldScreenMixin"
+    ],
     "injectors": {
         "defaultRequire": 1,
         "maxShiftBy": 1

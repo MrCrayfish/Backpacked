@@ -24,18 +24,7 @@ public class RecipeGen extends RecipeProvider
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> consumer)
     {
-        // Since we use Forge tags, we have to do it here
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BACKPACK.get())
-                .pattern("HHH")
-                .pattern("SIS")
-                .pattern("HHH")
-                .define('H', Items.RABBIT_HIDE)
-                .define('S', Tags.Items.STRING)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_hide", has(Items.RABBIT_HIDE))
-                .save(consumer);
-
         // Apply common recipes
-        CommonRecipeGen.generate(consumer, RecipeProvider::has);
+        CommonRecipeGen.generate(consumer, RecipeProvider::has, RecipeProvider::has);
     }
 }
