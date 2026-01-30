@@ -172,6 +172,9 @@
     "backpacked.gui.view_addons": "Див. доповнення",
     "backpacked.gui.want_more_backpacks": "Хочете більше косметики?",
     "backpacked.gui.x_of_y": "(%s/%s)",
+    "backpacked.gui.backpacked_equipped": "Рюкзак оснащено!",
+    "backpacked.gui.after_equipped_message": "%s Натисніть %s, щоб відкрити або %s, щоб керувати",
+    "backpacked.gui.no_more_backpack_slots": "Більше немає вільних слотів",
     "backpacked.title.customise_backpack": "Персоналізувати рюкзак",
     "backpacked.toast.unlocked_backpack": "Розблокований рюкзак",
     "backpacked.tooltip.remove_items": "Вам треба спорожнити рюкзак, перш ніж знімати його, або ж можете просто покласти його на полицю.",
@@ -201,5 +204,4 @@
     "key.categories.backpacked": "Backpacked",
     "message.backpacked.occupied_back_slot": "У задньому слоті є інший предмет",
     "message.backpacked.player_opened": "Гравець відкриває ваш рюкзак"
-
 }
