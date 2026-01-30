@@ -8,7 +8,7 @@ import net.minecraft.world.item.trading.Merchant;
 /**
  * Author: MrCrayfish
  */
-public interface MerchantTrade extends IFrameworkEvent
+public interface MerchantTrade extends IFrameworkEvent // TODO DONE
 {
     void handle(Merchant merchant, Player player, ItemStack stack);
 }

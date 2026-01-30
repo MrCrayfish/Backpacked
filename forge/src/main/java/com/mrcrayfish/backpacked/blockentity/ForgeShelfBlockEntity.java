@@ -20,8 +20,6 @@ import javax.annotation.Nullable;
  */
 public class ForgeShelfBlockEntity extends ShelfBlockEntity
 {
-    private LazyOptional<IItemHandlerModifiable> itemHandler;
-
     public ForgeShelfBlockEntity(BlockPos pos, BlockState state)
     {
         super(pos, state);
@@ -30,33 +28,6 @@ public class ForgeShelfBlockEntity extends ShelfBlockEntity
     public ForgeShelfBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
     {
         super(type, pos, state);
-    }
-
-    @Override
-    public void invalidateCaps()
-    {
-        super.invalidateCaps();
-        if(this.itemHandler != null)
-        {
-            LazyOptional<?> oldHandler = this.itemHandler;
-            this.itemHandler = null;
-            oldHandler.invalidate();
-        }
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
-    {
-        if(!this.remove && cap == ForgeCapabilities.ITEM_HANDLER)
-        {
-            if(this.itemHandler == null)
-            {
-                this.itemHandler = LazyOptional.of(() -> new InvWrapper(this));
-            }
-            return this.itemHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 
     @Override

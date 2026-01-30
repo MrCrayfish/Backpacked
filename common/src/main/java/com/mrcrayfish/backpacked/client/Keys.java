@@ -6,7 +6,8 @@ import org.lwjgl.glfw.GLFW;
 /**
  * Author: MrCrayfish
  */
-public class Keys
+public class Keys // TODO DONE
 {
     public static final KeyMapping KEY_BACKPACK = new KeyMapping("key.backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
+    public static final KeyMapping KEY_MANAGEMENT = new KeyMapping("key.backpacked.open_management", GLFW.GLFW_KEY_V, "key.categories.backpacked");
 }

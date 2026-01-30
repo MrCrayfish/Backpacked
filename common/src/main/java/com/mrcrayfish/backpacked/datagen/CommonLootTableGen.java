@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 /**
  * Author: MrCrayfish
  */
-public class CommonLootTableGen
+public class CommonLootTableGen // TODO DONE
 {
     public static void generate(Consumer<Block> dropSelf)
     {
@@ -21,5 +21,6 @@ public class CommonLootTableGen
         dropSelf.accept(ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         dropSelf.accept(ModBlocks.WARPED_BACKPACK_SHELF.get());
         dropSelf.accept(ModBlocks.CHERRY_BACKPACK_SHELF.get());
+        dropSelf.accept(ModBlocks.BACKPACK_DOCK.get());
     }
 }

@@ -23,19 +23,17 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class TravelDistanceChallenge extends Challenge
+public class TravelDistanceChallenge extends Challenge // TODO DONE
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "travel_distance");
     public static final Serializer SERIALIZER = new Serializer();
 
-    private final ProgressFormatter formatter;
     private final Optional<EnumSet<MovementType>> movementTypes;
     private final int totalDistanceInCm;
 
-    protected TravelDistanceChallenge(ProgressFormatter formatter, Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
+    protected TravelDistanceChallenge(Optional<EnumSet<MovementType>> movementTypes, int totalDistanceInCm)
     {
         super(ID);
-        this.formatter = formatter;
         this.movementTypes = movementTypes;
         this.totalDistanceInCm = totalDistanceInCm;
     }
@@ -47,9 +45,9 @@ public class TravelDistanceChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.formatter, this.movementTypes, this.totalDistanceInCm);
+        return new Tracker(formatter, this.movementTypes, this.totalDistanceInCm);
     }
 
     public static class Serializer extends ChallengeSerializer<TravelDistanceChallenge>
@@ -57,12 +55,11 @@ public class TravelDistanceChallenge extends Challenge
         @Override
         public TravelDistanceChallenge deserialize(JsonObject object)
         {
-            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.INT_PERCENT);
             Optional<EnumSet<MovementType>> movements = object.has("movement") ? MovementType.LIST_CODEC.xmap(EnumSet::copyOf, List::copyOf).parse(JsonOps.INSTANCE, object.get("movement")).result() : Optional.empty();
             int totalDistance = GsonHelper.getAsInt(object, "total_distance");
             if(totalDistance <= 0)
                 throw new JsonParseException("Total distance must be greater than zero. Found " + totalDistance);
-            return new TravelDistanceChallenge(formatter, movements, totalDistance);
+            return new TravelDistanceChallenge(movements, totalDistance);
         }
     }
 
@@ -80,7 +77,7 @@ public class TravelDistanceChallenge extends Challenge
         {
             BackpackedEvents.PLAYER_TRAVEL.register((player, distance, type) -> {
                 int distanceInCm = Math.round((float) Math.sqrt(distance) * 100);
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     if(tracker.isComplete())
                         return;
                     if(tracker.movementTypes.map(types -> types.contains(type)).orElse(true)) {

@@ -1,12 +1,14 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mrcrayfish.backpacked.Config;
-import com.mrcrayfish.backpacked.common.backpack.ModelProperty;
+import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.SpawnParticleFunction;
+import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
-import com.mrcrayfish.backpacked.network.message.MessageEntityBackpack;
 import com.mrcrayfish.backpacked.network.message.MessageOpenBackpack;
-import com.mrcrayfish.backpacked.platform.Services;
+import com.mrcrayfish.backpacked.network.message.MessagePickpocketBackpack;
+import com.mrcrayfish.backpacked.network.message.MessageRequestManagement;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
 import com.mrcrayfish.framework.api.event.ClientConnectionEvents;
 import com.mrcrayfish.framework.api.event.InputEvents;
@@ -14,14 +16,10 @@ import com.mrcrayfish.framework.api.event.TickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -32,7 +30,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class ClientEvents
+public class ClientEvents // TODO DONE
 {
     public static void init()
     {
@@ -53,54 +51,20 @@ public class ClientEvents
         Minecraft mc = Minecraft.getInstance();
         if(mc.player != null && mc.screen == null)
         {
-            LocalPlayer player = mc.player;
             if(Keys.KEY_BACKPACK.isDown() && Keys.KEY_BACKPACK.consumeClick())
             {
-                if(!Services.BACKPACK.getBackpackStack(player).isEmpty())
-                {
-                    Network.getPlay().sendToServer(new MessageOpenBackpack());
-                }
+                Network.getPlay().sendToServer(new MessageOpenBackpack());
+            }
+            if(Keys.KEY_MANAGEMENT.isDown() && Keys.KEY_MANAGEMENT.consumeClick())
+            {
+                Network.getPlay().sendToServer(new MessageRequestManagement());
             }
         }
     }
 
     private static void onClientTickEnd()
     {
-        Minecraft mc = Minecraft.getInstance();
-        if(mc.level == null || mc.player == null)
-            return;
-
-        List<Player> players = mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(16F), player -> true);
-        for(Player player : players)
-        {
-            if(!Services.BACKPACK.isBackpackVisible(player))
-                continue;
-
-            ItemStack stack = Services.BACKPACK.getBackpackStack(player);
-            if(stack.isEmpty())
-                continue;
-
-            if(!canShowBackpackEffects(stack))
-                continue;
-
-            // TODO add particle emitter
-            /*String modelName = stack.getOrCreateTag().getString("BackpackModel");
-            BackpackModel model = BackpackLayer.getModel(modelName).get();
-            if(model == null)
-                continue;*/
-
-            //model.tickForPlayer(PickpocketUtil.getBackpackBox(player, 1.0F).getCenter(), player);
-        }
-    }
-
-    public static boolean canShowBackpackEffects(ItemStack stack)
-    {
-        CompoundTag tag = stack.getOrCreateTag();
-        if(tag.contains(ModelProperty.SHOW_EFFECTS.getTagName(), Tag.TAG_BYTE))
-        {
-            return tag.getBoolean(ModelProperty.SHOW_EFFECTS.getTagName());
-        }
-        return true;
+        SpawnParticleFunction.clearSpawned();
     }
 
     private static boolean onInteraction(boolean attack, boolean use, boolean pick, InteractionHand hand)
@@ -116,7 +80,8 @@ public class ClientEvents
         List<LivingEntity> entities = new ArrayList<>();
         if(Config.SERVER.pickpocketing.enabled.get()) {
             entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
-                return !Services.BACKPACK.getBackpackStack(player).isEmpty() && !player.equals(mc.player) && PickpocketUtil.canPickpocketEntity(player, mc.player);
+                Optional<CosmeticProperties> optional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player); // Just use properties to determine if backpack is equipped on client
+                return !player.equals(mc.player) && optional.isPresent() && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
         entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.gameMode.getPickRange()), entity -> {
@@ -150,7 +115,7 @@ public class ClientEvents
         {
             if(PickpocketUtil.canSeeBackpack(hitEntity, mc.player))
             {
-                Network.getPlay().sendToServer(new MessageEntityBackpack(hitEntity.getId()));
+                Network.getPlay().sendToServer(new MessagePickpocketBackpack(hitEntity.getId()));
                 mc.player.swing(hand);
             }
             return true;

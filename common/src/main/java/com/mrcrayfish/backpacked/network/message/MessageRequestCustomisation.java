@@ -8,21 +8,38 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public class MessageRequestCustomisation extends PlayMessage<MessageRequestCustomisation>
+public final class MessageRequestCustomisation extends PlayMessage<MessageRequestCustomisation> // TODO DONE
 {
-    @Override
-    public void encode(MessageRequestCustomisation message, FriendlyByteBuf buffer) {}
+    private int backpackIndex;
+
+    public MessageRequestCustomisation() {}
+
+    public MessageRequestCustomisation(int backpackIndex)
+    {
+        this.backpackIndex = backpackIndex;
+    }
 
     @Override
-    public MessageRequestCustomisation decode(FriendlyByteBuf buffer)
+    public void encode(MessageRequestCustomisation message, FriendlyByteBuf buf)
     {
-        return new MessageRequestCustomisation();
+        buf.writeInt(this.backpackIndex);
+    }
+
+    @Override
+    public MessageRequestCustomisation decode(FriendlyByteBuf buf)
+    {
+        return new MessageRequestCustomisation(buf.readInt());
     }
 
     @Override
     public void handle(MessageRequestCustomisation message, MessageContext context)
     {
-        context.execute(() -> ServerPlayHandler.handleRequestCustomisation(message, context.getPlayer()));
+        context.execute(() -> ServerPlayHandler.handleRequestCustomisation(message, context));
         context.setHandled(true);
+    }
+
+    public int backpackIndex()
+    {
+        return this.backpackIndex;
     }
 }

@@ -1,0 +1,82 @@
+{
+    "shelf_offset": [0, 0, 0],
+    "bobbing": false,
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [75, -45, 0],
+            "translation": [0.75, 4.75, 3.25]
+        },
+        "firstperson_righthand": {
+            "rotation": [0, -45, 0],
+            "translation": [-0.5, 4.5, 0.5],
+            "scale": [0.5, 0.5, 0.5]
+        },
+        "ground": {
+            "translation": [0, 6, -2.5]
+        },
+        "gui": {
+            "rotation": [30, 35, 0],
+            "translation": [-1.25, 4, 0]
+        },
+        "head": {
+            "rotation": [0, -180, 0],
+            "translation": [0, 15.5, 2.5]
+        },
+        "fixed": {
+            "rotation": [0, -180, 0],
+            "translation": [0, 3, 1]
+        },
+        "on_shelf": {
+            "translation": [0, 1.25, -4]
+        }
+    },
+    "renderer": {
+        "type": "backpacked:advanced",
+        "functions": [
+            {
+                "type": "backpacked:draw_model",
+                "model": "backpacked:backpacked/rocket"
+            },
+            {
+                "type": "backpacked:conditional",
+                "condition": {
+                    "type": "backpacked:test_value",
+                    "first": {
+                        "type": "backpacked:entity_data",
+                        "property": "fall_flying_counter"
+                    },
+                    "second": 0.1,
+                    "comparison": "greater_than"
+                },
+                "functions": [
+                    {
+                        "type": "backpacked:spawn_particle",
+                        "particle": {
+                            "type": "minecraft:smoke"
+                        },
+                        "position": {
+                            "y": -0.625,
+                            "z": 0.125
+                        },
+                        "motion": {
+                            "y": -0.25
+                        }
+                    },
+                    {
+                        "type": "backpacked:spawn_particle",
+                        "particle": {
+                            "type": "minecraft:poof"
+                        },
+                        "position": {
+                            "y": -0.625,
+                            "z": 0.125
+                        },
+                        "motion": {
+                            "y": -0.25
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

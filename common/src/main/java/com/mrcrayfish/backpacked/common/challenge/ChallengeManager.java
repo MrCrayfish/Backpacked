@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.common.challenge;
 
-import com.mojang.serialization.Codec;
 import com.mrcrayfish.backpacked.common.challenge.impl.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +10,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public final class ChallengeManager
+public final class ChallengeManager // TODO DONE
 {
     private static ChallengeManager instance;
 
@@ -51,13 +50,5 @@ public final class ChallengeManager
     public ChallengeSerializer<? extends Challenge> getSerializer(ResourceLocation id)
     {
         return this.serializers.get(id);
-    }
-
-    public ResourceLocation getSerializerId(ChallengeSerializer<?> serializer)
-    {
-        return this.serializers.entrySet().stream()
-            .filter(entry -> entry.getValue() == serializer)
-            .map(Map.Entry::getKey)
-            .findFirst().orElse(null);
     }
 }

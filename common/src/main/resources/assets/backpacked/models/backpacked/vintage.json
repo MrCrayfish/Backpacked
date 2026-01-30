@@ -1,0 +1,182 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"texture_size": [32, 32],
+	"textures": {
+		"vintage": "backpacked:backpack/vintage"
+	},
+	"components": [
+		{
+			"from": [4, 0, 8],
+			"to": [12, 9, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 1, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 4, 4.5], "texture": "#vintage"},
+				"east": {"uv": [10.5, 0, 13, 4.5], "texture": "#vintage"},
+				"south": {"uv": [6.5, 0, 10.5, 4.5], "texture": "#vintage"},
+				"west": {"uv": [4, 0, 6.5, 4.5], "texture": "#vintage"},
+				"down": {"uv": [8.5, 4.5, 4.5, 7], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [3.95, 6.05, 12],
+			"to": [12.05, 9.05, 13],
+			"rotation": {"angle": -18, "axis": "x", "origin": [3.75, 9.05, 13]},
+			"faces": {
+				"east": {"uv": [4.5, 7, 5, 8.5], "texture": "#vintage"},
+				"south": {"uv": [0, 7, 4.5, 8.5], "texture": "#vintage"},
+				"west": {"uv": [5, 7, 5.5, 8.5], "texture": "#vintage"},
+				"down": {"uv": [4.5, 8.5, 0, 9], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [3.95, 8.05, 7.85],
+			"to": [12.05, 9.05, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [3.75, 9.05, 13]},
+			"faces": {
+				"north": {"uv": [5.5, 7, 10, 7.5], "texture": "#vintage"},
+				"east": {"uv": [8.5, 6.5, 11, 7], "texture": "#vintage"},
+				"west": {"uv": [8.5, 6, 11, 6.5], "texture": "#vintage"},
+				"up": {"uv": [4.5, 7, 0, 4.5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [5, 1, 13],
+			"to": [11, 4, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 2, 9]},
+			"faces": {
+				"east": {"uv": [15.5, 3.5, 16, 5], "texture": "#vintage"},
+				"south": {"uv": [13, 1.5, 16, 3], "texture": "#vintage"},
+				"west": {"uv": [15, 3.5, 15.5, 5], "texture": "#vintage"},
+				"down": {"uv": [16, 3, 13, 3.5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [4.9, 3, 12.9],
+			"to": [11.1, 5, 14.05],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4.75, 3, 14.15]},
+			"faces": {
+				"east": {"uv": [12.5, 4.5, 13, 5.5], "texture": "#vintage"},
+				"south": {"uv": [8.5, 4.5, 12, 5.5], "texture": "#vintage"},
+				"west": {"uv": [12, 4.5, 12.5, 5.5], "texture": "#vintage"},
+				"up": {"uv": [12, 6, 8.5, 5.5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [12, 1, 9],
+			"to": [13, 4, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [12, 1, 11]},
+			"faces": {
+				"north": {"uv": [15.5, 0, 16, 1.5], "texture": "#vintage"},
+				"east": {"uv": [13, 0, 14.5, 1.5], "texture": "#vintage"},
+				"south": {"uv": [14.5, 0, 15, 1.5], "texture": "#vintage"},
+				"down": {"uv": [15, 0, 15.5, 1.5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [2.9, 3, 8.9],
+			"to": [4.1, 5, 12.1],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 2, 11]},
+			"faces": {
+				"north": {"uv": [14, 4.5, 13.5, 5.5], "texture": "#vintage"},
+				"south": {"uv": [13.5, 4.5, 13, 5.5], "texture": "#vintage"},
+				"west": {"uv": [14.5, 3.5, 13, 4.5], "texture": "#vintage"},
+				"up": {"uv": [15, 3.5, 14.5, 5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [3, 1, 9],
+			"to": [4, 4, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 1, 11]},
+			"faces": {
+				"north": {"uv": [16, 0, 15.5, 1.5], "texture": "#vintage"},
+				"south": {"uv": [15, 0, 14.5, 1.5], "texture": "#vintage"},
+				"west": {"uv": [14.5, 0, 13, 1.5], "texture": "#vintage"},
+				"down": {"uv": [15.5, 0, 15, 1.5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [11.9, 3, 8.9],
+			"to": [13.1, 5, 12.1],
+			"rotation": {"angle": 0, "axis": "y", "origin": [12, 2, 11]},
+			"faces": {
+				"north": {"uv": [13.5, 4.5, 14, 5.5], "texture": "#vintage"},
+				"east": {"uv": [13, 3.5, 14.5, 4.5], "texture": "#vintage"},
+				"south": {"uv": [13, 4.5, 13.5, 5.5], "texture": "#vintage"},
+				"up": {"uv": [14.5, 3.5, 15, 5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [6.6, 9, 9.9],
+			"to": [9.425, 10, 10.95],
+			"rotation": {"angle": 0, "axis": "y", "origin": [6.5, 9, 9.925]},
+			"faces": {
+				"east": {"uv": [11, 6, 11.5, 6.5], "texture": "#vintage"},
+				"west": {"uv": [13.5, 5.5, 14, 6], "texture": "#vintage"},
+				"up": {"uv": [13.5, 6, 12, 5.5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [9.425, 9, 9.9],
+			"to": [6.6, 10, 10.95],
+			"rotation": {"angle": 0, "axis": "y", "origin": [9.325, 9, 9.925]},
+			"faces": {
+				"east": {"uv": [11.5, 6, 12, 6.5], "texture": "#vintage"},
+				"west": {"uv": [13.5, 6, 14, 6.5], "texture": "#vintage"},
+				"up": {"uv": [13.5, 6.5, 12, 6], "texture": "#vintage"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.5, 5, 0],
+			"scale": [1.2, 1.2, 1.2]
+		}
+	},
+	"groups": [
+		{
+			"uuid": "e6593d5f-59a6-80ad-b18a-bef9a0593bd3",
+			"isOpen": true,
+			"children": [
+				{
+					"uuid": "bc80b306-09bf-2e97-d18a-2e4faba1b339",
+					"isOpen": true,
+					"children": ["15903beb-8575-cf4a-4060-f3b282f31a5e", "88d1503f-2a18-8f8a-5475-918611510c29", "dd1797ed-9ea5-d46d-7b27-f28888a96f1c"]
+				},
+				{
+					"uuid": "6e615b93-b664-fd77-28d8-e0d77d1df690",
+					"isOpen": true,
+					"children": ["0b40e47c-cd75-841e-c57b-642927a88cdf", "2b3bce5b-542b-d87c-2452-664c65ab701b"]
+				},
+				{
+					"uuid": "3a7eac99-de98-cc85-b1a8-41174fc51440",
+					"isOpen": true,
+					"children": [
+						"9e0d71db-0b25-7485-b597-6d7952765dd1",
+						"5288c2ce-0666-c8a4-ded1-5c73e5a60591",
+						"4d201f3b-cb33-44fe-c290-c6e5302f4ea8",
+						"845e3286-4ffe-26ca-8cc9-ed40c1e45a69"
+					]
+				},
+				"975f1040-861f-b160-689e-8e6b7643ddda",
+				"950f2677-6c32-ba10-8e03-a5ec2bc4aa9c"
+			]
+		},
+		{
+			"uuid": "87408bc4-15b0-80a7-cbfe-9c4de781ab1d",
+			"isOpen": true,
+			"children": [
+				"c66b42e4-c7ad-6e0e-ed12-d88ef89b7694",
+				"5c539cde-c8d9-1902-83c9-8f2ba094e152",
+				"b43fb574-8320-1dda-0239-93373f03bec5",
+				"592e7c87-2243-8eef-7cc6-cd6fd73545a3"
+			]
+		},
+		{
+			"uuid": "23018c67-0343-bfc6-51c0-c8af06d67b9d",
+			"isOpen": false,
+			"children": ["5a4b812c-f9ef-d3a7-95bc-469b40125fff", "35881d74-112d-f06c-a17f-4fe0db3083e0"]
+		}
+	]
+}

@@ -9,21 +9,21 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class MessageUnlockBackpack extends PlayMessage<MessageUnlockBackpack>
+public final class MessageUnlockBackpack extends PlayMessage<MessageUnlockBackpack> // TODO DONE
 {
-    private ResourceLocation id;
+    private ResourceLocation cosmeticId;
 
     public MessageUnlockBackpack() {}
 
-    public MessageUnlockBackpack(ResourceLocation id)
+    public MessageUnlockBackpack(ResourceLocation cosmeticId)
     {
-        this.id = id;
+        this.cosmeticId = cosmeticId;
     }
 
     @Override
     public void encode(MessageUnlockBackpack message, FriendlyByteBuf buffer)
     {
-        buffer.writeResourceLocation(message.id);
+        buffer.writeResourceLocation(message.cosmeticId);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class MessageUnlockBackpack extends PlayMessage<MessageUnlockBackpack>
 
     public ResourceLocation cosmeticId()
     {
-        return this.id;
+        return this.cosmeticId;
     }
 }

@@ -29,19 +29,17 @@ import java.util.Set;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class CraftItemChallenge extends Challenge
+public class CraftItemChallenge extends Challenge // TODO DONE
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
     public static final Serializer SERIALIZER = new Serializer();
 
-    private final ProgressFormatter formatter;
     private final Optional<CraftedItemPredicate> predicate;
     private final int count;
 
-    public CraftItemChallenge(ProgressFormatter formatter, Optional<CraftedItemPredicate> predicate, int count)
+    public CraftItemChallenge(Optional<CraftedItemPredicate> predicate, int count)
     {
         super(ID);
-        this.formatter = formatter;
         this.predicate = predicate;
         this.count = count;
     }
@@ -53,9 +51,9 @@ public class CraftItemChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.formatter, this.predicate, this.count);
+        return new Tracker(formatter, this.predicate, this.count);
     }
 
     public static class Serializer extends ChallengeSerializer<CraftItemChallenge>
@@ -63,10 +61,9 @@ public class CraftItemChallenge extends Challenge
         @Override
         public CraftItemChallenge deserialize(JsonObject object)
         {
-            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.CRAFT_X_OF_X);
             Optional<CraftedItemPredicate> predicate = CraftedItemPredicate.deserialize(object.get("crafted_item"));
             int count = readCount(object, 1);
-            return new CraftItemChallenge(formatter, predicate, count);
+            return new CraftItemChallenge(predicate, count);
         }
     }
 
@@ -84,7 +81,7 @@ public class CraftItemChallenge extends Challenge
         {
             PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
                 if(player.level().isClientSide()) return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     if(tracker.isComplete()) return;
                     if(tracker.predicate.map(p -> p.test(stack)).orElse(true))
                     {

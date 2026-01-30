@@ -1,27 +1,24 @@
 package com.mrcrayfish.backpacked.common.challenge.impl;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.Constants;
+import com.mrcrayfish.backpacked.common.BlockSnapshot;
 import com.mrcrayfish.backpacked.common.challenge.Challenge;
 import com.mrcrayfish.backpacked.common.challenge.ChallengeSerializer;
-import com.mrcrayfish.backpacked.common.challenge.ChallengeUtils;
+import com.mrcrayfish.backpacked.common.challenge.PredicateUtils;
 import com.mrcrayfish.backpacked.common.tracker.IProgressTracker;
 import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
 import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
+import com.mrcrayfish.backpacked.mixin.common.BlockPredicateAccessor;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -29,22 +26,22 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MineBlockChallenge extends Challenge
+public class MineBlockChallenge extends Challenge // TODO DONE
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_block");
     public static final Serializer SERIALIZER = new Serializer();
 
-    private final ProgressFormatter formatter;
     private final Optional<BlockPredicate> block;
     private final Optional<ItemPredicate> item;
+    private final Optional<EntityPredicate> entity;
     private final int count;
 
-    public MineBlockChallenge(ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item, int count)
+    public MineBlockChallenge(Optional<BlockPredicate> block, Optional<ItemPredicate> item, Optional<EntityPredicate> entity, int count)
     {
         super(ID);
-        this.formatter = formatter;
         this.block = block;
         this.item = item;
+        this.entity = entity;
         this.count = count;
     }
 
@@ -55,9 +52,9 @@ public class MineBlockChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.count, this.formatter, this.block, this.item);
+        return new Tracker(this.count, formatter, this.block, this.item, this.entity);
     }
 
     public static class Serializer extends ChallengeSerializer<MineBlockChallenge>
@@ -65,11 +62,11 @@ public class MineBlockChallenge extends Challenge
         @Override
         public MineBlockChallenge deserialize(JsonObject object)
         {
-            ProgressFormatter formatter = readFormatter(object, ProgressFormatter.MINED_X_OF_X);
             Optional<BlockPredicate> block = object.has("block") ? Optional.of(BlockPredicate.fromJson(object.get("block"))) : Optional.empty();
             Optional<ItemPredicate> item = object.has("item") ? Optional.of(ItemPredicate.fromJson(object.get("item"))) : Optional.empty();
+            Optional<EntityPredicate> entity = object.has("player") ? Optional.of(EntityPredicate.fromJson(object.get("player"))) : Optional.empty();
             int count = readCount(object, 1);
-            return new MineBlockChallenge(formatter, block, item, count);
+            return new MineBlockChallenge(block, item, entity, count);
         }
     }
 
@@ -77,37 +74,44 @@ public class MineBlockChallenge extends Challenge
     {
         private final Optional<BlockPredicate> block;
         private final Optional<ItemPredicate> item;
+        private final Optional<EntityPredicate> entity;
 
-        protected Tracker(int maxCount, ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item)
+        protected Tracker(int maxCount, ProgressFormatter formatter, Optional<BlockPredicate> block, Optional<ItemPredicate> item, Optional<EntityPredicate> entity)
         {
             super(maxCount, formatter);
             this.block = block;
             this.item = item;
+            this.entity = entity;
         }
 
-        private boolean test(BlockState state, ItemStack stack, @Nullable CompoundTag tag)
+        private boolean needsTag()
         {
-            return ChallengeUtils.testPredicate(this.block, state, tag) && ChallengeUtils.testPredicate(this.item, stack);
+            return this.block.map(predicate -> ((BlockPredicateAccessor) predicate).backpacked$nbt() != NbtPredicate.ANY).orElse(false);
+        }
+
+        private boolean test(BlockSnapshot snapshot, ItemStack stack, ServerPlayer player)
+        {
+            return PredicateUtils.testPredicate(this.block, snapshot) && PredicateUtils.testPredicate(this.item, stack) && PredicateUtils.testPredicate(this.entity, player, player);
         }
 
         public static void registerEvent()
         {
             // Determines if we need to capture block entity compound tag for any tests
-            BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.register((state, stack, player) -> {
+            BackpackedEvents.MINED_BLOCK_CAPTURE_TAG.register((player) -> {
                 if(player.level().isClientSide())
                     return false;
-                return UnlockManager.getTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
-                    return !tracker.isComplete() && tracker.test(state, stack, null);
+                return UnlockManager.getIncompleteTrackers(player, Tracker.class).stream().anyMatch(tracker -> {
+                    return !tracker.isComplete() && tracker.needsTag();
                 });
             });
 
             // If this event is called, we have successfully mined a block and now we do tests
-            BackpackedEvents.MINED_BLOCK.register((state, stack, tag, player) -> {
+            BackpackedEvents.MINED_BLOCK.register((snapshot, stack, player) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
-                    if(!tracker.isComplete() && tracker.test(state, stack, tag)) {
-                        tracker.increment((ServerPlayer) player);
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
+                    if(!tracker.isComplete() && tracker.test(snapshot, stack, player)) {
+                        tracker.increment(player);
                     }
                 });
             });

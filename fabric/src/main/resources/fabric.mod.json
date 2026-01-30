@@ -23,8 +23,8 @@
         "fabric-datagen": [
             "com.mrcrayfish.backpacked.datagen.DataGeneration"
         ],
-        "mm:early_risers": [
-            "com.mrcrayfish.backpacked.asm.Loader"
+        "jei_mod_plugin": [
+            "com.mrcrayfish.backpacked.integration.jei.Plugin"
         ]
     },
     "mixins": [
@@ -36,8 +36,7 @@
         "fabric": "*",
         "minecraft": "${minecraft_version}",
         "java": ">=17",
-        "framework": ">=${framework_version}",
-        "trinkets": ">=${trinkets_version}"
+        "framework": ">=${framework_version}"
     },
     "accessWidener": "backpacked.accesswidener",
     "custom": {

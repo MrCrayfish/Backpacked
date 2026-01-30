@@ -8,21 +8,38 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public class MessageOpenBackpack extends PlayMessage<MessageOpenBackpack>
+public final class MessageOpenBackpack extends PlayMessage<MessageOpenBackpack> // TODO DONE
 {
-    @Override
-    public void encode(MessageOpenBackpack message, FriendlyByteBuf buffer) {}
+    private int backpackIndex;
+
+    public MessageOpenBackpack() {}
+
+    public MessageOpenBackpack(int backpackIndex)
+    {
+        this.backpackIndex = backpackIndex;
+    }
 
     @Override
-    public MessageOpenBackpack decode(FriendlyByteBuf buffer)
+    public void encode(MessageOpenBackpack message, FriendlyByteBuf buf)
     {
-        return new MessageOpenBackpack();
+        buf.writeInt(message.backpackIndex);
+    }
+
+    @Override
+    public MessageOpenBackpack decode(FriendlyByteBuf buf)
+    {
+        return new MessageOpenBackpack(buf.readInt());
     }
 
     @Override
     public void handle(MessageOpenBackpack message, MessageContext context)
     {
-        context.execute(() -> ServerPlayHandler.handleOpenBackpack(message, context.getPlayer()));
+        context.execute(() -> ServerPlayHandler.handleOpenBackpack(message, context));
         context.setHandled(true);
+    }
+
+    public int backpackIndex()
+    {
+        return this.backpackIndex;
     }
 }

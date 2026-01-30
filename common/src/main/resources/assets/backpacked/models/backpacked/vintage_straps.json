@@ -1,0 +1,100 @@
+{
+	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
+	"loader": "framework:open_model",
+	"texture_size": [32, 32],
+	"textures": {
+		"vintage": "backpacked:backpack/vintage"
+	},
+	"components": [
+		{
+			"from": [5, 1, 4],
+			"to": [6, 9, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, 0, 8]},
+			"faces": {
+				"north": {"uv": [15.5, 5, 16, 9], "texture": "#vintage"},
+				"up": {"uv": [14.5, 7, 14, 5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [4, 1, 4],
+			"to": [5, 2, 8],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, 1, 8]},
+			"faces": {
+				"north": {"uv": [11.5, 6.5, 12, 7], "texture": "#vintage"},
+				"west": {"uv": [12, 6.5, 14, 7], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [10, 1, 4],
+			"to": [11, 9, 8],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 0, 8]},
+			"faces": {
+				"north": {"uv": [15, 5, 15.5, 9], "texture": "#vintage"},
+				"up": {"uv": [15, 7, 14.5, 5], "texture": "#vintage"}
+			}
+		},
+		{
+			"from": [11, 1, 4],
+			"to": [12, 2, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 1, 8]},
+			"faces": {
+				"north": {"uv": [11, 6.5, 11.5, 7], "texture": "#vintage"},
+				"east": {"uv": [12, 7, 14, 7.5], "texture": "#vintage"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 30, 0],
+			"translation": [-1.5, 5, 0],
+			"scale": [1.2, 1.2, 1.2]
+		}
+	},
+	"groups": [
+		{
+			"uuid": "e6593d5f-59a6-80ad-b18a-bef9a0593bd3",
+			"isOpen": true,
+			"children": [
+				{
+					"uuid": "bc80b306-09bf-2e97-d18a-2e4faba1b339",
+					"isOpen": true,
+					"children": ["15903beb-8575-cf4a-4060-f3b282f31a5e", "88d1503f-2a18-8f8a-5475-918611510c29", "dd1797ed-9ea5-d46d-7b27-f28888a96f1c"]
+				},
+				{
+					"uuid": "6e615b93-b664-fd77-28d8-e0d77d1df690",
+					"isOpen": true,
+					"children": ["0b40e47c-cd75-841e-c57b-642927a88cdf", "2b3bce5b-542b-d87c-2452-664c65ab701b"]
+				},
+				{
+					"uuid": "3a7eac99-de98-cc85-b1a8-41174fc51440",
+					"isOpen": true,
+					"children": [
+						"9e0d71db-0b25-7485-b597-6d7952765dd1",
+						"5288c2ce-0666-c8a4-ded1-5c73e5a60591",
+						"4d201f3b-cb33-44fe-c290-c6e5302f4ea8",
+						"845e3286-4ffe-26ca-8cc9-ed40c1e45a69"
+					]
+				},
+				"975f1040-861f-b160-689e-8e6b7643ddda",
+				"950f2677-6c32-ba10-8e03-a5ec2bc4aa9c"
+			]
+		},
+		{
+			"uuid": "87408bc4-15b0-80a7-cbfe-9c4de781ab1d",
+			"isOpen": true,
+			"children": [
+				"c66b42e4-c7ad-6e0e-ed12-d88ef89b7694",
+				"5c539cde-c8d9-1902-83c9-8f2ba094e152",
+				"b43fb574-8320-1dda-0239-93373f03bec5",
+				"592e7c87-2243-8eef-7cc6-cd6fd73545a3"
+			]
+		},
+		{
+			"uuid": "23018c67-0343-bfc6-51c0-c8af06d67b9d",
+			"isOpen": false,
+			"children": ["5a4b812c-f9ef-d3a7-95bc-469b40125fff", "35881d74-112d-f06c-a17f-4fe0db3083e0"]
+		}
+	]
+}

@@ -21,12 +21,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashSet;
@@ -37,7 +37,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public class ExploreBiomeChallenge extends Challenge
+public class ExploreBiomeChallenge extends Challenge // TODO DONE
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "explore_biome");
     public static final Serializer SERIALIZER = new Serializer();
@@ -52,20 +52,16 @@ public class ExploreBiomeChallenge extends Challenge
         return DataResult.success(keys);
     });
     public static final Codec<ExploreBiomeChallenge> CODEC = RecordCodecBuilder.create(builder -> {
-        return builder.group(ProgressFormatter.CODEC.fieldOf("formatter").orElse(ProgressFormatter.EXPLORED_X_OF_X).forGetter(challenge -> {
-            return challenge.formatter;
-        }), BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
+        return builder.group(BIOME_LIST_CODEC.fieldOf("biome").forGetter(challenge -> {
             return challenge.biomes;
         })).apply(builder, ExploreBiomeChallenge::new);
     });
 
-    private final ProgressFormatter formatter;
     private final List<ResourceKey<Biome>> biomes;
 
-    public ExploreBiomeChallenge(ProgressFormatter formatter, List<ResourceKey<Biome>> biomes)
+    public ExploreBiomeChallenge(List<ResourceKey<Biome>> biomes)
     {
         super(ID);
-        this.formatter = formatter;
         this.biomes = biomes;
     }
 
@@ -76,9 +72,9 @@ public class ExploreBiomeChallenge extends Challenge
     }
 
     @Override
-    public IProgressTracker createProgressTracker(ResourceLocation backpackId)
+    public IProgressTracker createProgressTracker(ProgressFormatter formatter, ResourceLocation backpackId)
     {
-        return new Tracker(this.formatter, this.biomes);
+        return new Tracker(formatter, this.biomes);
     }
 
     public static class Serializer extends ChallengeSerializer<ExploreBiomeChallenge>
@@ -146,12 +142,18 @@ public class ExploreBiomeChallenge extends Challenge
             return this.formatter.formatter().apply(this.exploredBiomes.size(), this.biomes.size());
         }
 
+        @Override
+        public double getCompletionProgress()
+        {
+            return Mth.clamp(this.exploredBiomes.size() / (double) Math.max(1, this.biomes.size()), 0, 1);
+        }
+
         public static void registerEvent()
         {
             BackpackedEvents.EXPLORE_UPDATE.register((key, player) -> {
                 if(player.level().isClientSide())
                     return;
-                UnlockManager.getTrackers(player, Tracker.class).forEach(tracker -> {
+                UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {
                     if(!tracker.isComplete()) {
                         tracker.explore(key, (ServerPlayer) player);
                     }

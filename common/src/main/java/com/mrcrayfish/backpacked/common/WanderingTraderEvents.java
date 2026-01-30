@@ -1,6 +1,9 @@
 package com.mrcrayfish.backpacked.common;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.augment.Augments;
+import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.data.pickpocket.TraderPickpocketing;
 import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageSyncVillagerBackpack;
@@ -46,7 +49,7 @@ import java.util.stream.StreamSupport;
 /**
  * Author: MrCrayfish
  */
-public class WanderingTraderEvents
+public class WanderingTraderEvents // TODO DONE
 {
     public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
 
@@ -171,7 +174,7 @@ public class WanderingTraderEvents
 
     private static boolean isPlayerInvisible(Player player)
     {
-        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && Services.BACKPACK.getBackpackStack(player).isEmpty();
+        return player.hasEffect(MobEffects.INVISIBILITY) && player.getArmorCoverPercentage() <= 0 && StreamSupport.stream(player.getHandSlots().spliterator(), false).allMatch(ItemStack::isEmpty) && BackpackHelper.getFirstBackpackStack(player).isEmpty();
     }
 
     private static BlockHitResult performRayTrace(Vec3 start, Vec3 end, Entity source)
@@ -204,11 +207,12 @@ public class WanderingTraderEvents
 
             if(generateBackpackLoot(trader, data))
             {
+                // TODO restore
                 /*UnlockManager.getTracker(openingPlayer).flatMap(tracker -> tracker.getProgressTracker(WanderingBagBackpack.ID)).ifPresent(tracker -> {
                     ((WanderingBagBackpack.PickpocketProgressTracker) tracker).addTrader(trader, openingPlayer);
                 });*/
             }
-            Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), 8, 1, false, WANDERING_BAG_TRANSLATION);
+            Services.BACKPACK.openBackpackScreen(openingPlayer, trader.getInventory(), trader.getId(), 0, 8, 1, false, UnlockableSlots.all(), Pagination.NONE, Augments.EMPTY.copy(), WANDERING_BAG_TRANSLATION, UnlockableSlots.none());
             openingPlayer.level().playSound(openingPlayer, trader.getX(), trader.getY() + 1.0, trader.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.15F, 1.0F);
         });
     }

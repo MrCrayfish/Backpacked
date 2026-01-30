@@ -1,0 +1,82 @@
+{
+    "shelf_offset": [0, 0, 0],
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [75, -45, 0],
+            "translation": [0.75, 6.75, 3.25]
+        },
+        "firstperson_righthand": {
+            "rotation": [0, -45, 0],
+            "translation": [-0.5, 4.5, 0.5],
+            "scale": [0.5, 0.5, 0.5]
+        },
+        "ground": {
+            "translation": [0, 4.75, -2.5]
+        },
+        "gui": {
+            "rotation": [30, 35, 0],
+            "translation": [-2.75, 4.75, 0],
+            "scale": [1.1, 1.1, 1.1]
+        },
+        "head": {
+            "rotation": [0, -180, 0],
+            "translation": [0, 14.5, 2.5]
+        },
+        "fixed": {
+            "rotation": [0, -180, 0],
+            "translation": [0, 3.5, 1]
+        },
+        "on_shelf": {
+            "translation": [0, 1.25, -4]
+        }
+    },
+    "renderer": {
+        "type": "backpacked:advanced",
+        "functions": [
+            {
+                "type": "backpacked:draw_model",
+                "model": "backpacked:backpacked/cogwheel"
+            },
+            {
+                "type": "backpacked:push_matrix",
+                "functions": [
+                    {
+                        "type": "backpacked:translate_matrix",
+                        "y": -0.21875
+                    },
+                    {
+                        "type": "backpacked:rotate_matrix",
+                        "z": {
+                            "type": "backpacked:and",
+                            "first": {
+                                "type": "backpacked:tick_count"
+                            },
+                            "second": 4,
+                            "op": "multiply"
+                        }
+                    },
+                    {
+                        "type": "backpacked:rotate_matrix",
+                        "z": {
+                            "type": "backpacked:and",
+                            "first": {
+                                "type": "backpacked:entity_data",
+                                "property": "walk_position"
+                            },
+                            "second": 16,
+                            "op": "multiply"
+                        }
+                    },
+                    {
+                        "type": "backpacked:translate_matrix",
+                        "y": 0.21875
+                    },
+                    {
+                        "type": "backpacked:draw_model",
+                        "model": "backpacked:backpacked/cogwheel_wheel"
+                    }
+                ]
+            }
+        ]
+    }
+}

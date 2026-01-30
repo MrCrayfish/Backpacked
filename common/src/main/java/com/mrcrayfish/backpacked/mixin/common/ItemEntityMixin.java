@@ -1,10 +1,12 @@
 package com.mrcrayfish.backpacked.mixin.common;
 
-import com.mrcrayfish.backpacked.core.ModEnchantments;
+import com.mrcrayfish.backpacked.BackpackHelper;
+import com.mrcrayfish.backpacked.Config;
+import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,16 +16,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Author: MrCrayfish
  */
 @Mixin(ItemEntity.class)
-public class ItemEntityMixin
+public class ItemEntityMixin // TODO DONE
 {
     @Inject(method = "fireImmune", at = @At(value = "HEAD"), cancellable = true)
     public void backpacked$FireImmuneHead(CallbackInfoReturnable<Boolean> cir)
     {
         ItemEntity entity = (ItemEntity) (Object) this;
         ItemStack stack = entity.getItem();
-        if(stack.getItem() == ModItems.BACKPACK.get())
+        if(stack.is(ModItems.BACKPACK.get()))
         {
-            if(EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.IMBUED_HIDE.get(), stack) > 0)
+            ImbuedHideAugment augment = BackpackHelper.findAugment(stack, ModAugmentTypes.IMBUED_HIDE.get());
+            if(augment != null && Config.AUGMENTS.imbuedHide.fireImmunity.get())
             {
                 cir.setReturnValue(true);
             }

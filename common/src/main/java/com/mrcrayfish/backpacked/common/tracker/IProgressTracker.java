@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 /**
  * Author: MrCrayfish
  */
-public interface IProgressTracker
+public interface IProgressTracker // TODO DONE
 {
     boolean isComplete();
 
@@ -17,6 +17,8 @@ public interface IProgressTracker
     void write(CompoundTag tag);
 
     Component getDisplayComponent();
+
+    double getCompletionProgress();
 
     default void markForCompletionTest(ServerPlayer player)
     {

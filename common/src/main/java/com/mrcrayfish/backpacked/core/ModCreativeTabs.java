@@ -20,7 +20,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @RegistryContainer
-public class ModCreativeTabs
+public class ModCreativeTabs // TODO DONE
 {
     public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(new ResourceLocation(Constants.MOD_ID, "creative_tab"), builder -> {
         builder.title(Component.translatable("itemGroup." + Constants.MOD_ID));
@@ -32,13 +32,6 @@ public class ModCreativeTabs
             Registration.get(Registries.ITEM).stream().filter(entry -> entry.getId().getNamespace().equals(Constants.MOD_ID)).forEach(entry -> {
                 output.accept((ItemLike) entry.get());
             });
-            for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
-                Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.getKey(enchantment)).ifPresent(id -> {
-                    if(id.getNamespace().equals(Constants.MOD_ID) && enchantment.category == Services.BACKPACK.getEnchantmentCategory()) {
-                        Services.REGISTRATION.addEnchantedBookToCreativeTab(output, enchantment);
-                    }
-                });
-            }
         });
     });
 }

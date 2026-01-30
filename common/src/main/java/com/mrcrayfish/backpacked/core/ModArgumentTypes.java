@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
  * Author: MrCrayfish
  */
 @RegistryContainer
-public class ModArgumentTypes
+public class ModArgumentTypes // TODO DONE
 {
     public static final RegistryEntry<SingletonArgumentInfo<BackpackArgument>> BACKPACK = RegistryEntry.commandArgumentType(new ResourceLocation(Constants.MOD_ID, "backpack"), BackpackArgument.class, () -> SingletonArgumentInfo.contextFree(BackpackArgument::backpacks));
 }

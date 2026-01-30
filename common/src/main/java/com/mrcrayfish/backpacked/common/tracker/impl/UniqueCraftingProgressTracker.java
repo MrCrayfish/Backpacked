@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 /**
  * Author: MrCrayfish
  */
-public class UniqueCraftingProgressTracker extends CraftingProgressTracker
+public class UniqueCraftingProgressTracker extends CraftingProgressTracker // TODO DONE
 {
     protected Set<ResourceLocation> craftedItems = new HashSet<>();
 
@@ -68,7 +68,7 @@ public class UniqueCraftingProgressTracker extends CraftingProgressTracker
         PlayerEvents.CRAFT_ITEM.register((player, stack, inventory) -> {
             if(player.level().isClientSide())
                 return;
-            UnlockManager.getTrackers(player, UniqueCraftingProgressTracker.class).forEach(tracker -> {
+            UnlockManager.getIncompleteTrackers(player, UniqueCraftingProgressTracker.class).forEach(tracker -> {
                 if(!tracker.isComplete()) {
                     tracker.processCrafted(stack, (ServerPlayer) player);
                 }

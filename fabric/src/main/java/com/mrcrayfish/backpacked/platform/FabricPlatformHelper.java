@@ -1,18 +1,29 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Author: MrCrayfish
  */
 public class FabricPlatformHelper implements IPlatformHelper
 {
+    @Override
+    public boolean isModLoaded(String modId)
+    {
+        return FabricLoader.getInstance().isModLoaded(modId);
+    }
+
     @Override
     public boolean testPredicate(Optional<BlockPredicate> optional, BlockState state, @Nullable CompoundTag tag)
     {
@@ -27,5 +38,23 @@ public class FabricPlatformHelper implements IPlatformHelper
             return false;
         }
         return predicate.properties.matches(state);
+    }
+
+    @Override
+    public Predicate<ItemStack> getValidProjectiles(ItemStack weapon)
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isRepairable(ItemStack stack)
+    {
+        return false;
+    }
+
+    @Override
+    public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
+    {
+        return null;
     }
 }
