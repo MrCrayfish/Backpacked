@@ -38,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBlock // TODO DONE
+public class ShelfBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
     private static final Map<Direction, VoxelShape> EMPTY_SHAPES = Maps.newEnumMap(ImmutableMap.of(
         Direction.NORTH, Block.box(2, 3, 7, 14, 5, 16),

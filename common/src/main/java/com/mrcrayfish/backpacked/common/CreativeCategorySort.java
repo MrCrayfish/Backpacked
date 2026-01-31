@@ -20,7 +20,7 @@ import java.util.Map;
  * {@link CreativeModeTab.DisplayItemsGenerator} and getting then incrementing
  * a counter for each ItemStack. Each creative tab is processed in the same order it was registered.
  */
-public final class CreativeCategorySort // TODO DONE
+public final class CreativeCategorySort
 {
     private static final Map<Item, Integer> CREATIVE_SORT_INDEX_MAP = new Object2IntOpenHashMap<>();
     private static boolean needsSorting = true; // TODO might need to be invalidated

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public record PushMatrixFunction(List<BaseFunction> functions) implements BaseFunction // TODO DONE
+public record PushMatrixFunction(List<BaseFunction> functions) implements BaseFunction
 {
     public static final Type TYPE = new Type(
         Utils.rl("push_matrix"),

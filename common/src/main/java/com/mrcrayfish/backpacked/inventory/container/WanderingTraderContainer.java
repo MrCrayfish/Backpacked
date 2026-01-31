@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class WanderingTraderContainer extends BackpackContainerMenu // TODO DONE
+public class WanderingTraderContainer extends BackpackContainerMenu
 {
     private final WanderingTrader trader;
 

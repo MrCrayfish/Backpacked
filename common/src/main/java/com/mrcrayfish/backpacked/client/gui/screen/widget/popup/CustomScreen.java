@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public abstract class CustomScreen extends Screen implements PopupMenuHandler // TODO DONE
+public abstract class CustomScreen extends Screen implements PopupMenuHandler
 {
     protected final PopupMenuController controller = new PopupMenuController();
 

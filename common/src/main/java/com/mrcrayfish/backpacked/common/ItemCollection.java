@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-public record ItemCollection(HashSet<ResourceLocation> ids) // TODO DONE
+public record ItemCollection(HashSet<ResourceLocation> ids)
 {
     public static final ItemCollection EMPTY = new ItemCollection(new HashSet<>());
     public static final int MAX_ENTRIES = 256;

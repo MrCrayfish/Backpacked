@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public final class ChallengeManager // TODO DONE
+public final class ChallengeManager
 {
     private static ChallengeManager instance;
 

@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 
-public class DefaultRenderer implements BackpackRenderer // TODO DONE
+public class DefaultRenderer implements BackpackRenderer
 {
     public static final Type TYPE = new Type(Utils.rl("default"), Codec.unit(new DefaultRenderer()));
 

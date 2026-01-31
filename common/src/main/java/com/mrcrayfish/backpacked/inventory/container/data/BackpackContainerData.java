@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Author: MrCrayfish
- */ // TODO DONE
+ */
 public record BackpackContainerData(int backpackIndex, int columns, int rows, boolean owner, UnlockableSlots slots, Pagination pagination, Augments augments, UnlockableSlots bays)
 {
     public void encode(FriendlyByteBuf buf)

@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 /**
  * Author: MrCrayfish
  */
-public class TickCountValue implements Value // TODO DONE
+public class TickCountValue implements Value
 {
     public static final Type TYPE = new Type(Utils.rl("tick_count"), Codec.unit(new TickCountValue()));
 

@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public final class MessageRequestCustomisation extends PlayMessage<MessageRequestCustomisation> // TODO DONE
+public final class MessageRequestCustomisation extends PlayMessage<MessageRequestCustomisation>
 {
     private int backpackIndex;
 

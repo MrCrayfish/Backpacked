@@ -7,7 +7,7 @@ import net.minecraft.world.Container;
 /**
  * Author: MrCrayfish
  */
-public class BackpackSlot extends UnlockableSlot // TODO DONE
+public class BackpackSlot extends UnlockableSlot
 {
     public BackpackSlot(UnlockableController controller, Container container, int index, int x, int y)
     {

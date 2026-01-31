@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack;
 
-public enum Scene // TODO DONE
+public enum Scene
 {
     CUSTOMISATION_MENU,
     ON_ENTITY,

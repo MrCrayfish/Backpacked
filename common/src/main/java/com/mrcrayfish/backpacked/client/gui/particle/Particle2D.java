@@ -38,7 +38,7 @@ public class Particle2D
     private int startScaleAtLife = 0;
     private int endScaleAtLife = this.totalLife;
 
-    public Particle2D(double x, double y, double width, double height) // TODO DONE
+    public Particle2D(double x, double y, double width, double height)
     {
         this.prevX = x;
         this.prevY = y;

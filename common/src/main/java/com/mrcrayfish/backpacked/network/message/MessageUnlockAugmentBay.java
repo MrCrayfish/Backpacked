@@ -9,7 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public final class MessageUnlockAugmentBay extends PlayMessage<MessageUnlockAugmentBay> // TODO DONE
+public final class MessageUnlockAugmentBay extends PlayMessage<MessageUnlockAugmentBay>
 {
     private Augments.Position position;
 

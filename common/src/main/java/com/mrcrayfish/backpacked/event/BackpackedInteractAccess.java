@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public interface BackpackedInteractAccess // TODO DONE
+public interface BackpackedInteractAccess
 {
     List<ResourceLocation> getBackpacked$CapturedInteractIds();
 }

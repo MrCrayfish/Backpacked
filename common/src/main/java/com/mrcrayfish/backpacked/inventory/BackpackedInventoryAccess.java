@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 /**
  * Author: MrCrayfish
  */
-public interface BackpackedInventoryAccess // TODO DONE
+public interface BackpackedInventoryAccess
 {
     int backpacked$GetBackpackInventoryCount();
 

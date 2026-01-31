@@ -20,7 +20,7 @@ import org.joml.Vector3f;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class PlayerDisplay extends AbstractWidget // TODO DONE
+public class PlayerDisplay extends AbstractWidget
 {
     private static final int FRAME_OFFSET = 4;
 
@@ -120,11 +120,6 @@ public class PlayerDisplay extends AbstractWidget // TODO DONE
         cameraRotation.mul(Axis.XN.rotationDegrees(this.rotationY + (this.grabbed ? mouseY - this.grabbedY : 0)));
         cameraRotation.mul(Axis.YP.rotationDegrees(this.rotationX + (this.grabbed ? mouseX - this.grabbedX : 0)));
         playerRotation.mul(cameraRotation);
-
-        // TODO port test
-        float entityScale = player.getScale();
-        float renderScale = 70F / entityScale;
-        Vector3f box = new Vector3f(0.0F, player.getBbHeight() / 2.0F + entityScale * 0.0625F, 0.0F);
         InventoryScreen.renderEntityInInventory(graphics, x, y + 70, 70, playerRotation, cameraRotation, player);
         this.restoreValues();
     }

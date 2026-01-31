@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 /**
  * Author: MrCrayfish
  */
-public interface IProgressTracker // TODO DONE
+public interface IProgressTracker
 {
     boolean isComplete();
 

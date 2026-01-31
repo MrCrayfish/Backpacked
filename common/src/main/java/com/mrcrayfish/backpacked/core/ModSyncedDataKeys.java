@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class ModSyncedDataKeys // TODO DONE
+public class ModSyncedDataKeys
 {
     public static final SyncedDataKey<Player, Integer> SELECTED_BACKPACK = SyncedDataKey.builder(SyncedClassKey.PLAYER, Serializers.INTEGER)
         .id(Utils.rl("selected_backpack"))

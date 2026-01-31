@@ -6,7 +6,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageSortBackpack extends PlayMessage<MessageSortBackpack> // TODO DONE
+public final class MessageSortBackpack extends PlayMessage<MessageSortBackpack>
 {
     private ItemSorting sorting;
 

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractArrow.class)
-public abstract class AbstractArrowMixin // TODO DONE
+public abstract class AbstractArrowMixin
 {
     @Shadow
     public AbstractArrow.Pickup pickup;

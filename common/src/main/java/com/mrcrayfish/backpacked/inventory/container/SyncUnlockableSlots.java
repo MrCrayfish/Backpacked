@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 
-public interface SyncUnlockableSlots // TODO DONE
+public interface SyncUnlockableSlots
 {
     /**
      * Handles syncing unlocked slots after they were just unlocked by a player.

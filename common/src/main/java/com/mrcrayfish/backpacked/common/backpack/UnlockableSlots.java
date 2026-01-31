@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public sealed class UnlockableSlots extends SyncedObject
@@ -284,15 +285,15 @@ public sealed class UnlockableSlots extends SyncedObject
 
     public void encode(FriendlyByteBuf buf)
     {
-        buf.writeCollection(this.slots, FriendlyByteBuf::writeInt);
+        buf.writeVarIntArray(this.getSlotsArray());
         buf.writeInt(this.getMaxSlots());
     }
 
     public static UnlockableSlots decode(FriendlyByteBuf buf)
     {
-        Set<Integer> slots = buf.readCollection(HashSet::new, FriendlyByteBuf::readInt);
+        int[] slots = buf.readVarIntArray();
         int maxSlots = buf.readInt();
-        return new UnlockableSlots(slots, maxSlots);
+        return new UnlockableSlots(Arrays.stream(slots).boxed().toList(), maxSlots);
     }
 
     public static UnlockableSlots all()
@@ -307,7 +308,7 @@ public sealed class UnlockableSlots extends SyncedObject
 
     public UnlockableSlots copy()
     {
-        return new UnlockableSlots(new HashSet<>(Arrays.stream(this.getSlotsArray()).boxed().toList()), this.getMaxSlots());
+        return new UnlockableSlots(Arrays.stream(this.getSlotsArray()).boxed().toList(), this.getMaxSlots());
     }
 
     public void update(ItemStack backpack, String key)

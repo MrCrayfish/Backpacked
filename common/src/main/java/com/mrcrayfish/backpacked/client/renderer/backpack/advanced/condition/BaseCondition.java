@@ -6,7 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import net.minecraft.resources.ResourceLocation;
 
-public interface BaseCondition // TODO DONE
+public interface BaseCondition
 {
     Codec<BaseCondition> CODEC = Type.CODEC.dispatch(BaseCondition::type, Type::codec);
 

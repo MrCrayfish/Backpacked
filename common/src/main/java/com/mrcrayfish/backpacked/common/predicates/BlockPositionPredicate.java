@@ -7,7 +7,7 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public record BlockPositionPredicate(MinMaxBounds.Ints x, MinMaxBounds.Ints y, MinMaxBounds.Ints z) // TODO DONE
+public record BlockPositionPredicate(MinMaxBounds.Ints x, MinMaxBounds.Ints y, MinMaxBounds.Ints z)
 {
     public boolean test(BlockPos pos)
     {

@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(IntegerProperty.class)
-public interface IntegerPropertyMixin // TODO DONE
+public interface IntegerPropertyMixin
 {
     @Accessor("max")
     int backpacked$getMax();

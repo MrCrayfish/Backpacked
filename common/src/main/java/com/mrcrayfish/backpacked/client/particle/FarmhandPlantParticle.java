@@ -15,7 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public class FarmhandPlantParticle extends Particle // TODO DONE
+public class FarmhandPlantParticle extends Particle
 {
     private final EntityRenderDispatcher dispatcher;
     private final RenderBuffers buffers;

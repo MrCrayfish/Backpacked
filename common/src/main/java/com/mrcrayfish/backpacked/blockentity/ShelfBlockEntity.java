@@ -56,7 +56,7 @@ import java.util.function.Consumer;
 /**
  * Author: MrCrayfish
  */
-public class ShelfBlockEntity extends BlockEntity // TODO DONE
+public class ShelfBlockEntity extends BlockEntity
 {
     public static final int SIZE = 1;
     public static final int TOTAL_ANIMATION_TICKS = 4;

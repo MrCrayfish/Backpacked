@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.item;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
 import net.minecraft.network.chat.Component;
 
-public class ButtonItem extends MenuItem // TODO DONE
+public class ButtonItem extends MenuItem
 {
     private final Runnable action;
 

@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 
-public class Services // TODO DONE
+public class Services
 {
     public static final IBackpackHelper BACKPACK = load(IBackpackHelper.class);
     public static final IEntityHelper ENTITY = load(IEntityHelper.class);

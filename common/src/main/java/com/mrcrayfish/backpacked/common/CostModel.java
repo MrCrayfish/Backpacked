@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import java.util.List;
 
-public interface CostModel // TODO DONE
+public interface CostModel
 {
     /**
      * @return The cost type to use

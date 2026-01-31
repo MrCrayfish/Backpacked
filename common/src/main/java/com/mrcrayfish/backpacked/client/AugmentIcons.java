@@ -6,7 +6,7 @@ import com.mrcrayfish.framework.api.client.screen.widget.texture.FrameworkTextur
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class AugmentIcons // TODO DONE
+public final class AugmentIcons
 {
     private static final Map<AugmentType<?>, FrameworkTexture> ICONS = new ConcurrentHashMap<>();
 

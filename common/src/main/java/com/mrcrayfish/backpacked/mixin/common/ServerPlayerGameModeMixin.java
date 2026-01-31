@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
  * Author: MrCrayfish
  */
 @Mixin(ServerPlayerGameMode.class)
-public class ServerPlayerGameModeMixin // TODO DONE
+public class ServerPlayerGameModeMixin
 {
     /*******************************
      * Capture mining block events *

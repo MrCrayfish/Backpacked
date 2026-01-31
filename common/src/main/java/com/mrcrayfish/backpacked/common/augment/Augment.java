@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
- // TODO DONE
+
 @SuppressWarnings("unchecked")
 public interface Augment<T extends Augment<T>>
 {

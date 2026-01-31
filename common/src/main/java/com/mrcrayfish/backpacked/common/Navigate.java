@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
-public enum Navigate // TODO DONE
+public enum Navigate
 {
     CURRENT(0), PREVIOUS(-1), NEXT(1);
 

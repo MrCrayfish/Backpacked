@@ -8,7 +8,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 /**
  * Author: MrCrayfish
  */
-public record ConstantValue(double value) implements Value // TODO DONE
+public record ConstantValue(double value) implements Value
 {
     public static final Type TYPE = new Type(
         Utils.rl("constant"),

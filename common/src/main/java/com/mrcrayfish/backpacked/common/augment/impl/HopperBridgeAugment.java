@@ -15,7 +15,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 
 import java.util.Locale;
- // TODO DONE
+
 public record HopperBridgeAugment(boolean insert, boolean extract, FilterMode filterMode, ItemCollection filters) implements Augment<HopperBridgeAugment>, FilterableItems<HopperBridgeAugment>
 {
     public static final AugmentType<HopperBridgeAugment> TYPE = new AugmentType<>(

@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Author: MrCrayfish
  */
-public final class MessageBackpackCosmetics extends PlayMessage<MessageBackpackCosmetics> // TODO DONE
+public final class MessageBackpackCosmetics extends PlayMessage<MessageBackpackCosmetics>
 {
     private int backpackIndex;
     private CosmeticProperties properties;

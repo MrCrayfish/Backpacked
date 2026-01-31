@@ -40,11 +40,10 @@ public class BackpackEvents
         ItemStack realStack = BackpackHelper.getFirstBackpackStack(player);
         if(realStack.is(ModItems.BACKPACK.get()))
         {
-            // TODO should be fine but look into performance since this is every tick
             CosmeticProperties realProperties = CosmeticProperties.view(realStack, CosmeticProperties.DEFAULT);
             if(cosmeticProperties.isEmpty() || !realProperties.equals(cosmeticProperties.get()))
             {
-                ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(player, Optional.of(realProperties));
+                ModSyncedDataKeys.COSMETIC_PROPERTIES.setValue(player, Optional.of(realProperties.copy()));
             }
         }
         else if(cosmeticProperties.isPresent())

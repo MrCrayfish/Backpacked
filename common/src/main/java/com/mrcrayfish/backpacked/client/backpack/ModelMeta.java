@@ -17,7 +17,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public record ModelMeta(Vector3f shelfOffset, ItemTransforms display, Optional<BackpackRenderer> renderer, boolean bobbing) // TODO DONE
+public record ModelMeta(Vector3f shelfOffset, ItemTransforms display, Optional<BackpackRenderer> renderer, boolean bobbing)
 {
     public static final Codec<ItemTransform> ITEM_TRANSFORM_CODEC = RecordCodecBuilder.create(builder -> {
         return builder.group(

@@ -35,7 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends CustomContainerScreen<T> // TODO DONE
+public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu> extends CustomContainerScreen<T>
 {
     private static final Component HOLD_TO_UNLOCK = Component.translatable("backpacked.gui.hold_to_unlock");
     private static final int UNLOCK_TIME = 20;
@@ -105,7 +105,6 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
         this.screenParticles.renderParticles(graphics, partialTicks);
     }
 
-    // TODO port test
     @Override
     public void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {

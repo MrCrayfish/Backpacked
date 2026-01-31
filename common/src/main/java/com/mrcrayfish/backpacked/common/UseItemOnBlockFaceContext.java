@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class UseItemOnBlockFaceContext extends UseOnContext // TODO DONE
+public class UseItemOnBlockFaceContext extends UseOnContext
 {
     private UseItemOnBlockFaceContext(Level level, ItemStack stack, BlockHitResult result)
     {

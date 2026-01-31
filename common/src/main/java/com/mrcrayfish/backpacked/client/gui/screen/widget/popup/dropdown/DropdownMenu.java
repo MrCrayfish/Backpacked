@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 /**
  * Author: MrCrayfish
  */
-public class DropdownMenu extends PopupMenu // TODO DONE
+public class DropdownMenu extends PopupMenu
 {
     private final PaddedGridLayout layout = (PaddedGridLayout) new PaddedGridLayout().padding(3).spacing(2);
     private final GridLayout.RowHelper helper = this.layout.createRowHelper(1);
@@ -46,7 +46,7 @@ public class DropdownMenu extends PopupMenu // TODO DONE
     {
         item.owner = this;
         helper.addChild(item);
-        this.invalidateWidgets();
+        this.rebuildWidgets();
     }
 
     public static Builder builder(PopupMenuHandler handler)

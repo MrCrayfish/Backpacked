@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelfMenu> // TODO DONE
+public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelfMenu>
 {
     public BackpackShelfScreen(BackpackShelfMenu menu, Inventory playerInventory, Component title)
     {

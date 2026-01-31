@@ -47,7 +47,7 @@ import java.util.*;
 /**
  * Author: MrCrayfish
  */
-public class ServerPlayHandler // TODO DONE
+public class ServerPlayHandler
 {
     public static void handleCustomiseBackpack(MessageBackpackCosmetics message, MessageContext context)
     {

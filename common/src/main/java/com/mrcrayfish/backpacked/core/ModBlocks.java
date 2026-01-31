@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Blocks;
  * Author: MrCrayfish
  */
 @RegistryContainer
-public final class ModBlocks // TODO DONE
+public final class ModBlocks
 {
     public static final RegistryEntry<Block> OAK_BACKPACK_SHELF = RegistryEntry.blockWithItem(new ResourceLocation(Constants.MOD_ID, "oak_backpack_shelf"), () -> new ShelfBlock(Block.Properties.copy(Blocks.OAK_PLANKS)));
     public static final RegistryEntry<Block> SPRUCE_BACKPACK_SHELF = RegistryEntry.blockWithItem(new ResourceLocation(Constants.MOD_ID, "spruce_backpack_shelf"), () -> new ShelfBlock(Block.Properties.copy(Blocks.SPRUCE_PLANKS)));

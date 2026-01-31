@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class BackpackLoader extends SimpleJsonResourceReloadListener // TODO DONE
+public class BackpackLoader extends SimpleJsonResourceReloadListener
 {
     private static final String DIRECTORY = "backpacked";
     private static final Gson GSON = new GsonBuilder().create();

@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.function.Function;
 
-public class AugmentSettingsMenu extends PopupMenu // TODO DONE
+public class AugmentSettingsMenu extends PopupMenu
 {
     private final FrameLayout layout;
 
@@ -25,7 +25,6 @@ public class AugmentSettingsMenu extends PopupMenu // TODO DONE
         super(handler);
         this.setBackground(TextureDefinitions.AUGMENT_MENU_BACKGROUND);
         this.setScreenClampPadding(10);
-        // TODO port test
         FrameLayout frameLayout = new FrameLayout();
         frameLayout.defaultChildLayoutSetting().padding(8);
         frameLayout.addChild(layoutSupplier.apply(this));
@@ -41,7 +40,7 @@ public class AugmentSettingsMenu extends PopupMenu // TODO DONE
     protected static Layout createOption(Component label, Component tooltip, AbstractWidget widget, int width)
     {
         GridLayout optionLayout = new GridLayout().spacing(5);
-        GridLayout.RowHelper optionHelper = optionLayout.createRowHelper(1);
+        GridLayout.RowHelper optionHelper = optionLayout.createRowHelper(2);
         TextWidget text = new TextWidget(label, Minecraft.getInstance().font);
         text.setWidth(width - widget.getWidth() - 5);
         text.setColour(0xFF61503D);

@@ -22,7 +22,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MerchantTradeChallenge extends Challenge // TODO DONE
+public class MerchantTradeChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merchant_trade");
     public static final Serializer SERIALIZER = new Serializer();

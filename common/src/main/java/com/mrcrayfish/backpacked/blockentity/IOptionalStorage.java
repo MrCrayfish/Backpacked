@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public interface IOptionalStorage extends Container // TODO DONE
+public interface IOptionalStorage extends Container
 {
     @Nullable
     Container getInventory();

@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class ClientEvents // TODO DONE
+public class ClientEvents
 {
     public static void init()
     {

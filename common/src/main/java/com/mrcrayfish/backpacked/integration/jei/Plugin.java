@@ -9,7 +9,7 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.resources.ResourceLocation;
 
 @JeiPlugin
-public class Plugin implements IModPlugin // TODO DONE
+public class Plugin implements IModPlugin
 {
     @Override
     public ResourceLocation getPluginUid()

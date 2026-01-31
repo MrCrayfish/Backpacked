@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Author: MrCrayfish
  */
-public final class UnlockManager // TODO DONE
+public final class UnlockManager
 {
     private static UnlockManager instance;
 

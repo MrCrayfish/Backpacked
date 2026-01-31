@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Author: MrCrayfish
  */
-public final class MessageSyncUnlockTracker extends PlayMessage<MessageSyncUnlockTracker> // TODO DONE
+public final class MessageSyncUnlockTracker extends PlayMessage<MessageSyncUnlockTracker>
 {
     private Set<ResourceLocation> unlockedBackpacks;
 

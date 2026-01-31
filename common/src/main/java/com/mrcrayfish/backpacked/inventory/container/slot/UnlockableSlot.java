@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class UnlockableSlot extends Slot // TODO DONE
+public class UnlockableSlot extends Slot
 {
     private final int slot;
     private final UnlockableController controller;

@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public final class BackpackManager // TODO DONE
+public final class BackpackManager
 {
     private static final String FALLBACK_MODEL = new ResourceLocation(Constants.MOD_ID, "vintage").toString();
     private static String defaultCosmetic;
@@ -58,8 +58,9 @@ public final class BackpackManager // TODO DONE
     }
 
     @Nullable
-    public Backpack getBackpack(String id)
+    public Backpack getBackpack(String rawId)
     {
+        ResourceLocation id = ResourceLocation.tryParse(rawId);
         return this.loadedBackpacks.get(id);
     }
 

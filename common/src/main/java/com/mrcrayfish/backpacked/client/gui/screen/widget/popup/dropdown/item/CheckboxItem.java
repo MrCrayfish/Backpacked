@@ -11,7 +11,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.util.function.Function;
 
-public class CheckboxItem extends MenuItem // TODO DONE
+public class CheckboxItem extends MenuItem
 {
     private static final WidgetTextures SPRITES = new WidgetTextures(
         TextureDefinitions.TOGGLE_ON,

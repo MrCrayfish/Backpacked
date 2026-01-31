@@ -11,6 +11,7 @@ public final class TextureDefinitions
 {
     public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/widgets.png");
 
+    /* GUI Assets */
     public static final FrameworkTexture MISSING_TEXTURE = FrameworkTexture.subImage(MissingTextureAtlasSprite.getLocation(), 0, 0, 16, 16, 16, 16);
     public static final FrameworkTexture BUTTON_ENABLED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 20, 56, 20, 20, Border.of(6));
     public static final FrameworkTexture BUTTON_DISABLED = FrameworkTexture.nineSlice(WIDGETS_LOCATION, 0, 56, 20, 20, Border.of(6));
@@ -73,4 +74,19 @@ public final class TextureDefinitions
     public static final FrameworkTexture SLOT_MODE_ENABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 158, 10, 10);
     public static final FrameworkTexture SLOT_MODE_PURCHASABLE = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 178, 10, 10);
     public static final FrameworkTexture SLOT_MODE_DISABLED = FrameworkTexture.subImage(WIDGETS_LOCATION, 212, 168, 10, 10);
+
+    /* Augment Icons */
+    public static final FrameworkTexture AUGMENT_EMPTY = FrameworkTexture.subImage(WIDGETS_LOCATION, 0, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_FARMHAND = FrameworkTexture.subImage(WIDGETS_LOCATION, 12, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_FUNNELLING = FrameworkTexture.subImage(WIDGETS_LOCATION, 24, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_GIANT = FrameworkTexture.subImage(WIDGETS_LOCATION, 36, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_HOPPER_BRIDGE = FrameworkTexture.subImage(WIDGETS_LOCATION, 48, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_IMBUED_HIDE = FrameworkTexture.subImage(WIDGETS_LOCATION, 60, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_IMMORTAL = FrameworkTexture.subImage(WIDGETS_LOCATION, 72, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_LIGHTWEAVER = FrameworkTexture.subImage(WIDGETS_LOCATION, 84, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_LOOTBOUND = FrameworkTexture.subImage(WIDGETS_LOCATION, 96, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_QUIVERLINK = FrameworkTexture.subImage(WIDGETS_LOCATION, 108, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_RECALL = FrameworkTexture.subImage(WIDGETS_LOCATION, 120, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_REFORGE = FrameworkTexture.subImage(WIDGETS_LOCATION, 132, 244, 12, 12);
+    public static final FrameworkTexture AUGMENT_SEEDFLOW = FrameworkTexture.subImage(WIDGETS_LOCATION, 144, 244, 12, 12);
 }

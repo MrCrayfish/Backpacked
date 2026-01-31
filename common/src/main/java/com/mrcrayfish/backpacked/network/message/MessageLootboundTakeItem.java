@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public final class MessageLootboundTakeItem extends PlayMessage<MessageLootboundTakeItem> // TODO DONE
+public final class MessageLootboundTakeItem extends PlayMessage<MessageLootboundTakeItem>
 {
     private int entityId;
     private ItemStack stack;

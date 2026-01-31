@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.common;
 
-public enum InterpolateFunction // TODO DONE
+public enum InterpolateFunction
 {
     LINEAR,
     SQUARED,

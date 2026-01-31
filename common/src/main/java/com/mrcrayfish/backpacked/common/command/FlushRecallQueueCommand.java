@@ -10,7 +10,7 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Author: MrCrayfish
  */
-public class FlushRecallQueueCommand // TODO DONE
+public class FlushRecallQueueCommand
 {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {

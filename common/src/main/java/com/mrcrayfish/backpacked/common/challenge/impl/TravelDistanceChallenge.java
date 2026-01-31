@@ -23,7 +23,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class TravelDistanceChallenge extends Challenge // TODO DONE
+public class TravelDistanceChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "travel_distance");
     public static final Serializer SERIALIZER = new Serializer();

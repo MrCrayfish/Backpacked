@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 
 import java.util.function.Supplier;
 
-public record PointOfInterest(ResourceKey<PoiType> key, Supplier<PoiType> supplier) // TODO DONE
+public record PointOfInterest(ResourceKey<PoiType> key, Supplier<PoiType> supplier)
 {
     public PointOfInterest(String name, Supplier<PoiType> supplier)
     {

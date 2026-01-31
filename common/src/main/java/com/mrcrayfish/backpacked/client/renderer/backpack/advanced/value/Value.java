@@ -12,7 +12,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public interface Value // TODO DONE
+public interface Value
 {
     Codec<Value> CODEC = Type.CODEC.dispatch(Type::get, Type::codec);
     Codec<Value> EITHER_CODEC = Codec.either(Codec.DOUBLE, Value.CODEC).xmap(either -> {

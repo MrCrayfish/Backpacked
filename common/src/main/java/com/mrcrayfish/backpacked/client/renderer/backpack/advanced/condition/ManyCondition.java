@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 
 import java.util.List;
 
-public record ManyCondition(List<BaseCondition> conditions) implements BaseCondition // TODO DONE
+public record ManyCondition(List<BaseCondition> conditions) implements BaseCondition
 {
     public static final Type TYPE = new Type(Utils.rl("many"), RecordCodecBuilder.<ManyCondition>create(builder -> builder.group(
         BaseCondition.CODEC.listOf().fieldOf("conditions").forGetter(o -> o.conditions)

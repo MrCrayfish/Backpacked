@@ -9,12 +9,13 @@ import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.*;
 import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value.*;
 import com.mrcrayfish.backpacked.common.augment.impl.*;
+import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.framework.api.event.InputEvents;
 
 /**
  * Author: MrCrayfish
  */
-public class ClientBootstrap // TODO DONE
+public class ClientBootstrap
 {
     public static void earlyInit()
     {
@@ -55,5 +56,19 @@ public class ClientBootstrap // TODO DONE
         AugmentSettingsFactories.registerFactory(HopperBridgeAugment.TYPE, HopperBridgeMenu::new);
         AugmentSettingsFactories.registerFactory(RecallAugment.TYPE, RecallMenu::new);
         AugmentSettingsFactories.registerFactory(ImmortalAugment.TYPE, ImmortalMenu::new);
+
+        AugmentIcons.set(ModAugmentTypes.EMPTY.get(), TextureDefinitions.AUGMENT_EMPTY);
+        AugmentIcons.set(ModAugmentTypes.FARMHAND.get(), TextureDefinitions.AUGMENT_FARMHAND);
+        AugmentIcons.set(ModAugmentTypes.FUNNELLING.get(), TextureDefinitions.AUGMENT_FUNNELLING);
+        AugmentIcons.set(ModAugmentTypes.GIANT.get(), TextureDefinitions.AUGMENT_GIANT);
+        AugmentIcons.set(ModAugmentTypes.HOPPER_BRIDGE.get(), TextureDefinitions.AUGMENT_HOPPER_BRIDGE);
+        AugmentIcons.set(ModAugmentTypes.IMBUED_HIDE.get(), TextureDefinitions.AUGMENT_IMBUED_HIDE);
+        AugmentIcons.set(ModAugmentTypes.IMMORTAL.get(), TextureDefinitions.AUGMENT_IMMORTAL);
+        AugmentIcons.set(ModAugmentTypes.LIGHTWEAVER.get(), TextureDefinitions.AUGMENT_LIGHTWEAVER);
+        AugmentIcons.set(ModAugmentTypes.LOOTBOUND.get(), TextureDefinitions.AUGMENT_LOOTBOUND);
+        AugmentIcons.set(ModAugmentTypes.QUIVERLINK.get(), TextureDefinitions.AUGMENT_QUIVERLINK);
+        AugmentIcons.set(ModAugmentTypes.RECALL.get(), TextureDefinitions.AUGMENT_RECALL);
+        AugmentIcons.set(ModAugmentTypes.REFORGE.get(), TextureDefinitions.AUGMENT_REFORGE);
+        AugmentIcons.set(ModAugmentTypes.SEEDFLOW.get(), TextureDefinitions.AUGMENT_SEEDFLOW);
     }
 }

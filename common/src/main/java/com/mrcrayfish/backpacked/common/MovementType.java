@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Author: MrCrayfish
  */
-public enum MovementType implements StringRepresentable // TODO DONE
+public enum MovementType implements StringRepresentable
 {
     WALK("walk"),
     SPRINT("sprint"),

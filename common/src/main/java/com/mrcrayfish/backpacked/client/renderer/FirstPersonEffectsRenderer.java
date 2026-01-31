@@ -32,7 +32,7 @@ import java.util.Optional;
 /**
  * Allows particles to be spawned when in first person since the player model is not drawn
  */
-public class FirstPersonEffectsRenderer // TODO DONE
+public class FirstPersonEffectsRenderer
 {
     public static void draw(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, float partialTick)
     {

@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
- // TODO DONE
+
 public record LightweaverAugment(int minimumLight, boolean sound) implements Augment<LightweaverAugment>
 {
     public static final AugmentType<LightweaverAugment> TYPE = new AugmentType<>(

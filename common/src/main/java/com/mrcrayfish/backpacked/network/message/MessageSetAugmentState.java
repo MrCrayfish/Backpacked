@@ -6,7 +6,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageSetAugmentState extends PlayMessage<MessageSetAugmentState> // TODO DONE
+public final class MessageSetAugmentState extends PlayMessage<MessageSetAugmentState>
 {
     private Augments.Position position;
     private boolean state;

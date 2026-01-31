@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Author: MrCrayfish
  */
 @Mixin(ItemEntity.class)
-public class ItemEntityMixin // TODO DONE
+public class ItemEntityMixin
 {
     @Inject(method = "fireImmune", at = @At(value = "HEAD"), cancellable = true)
     public void backpacked$FireImmuneHead(CallbackInfoReturnable<Boolean> cir)

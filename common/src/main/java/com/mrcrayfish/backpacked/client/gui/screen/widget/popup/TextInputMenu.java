@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
 
-public class TextInputMenu extends PopupMenu // TODO DONE
+public class TextInputMenu extends PopupMenu
 {
     private static final int WIDTH = 160;
 

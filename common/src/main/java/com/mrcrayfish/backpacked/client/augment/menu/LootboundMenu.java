@@ -12,7 +12,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-public class LootboundMenu extends AugmentSettingsMenu // TODO DONE
+public class LootboundMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component BLOCKS_LABEL = Component.translatable("augment.backpacked.lootbound.blocks");

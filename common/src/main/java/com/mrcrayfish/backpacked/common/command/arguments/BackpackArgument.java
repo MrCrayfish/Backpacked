@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Author: MrCrayfish
  */
-public class BackpackArgument implements ArgumentType<Backpack> // TODO DONE
+public class BackpackArgument implements ArgumentType<Backpack>
 {
     public static BackpackArgument backpacks()
     {

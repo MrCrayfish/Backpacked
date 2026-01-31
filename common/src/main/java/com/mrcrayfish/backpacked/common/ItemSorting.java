@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Comparator;
 
-public enum ItemSorting // TODO DONE
+public enum ItemSorting
 {
     ALPHABETICAL("alphabetical", Comparator.comparing(stack -> stack.getItem().getName(stack).getString())),
     ITEMS_FIRST("items_first", Comparator.comparing(stack -> !stack.getDescriptionId().startsWith("item"))), // The description id more accurately represents if a block or an item

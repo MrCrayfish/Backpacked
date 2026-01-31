@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
-public class RecallMenu extends AugmentSettingsMenu // TODO DONE
+public class RecallMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component SET_SHELF_LABEL = Component.translatable("augment.backpacked.recall.link_shelf");

@@ -247,7 +247,7 @@ public sealed class Augments permits Augments.Cached
                     continue;
 
                 CompoundTag valueTag = augmentTag.getCompound("Value");
-                if(type.id().toString().equals(valueTag.getString("Id")))
+                if(type.id().toString().equals(valueTag.getString("type")))
                     return true;
             }
             return false;
@@ -264,7 +264,11 @@ public sealed class Augments permits Augments.Cached
                 return EmptyAugment.INSTANCE;
 
             CompoundTag augment = augments.getCompound(position.key());
-            return Augment.CODEC.parse(NbtOps.INSTANCE, augment).result().orElse(EmptyAugment.INSTANCE);
+            if(!augment.contains("Value", Tag.TAG_COMPOUND))
+                return EmptyAugment.INSTANCE;
+
+            CompoundTag value = augment.getCompound("Value");
+            return Augment.CODEC.parse(NbtOps.INSTANCE, value).result().orElse(EmptyAugment.INSTANCE);
         }
 
         private boolean readState(Position position)
@@ -367,8 +371,6 @@ public sealed class Augments permits Augments.Cached
             CompoundTag tag = this.stack.getOrCreateTag();
             CompoundTag augmentsTag = tag.getCompound(KEY);
             CompoundTag augmentTag = augmentsTag.getCompound(position.key());
-            augmentTag.putString("Id", augment.type().toString());
-            // TODO need to check how this serializes, does it inlcude ID or do I have to do manual like above
             Augment.CODEC.encodeStart(NbtOps.INSTANCE, augment).resultOrPartial(Constants.LOG::error).ifPresent(tag1 -> {
                 augmentTag.put("Value", tag1);
             });
@@ -403,7 +405,11 @@ public sealed class Augments permits Augments.Cached
                     continue;
 
                 CompoundTag augment = augments.getCompound(position.key());
-                if(augment.getString("Id").equals(type.name().toString()))
+                if(!augment.contains("Value", Tag.TAG_COMPOUND))
+                    continue;
+
+                CompoundTag value = augment.getCompound("Value");
+                if(value.getString("type").equals(type.name().toString()))
                 {
                     return Optional.of(position);
                 }

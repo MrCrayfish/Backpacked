@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-public class ConditionalSlot extends Slot // TODO DONE
+public class ConditionalSlot extends Slot
 {
     private final Predicate<ItemStack> predicate;
     private @Nullable ResourceLocation icon;

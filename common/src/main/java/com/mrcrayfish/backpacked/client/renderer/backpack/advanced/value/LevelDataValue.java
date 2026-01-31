@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.BiFunction;
 
-public record LevelDataValue(Property property) implements Value // TODO DONE
+public record LevelDataValue(Property property) implements Value
 {
     public static final Type TYPE = new Type(
         Utils.rl("level_data"),

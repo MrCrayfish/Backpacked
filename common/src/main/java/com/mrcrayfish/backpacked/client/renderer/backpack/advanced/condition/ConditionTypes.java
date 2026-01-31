@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.resources.ResourceLocation;
 
-public class ConditionTypes // TODO DONE
+public class ConditionTypes
 {
     private static final BiMap<ResourceLocation, BaseCondition.Type> CONDITIONS = HashBiMap.create();
 

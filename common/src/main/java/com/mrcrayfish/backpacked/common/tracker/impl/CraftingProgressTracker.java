@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Predicate;
 
 
-public class CraftingProgressTracker implements IProgressTracker // TODO DONE
+public class CraftingProgressTracker implements IProgressTracker
 {
     protected int count;
     protected final int totalCount;

@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
-public abstract class UnlockableContainer implements Container // TODO DONE
+public abstract class UnlockableContainer implements Container
 {
     protected final int size;
     protected final NonNullList<ItemStack> items;
@@ -162,7 +162,6 @@ public abstract class UnlockableContainer implements Container // TODO DONE
 
     public void copyFrom(ItemStack stack)
     {
-        // TODO port test
         ListTag list = stack.getOrCreateTag().getList("Items", Tag.TAG_COMPOUND);
         InventoryHelper.loadItems(list, this);
     }

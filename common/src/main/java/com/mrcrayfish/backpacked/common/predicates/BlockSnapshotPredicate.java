@@ -22,7 +22,7 @@ import java.util.Optional;
 
 /**
  * Predicate to test block states that were removed from a level.
- */ // TODO DONE
+ */
 public record BlockSnapshotPredicate(Optional<BlockPredicate> block, Optional<BlockPositionPredicate> position, Optional<HolderSet<Biome>> biomes, Optional<HolderSet<Structure>> structures, Optional<ResourceKey<Level>> dimension)
 {
     /**

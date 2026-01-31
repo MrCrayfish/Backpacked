@@ -5,7 +5,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessagePickpocketBackpack extends PlayMessage<MessagePickpocketBackpack> // TODO DONE
+public final class MessagePickpocketBackpack extends PlayMessage<MessagePickpocketBackpack>
 {
     private int entityId;
 

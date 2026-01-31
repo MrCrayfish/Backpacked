@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
- // TODO DONE
+
 public record QuiverlinkAugment(Priority priority) implements Augment<QuiverlinkAugment>
 {
     public static final AugmentType<QuiverlinkAugment> TYPE = new AugmentType<>(

@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.Window;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import com.mrcrayfish.framework.api.client.screen.widget.texture.FrameworkTexture;
@@ -11,7 +12,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutElement // TODO DONE
+public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutElement
 {
     final PopupMenuController controller;
     @Nullable PopupMenu parent;
@@ -29,7 +29,8 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
     private int y;
     private int width;
     private int height;
-    private @Nullable List<AbstractWidget> cachedWidgets;
+    private List<GuiEventListener> widgets = List.of();
+    private List<Renderable> renderables = List.of();
     private Alignment alignment = Alignment.END_TOP;
     private @Nullable FrameworkTexture background;
     private int screenClampPadding = 0;
@@ -98,20 +99,39 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         this.background = background;
     }
 
-    List<AbstractWidget> getWidgets()
+    List<GuiEventListener> getWidgets()
     {
-        if(this.cachedWidgets == null)
-        {
-            List<AbstractWidget> widgets = new ArrayList<>();
-            this.layout().visitWidgets(widgets::add);
-            this.cachedWidgets = List.copyOf(widgets);
-        }
-        return this.cachedWidgets;
+        return this.widgets;
     }
 
-    protected void invalidateWidgets()
+    private Consumer<LayoutElement> extract(Consumer<LayoutElement> consumer)
     {
-        this.cachedWidgets = null;
+        return element -> {
+            consumer.accept(element);
+            if(element instanceof Layout layout) {
+                layout.visitChildren(this.extract(consumer));
+            }
+        };
+    }
+
+    protected void rebuildWidgets()
+    {
+        List<GuiEventListener> widgets = new ArrayList<>();
+        List<Renderable> renderables = new ArrayList<>();
+        this.layout().visitChildren(this.extract(element -> {
+            if(element instanceof GuiEventListener listener) {
+                if(listener instanceof AbstractWidget widget) {
+                    widget.visitWidgets(widgets::add);
+                } else {
+                    widgets.add(listener);
+                }
+            }
+            if(element instanceof Renderable renderable) {
+                renderables.add(renderable);
+            }
+        }));
+        this.widgets = ImmutableList.copyOf(widgets);
+        this.renderables = ImmutableList.copyOf(renderables);
     }
 
     @Override
@@ -128,7 +148,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         }
 
         // Draw all widgets from the layout
-        this.getWidgets().forEach(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
+        this.renderables.forEach(renderable -> renderable.render(graphics, mouseX, mouseY, deltaTick));
 
         if(this.child != null)
         {
@@ -159,6 +179,7 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
 
     public void show(ScreenRectangle rect)
     {
+        this.rebuildWidgets();
         this.updatePosition(rect);
         this.controller.open(this);
     }

@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(HopperBlockEntity.class)
-public class HopperBlockEntityMixin // TODO DONE
+public class HopperBlockEntityMixin
 {
     @Inject(method = "getContainerAt(Lnet/minecraft/world/level/Level;DDD)Lnet/minecraft/world/Container;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;"), cancellable = true)
     private static void backpacked$GetBackpackContainer(Level level, double x, double y, double z, CallbackInfoReturnable<Container> cir)

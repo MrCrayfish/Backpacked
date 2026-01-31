@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public final class ValueTypes // TODO DONE
+public final class ValueTypes
 {
     private static final BiMap<ResourceLocation, Value.Type> SOURCES = HashBiMap.create();
 

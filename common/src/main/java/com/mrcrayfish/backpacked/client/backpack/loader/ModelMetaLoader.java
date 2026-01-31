@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public class ModelMetaLoader extends SimplePreparableReloadListener<Map<ResourceLocation, ModelMeta>> // TODO DONE
+public class ModelMetaLoader extends SimplePreparableReloadListener<Map<ResourceLocation, ModelMeta>>
 {
     private static final String DIRECTORY = "backpacked";
     private static final String EXTENSION = ".json";

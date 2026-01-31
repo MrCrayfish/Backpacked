@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class Farmhand extends SavedData // TODO DONE
+public final class Farmhand extends SavedData
 {
     public static final String ID = "backpacked_farmhand";
     public static final int PLANT_TIME = 14;

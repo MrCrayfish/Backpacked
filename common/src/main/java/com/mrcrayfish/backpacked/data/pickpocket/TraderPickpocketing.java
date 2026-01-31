@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class TraderPickpocketing extends SyncedObject implements Serializable // TODO DONE
+public class TraderPickpocketing extends SyncedObject implements Serializable
 {
     public static final IDataSerializer<TraderPickpocketing> SERIALIZER = new Serializer();
 

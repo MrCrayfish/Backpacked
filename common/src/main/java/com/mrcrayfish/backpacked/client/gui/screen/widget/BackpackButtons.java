@@ -9,7 +9,7 @@ import com.mrcrayfish.framework.api.client.screen.widget.texture.WidgetTextures;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class BackpackButtons // TODO DONE
+public class BackpackButtons
 {
     public static final WidgetTextures DEFAULT_SPRITES = new WidgetTextures(
         TextureDefinitions.BUTTON_ENABLED,

@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Optional;
 
-public class BackpackManagementMenu extends CustomContainerMenu // TODO DONE
+public class BackpackManagementMenu extends CustomContainerMenu
 {
     private static final ResourceLocation EMPTY_SLOT = Utils.rl("item/empty_backpack_slot");
 
@@ -126,21 +126,6 @@ public class BackpackManagementMenu extends CustomContainerMenu // TODO DONE
         {
             super(slots);
             this.paymentContainers = paymentContainers;
-        }
-
-        @Override
-        public Optional<UnlockableSlots> getSlots(Player player)
-        {
-            // TODO use needs to be analysed
-            return Optional.of(BackpackHelper.getBackpackUnlockableSlots(player));
-        }
-
-        @Override
-        public boolean setSlots(Player player, UnlockableSlots slots)
-        {
-            // TODO use needs to be analysed
-            BackpackHelper.setBackpackUnlockableSlots(player, slots);
-            return false;
         }
 
         @Override

@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(CropBlock.class)
-public interface CropBlockMixin // TODO DONE
+public interface CropBlockMixin
 {
     @Invoker(value = "getBaseSeedId")
     ItemLike backpacked$getBaseSeedId();

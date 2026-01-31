@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("ClassCanBeRecord")
-public final class AugmentHolder<T> // TODO DONE
+public final class AugmentHolder<T>
 {
     private final Supplier<T> supplier;
     private final Consumer<T> updater;

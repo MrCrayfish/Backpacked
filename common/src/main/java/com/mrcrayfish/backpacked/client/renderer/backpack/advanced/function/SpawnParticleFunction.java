@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class SpawnParticleFunction implements BaseFunction // TODO DONE
+public class SpawnParticleFunction implements BaseFunction
 {
     private static final Set<Integer> SPAWNED = new HashSet<>();
 

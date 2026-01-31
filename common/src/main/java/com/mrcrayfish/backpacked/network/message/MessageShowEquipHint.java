@@ -5,7 +5,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageShowEquipHint extends PlayMessage<MessageShowEquipHint> // TODO DONE
+public final class MessageShowEquipHint extends PlayMessage<MessageShowEquipHint>
 {
     public static final MessageShowEquipHint INSTANCE = new MessageShowEquipHint();
 

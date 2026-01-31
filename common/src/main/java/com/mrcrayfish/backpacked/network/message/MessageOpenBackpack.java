@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public final class MessageOpenBackpack extends PlayMessage<MessageOpenBackpack> // TODO DONE
+public final class MessageOpenBackpack extends PlayMessage<MessageOpenBackpack>
 {
     private int backpackIndex;
 

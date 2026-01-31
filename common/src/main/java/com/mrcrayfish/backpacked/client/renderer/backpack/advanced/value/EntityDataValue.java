@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.function.BiFunction;
 
-public record EntityDataValue(Data data) implements Value // TODO DONE
+public record EntityDataValue(Data data) implements Value
 {
     public static final Type TYPE = new Type(
         Utils.rl("entity_data"),

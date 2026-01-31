@@ -62,7 +62,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerMenu> // TODO DONE
+public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerMenu>
 {
     private static final Component MANAGEMENT_TOOLTIP = Component.translatable("backpacked.gui.manage_backpacks");
     private static final Component CUSTOMISE_TOOLTIP = Component.translatable("backpacked.button.customise.tooltip");

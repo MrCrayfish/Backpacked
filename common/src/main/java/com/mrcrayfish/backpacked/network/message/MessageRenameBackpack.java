@@ -5,7 +5,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageRenameBackpack extends PlayMessage<MessageRenameBackpack> // TODO DONE
+public final class MessageRenameBackpack extends PlayMessage<MessageRenameBackpack>
 {
     private String value;
 
