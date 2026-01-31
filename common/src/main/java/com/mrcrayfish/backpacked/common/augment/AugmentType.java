@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
- // TODO DONE
+
 public record AugmentType<T extends Augment<T>>(ResourceLocation id, Codec<T> codec, BiConsumer<FriendlyByteBuf, T> encoder, Function<FriendlyByteBuf, T> decoder, Supplier<T> defaultSupplier, ResourceLocation sprite, Component name, Component description, Supplier<AugmentType<?>> requires) implements Comparable<AugmentType<?>>
 {
     public static final Comparator<AugmentType<?>> BY_NAME = Comparator.comparing(type -> type.name().getString());

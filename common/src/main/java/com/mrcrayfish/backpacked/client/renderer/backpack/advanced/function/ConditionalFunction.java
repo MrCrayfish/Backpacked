@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 
 import java.util.List;
 
-public record ConditionalFunction(BaseCondition condition, List<BaseFunction> functions) implements BaseFunction // TODO DONE
+public record ConditionalFunction(BaseCondition condition, List<BaseFunction> functions) implements BaseFunction
 {
     public static final Type TYPE = new Type(
         Utils.rl("conditional"),

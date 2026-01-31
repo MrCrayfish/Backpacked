@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * and {@link com.mrcrayfish.backpacked.mixin.common.BlockItemMixin} are used to enable customisation
  * of the place sound, solving the aforementioned issue but also allow for the sound to be disabled.
  */
-public final class PlaceSoundControls // TODO DONE
+public final class PlaceSoundControls
 {
     // Don't care about potential nested calls, so a singleton instance is used for everything
     // It is out of scope to solve edge cases that aren't going to be an issue in Backpacked

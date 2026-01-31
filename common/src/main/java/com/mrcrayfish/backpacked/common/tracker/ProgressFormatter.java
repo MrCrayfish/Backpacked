@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 /**
  * Author: MrCrayfish
  */
-public record ProgressFormatter(ResourceLocation id, BiFunction<Integer, Integer, Component> formatter) // TODO DONE
+public record ProgressFormatter(ResourceLocation id, BiFunction<Integer, Integer, Component> formatter)
 {
     public static final BiMap<ResourceLocation, ProgressFormatter> REGISTERED_FORMATTERS = HashBiMap.create();
     public static final Codec<ProgressFormatter> CODEC = ResourceLocation.CODEC.flatXmap(id -> {

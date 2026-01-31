@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Collections;
 import java.util.Map;
 
-public final class RendererTypes // TODO DONE
+public final class RendererTypes
 {
     private static final BiMap<ResourceLocation, BackpackRenderer.Type> SOURCES = HashBiMap.create();
 

@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 /**
  * Author: MrCrayfish
  */
-public class CountProgressTracker implements IProgressTracker // TODO DONE
+public class CountProgressTracker implements IProgressTracker
 {
     private final ProgressFormatter formatter;
     private final int maxCount;

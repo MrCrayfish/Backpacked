@@ -6,8 +6,8 @@ import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
- // TODO DONE
-public final class MessageFarmhandPlant extends PlayMessage<MessageFarmhandPlant> // TODO DONE
+
+public final class MessageFarmhandPlant extends PlayMessage<MessageFarmhandPlant>
 {
     private ItemStack stack;
     private int entityId;

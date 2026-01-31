@@ -7,12 +7,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(BitmapProvider.Definition.class)
-public abstract class BitmapProviderDefinitionMixin // TODO DONE
+public abstract class ForgeBitmapProviderDefinitionMixin
 {
     /* First, define a variable to hold remove rule */
     @Unique
@@ -26,17 +25,13 @@ public abstract class BitmapProviderDefinitionMixin // TODO DONE
     }
 
     /* Thirdly, while init the glyph, remove the extra pixel space that is added to the real width */
-    @ModifyArgs(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/font/providers/BitmapProvider$Glyph;<init>(FLcom/mojang/blaze3d/platform/NativeImage;IIIIII)V"))
-    private void backpacked$RemoveExtraWidth(Args args)
+    @ModifyArg(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/font/providers/BitmapProvider$Glyph;<init>(FLcom/mojang/blaze3d/platform/NativeImage;IIIIII)V"), index = 6)
+    private int backpacked$RemoveExtraWidth(int original)
     {
         if(this.backpacked$removeOnePixel)
         {
-            Object arg = args.get(6); // 6 is the index for the width param
-            if(arg instanceof Integer)
-            {
-                // Remove the added pixel
-                args.set(6, (int) arg - 1);
-            }
+            return original - 1;
         }
+        return original;
     }
 }

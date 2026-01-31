@@ -20,7 +20,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class Backpack // TODO DONE
+public class Backpack
 {
     private final Optional<UnlockChallenge> unlockChallenge;
     private ResourceLocation id;

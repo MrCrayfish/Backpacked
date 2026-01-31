@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.util.Utils;
 
-// TODO DONE
 public record GiantAugment() implements Augment<GiantAugment>
 {
     public static final GiantAugment INSTANCE = new GiantAugment();

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public final class MessageUnlockSlot extends PlayMessage<MessageUnlockSlot> // TODO DONE
+public final class MessageUnlockSlot extends PlayMessage<MessageUnlockSlot>
 {
     private List<Integer> slotIndexes;
 

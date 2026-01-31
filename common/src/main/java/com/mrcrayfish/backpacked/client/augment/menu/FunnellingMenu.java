@@ -25,7 +25,7 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 
 import java.util.function.Predicate;
 
-public class FunnellingMenu extends AugmentSettingsMenu // TODO DONE
+public class FunnellingMenu extends AugmentSettingsMenu
 {
     private static final Component SEARCH_HINT = Component.translatable("backpacked.gui.search_hint");
     private static final Component ACTIVE_LABEL = Component.translatable("backpacked.gui.active");
@@ -70,8 +70,8 @@ public class FunnellingMenu extends AugmentSettingsMenu // TODO DONE
             grid.setSelectedOnly(selectedOnly);
 
             int filterButtonWidth = 55;
-            GridLayout header = new GridLayout().rowSpacing(2);
-            GridLayout.RowHelper headerHelper = header.createRowHelper(1);
+            GridLayout header = new GridLayout().spacing(2);
+            GridLayout.RowHelper headerHelper = header.createRowHelper(2);
             FrameworkEditBox searchField = FrameworkEditBox.builder()
                 .setWidth(divider.getWidth() - 3 - filterButtonWidth)
                 .setPadding(2, 0, 2, 0)

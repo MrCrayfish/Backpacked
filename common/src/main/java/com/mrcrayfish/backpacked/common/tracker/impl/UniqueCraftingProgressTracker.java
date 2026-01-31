@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 /**
  * Author: MrCrayfish
  */
-public class UniqueCraftingProgressTracker extends CraftingProgressTracker // TODO DONE
+public class UniqueCraftingProgressTracker extends CraftingProgressTracker
 {
     protected Set<ResourceLocation> craftedItems = new HashSet<>();
 

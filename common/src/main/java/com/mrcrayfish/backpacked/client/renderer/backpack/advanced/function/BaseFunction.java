@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public interface BaseFunction // TODO DONE
+public interface BaseFunction
 {
     Codec<BaseFunction> CODEC = Type.CODEC.dispatch(BaseFunction::type, Type::codec);
 

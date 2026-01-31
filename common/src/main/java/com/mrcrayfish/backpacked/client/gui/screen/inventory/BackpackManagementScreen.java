@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 
-public class BackpackManagementScreen extends UnlockableContainerScreen<BackpackManagementMenu> // TODO DONE
+public class BackpackManagementScreen extends UnlockableContainerScreen<BackpackManagementMenu>
 {
     private static final Component LABEL_NO_BACKPACK = Component.translatable("backpacked.gui.no_backpack_equipped");
     private static final Component LABEL_NO_BACKPACK_PLURAL = Component.translatable("backpacked.gui.no_backpack_equipped.plural");

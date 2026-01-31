@@ -6,7 +6,7 @@ import net.minecraft.util.StringRepresentable;
 
 import java.util.function.BiFunction;
 
-public enum Operator implements StringRepresentable // TODO DONE
+public enum Operator implements StringRepresentable
 {
     FIRST("first", (a, b) -> a),
     LAST("last", (a, b) -> b),

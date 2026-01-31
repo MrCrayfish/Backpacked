@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class BackpackShelfMenu extends CustomContainerMenu // TODO DONE
+public class BackpackShelfMenu extends CustomContainerMenu
 {
     private static final ResourceLocation EMPTY_SLOT = Utils.rl("item/empty_backpack_slot");
     private final Container managementContainer;

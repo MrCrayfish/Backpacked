@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Level.class)
-public abstract class LevelMixin // TODO DONE
+public abstract class LevelMixin
 {
     @Shadow
     public abstract void playSound(@Nullable Player player, double x, double y, double z, SoundEvent event, SoundSource source, float pitch, float volume);

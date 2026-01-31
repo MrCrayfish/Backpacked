@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 /**
  * Author: MrCrayfish
  */
-public record TranslateMatrixFunction(Value x, Value y, Value z) implements BaseFunction // TODO DONE
+public record TranslateMatrixFunction(Value x, Value y, Value z) implements BaseFunction
 {
     public static final Type TYPE = new Type(
         Utils.rl("translate_matrix"),

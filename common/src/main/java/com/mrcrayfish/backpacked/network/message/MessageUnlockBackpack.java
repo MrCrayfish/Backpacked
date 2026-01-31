@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public final class MessageUnlockBackpack extends PlayMessage<MessageUnlockBackpack> // TODO DONE
+public final class MessageUnlockBackpack extends PlayMessage<MessageUnlockBackpack>
 {
     private ResourceLocation cosmeticId;
 

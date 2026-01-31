@@ -6,7 +6,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageCheckShelfKey extends PlayMessage<MessageCheckShelfKey> // TODO DONE
+public final class MessageCheckShelfKey extends PlayMessage<MessageCheckShelfKey>
 {
     private int backpackIndex;
     private Augments.Position position;

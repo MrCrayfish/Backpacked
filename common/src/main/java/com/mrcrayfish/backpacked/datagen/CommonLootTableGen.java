@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 /**
  * Author: MrCrayfish
  */
-public class CommonLootTableGen // TODO DONE
+public class CommonLootTableGen
 {
     public static void generate(Consumer<Block> dropSelf)
     {

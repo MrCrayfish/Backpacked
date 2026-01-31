@@ -12,7 +12,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-public class QuiverlinkMenu extends AugmentSettingsMenu // TODO DONE
+public class QuiverlinkMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component PRIORITY_LABEL = Component.translatable("augment.backpacked.quiverlink.priority");

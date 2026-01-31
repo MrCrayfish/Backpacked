@@ -10,7 +10,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 /**
  * Author: MrCrayfish
  */
-public record RotateMatrixFunction(Value x, Value y, Value z) implements BaseFunction // TODO DONE
+public record RotateMatrixFunction(Value x, Value y, Value z) implements BaseFunction
 {
     public static final Type TYPE = new Type(
         Utils.rl("rotate_matrix"),

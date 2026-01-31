@@ -43,13 +43,13 @@ public class PaddedGridLayout extends GridLayout implements PaddedLayout
     @Override
     public void setX(int x)
     {
-        super.setX(x + this.padding);
+        super.setX(x);
     }
 
     @Override
     public void setY(int y)
     {
-        super.setY(y + this.padding);
+        super.setY(y);
     }
 
     @Override

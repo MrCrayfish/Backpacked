@@ -37,7 +37,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public class ExploreBiomeChallenge extends Challenge // TODO DONE
+public class ExploreBiomeChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "explore_biome");
     public static final Serializer SERIALIZER = new Serializer();

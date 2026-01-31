@@ -39,7 +39,7 @@ import org.joml.Vector3f;
 /**
  * Author: MrCrayfish
  */
-public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity> // TODO DONE
+public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity>
 {
     private static final Component RECALL_ICON = ScreenUtil.getIconComponent(Icons.RECALL);
 

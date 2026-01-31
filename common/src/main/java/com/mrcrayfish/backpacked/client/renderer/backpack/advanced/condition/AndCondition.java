@@ -4,7 +4,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.util.Utils;
 
-public record AndCondition(BaseCondition first, BaseCondition second) implements BaseCondition // TODO DONE
+public record AndCondition(BaseCondition first, BaseCondition second) implements BaseCondition
 {
     public static final Type TYPE = new Type(Utils.rl("and"), RecordCodecBuilder.<AndCondition>create(builder -> builder.group(
         BaseCondition.CODEC.fieldOf("first").forGetter(o -> o.first),

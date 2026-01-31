@@ -6,7 +6,7 @@ import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AugmentSettingsFactories // TODO DONE
+public class AugmentSettingsFactories
 {
     private static final Map<AugmentType<?>, AugmentMenuFactory<?>> FACTORIES = new HashMap<>();
 

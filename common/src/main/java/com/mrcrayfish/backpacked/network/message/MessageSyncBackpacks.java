@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Author: MrCrayfish
  */
-public final class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks> // TODO DONE
+public final class MessageSyncBackpacks extends HandshakeMessage<MessageSyncBackpacks>
 {
     private List<Backpack> backpacks;
 

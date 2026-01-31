@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack;
 
-public enum RenderMode // TODO DONE
+public enum RenderMode
 {
     ALL,
     MODELS_ONLY,

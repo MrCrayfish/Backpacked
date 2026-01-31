@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class Stepper extends AbstractWidget // TODO DONE
+public class Stepper extends AbstractWidget
 {
     private static final WidgetTextures BUTTON_SPRITES = new WidgetTextures(
         TextureDefinitions.BUTTON_ENABLED,

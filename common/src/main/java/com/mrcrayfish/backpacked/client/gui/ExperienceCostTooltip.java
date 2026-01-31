@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public class ExperienceCostTooltip implements ClientTooltipComponent // TODO DONE
+public class ExperienceCostTooltip implements ClientTooltipComponent
 {
     private static final ResourceLocation ICON_ORB = Utils.rl("backpack/exp_orb");
 

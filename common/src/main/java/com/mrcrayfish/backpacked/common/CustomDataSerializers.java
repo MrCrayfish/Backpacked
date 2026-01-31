@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 
-public class CustomDataSerializers // TODO DONE
+public class CustomDataSerializers
 {
     public static final IDataSerializer<Optional<CosmeticProperties>> OPTIONAL_COSMETIC_PROPERTIES = new IDataSerializer<Optional<CosmeticProperties>>()
     {

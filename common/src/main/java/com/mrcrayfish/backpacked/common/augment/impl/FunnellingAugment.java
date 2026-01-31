@@ -16,7 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Locale;
-// TODO DONE
+
 public record FunnellingAugment(ItemCollection filters, Mode mode) implements Augment<FunnellingAugment>, FilterableItems<FunnellingAugment>
 {
     public static final AugmentType<FunnellingAugment> TYPE = new AugmentType<>(

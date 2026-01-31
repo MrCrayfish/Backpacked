@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.function.Supplier;
 
-public class PaymentItem // TODO DONE
+public class PaymentItem
 {
     private final Supplier<String> idSupplier;
     private Item cachedItem;

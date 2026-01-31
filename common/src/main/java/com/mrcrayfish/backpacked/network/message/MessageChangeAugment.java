@@ -8,7 +8,7 @@ import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
-public final class MessageChangeAugment extends PlayMessage<MessageChangeAugment> // TODO DONE
+public final class MessageChangeAugment extends PlayMessage<MessageChangeAugment>
 {
     private Augments.Position position;
     private ResourceLocation augmentTypeId;

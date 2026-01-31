@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import net.minecraft.world.item.Item;
 
-public interface FilterableItems<T extends FilterableItems<T>> // TODO DONE
+public interface FilterableItems<T extends FilterableItems<T>>
 {
     T addItemFilter(Item item);
 

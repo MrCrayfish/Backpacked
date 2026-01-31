@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Author: MrCrayfish
  */
 @Mixin(Entity.class)
-public class EntityMixin implements IMovedAccess // TODO DONE
+public class EntityMixin implements IMovedAccess
 {
     @Unique
     public boolean backpacked$Moved;

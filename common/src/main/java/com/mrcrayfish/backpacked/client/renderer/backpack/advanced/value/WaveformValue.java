@@ -10,7 +10,7 @@ import net.minecraft.util.StringRepresentable;
 /**
  * Author: MrCrayfish
  */
-public record WaveformValue(Waveform waveform, double wavelength, double amplitude, double phase) implements Value // TODO DONE
+public record WaveformValue(Waveform waveform, double wavelength, double amplitude, double phase) implements Value
 {
     public static final Type TYPE = new Type(
         Utils.rl("waveform"),

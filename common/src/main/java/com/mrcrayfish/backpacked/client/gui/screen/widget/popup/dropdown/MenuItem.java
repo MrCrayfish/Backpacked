@@ -11,7 +11,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
-public abstract class MenuItem extends AbstractWidget // TODO DONE
+public abstract class MenuItem extends AbstractWidget
 {
     protected static final WidgetTextures SPRITES = new WidgetTextures(
         TextureDefinitions.DROPDOWN_ITEM,

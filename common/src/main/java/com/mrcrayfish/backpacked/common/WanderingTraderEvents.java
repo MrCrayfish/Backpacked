@@ -49,7 +49,7 @@ import java.util.stream.StreamSupport;
 /**
  * Author: MrCrayfish
  */
-public class WanderingTraderEvents // TODO DONE
+public class WanderingTraderEvents
 {
     public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
 

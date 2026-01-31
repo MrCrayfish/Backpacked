@@ -4,7 +4,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.util.Utils;
 
-public record AndValue(Value first, Value second, Operator operator) implements Value // TODO DONE
+public record AndValue(Value first, Value second, Operator operator) implements Value
 {
     public static final Type TYPE = new Type(
         Utils.rl("and"),

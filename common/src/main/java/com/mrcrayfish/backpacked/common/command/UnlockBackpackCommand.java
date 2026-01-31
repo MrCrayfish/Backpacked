@@ -10,7 +10,7 @@ import net.minecraft.commands.Commands;
 /**
  * Author: MrCrayfish
  */
-public class UnlockBackpackCommand // TODO DONE
+public class UnlockBackpackCommand
 {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {

@@ -8,7 +8,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
- // TODO DONE
+
 public record BlockSnapshot(ServerLevel level, BlockState state, BlockPos pos, @Nullable CompoundTag tag, Holder<Biome> biome, int timeOfDay)
 {
     public static BlockSnapshot capture(ServerLevel level, BlockPos pos)

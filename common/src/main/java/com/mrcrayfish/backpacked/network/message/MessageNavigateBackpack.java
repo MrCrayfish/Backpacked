@@ -6,7 +6,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageNavigateBackpack extends PlayMessage<MessageNavigateBackpack> // TODO DONE
+public final class MessageNavigateBackpack extends PlayMessage<MessageNavigateBackpack>
 {
     private Navigate navigate;
 

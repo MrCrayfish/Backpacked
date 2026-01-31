@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockItem.class)
-public abstract class BlockItemMixin // TODO DONE
+public abstract class BlockItemMixin
 {
     /* Marks in PlaceSoundControls just before the block place sound is about to play so it can
      * correctly apply the modifications in PlaceSoundControls */

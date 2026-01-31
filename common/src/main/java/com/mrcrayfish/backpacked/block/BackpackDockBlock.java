@@ -21,7 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class BackpackDockBlock extends HorizontalDirectionalBlock implements EntityBlock // TODO DONE
+public class BackpackDockBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
     public BackpackDockBlock(Properties properties)
     {
@@ -50,7 +50,6 @@ public class BackpackDockBlock extends HorizontalDirectionalBlock implements Ent
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result)
     {
-        // TODO port test
         ItemStack stack = player.getItemInHand(hand);
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if(blockEntity instanceof BackpackDockBlockEntity access)

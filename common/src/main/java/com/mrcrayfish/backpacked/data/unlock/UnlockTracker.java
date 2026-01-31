@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class UnlockTracker extends SyncedObject implements Serializable // TODO DONE
+public class UnlockTracker extends SyncedObject implements Serializable
 {
     public static final Serializer SERIALIZER = new Serializer();
 

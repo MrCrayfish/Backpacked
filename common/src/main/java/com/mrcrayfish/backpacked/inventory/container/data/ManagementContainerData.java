@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.inventory.container.data;
 import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import net.minecraft.network.FriendlyByteBuf;
 
-public record ManagementContainerData(UnlockableSlots slots, boolean showInventoryButton) // TODO DONE
+public record ManagementContainerData(UnlockableSlots slots, boolean showInventoryButton)
 {
     public void encode(FriendlyByteBuf buf)
     {

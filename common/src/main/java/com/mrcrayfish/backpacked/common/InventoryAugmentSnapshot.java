@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 
 import java.util.function.Supplier;
 
-public interface InventoryAugmentSnapshot // TODO DONE
+public interface InventoryAugmentSnapshot
 {
     BackpackInventory inventory();
 

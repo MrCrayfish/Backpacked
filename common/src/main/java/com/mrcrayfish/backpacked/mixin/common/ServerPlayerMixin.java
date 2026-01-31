@@ -21,7 +21,7 @@ import java.util.List;
  * Author: MrCrayfish
  */
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin implements BackpackedInteractAccess // TODO DONE
+public abstract class ServerPlayerMixin implements BackpackedInteractAccess
 {
     @Unique
     public List<ResourceLocation> backpacked$CapturedInteractIds = new ArrayList<>();

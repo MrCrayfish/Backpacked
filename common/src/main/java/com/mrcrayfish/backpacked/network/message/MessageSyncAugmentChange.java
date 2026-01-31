@@ -7,7 +7,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageSyncAugmentChange extends PlayMessage<MessageSyncAugmentChange> // TODO DONE
+public final class MessageSyncAugmentChange extends PlayMessage<MessageSyncAugmentChange>
 {
     private Augments.Position position;
     private Augment<?> augment;

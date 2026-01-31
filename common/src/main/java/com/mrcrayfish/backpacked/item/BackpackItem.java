@@ -80,10 +80,10 @@ public class BackpackItem extends Item
             int cols = item.getColumnCount();
             int rows = item.getRowCount();
             boolean owner = ownerPlayer.equals(openingPlayer);
-            UnlockableSlots slots = item.getUnlockableSlots(backpack).copy();
+            UnlockableSlots slots = item.getUnlockableSlots(backpack);
             Pagination pagination = BackpackHelper.createPaginationInfo(ownerPlayer, backpackIndex);
             Augments augments = Augments.cached(backpack).copy();
-            UnlockableSlots bays = item.getUnlockableAugmentBays(backpack).copy();
+            UnlockableSlots bays = item.getUnlockableAugmentBays(backpack);
             Services.BACKPACK.openBackpackScreen(openingPlayer, inventory, ownerPlayer.getId(), backpackIndex, cols, rows, owner, slots, pagination, augments, title, bays);
             return true;
         }

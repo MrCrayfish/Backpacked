@@ -4,7 +4,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 
 import java.util.function.BiConsumer;
 
-public enum Alignment // TODO DONE
+public enum Alignment
 {
     // PLACEMENT_ALIGNMENT
     ABOVE_LEFT((menu, rectangle) -> {

@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class BackpackDockBlockEntity extends BlockEntity implements IOptionalStorage // TODO DONE
+public class BackpackDockBlockEntity extends BlockEntity implements IOptionalStorage
 {
     private ItemStack backpack = ItemStack.EMPTY;
     private @Nullable ItemStackContainer inventory;

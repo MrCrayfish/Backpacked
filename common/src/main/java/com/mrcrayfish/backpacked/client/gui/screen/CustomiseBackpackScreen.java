@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 /**
  * Author: MrCrayfish
  */
-public class CustomiseBackpackScreen extends CustomScreen // TODO DONE
+public class CustomiseBackpackScreen extends CustomScreen
 {
     private static final Component SAVE = Component.translatable("backpacked.button.save");
     private static final Component SHOW_PARTICLES = Component.translatable("backpacked.button.show_particles");

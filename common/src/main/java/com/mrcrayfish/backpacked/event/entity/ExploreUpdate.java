@@ -9,7 +9,7 @@ import net.minecraft.world.level.biome.Biome;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface ExploreUpdate extends IFrameworkEvent // TODO DONE
+public interface ExploreUpdate extends IFrameworkEvent
 {
     void handle(ResourceKey<Biome> key, Player player);
 }

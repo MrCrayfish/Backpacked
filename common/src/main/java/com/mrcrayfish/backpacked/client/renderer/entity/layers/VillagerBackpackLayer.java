@@ -25,7 +25,7 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 /**
  * Author: MrCrayfish
  */
-public class VillagerBackpackLayer<T extends AbstractVillager, M extends VillagerModel<T>> extends RenderLayer<T, M> // TODO DONE
+public class VillagerBackpackLayer<T extends AbstractVillager, M extends VillagerModel<T>> extends RenderLayer<T, M>
 {
     private static final String WANDERING_BACKPACK = new ResourceLocation(Constants.MOD_ID, "wandering_bag").toString();
 

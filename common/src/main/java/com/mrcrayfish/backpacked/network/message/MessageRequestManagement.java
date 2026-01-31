@@ -5,7 +5,7 @@ import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageRequestManagement extends PlayMessage<MessageRequestManagement> // TODO DONE
+public final class MessageRequestManagement extends PlayMessage<MessageRequestManagement>
 {
     @Override
     public void encode(MessageRequestManagement message, FriendlyByteBuf buf) {}

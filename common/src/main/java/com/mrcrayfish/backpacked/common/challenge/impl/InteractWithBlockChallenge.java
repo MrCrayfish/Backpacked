@@ -26,7 +26,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class InteractWithBlockChallenge extends Challenge // TODO DONE
+public class InteractWithBlockChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "interact_with_block");
     public static final Serializer SERIALIZER = new Serializer();

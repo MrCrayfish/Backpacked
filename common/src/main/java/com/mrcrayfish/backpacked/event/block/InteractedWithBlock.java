@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface InteractedWithBlock extends IFrameworkEvent // TODO DONE
+public interface InteractedWithBlock extends IFrameworkEvent
 {
     void handle(BlockSnapshot snapshot, ItemStack stack, ServerPlayer player);
 

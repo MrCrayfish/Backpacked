@@ -26,7 +26,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MineBlockChallenge extends Challenge // TODO DONE
+public class MineBlockChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "mine_block");
     public static final Serializer SERIALIZER = new Serializer();

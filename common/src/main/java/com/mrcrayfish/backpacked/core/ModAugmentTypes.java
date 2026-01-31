@@ -7,7 +7,7 @@ import com.mrcrayfish.framework.api.registry.RegistryContainer;
 import com.mrcrayfish.framework.api.registry.RegistryEntry;
 
 @RegistryContainer
-public class ModAugmentTypes // TODO DONE
+public class ModAugmentTypes
 {
     public static final RegistryEntry<AugmentType<EmptyAugment>> EMPTY = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("empty"), () -> EmptyAugment.TYPE);
     public static final RegistryEntry<AugmentType<FunnellingAugment>> FUNNELLING = RegistryEntry.custom(ModRegistries.AUGMENT_TYPES, Utils.rl("funnelling"), () -> FunnellingAugment.TYPE);

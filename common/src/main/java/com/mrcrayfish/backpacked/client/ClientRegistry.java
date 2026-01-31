@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public class ClientRegistry // TODO DONE
+public class ClientRegistry
 {
     private static ClientRegistry instance;
 

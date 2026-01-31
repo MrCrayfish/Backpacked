@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public abstract class Challenge // TODO DONE
+public abstract class Challenge
 {
     private final ResourceLocation id;
 

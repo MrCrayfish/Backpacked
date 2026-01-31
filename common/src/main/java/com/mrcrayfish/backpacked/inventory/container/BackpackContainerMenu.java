@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.inventory.container;
 
-import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.Config;
 import com.mrcrayfish.backpacked.blockentity.BackpackDockBlockEntity;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
@@ -27,7 +26,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Author: MrCrayfish
@@ -63,8 +61,8 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         this.rows = Mth.clamp(rows, 1, MAX_ROWS);
         this.owner = owner;
         this.pagination = pagination;
-        this.slotController = new BackpackUnlockableController(this, slots, List.of(playerInventory, backpackContainer));
-        this.augmentBayController = new AugmentUnlockableController(this, bays, List.of(playerInventory, backpackContainer));
+        this.slotController = new BackpackUnlockableController(slots, List.of(playerInventory, backpackContainer));
+        this.augmentBayController = new AugmentUnlockableController(bays, List.of(playerInventory, backpackContainer));
         this.augments = augments;
 
         checkContainerSize(backpackContainer, this.cols * this.rows);
@@ -234,9 +232,6 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
         players.forEach(otherPlayer -> {
             if(otherPlayer.containerMenu instanceof BackpackContainerMenu otherMenu) {
                 if(this.backpackInventory == otherMenu.backpackInventory) {
-                    if(otherPlayer != unlockingPlayer) {
-                        otherMenu.slotController.cachedSlots = this.slotController.cachedSlots;
-                    }
                     Network.PLAY.sendToPlayer(() -> otherPlayer, new MessageSyncUnlockSlot(slotIndexes));
                 }
             }
@@ -245,38 +240,12 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
 
     private static class BackpackUnlockableController extends UnlockableController
     {
-        private final BackpackContainerMenu menu;
         private final List<Container> paymentContainers;
 
-        private BackpackUnlockableController(BackpackContainerMenu menu, UnlockableSlots slots, List<Container> paymentContainers)
+        private BackpackUnlockableController(UnlockableSlots slots, List<Container> paymentContainers)
         {
             super(slots);
-            this.menu = menu;
             this.paymentContainers = paymentContainers;
-        }
-
-        @Override
-        public Optional<UnlockableSlots> getSlots(Player player) // TODO use needs to be analysed
-        {
-            ItemStack backpack = this.menu.getBackpackStack();
-            if(!backpack.isEmpty())
-            {
-                return Optional.of(UnlockableSlots.get(backpack, BackpackItem.SLOTS_KEY));
-            }
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean setSlots(Player player, UnlockableSlots slots) // TODO use needs to be analysed
-        {
-            ItemStack backpack = this.menu.getBackpackStack();
-            if(!backpack.isEmpty())
-            {
-                slots.update(backpack, BackpackItem.SLOTS_KEY);
-                this.menu.sendChanged();
-                return true;
-            }
-            return false;
         }
 
         @Override
@@ -306,38 +275,12 @@ public class BackpackContainerMenu extends CustomContainerMenu implements SyncUn
 
     private static class AugmentUnlockableController extends UnlockableController
     {
-        private final BackpackContainerMenu menu;
         private final List<Container> paymentContainers;
 
-        private AugmentUnlockableController(BackpackContainerMenu menu, UnlockableSlots bays, List<Container> paymentContainers)
+        private AugmentUnlockableController(UnlockableSlots bays, List<Container> paymentContainers)
         {
             super(bays);
-            this.menu = menu;
             this.paymentContainers = paymentContainers;
-        }
-
-        @Override
-        public Optional<UnlockableSlots> getSlots(Player player) // TODO use needs to be analysed
-        {
-            ItemStack backpack = this.menu.getBackpackStack();
-            if(!backpack.isEmpty())
-            {
-                return Optional.ofNullable(BackpackHelper.getUnlockableAugmentBays(backpack));
-            }
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean setSlots(Player player, UnlockableSlots slots)
-        {
-            ItemStack backpack = this.menu.getBackpackStack();
-            if(!backpack.isEmpty())
-            {
-                slots.update(backpack, BackpackItem.AUGMENTS_KEY);
-                this.menu.sendChanged();
-                return true;
-            }
-            return false;
         }
 
         @Override

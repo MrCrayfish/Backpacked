@@ -20,7 +20,7 @@ import java.util.Optional;
  * Author: MrCrayfish
  */
 @RegistryContainer
-public class ModCreativeTabs // TODO DONE
+public class ModCreativeTabs
 {
     public static final RegistryEntry<CreativeModeTab> MAIN = RegistryEntry.creativeModeTab(new ResourceLocation(Constants.MOD_ID, "creative_tab"), builder -> {
         builder.title(Component.translatable("itemGroup." + Constants.MOD_ID));

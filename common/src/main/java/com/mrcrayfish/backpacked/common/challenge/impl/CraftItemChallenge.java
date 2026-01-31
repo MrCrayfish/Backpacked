@@ -29,7 +29,7 @@ import java.util.Set;
  * Author: MrCrayfish
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class CraftItemChallenge extends Challenge // TODO DONE
+public class CraftItemChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "craft_item");
     public static final Serializer SERIALIZER = new Serializer();

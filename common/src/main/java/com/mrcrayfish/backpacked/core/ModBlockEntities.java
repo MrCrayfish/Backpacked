@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * Author: MrCrayfish
  */
 @RegistryContainer
-public class ModBlockEntities // TODO DONE
+public class ModBlockEntities
 {
     public static final RegistryEntry<BlockEntityType<ShelfBlockEntity>> SHELF = RegistryEntry.blockEntity(
         new ResourceLocation(Constants.MOD_ID, "shelf"),

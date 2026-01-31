@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface MinedBlock extends IFrameworkEvent // TODO DONE
+public interface MinedBlock extends IFrameworkEvent
 {
     void handle(BlockSnapshot snapshot, ItemStack stack, ServerPlayer player);
 

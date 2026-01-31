@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.common;
 
 import net.minecraft.ChatFormatting;
 
-public enum UnlockableSlotMode // TODO DONE
+public enum UnlockableSlotMode
 {
     ENABLED(ChatFormatting.GREEN, "backpacked.unlockable_slot_mode.enabled"),
     PURCHASABLE(ChatFormatting.GOLD, "backpacked.unlockable_slot_mode.purchasable"),

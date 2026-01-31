@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.MenuType;
  * Author: MrCrayfish
  */
 @RegistryContainer
-public class ModContainers // TODO DONE
+public class ModContainers
 {
     public static final RegistryEntry<MenuType<BackpackContainerMenu>> BACKPACK = RegistryEntry.menuTypeWithData(
         Utils.rl("backpack"),

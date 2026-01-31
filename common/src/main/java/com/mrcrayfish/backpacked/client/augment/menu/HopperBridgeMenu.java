@@ -16,7 +16,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.network.chat.Component;
 
-public class HopperBridgeMenu extends AugmentSettingsMenu // TODO DONE
+public class HopperBridgeMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component FILTERS_LABEL = Component.translatable("backpacked.gui.filters");
@@ -65,7 +65,7 @@ public class HopperBridgeMenu extends AugmentSettingsMenu // TODO DONE
             list.setActive(() -> holder.get().filterMode() != HopperBridgeAugment.FilterMode.OFF);
 
             GridLayout header = new GridLayout().spacing(2);
-            GridLayout.RowHelper headerHelper = header.createRowHelper(1);
+            GridLayout.RowHelper headerHelper = header.createRowHelper(2);
 
             FrameworkEditBox searchField = FrameworkEditBox.builder()
                 .setWidth(divider.getWidth() - 18 - 2)

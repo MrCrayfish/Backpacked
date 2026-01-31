@@ -20,7 +20,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public class BackpackedCodecs // TODO DONE
+public class BackpackedCodecs
 {
     public static final Codec<Set<String>> STRING_SET = Codec.either(Codec.STRING, Codec.STRING.listOf()).xmap(either -> {
         return either.map(List::of, Function.identity());

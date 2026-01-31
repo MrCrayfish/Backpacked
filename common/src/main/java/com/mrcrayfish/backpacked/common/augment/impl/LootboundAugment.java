@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.common.augment.AugmentType;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
- // TODO DONE
+
 public record LootboundAugment(boolean blocks, boolean mobs) implements Augment<LootboundAugment>
 {
     public static final AugmentType<LootboundAugment> TYPE = new AugmentType<>(

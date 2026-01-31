@@ -13,7 +13,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-public class LightweaverMenu extends AugmentSettingsMenu // TODO DONE
+public class LightweaverMenu extends AugmentSettingsMenu
 {
     private static final Component OPTIONS_LABEL = Component.translatable("backpacked.gui.options");
     private static final Component LIGHT_LEVEL_LABEL = Component.translatable("augment.backpacked.lightweaver.light_level");

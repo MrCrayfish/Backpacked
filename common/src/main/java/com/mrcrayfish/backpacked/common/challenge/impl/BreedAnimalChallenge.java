@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType") // TODO DONE
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class BreedAnimalChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "breed_animal");

@@ -9,7 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
-public record ShelfKey(ResourceKey<Level> level, long position) // TODO DONE
+public record ShelfKey(ResourceKey<Level> level, long position)
 {
     public ShelfKey(ResourceKey<Level> level, BlockPos pos)
     {

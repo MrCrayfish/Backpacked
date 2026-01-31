@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelectionList // TODO DONE
+public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelectionList
 {
     private static final StateSprites ITEM_SPRITES = new StateSprites(
         TextureDefinitions.LIST_ITEM,

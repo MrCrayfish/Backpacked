@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class AugmentPopupMenu extends PopupMenu // TODO DONE
+public class AugmentPopupMenu extends PopupMenu
 {
     private static final int MAX_COLUMNS = 6;
 

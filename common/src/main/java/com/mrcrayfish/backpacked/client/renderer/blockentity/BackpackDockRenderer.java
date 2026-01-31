@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 
-public class BackpackDockRenderer implements BlockEntityRenderer<BackpackDockBlockEntity> // TODO DONE
+public class BackpackDockRenderer implements BlockEntityRenderer<BackpackDockBlockEntity>
 {
     public BackpackDockRenderer(BlockEntityRendererProvider.Context context) {}
 

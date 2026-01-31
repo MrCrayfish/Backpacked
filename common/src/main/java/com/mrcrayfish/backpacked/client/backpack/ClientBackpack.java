@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class ClientBackpack extends Backpack // TODO DONE
+public class ClientBackpack extends Backpack
 {
     private final ResourceLocation baseModel;
     private final ResourceLocation strapsModel;

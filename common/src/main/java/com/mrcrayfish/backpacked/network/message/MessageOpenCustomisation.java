@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-public final class MessageOpenCustomisation extends PlayMessage<MessageOpenCustomisation> // TODO DONE
+public final class MessageOpenCustomisation extends PlayMessage<MessageOpenCustomisation>
 {
     private int backpackIndex;
     private Map<ResourceLocation, Component> progressMap;

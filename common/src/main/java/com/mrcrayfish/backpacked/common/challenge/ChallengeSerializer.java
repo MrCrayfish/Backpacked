@@ -9,7 +9,7 @@ import net.minecraft.util.GsonHelper;
 /**
  * Author: MrCrayfish
  */
-public abstract class ChallengeSerializer<T extends Challenge> // TODO DONE
+public abstract class ChallengeSerializer<T extends Challenge>
 {
     public abstract T deserialize(JsonObject object);
 

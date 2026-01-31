@@ -14,18 +14,19 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class UnlockableController // TODO DONE
+public abstract class UnlockableController
 {
-    protected UnlockableSlots cachedSlots;
+    protected final UnlockableSlots slots;
 
     public UnlockableController(UnlockableSlots slots)
     {
-        this.cachedSlots = slots;
+        this.slots = slots;
     }
 
-    public abstract Optional<UnlockableSlots> getSlots(Player player);
-
-    public abstract boolean setSlots(Player player, UnlockableSlots slots);
+    public UnlockableSlots getSlots(Player player)
+    {
+        return this.slots;
+    }
 
     public abstract CostModel getCostModel();
 
@@ -37,24 +38,24 @@ public abstract class UnlockableController // TODO DONE
 
     public int getMaxSlots()
     {
-        return this.cachedSlots.getMaxSlots();
+        return this.slots.getMaxSlots();
     }
 
     public final boolean unlockSlot(int slot)
     {
-        int before = this.cachedSlots.getUnlockCount();
-        this.cachedSlots.unlockSlot(slot);
-        return this.cachedSlots.getUnlockCount() != before;
+        int before = this.slots.getUnlockCount();
+        this.slots.unlockSlot(slot);
+        return this.slots.getUnlockCount() != before;
     }
 
     public final boolean isSlotUnlocked(int slot)
     {
-        return this.cachedSlots.isUnlocked(slot);
+        return this.slots.isUnlocked(slot);
     }
 
     public final int getNextUnlockCost(int numberOfSlots)
     {
-        return this.cachedSlots.nextUnlockCost(this.getCostModel(), numberOfSlots);
+        return this.slots.nextUnlockCost(this.getCostModel(), numberOfSlots);
     }
 
     public final boolean canAffordNextSlot(Player player, int numberOfSlots)
@@ -127,11 +128,7 @@ public abstract class UnlockableController // TODO DONE
 
     public boolean handleUnlockSlot(ServerPlayer player, int containerIndex)
     {
-        Optional<UnlockableSlots> slotsOptional = this.getSlots(player);
-        if(slotsOptional.isEmpty())
-            return false;
-
-        UnlockableSlots slots = slotsOptional.get();
+        UnlockableSlots slots = this.getSlots(player);
         if(!slots.isUnlockable(containerIndex))
             return false;
 
@@ -141,10 +138,6 @@ public abstract class UnlockableController // TODO DONE
 
         paymentJob.get().run(); // Consumes experience/items
         slots.unlockSlot(containerIndex);
-        if(this.setSlots(player, slots))
-        {
-            this.cachedSlots = slots;
-        }
         return true;
     }
 }

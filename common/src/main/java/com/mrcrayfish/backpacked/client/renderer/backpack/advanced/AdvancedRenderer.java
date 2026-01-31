@@ -9,7 +9,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 
 import java.util.List;
 
-public record AdvancedRenderer(List<BaseFunction> functions) implements BackpackRenderer // TODO DONE
+public record AdvancedRenderer(List<BaseFunction> functions) implements BackpackRenderer
 {
     public static final Type TYPE = new Type(
         Utils.rl("advanced"),

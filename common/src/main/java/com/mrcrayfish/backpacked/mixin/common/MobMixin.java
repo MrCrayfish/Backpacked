@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
  * Author: MrCrayfish
  */
 @Mixin(Mob.class)
-public class MobMixin // TODO DONE
+public class MobMixin
 {
     @Unique
     private ItemStack backpacked$capturedFood;

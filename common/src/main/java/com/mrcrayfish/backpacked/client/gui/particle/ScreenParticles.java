@@ -17,7 +17,7 @@ import java.util.List;
  * {@link Screen#render(GuiGraphics, int, int, float)}, and ideally this should be invoked after
  * everything is drawn on the screen but before rendering tooltips.
  */
-public final class ScreenParticles // TODO DONE
+public final class ScreenParticles
 {
     private final List<Particle2D> particles = new ArrayList<>();
 
@@ -48,13 +48,7 @@ public final class ScreenParticles // TODO DONE
      */
     public void renderParticles(GuiGraphics graphics, float partialTick)
     {
-        // Fixes particles not being smooth on Fabric
-        if(Services.PLATFORM.getPlatform().isFabric())
-        {
-            // TODO port test
-            partialTick = Minecraft.getInstance().getFrameTime();
-        }
-        float finalPartialTick = partialTick;
+        float finalPartialTick = Minecraft.getInstance().getFrameTime();
         this.particles.forEach(p -> p.render(graphics, finalPartialTick));
     }
 }

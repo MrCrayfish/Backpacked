@@ -19,7 +19,7 @@ import java.util.function.Function;
 /**
  * Author: MrCrayfish
  */
-public class CommonRecipeGen // TODO DONE
+public class CommonRecipeGen
 {
     public static void generate(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> hasItem, Function<TagKey<Item>, CriterionTriggerInstance> hasTag)
     {

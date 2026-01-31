@@ -10,7 +10,7 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Author: MrCrayfish
  */
-public class ForceRecallCommand // TODO DONE
+public class ForceRecallCommand
 {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {

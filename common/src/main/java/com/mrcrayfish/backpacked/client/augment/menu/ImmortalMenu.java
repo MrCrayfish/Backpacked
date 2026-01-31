@@ -20,7 +20,7 @@ import net.minecraft.network.chat.Component;
 
 import java.text.DecimalFormat;
 
-public class ImmortalMenu extends AugmentSettingsMenu // TODO DONE
+public class ImmortalMenu extends AugmentSettingsMenu
 {
     private static final Component COOLDOWN_LABEL = Component.translatable("augment.backpacked.immortal.cooldown");
 

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.Rect2i;
 import java.util.Collections;
 import java.util.List;
 
-public class BackpackManagementScreenHandler implements IGuiContainerHandler<BackpackManagementScreen> // TODO DONE
+public class BackpackManagementScreenHandler implements IGuiContainerHandler<BackpackManagementScreen>
 {
     @Override
     public List<Rect2i> getGuiExtraAreas(BackpackManagementScreen screen)

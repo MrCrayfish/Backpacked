@@ -5,7 +5,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
 
-public interface BackpackRenderer // TODO DONE
+public interface BackpackRenderer
 {
     Codec<BackpackRenderer> CODEC = Type.CODEC.dispatch(Type::get, Type::codec);
 

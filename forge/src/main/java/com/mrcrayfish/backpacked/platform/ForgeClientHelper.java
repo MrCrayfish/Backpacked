@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.platform.services.IClientHelper;
-import com.mrcrayfish.backpacked.util.ReflectedMethod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -23,14 +22,16 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class ForgeClientHelper implements IClientHelper
 {
-    private static final ReflectedMethod<PlayerRenderer, Void> SETUP_ROTATIONS = new ReflectedMethod<>(PlayerRenderer.class, "m_7523_", AbstractClientPlayer.class, PoseStack.class, float.class, float.class, float.class, float.class);
+    private static final Method SETUP_ROTATIONS = ObfuscationReflectionHelper.findMethod(PlayerRenderer.class, "m_7523_", AbstractClientPlayer.class, PoseStack.class, float.class, float.class, float.class);
 
     @Override
     @Nullable
@@ -67,7 +68,11 @@ public class ForgeClientHelper implements IClientHelper
     @Override
     public void invokeRotationSetup(PlayerRenderer renderer, AbstractClientPlayer player, PoseStack stack, float scale, float bodyRot, float partialTick)
     {
-        SETUP_ROTATIONS.invoke(renderer, player, stack, 0, bodyRot, partialTick, scale);
+        try
+        {
+            SETUP_ROTATIONS.invoke(renderer, player, stack, 0, bodyRot, partialTick, scale);
+        }
+        catch(Exception ignored) {}
     }
 
     @Override

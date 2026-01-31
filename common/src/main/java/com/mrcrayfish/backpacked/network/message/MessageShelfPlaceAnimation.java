@@ -6,7 +6,7 @@ import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
-public final class MessageShelfPlaceAnimation extends PlayMessage<MessageShelfPlaceAnimation> // TODO DONE
+public final class MessageShelfPlaceAnimation extends PlayMessage<MessageShelfPlaceAnimation>
 {
     private BlockPos pos;
 

@@ -4,7 +4,7 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageNavigateBackpack;
 import net.minecraft.network.FriendlyByteBuf;
 
-public record Pagination(int currentPage, int totalPages) // TODO DONE
+public record Pagination(int currentPage, int totalPages)
 {
     public static final Pagination NONE = new Pagination(0, 0);
 

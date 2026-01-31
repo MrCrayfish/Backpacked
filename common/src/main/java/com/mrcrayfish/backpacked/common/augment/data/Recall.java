@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public final class Recall extends SavedData // TODO DONE
+public final class Recall extends SavedData
 {
     public static final String ID = "backpacked_recall";
     private static final int MAX_QUEUE_SIZE = 18;

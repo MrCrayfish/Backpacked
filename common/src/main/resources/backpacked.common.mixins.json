@@ -8,7 +8,6 @@
         "common.AbstractArrowMixin",
         "common.BlockItemInvoker",
         "common.BlockItemMixin",
-        "common.BlockMixin",
         "common.BlockPredicateAccessor",
         "common.BredAnimalsTriggerMixin",
         "common.CreativeModeTabMixin",
@@ -29,7 +28,6 @@
         "common.ServerPlayerMixin"
     ],
     "client": [
-        "client.BitmapProviderDefinitionMixin",
         "client.GuiMixin",
         "client.ModelBakeryMixin"
     ],

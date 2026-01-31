@@ -153,7 +153,6 @@ public class BackpackInventory extends UnlockableContainer
             return false;
         if(this.getState().isInvalid())
             return false;
-        // TODO port test
         if(BackpackHelper.getBackpackStack(this.player, this.index) != this.stack)
             return false;
         return this.player.equals(player) || PickpocketUtil.canPickpocketEntity(this.player, player, Config.SERVER.pickpocketing.maxReachDistance.get() + 0.5);

@@ -7,7 +7,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 
 import java.util.List;
 
-public record ExpressionValue(List<Operation> operations) implements Value // TODO DONE
+public record ExpressionValue(List<Operation> operations) implements Value
 {
     public static final Type TYPE = new Type(
         Utils.rl("expression"),

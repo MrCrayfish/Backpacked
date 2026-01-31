@@ -11,7 +11,7 @@ import net.minecraft.util.RandomSource;
 
 import java.util.List;
 
-public class BakedModelRenderer // TODO DONE
+public class BakedModelRenderer
 {
     private static final RandomSource RANDOM = RandomSource.create();
 

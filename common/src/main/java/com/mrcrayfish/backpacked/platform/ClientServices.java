@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.platform.services.IClientHelper;
 /**
  * Author: MrCrayfish
  */
-public class ClientServices // TODO DONE
+public class ClientServices
 {
     public static final IClientHelper CLIENT = Services.load(IClientHelper.class);
 }

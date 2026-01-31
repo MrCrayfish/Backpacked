@@ -33,7 +33,7 @@ import java.util.Optional;
 /**
  * Author: MrCrayfish
  */
-public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends RenderLayer<T, M> // TODO DONE
+public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends RenderLayer<T, M>
 {
     public BackpackLayer(RenderLayerParent<T, M> renderer, ItemRenderer itemRenderer)
     {

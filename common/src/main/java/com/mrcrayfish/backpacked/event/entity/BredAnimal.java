@@ -8,7 +8,7 @@ import net.minecraft.world.entity.animal.Animal;
  * Author: MrCrayfish
  */
 @FunctionalInterface
-public interface BredAnimal extends IFrameworkEvent // TODO DONE
+public interface BredAnimal extends IFrameworkEvent
 {
     void handle(Animal first, Animal second, ServerPlayer player);
 }

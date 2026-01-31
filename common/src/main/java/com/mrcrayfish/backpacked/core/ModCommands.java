@@ -10,7 +10,7 @@ import net.minecraft.commands.CommandSourceStack;
 /**
  * Author: MrCrayfish
  */
-public class ModCommands // TODO DONE
+public class ModCommands
 {
     public static void init()
     {

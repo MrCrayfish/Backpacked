@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-public class BackpackItemSpecialRenderer extends BlockEntityWithoutLevelRenderer // TODO DONE
+public class BackpackItemSpecialRenderer extends BlockEntityWithoutLevelRenderer
 {
     public BackpackItemSpecialRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet set)
     {

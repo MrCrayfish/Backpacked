@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class Network // TODO DONE
+public class Network
 {
     public static final FrameworkNetwork PLAY = FrameworkAPI
             .createNetworkBuilder(new ResourceLocation(Constants.MOD_ID, "play"), 1)

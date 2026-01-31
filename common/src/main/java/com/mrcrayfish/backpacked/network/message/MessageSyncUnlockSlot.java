@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public final class MessageSyncUnlockSlot extends PlayMessage<MessageSyncUnlockSlot> // TODO DONE
+public final class MessageSyncUnlockSlot extends PlayMessage<MessageSyncUnlockSlot>
 {
     private List<Integer> unlockedSlotIndexes;
 

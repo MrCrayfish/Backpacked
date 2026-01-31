@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class CustomContainerMenu extends AbstractContainerMenu // TODO DONE
+public abstract class CustomContainerMenu extends AbstractContainerMenu
 {
     protected CustomContainerMenu(@Nullable MenuType<?> type, int windowId)
     {

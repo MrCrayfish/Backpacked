@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 /**
  * Author: MrCrayfish
  */
-public interface PlayerTravel extends IFrameworkEvent // TODO DONE
+public interface PlayerTravel extends IFrameworkEvent
 {
     void handle(ServerPlayer player, double distance, MovementType type);
 }

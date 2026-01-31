@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 import java.util.function.Predicate;
- // TODO DONE
+
 public record SeedflowAugment(boolean randomizeSeeds, boolean useFilters, ItemCollection filters) implements Augment<SeedflowAugment>, FilterableItems<SeedflowAugment>
 {
     public static final AugmentType<SeedflowAugment> TYPE = new AugmentType<>(

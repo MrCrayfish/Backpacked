@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
  * @param rows          the row count of the backpack inventory
  * @param slotsUnlocked if all slots in the backpack are unlocked
  */
-public record BackpackState(int cols, int rows, boolean slotsUnlocked) // TODO DONE
+public record BackpackState(int cols, int rows, boolean slotsUnlocked)
 {
     public static final BackpackState UNKNOWN = new BackpackState(0, 0, true);
 

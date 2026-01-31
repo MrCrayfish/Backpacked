@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public class FunctionTypes // TODO DONE
+public class FunctionTypes
 {
     private static final BiMap<ResourceLocation, BaseFunction.Type> FUNCTIONS = HashBiMap.create();
 

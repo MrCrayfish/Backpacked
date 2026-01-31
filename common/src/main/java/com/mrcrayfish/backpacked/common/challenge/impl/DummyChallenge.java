@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Author: MrCrayfish
  */
-public final class DummyChallenge extends Challenge // TODO DONE
+public final class DummyChallenge extends Challenge
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "dummy");
     public static final DummyChallenge INSTANCE = new DummyChallenge();

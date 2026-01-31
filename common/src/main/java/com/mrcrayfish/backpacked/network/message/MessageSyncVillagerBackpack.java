@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 /**
  * Author: MrCrayfish
  */
-public final class MessageSyncVillagerBackpack extends PlayMessage<MessageSyncVillagerBackpack> // TODO DONE
+public final class MessageSyncVillagerBackpack extends PlayMessage<MessageSyncVillagerBackpack>
 {
     private int entityId;
 

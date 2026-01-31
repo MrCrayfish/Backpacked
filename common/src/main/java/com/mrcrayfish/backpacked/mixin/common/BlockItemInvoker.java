@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(BlockItem.class)
-public interface BlockItemInvoker // TODO DONE
+public interface BlockItemInvoker
 {
     @Invoker(value = "getPlacementState")
     BlockState backpacked$getPlacementState(BlockPlaceContext context);
