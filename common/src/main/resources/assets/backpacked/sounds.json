@@ -1,3 +1,18 @@
 {
-    "item.backpack.place": { "subtitle":  "subtitle.backpacked.backpack.place", "sounds": [{ "name": "backpacked:item/backpack/place" }]}
+    "item.backpack.place": {
+        "subtitle": "subtitle.backpacked.backpack.place",
+        "sounds": [
+            {
+                "name": "backpacked:item/backpack/place"
+            }
+        ]
+    },
+    "augment.backpacked.lootbound.take_item": {
+        "subtitle": "subtitle.backpacked.augment.lootbound.take_item",
+        "sounds": [
+            {
+                "name": "backpacked:augment/lootbound/take_item"
+            }
+        ]
+    }
 }

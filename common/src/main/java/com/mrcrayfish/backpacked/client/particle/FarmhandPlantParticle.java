@@ -38,7 +38,8 @@ public class FarmhandPlantParticle extends Particle
             start.z + (end.z - start.z) / 2
         );
         this.hasPhysics = false;
-        this.entity = new ItemEntity(level, 0, 0, 0, stack);
+        this.entity = new ItemEntity(level, start.x, start.y, start.z, stack);
+        this.entity.setOldPosAndRot();
     }
 
     @Override
@@ -66,7 +67,8 @@ public class FarmhandPlantParticle extends Particle
         double posY = pos.y - cameraPos.y();
         double posZ = pos.z - cameraPos.z();
         int light = this.dispatcher.getPackedLightCoords(this.entity, partialTick);
-        this.dispatcher.render(this.entity, posX, posY, posZ, this.entity.getYRot(), 0, new PoseStack(), source, light);
+        this.dispatcher.render(this.entity, posX, posY, posZ, this.entity.getYRot(), partialTick, new PoseStack(), source, light);
+        source.endBatch();
     }
 
     @Override

@@ -275,9 +275,18 @@ public class AugmentHandler
         for(var snapshot : snapshots)
         {
             InventoryHelper.streamFor(snapshot.inventory()).filter(stack -> {
-                return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) > 0 && stack.isDamageableItem() && stack.isDamaged() && stack.getCount() == 1 && stack.getMaxStackSize() == 1 && Services.PLATFORM.isRepairable(stack);
+                if(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, stack) <= 0)
+                    return false;
+                if(!stack.isDamageableItem())
+                    return false;
+                if(!stack.isDamaged())
+                    return false;
+                if(stack.getCount() != 1)
+                    return false;
+                if(stack.getMaxStackSize() != 1)
+                    return false;
+                return Services.PLATFORM.isRepairable(stack);
             }).forEach(stack -> {
-                // TODO port test
                 int repairableAmount = Math.min((int) (orb.getValue() * 2F), stack.getDamageValue());
                 int maxRepairableDamage = Math.min(repairableAmount, stack.getDamageValue());
                 stack.setDamageValue(stack.getDamageValue() - maxRepairableDamage);
@@ -415,13 +424,11 @@ public class AugmentHandler
                     : nextPlantableSeed(level, augment, inventory);
 
             boolean changed = false;
-            ItemStack stack = ItemStack.EMPTY;
             Iterator<BlockPos> it = positions.iterator();
             while(it.hasNext())
             {
                 BlockPos pos = it.next();
-                if(stack.isEmpty() || random)
-                    stack = seedSupplier.apply(pos);
+                ItemStack stack = seedSupplier.apply(pos);
 
                 // If stack is still empty even after calling the supplier, there are no more seeds
                 if(stack.isEmpty())
@@ -461,7 +468,7 @@ public class AugmentHandler
         if(!block.isEnabled(level.enabledFeatures()))
             return false;
 
-        var context = new BlockPlaceContext(UseItemOnBlockFaceContext.create(level, stack, pos, face));
+        var context = new BlockPlaceContext(UseItemOnBlockFaceContext.create(level, stack, pos.below(), face));
         if(!context.canPlace())
             return false;
 

@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,18 +44,22 @@ public class FabricPlatformHelper implements IPlatformHelper
     @Override
     public Predicate<ItemStack> getValidProjectiles(ItemStack weapon)
     {
-        return null;
+        if(weapon.getItem() instanceof ProjectileWeaponItem item)
+        {
+            return item.getAllSupportedProjectiles();
+        }
+        return stack -> false;
     }
 
     @Override
     public boolean isRepairable(ItemStack stack)
     {
-        return false;
+        return true;
     }
 
     @Override
     public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
     {
-        return null;
+        return (stack, visibility) -> consumer.accept(stack);
     }
 }

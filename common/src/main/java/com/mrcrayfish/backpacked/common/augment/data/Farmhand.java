@@ -36,14 +36,6 @@ public final class Farmhand extends SavedData
     public static final int PLANT_TIME = 14;
     private static final int MAX_DISTANCE_SQR = 16 * 16;
 
-    /*
-        this.raids = this.getDataStorage().computeIfAbsent((p_184095_) -> {
-         return Raids.load(this, p_184095_);
-      }, () -> {
-         return new Raids(this);
-      }, Raids.getFileId(this.dimensionTypeRegistration()));
-     */
-
     private final ServerLevel level;
     private final Map<BlockPos, DelayedPlantTask> tasks = new HashMap<>();
 

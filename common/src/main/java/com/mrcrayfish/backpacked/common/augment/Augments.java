@@ -117,10 +117,10 @@ public sealed class Augments permits Augments.Cached
     {
         return switch(position)
         {
-            case FIRST -> this.firstState;
-            case SECOND -> this.secondState;
-            case THIRD -> this.thirdState;
-            case FOURTH -> this.fourthState;
+            case FIRST -> this.firstState();
+            case SECOND -> this.secondState();
+            case THIRD -> this.thirdState();
+            case FOURTH -> this.fourthState();
         };
     }
 
@@ -409,7 +409,7 @@ public sealed class Augments permits Augments.Cached
                     continue;
 
                 CompoundTag value = augment.getCompound("Value");
-                if(value.getString("type").equals(type.name().toString()))
+                if(value.getString("type").equals(type.id().toString()))
                 {
                     return Optional.of(position);
                 }
