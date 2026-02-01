@@ -1,9 +1,11 @@
 {
     "unlock_challenge": {
-        "type": "backpacked:merchant_trade",
         "formatter": "backpacked:incomplete_complete",
-        "merchant": {
-            "type": "minecraft:wandering_trader"
+        "challenge": {
+            "type": "backpacked:merchant_trade",
+            "merchant": {
+                "type": "minecraft:wandering_trader"
+            }
         }
     }
 }

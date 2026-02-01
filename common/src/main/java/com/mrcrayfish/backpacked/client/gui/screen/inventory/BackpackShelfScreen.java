@@ -31,6 +31,8 @@ public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelf
     @Override
     public void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
     {
+        this.renderBackground(graphics);
+
         // Draw the shelf image
         TextureDefinitions.SHELF.draw(graphics, this.leftPos + (this.imageWidth - 74) / 2, this.topPos + 12, 74, 33);
 
@@ -51,6 +53,8 @@ public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelf
         TextureDefinitions.INVENTORY_BACKGROUND.draw(graphics, this.leftPos, this.topPos + 94, 176, 90);
         TextureDefinitions.INVENTORY_SLOT.draw(graphics, this.leftPos + 1 + 6, this.topPos + 94 + 7, 162, 54);
         TextureDefinitions.INVENTORY_SLOT.draw(graphics, this.leftPos + 1 + 6, this.topPos + 94 + 65, 162, 18);
+
+        super.renderBg(graphics, partialTick, mouseX, mouseY);
     }
 
     @Override
