@@ -48,6 +48,14 @@ public abstract class CustomScreen extends Screen implements PopupMenuHandler
         {
             return this.controller.mouseReleased(mouseX, mouseY, button);
         }
+        if(button == 0 && this.isDragging())
+        {
+            this.setDragging(false);
+            if(this.getFocused() != null)
+            {
+                return this.getFocused().mouseReleased(mouseX, mouseY, button);
+            }
+        }
         return super.mouseReleased(mouseX, mouseY, button);
     }
 

@@ -10,9 +10,12 @@ import net.minecraft.network.FriendlyByteBuf;
  */
 public final class MessageOpenBackpack extends PlayMessage<MessageOpenBackpack>
 {
-    private int backpackIndex;
+    private final int backpackIndex;
 
-    public MessageOpenBackpack() {}
+    public MessageOpenBackpack()
+    {
+        this.backpackIndex = -1;
+    }
 
     public MessageOpenBackpack(int backpackIndex)
     {

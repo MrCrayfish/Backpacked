@@ -52,7 +52,7 @@ public class FabricLivingEntityMixin
     }
 
     @Inject(method = "checkTotemDeathProtection", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void backpacked$CheckBackpackForTotem(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir, int var4, int var5, InteractionHand hand)
+    private void backpacked$CheckBackpackForTotem(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir, InteractionHand[] hands, int var4, int var5, InteractionHand hand)
     {
         this.backpacked$hand = hand;
     }

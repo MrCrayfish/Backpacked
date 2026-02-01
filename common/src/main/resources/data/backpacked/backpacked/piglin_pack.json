@@ -1,15 +1,17 @@
 {
     "unlock_challenge": {
-        "type": "backpacked:interact_with_entity",
         "formatter": "backpacked:traded_x_of_x",
-        "entity": {
-            "type": "minecraft:piglin"
-        },
-        "item": {
-            "items": [
-                "minecraft:gold_ingot"
-            ]
-        },
-        "count": 5
+        "challenge": {
+            "type": "backpacked:interact_with_entity",
+            "entity": {
+                "type": "minecraft:piglin"
+            },
+            "item": {
+                "items": [
+                    "minecraft:gold_ingot"
+                ]
+            },
+            "count": 5
+        }
     }
 }

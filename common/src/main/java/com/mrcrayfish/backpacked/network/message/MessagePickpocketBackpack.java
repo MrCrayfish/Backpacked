@@ -19,7 +19,7 @@ public final class MessagePickpocketBackpack extends PlayMessage<MessagePickpock
     @Override
     public void encode(MessagePickpocketBackpack message, FriendlyByteBuf buf)
     {
-        buf.writeVarInt(this.entityId);
+        buf.writeVarInt(message.entityId);
     }
 
     @Override

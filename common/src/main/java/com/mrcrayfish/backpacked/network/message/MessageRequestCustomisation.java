@@ -22,7 +22,7 @@ public final class MessageRequestCustomisation extends PlayMessage<MessageReques
     @Override
     public void encode(MessageRequestCustomisation message, FriendlyByteBuf buf)
     {
-        buf.writeInt(this.backpackIndex);
+        buf.writeInt(message.backpackIndex);
     }
 
     @Override
