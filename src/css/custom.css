@@ -35,3 +35,43 @@
   padding: 1em 1em 0;
   margin-bottom: 1em;
 }
+
+.fill-height {
+  min-height: 100%;
+}
+
+.avatar-author {
+  --ifm-badge-background-color: var(--ifm-color-secondary);
+  --ifm-badge-border-color: var(--ifm-badge-background-color);
+  background-color: var(--ifm-badge-background-color);
+  border: var(--ifm-badge-border-width) solid var(--ifm-badge-border-color);
+  border-radius: var(--ifm-badge-border-radius);
+  color: var(--ifm-badge-color);
+  padding: var(--ifm-badge-padding-vertical) var(--ifm-badge-padding-horizontal);
+  display: flex
+}
+
+.avatar--xs {
+  --ifm-avatar-photo-size: 1.5rem;
+  --ifm-avatar-intro-margin: 0.5rem;
+}
+
+.addon-header {
+  display: flex;
+}
+
+.curseforge {
+  background-color: #eb622b;
+  color: white;
+}
+
+.how-to-center-a-div {
+  display: flex; 
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+}
+
+.hero--backpacked {
+  --ifm-hero-background-color: #c0ab9a;
+}
