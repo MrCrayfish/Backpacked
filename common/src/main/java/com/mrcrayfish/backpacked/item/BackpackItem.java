@@ -48,12 +48,12 @@ public class BackpackItem extends Item
 
     public int getColumnCount()
     {
-        return Config.SERVER.backpack.inventorySizeColumns.get();
+        return Config.BACKPACK.inventory.size.columns.get();
     }
 
     public int getRowCount()
     {
-        return Config.SERVER.backpack.inventorySizeRows.get();
+        return Config.BACKPACK.inventory.size.rows.get();
     }
 
     public int getMaxAugmentBays(ItemStack stack)

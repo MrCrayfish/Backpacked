@@ -61,47 +61,11 @@ public class Config
 
     public static class Server
     {
-        @ConfigProperty(name = "backpack")
-        public final Backpack backpack = new Backpack();
-
         @ConfigProperty(name = "pickpocketing")
         public final Pickpocketing pickpocketing = new Pickpocketing();
 
         @ConfigProperty(name = "wanderingTrader")
         public final WanderingTrader wanderingTrader = new WanderingTrader();
-
-        public static class Backpack
-        {
-            @ConfigProperty(name = "defaultCosmetic", comment = "The default cosmetic (model) of the backpack. This should generally be a backpack that is unlocked by default")
-            public final StringProperty defaultCosmetic = StringProperty.create("backpacked:standard", new ResourceLocationValidator("Value needs to be a match an existing backpack"));
-
-            @ConfigProperty(name = "keepOnDeath", comment = "If enabled, the backpack will stay on the player on death. Similar to keep inventory rule.")
-            public final BoolProperty keepOnDeath = BoolProperty.create(false);
-
-            @ConfigProperty(name = "inventorySizeColumns", comment = "The amount of slot columns in the backpack inventory.")
-            public final IntProperty inventorySizeColumns = IntProperty.create(9, 1, BackpackContainerMenu.MAX_COLUMNS);
-
-            @ConfigProperty(name = "inventorySizeRows", comment = "The amount of slot rows in the backpack inventory.")
-            public final IntProperty inventorySizeRows = IntProperty.create(5, 1, BackpackContainerMenu.MAX_ROWS);
-
-            @ConfigProperty(name = "disableCustomisation", comment = "If enabled, prevents backpacks from being customised. This will remove the customise button from the backpack inventory")
-            public final BoolProperty disableCustomisation = BoolProperty.create(false);
-
-            @ConfigProperty(name = "unlockAllCosmetics", comment = "Allows every player to use any backpack cosmetic variant without needing to complete the challenges. Side note, any progress to a challenge will not be tracked while enabled.")
-            public final BoolProperty unlockAllCosmetics = BoolProperty.create(false);
-
-            @ConfigProperty(name = "lockIntoSlot", comment = "Stops players from removing the backpack if it's not empty. This prevents players from carrying multiple backpacks.")
-            public final BoolProperty lockIntoSlot = BoolProperty.create(true);
-
-            @ConfigProperty(name = "autoEquipOnPickup", comment = "When picking up a backpack (with items inside) off the ground, the item will automatically equip. Having this enabled may not be ideal for multiplayer servers.")
-            public final BoolProperty autoEquipOnPickup = BoolProperty.create(false);
-
-            @ConfigProperty(name = "dropContentsFromShelf", comment = "When breaking a shelf, the placed backpack will also drops it's items into the world. This prevents players from carrying multiple backpacks")
-            public final BoolProperty dropContentsFromShelf = BoolProperty.create(true);
-
-            @ConfigProperty(name = "bannedItems", comment = "A list of items that are not allowed inside a backpack. Note: It is recommended to ban items that have an inventory as this will create large NBT data and potentially crash the server!")
-            public final ListProperty<String> bannedItems = ListProperty.create(ListProperty.STRING, new ResourceLocationValidator("Value needs to be a valid item identifier"), Server::getDefaultBannedItems);
-        }
 
         public static class Pickpocketing
         {
@@ -706,7 +670,7 @@ public class Config
 
     public static void updateBannedItemsList()
     {
-        bannedItemsList = ImmutableSet.copyOf(Config.SERVER.backpack.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
+        bannedItemsList = ImmutableSet.copyOf(Config.BACKPACK.inventory.bannedItems.get().stream().map(ResourceLocation::new).collect(Collectors.toSet()));
     }
 
     public static Set<ResourceLocation> getBannedItemsList()

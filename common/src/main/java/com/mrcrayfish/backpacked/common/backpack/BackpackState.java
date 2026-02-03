@@ -41,9 +41,9 @@ public record BackpackState(int cols, int rows, boolean slotsUnlocked)
      */
     public boolean isInvalid()
     {
-        if(this.cols != Config.SERVER.backpack.inventorySizeColumns.get())
+        if(this.cols != Config.BACKPACK.inventory.size.columns.get())
             return true;
-        if(this.rows != Config.SERVER.backpack.inventorySizeRows.get())
+        if(this.rows != Config.BACKPACK.inventory.size.rows.get())
             return true;
         if(this.slotsUnlocked != Config.BACKPACK.inventory.slots.unlockAllSlots.get())
             return true;
