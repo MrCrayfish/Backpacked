@@ -1,8 +1,6 @@
 package com.mrcrayfish.backpacked.client.backpack;
 
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
-import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 
 /**

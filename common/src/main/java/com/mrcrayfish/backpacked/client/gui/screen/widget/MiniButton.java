@@ -5,7 +5,6 @@ import com.mrcrayfish.framework.api.client.screen.widget.texture.FrameworkTextur
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
 
 public class MiniButton extends Button
 {

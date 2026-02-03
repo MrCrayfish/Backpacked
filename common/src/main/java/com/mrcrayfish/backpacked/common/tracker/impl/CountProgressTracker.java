@@ -7,8 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 
-import java.util.function.BiFunction;
-
 /**
  * Author: MrCrayfish
  */

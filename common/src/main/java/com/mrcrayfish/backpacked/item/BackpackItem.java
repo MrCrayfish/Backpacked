@@ -11,16 +11,22 @@ import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.inventory.container.BackpackManagementMenu;
 import com.mrcrayfish.backpacked.inventory.container.data.ManagementContainerData;
+import com.mrcrayfish.backpacked.network.Network;
+import com.mrcrayfish.backpacked.network.message.MessageShowEquipHint;
 import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -59,6 +65,26 @@ public class BackpackItem extends Item
     public boolean canFitInsideContainerItems()
     {
         return false;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
+    {
+        ItemStack stack = player.getItemInHand(hand);
+        if(!level.isClientSide())
+        {
+            if(BackpackHelper.equipBackpack(player, stack))
+            {
+                Network.getPlay().sendToPlayer(() -> (ServerPlayer) player, new MessageShowEquipHint());
+                level.playSeededSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER, player.getSoundSource(), 1.0F, 1.0F, player.getRandom().nextLong());
+                return InteractionResultHolder.success(stack);
+            }
+            else
+            {
+                player.displayClientMessage(NO_MORE_BACKPACK_SLOTS_TRANSLATION, true);
+            }
+        }
+        return InteractionResultHolder.success(stack);
     }
 
     public static boolean openBackpack(ServerPlayer ownerPlayer, ServerPlayer openingPlayer, int backpackIndex)

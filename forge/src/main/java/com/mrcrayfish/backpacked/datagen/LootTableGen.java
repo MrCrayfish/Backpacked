@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.datagen;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mrcrayfish.backpacked.Constants;
-import com.mrcrayfish.backpacked.core.ModBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;

@@ -2,9 +2,7 @@ package com.mrcrayfish.backpacked.common.predicates;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.BlockSnapshot;
 import com.mrcrayfish.backpacked.common.challenge.PredicateUtils;
 import net.minecraft.advancements.critereon.BlockPredicate;

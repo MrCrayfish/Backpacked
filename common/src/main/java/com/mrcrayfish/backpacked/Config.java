@@ -1,21 +1,11 @@
 package com.mrcrayfish.backpacked;
 
 import com.google.common.collect.ImmutableSet;
-import com.mrcrayfish.backpacked.client.gui.ButtonAlignment;
 import com.mrcrayfish.backpacked.common.*;
-import com.mrcrayfish.backpacked.common.augment.Augments;
 import com.mrcrayfish.backpacked.common.augment.impl.EmptyAugment;
 import com.mrcrayfish.backpacked.core.ModRegistries;
 import com.mrcrayfish.backpacked.inventory.container.BackpackContainerMenu;
-import com.mrcrayfish.framework.api.config.BoolProperty;
-import com.mrcrayfish.framework.api.config.ConfigProperty;
-import com.mrcrayfish.framework.api.config.ConfigType;
-import com.mrcrayfish.framework.api.config.DoubleProperty;
-import com.mrcrayfish.framework.api.config.EnumProperty;
-import com.mrcrayfish.framework.api.config.FrameworkConfig;
-import com.mrcrayfish.framework.api.config.IntProperty;
-import com.mrcrayfish.framework.api.config.ListProperty;
-import com.mrcrayfish.framework.api.config.StringProperty;
+import com.mrcrayfish.framework.api.config.*;
 import com.mrcrayfish.framework.api.config.event.FrameworkConfigEvents;
 import com.mrcrayfish.framework.api.config.validate.Validator;
 import net.minecraft.network.chat.Component;

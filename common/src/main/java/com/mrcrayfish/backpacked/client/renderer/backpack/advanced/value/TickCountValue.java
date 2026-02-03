@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import com.mrcrayfish.backpacked.util.Utils;
 

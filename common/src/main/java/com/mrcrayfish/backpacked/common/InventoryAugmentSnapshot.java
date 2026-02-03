@@ -3,8 +3,6 @@ package com.mrcrayfish.backpacked.common;
 import com.mrcrayfish.backpacked.common.augment.Augment;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 
-import java.util.function.Supplier;
-
 public interface InventoryAugmentSnapshot
 {
     BackpackInventory inventory();

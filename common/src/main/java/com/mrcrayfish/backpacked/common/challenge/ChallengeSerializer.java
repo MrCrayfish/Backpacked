@@ -2,8 +2,6 @@ package com.mrcrayfish.backpacked.common.challenge;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mrcrayfish.backpacked.common.tracker.ProgressFormatter;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
 /**
