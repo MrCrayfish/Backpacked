@@ -19,60 +19,59 @@ import java.util.function.Function;
  */
 public class CommonRecipeGen
 {
-    public static void generate(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag)
+    public static void generate(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag, TagKey<Item> ironIngotTag, TagKey<Item> copperIngotTag, TagKey<Item> stringTag, TagKey<Item> stickTag, TagKey<Item> leatherTag)
     {
-        backpack(output, hasItem);
-        backpackShelf(output, hasItem, Items.OAK_LOG, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.SPRUCE_LOG, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.BIRCH_LOG, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.JUNGLE_LOG, Items.JUNGLE_SLAB, ModBlocks.JUNGLE_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.DARK_OAK_LOG, Items.DARK_OAK_SLAB, ModBlocks.DARK_OAK_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.ACACIA_LOG, Items.ACACIA_SLAB, ModBlocks.ACACIA_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
-        backpackShelf(output, hasItem, Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
-        backpackDock(output, hasItem, hasTag);
+        backpack(output, hasTag, ironIngotTag, stringTag, leatherTag);
+        backpackShelf(output, hasItem, hasTag, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.JUNGLE_SLAB, ModBlocks.JUNGLE_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.DARK_OAK_SLAB, ModBlocks.DARK_OAK_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.ACACIA_SLAB, ModBlocks.ACACIA_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get(), stickTag);
+        backpackShelf(output, hasItem, hasTag, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get(), stickTag);
+        backpackDock(output, hasItem, hasTag, copperIngotTag);
     }
 
-    private static void backpack(RecipeOutput output, Function<ItemLike, Criterion<?>> has)
+    private static void backpack(RecipeOutput output, Function<TagKey<Item>, Criterion<?>> hasTag, TagKey<Item> ironIngotTag, TagKey<Item> stringTag, TagKey<Item> leatherTag)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BACKPACK.get())
                 .pattern("LLL")
                 .pattern("SIS")
                 .pattern("LLL")
-                .define('L', Items.LEATHER)
-                .define('S', Items.STRING)
-                .define('I', Items.IRON_INGOT)
-                .unlockedBy("has_leather", has.apply(Items.LEATHER))
-                .unlockedBy("has_string", has.apply(Items.STRING))
-                .unlockedBy("has_iron_ingot", has.apply(Items.IRON_INGOT))
+                .define('L', leatherTag)
+                .define('S', ironIngotTag)
+                .define('I', stringTag)
+                .unlockedBy("has_leather", hasTag.apply(leatherTag))
+                .unlockedBy("has_string", hasTag.apply(stringTag))
+                .unlockedBy("has_iron_ingot", hasTag.apply(ironIngotTag))
                 .save(output);
     }
 
-    private static void backpackShelf(RecipeOutput output, Function<ItemLike, Criterion<?>> has, ItemLike log, ItemLike slab, ItemLike craftedItem)
+    private static void backpackShelf(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag, ItemLike slab, ItemLike craftedItem, TagKey<Item> stickTag)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, craftedItem, 4)
-                .pattern("LHL")
+                .pattern("HHH")
                 .pattern("S S")
-                .define('L', log)
                 .define('H', slab)
-                .define('S', Items.STICK)
-                .unlockedBy("has_slab", has.apply(slab))
-                .unlockedBy("has_stick", has.apply(Items.STICK))
+                .define('S', stickTag)
+                .unlockedBy("has_slab", hasItem.apply(slab))
+                .unlockedBy("has_stick", hasTag.apply(stickTag))
                 .save(output);
     }
 
-    private static void backpackDock(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag)
+    private static void backpackDock(RecipeOutput output, Function<ItemLike, Criterion<?>> hasItem, Function<TagKey<Item>, Criterion<?>> hasTag, TagKey<Item> copperIngotTag)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BACKPACK_DOCK.get())
                 .pattern("PCP")
                 .pattern("CHC")
                 .pattern("PCP")
                 .define('P', ItemTags.PLANKS)
-                .define('C', Items.COPPER_INGOT)
+                .define('C', copperIngotTag)
                 .define('H', Items.HOPPER)
                 .unlockedBy("has_planks", hasTag.apply(ItemTags.PLANKS))
-                .unlockedBy("has_copper_ingot", hasItem.apply(Items.COPPER_INGOT))
+                .unlockedBy("has_copper_ingot", hasTag.apply(copperIngotTag))
                 .unlockedBy("has_hopper", hasItem.apply(Items.HOPPER))
                 .save(output);
     }
