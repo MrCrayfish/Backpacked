@@ -47,7 +47,7 @@ import java.util.stream.StreamSupport;
  */
 public class WanderingTraderEvents
 {
-    public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpacked.backpack.wandering_bag");
+    public static final Component WANDERING_BAG_TRANSLATION = Component.translatable("backpack.backpacked.wandering_bag");
 
     public static void init()
     {
