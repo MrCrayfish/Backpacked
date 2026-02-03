@@ -1,6 +1,5 @@
 package com.mrcrayfish.backpacked.client.gui.particle;
 
-import com.mrcrayfish.framework.platform.Services;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

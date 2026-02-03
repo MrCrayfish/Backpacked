@@ -10,7 +10,6 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler
 import com.mrcrayfish.backpacked.common.augment.impl.LightweaverAugment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.GridLayout;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
 public class LightweaverMenu extends AugmentSettingsMenu

@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.network.message;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.client.ClientRegistry;
 import com.mrcrayfish.backpacked.common.backpack.Backpack;
-import com.mrcrayfish.backpacked.common.backpack.BackpackManager;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.HandshakeMessage;
 import net.minecraft.network.FriendlyByteBuf;

@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.condition;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import net.minecraft.resources.ResourceLocation;
 

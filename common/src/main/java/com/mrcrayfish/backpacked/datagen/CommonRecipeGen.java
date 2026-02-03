@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModItems;
-import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;

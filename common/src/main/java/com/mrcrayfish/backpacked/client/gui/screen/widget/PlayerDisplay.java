@@ -6,16 +6,13 @@ import com.mrcrayfish.backpacked.client.TextureDefinitions;
 import com.mrcrayfish.backpacked.common.backpack.CosmeticProperties;
 import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
-import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.Optional;
 import java.util.function.Supplier;

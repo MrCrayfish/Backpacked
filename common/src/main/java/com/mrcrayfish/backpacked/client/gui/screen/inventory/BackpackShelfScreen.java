@@ -3,10 +3,8 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.client.TextureDefinitions;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
-import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 

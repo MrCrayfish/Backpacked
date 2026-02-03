@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
-import com.mrcrayfish.backpacked.client.TextureDefinitions;
 import com.mrcrayfish.backpacked.client.LabelAndDescription;
+import com.mrcrayfish.backpacked.client.TextureDefinitions;
 import com.mrcrayfish.framework.api.client.screen.widget.Buttons;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import com.mrcrayfish.framework.api.client.screen.widget.texture.WidgetTextures;

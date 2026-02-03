@@ -3,7 +3,6 @@ package com.mrcrayfish.backpacked.client.renderer.backpack.advanced.value;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderContext;
 import net.minecraft.resources.ResourceLocation;
 

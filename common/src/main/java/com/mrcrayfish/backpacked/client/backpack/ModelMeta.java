@@ -3,14 +3,12 @@ package com.mrcrayfish.backpacked.client.backpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.client.renderer.backpack.BackpackRenderer;
-import com.mrcrayfish.backpacked.client.renderer.backpack.advanced.function.BaseFunction;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Vector3f;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 

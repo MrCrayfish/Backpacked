@@ -2,7 +2,6 @@ package com.mrcrayfish.backpacked.common.augment;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModRegistries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;

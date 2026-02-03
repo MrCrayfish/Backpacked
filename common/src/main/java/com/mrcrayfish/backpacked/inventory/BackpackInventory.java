@@ -8,10 +8,8 @@ import com.mrcrayfish.backpacked.common.backpack.UnlockableSlots;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.inventory.container.UnlockableContainer;
 import com.mrcrayfish.backpacked.item.BackpackItem;
-import com.mrcrayfish.backpacked.platform.Services;
 import com.mrcrayfish.backpacked.util.InventoryHelper;
 import com.mrcrayfish.backpacked.util.PickpocketUtil;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -24,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.Hopper;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 /**

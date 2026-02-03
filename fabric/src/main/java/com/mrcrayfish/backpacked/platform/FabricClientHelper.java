@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.mixin.common.PlayerRendererInvoker;
 import com.mrcrayfish.backpacked.platform.services.IClientHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -26,9 +25,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;

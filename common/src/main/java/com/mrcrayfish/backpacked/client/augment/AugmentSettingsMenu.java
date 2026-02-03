@@ -4,7 +4,6 @@ import com.mrcrayfish.backpacked.client.TextureDefinitions;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.TextWidget;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenu;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.PopupMenuHandler;
-import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;

@@ -5,9 +5,6 @@ import com.mrcrayfish.backpacked.network.play.ServerPlayHandler;
 import com.mrcrayfish.framework.api.network.MessageContext;
 import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.Objects;
 
 /**
  * Author: MrCrayfish
