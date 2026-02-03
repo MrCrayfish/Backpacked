@@ -1,7 +1,6 @@
 package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModBlocks;
-import com.mrcrayfish.backpacked.core.ModItems;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -20,9 +19,8 @@ import java.util.function.Function;
  */
 public class CommonRecipeGen
 {
-    public static void generate(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> hasItem, Function<TagKey<Item>, CriterionTriggerInstance> hasTag)
+    public static void generate(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> hasItem, Function<TagKey<Item>, CriterionTriggerInstance> hasTag, TagKey<Item> copperIngotTag)
     {
-        backpack(consumer, hasItem);
         backpackShelf(consumer, hasItem, Items.OAK_LOG, Items.OAK_SLAB, ModBlocks.OAK_BACKPACK_SHELF.get());
         backpackShelf(consumer, hasItem, Items.SPRUCE_LOG, Items.SPRUCE_SLAB, ModBlocks.SPRUCE_BACKPACK_SHELF.get());
         backpackShelf(consumer, hasItem, Items.BIRCH_LOG, Items.BIRCH_SLAB, ModBlocks.BIRCH_BACKPACK_SHELF.get());
@@ -32,30 +30,14 @@ public class CommonRecipeGen
         backpackShelf(consumer, hasItem, Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         backpackShelf(consumer, hasItem, Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
         backpackShelf(consumer, hasItem, Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
-        backpackDock(consumer, hasItem, hasTag);
-    }
-
-    private static void backpack(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> has)
-    {
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BACKPACK.get())
-            .pattern("LLL")
-            .pattern("SIS")
-            .pattern("LLL")
-            .define('L', Items.LEATHER)
-            .define('S', Items.STRING)
-            .define('I', Items.IRON_INGOT)
-            .unlockedBy("has_leather", has.apply(Items.LEATHER))
-            .unlockedBy("has_string", has.apply(Items.STRING))
-            .unlockedBy("has_iron_ingot", has.apply(Items.IRON_INGOT))
-            .save(consumer);
+        backpackDock(consumer, hasItem, hasTag, copperIngotTag);
     }
 
     private static void backpackShelf(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> has, ItemLike log, ItemLike slab, ItemLike craftedItem)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, craftedItem, 4)
-                .pattern("LHL")
+                .pattern("HHH")
                 .pattern("S S")
-                .define('L', log)
                 .define('H', slab)
                 .define('S', Items.STICK)
                 .unlockedBy("has_slab", has.apply(slab))
@@ -63,17 +45,17 @@ public class CommonRecipeGen
                 .save(consumer);
     }
 
-    private static void backpackDock(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> hasItem, Function<TagKey<Item>, CriterionTriggerInstance> hasTag)
+    private static void backpackDock(Consumer<FinishedRecipe> consumer, Function<ItemLike, CriterionTriggerInstance> hasItem, Function<TagKey<Item>, CriterionTriggerInstance> hasTag, TagKey<Item> copperIngotTag)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BACKPACK_DOCK.get())
             .pattern("PCP")
             .pattern("CHC")
             .pattern("PCP")
             .define('P', ItemTags.PLANKS)
-            .define('C', Items.COPPER_INGOT)
+            .define('C', copperIngotTag)
             .define('H', Items.HOPPER)
             .unlockedBy("has_planks", hasTag.apply(ItemTags.PLANKS))
-            .unlockedBy("has_copper_ingot", hasItem.apply(Items.COPPER_INGOT))
+            .unlockedBy("has_copper_ingot", hasTag.apply(copperIngotTag))
             .unlockedBy("has_hopper", hasItem.apply(Items.HOPPER))
             .save(consumer);
     }
