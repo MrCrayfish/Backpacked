@@ -1,12 +1,15 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.fabric.impl.resource.pack.BuiltinModResourcePackSource;
 import net.fabricmc.fabric.impl.resource.pack.ModResourcePackCreator;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
@@ -56,5 +59,35 @@ public class FabricPlatformHelper implements IPlatformHelper
     public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
     {
         return (stack, visibility) -> consumer.accept(stack);
+    }
+
+    @Override
+    public TagKey<Item> getLeatherItemTag()
+    {
+        return ConventionalItemTags.LEATHERS;
+    }
+
+    @Override
+    public TagKey<Item> getStringItemTag()
+    {
+        return ConventionalItemTags.STRINGS;
+    }
+
+    @Override
+    public TagKey<Item> getIronIngotItemTag()
+    {
+        return ConventionalItemTags.IRON_INGOTS;
+    }
+
+    @Override
+    public TagKey<Item> getWoodenRodsTag()
+    {
+        return ConventionalItemTags.WOODEN_RODS;
+    }
+
+    @Override
+    public TagKey<Item> getCopperIngotItemTag()
+    {
+        return ConventionalItemTags.COPPER_INGOTS;
     }
 }

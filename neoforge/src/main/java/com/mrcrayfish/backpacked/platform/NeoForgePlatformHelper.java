@@ -3,10 +3,13 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -52,5 +55,35 @@ public class NeoForgePlatformHelper implements IPlatformHelper
     public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
     {
         return (stack, visibility) -> consumer.accept(stack);
+    }
+
+    @Override
+    public TagKey<Item> getLeatherItemTag()
+    {
+        return Tags.Items.LEATHERS;
+    }
+
+    @Override
+    public TagKey<Item> getStringItemTag()
+    {
+        return Tags.Items.STRINGS;
+    }
+
+    @Override
+    public TagKey<Item> getIronIngotItemTag()
+    {
+        return Tags.Items.INGOTS_IRON;
+    }
+
+    @Override
+    public TagKey<Item> getWoodenRodsTag()
+    {
+        return Tags.Items.RODS_WOODEN;
+    }
+
+    @Override
+    public TagKey<Item> getCopperIngotItemTag()
+    {
+        return Tags.Items.INGOTS_COPPER;
     }
 }

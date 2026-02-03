@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModItems;
+import com.mrcrayfish.backpacked.platform.Services;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -45,12 +46,12 @@ public class RecipeGen extends RecipeProvider
             .pattern("LLL")
             .pattern("SIS")
             .pattern("LLL")
-            .define('L', Items.LEATHER)
-            .define('S', Items.STRING)
-            .define('I', Items.IRON_INGOT)
-            .unlockedBy("has_leather", this.has(Items.LEATHER))
-            .unlockedBy("has_string", this.has(Items.STRING))
-            .unlockedBy("has_iron_ingot", this.has(Items.IRON_INGOT))
+            .define('L', Services.PLATFORM.getLeatherItemTag())
+            .define('S', Services.PLATFORM.getStringItemTag())
+            .define('I', Services.PLATFORM.getIronIngotItemTag())
+            .unlockedBy("has_leather", this.has(Services.PLATFORM.getLeatherItemTag()))
+            .unlockedBy("has_string", this.has(Services.PLATFORM.getStringItemTag()))
+            .unlockedBy("has_iron_ingot", this.has(Services.PLATFORM.getIronIngotItemTag()))
             .save(this.output);
     }
 
@@ -61,7 +62,7 @@ public class RecipeGen extends RecipeProvider
             .pattern("S S")
             .define('L', log)
             .define('H', slab)
-            .define('S', Items.STICK)
+            .define('S', Services.PLATFORM.getWoodenRodsTag())
             .unlockedBy("has_slab", this.has(slab))
             .unlockedBy("has_stick", this.has(Items.STICK))
             .save(this.output);
@@ -74,10 +75,10 @@ public class RecipeGen extends RecipeProvider
             .pattern("CHC")
             .pattern("PCP")
             .define('P', ItemTags.PLANKS)
-            .define('C', Items.COPPER_INGOT)
+            .define('C', Services.PLATFORM.getCopperIngotItemTag())
             .define('H', Items.HOPPER)
             .unlockedBy("has_planks", this.has(ItemTags.PLANKS))
-            .unlockedBy("has_copper_ingot", this.has(Items.COPPER_INGOT))
+            .unlockedBy("has_copper_ingot", this.has(Services.PLATFORM.getCopperIngotItemTag()))
             .unlockedBy("has_hopper", this.has(Items.HOPPER))
             .save(this.output);
     }
