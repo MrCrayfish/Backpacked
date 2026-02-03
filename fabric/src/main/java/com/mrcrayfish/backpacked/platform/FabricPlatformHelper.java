@@ -35,9 +35,8 @@ public class FabricPlatformHelper implements IPlatformHelper
             return false;
         if(predicate.blocks != null && !predicate.blocks.contains(state.getBlock()))
             return false;
-        if(tag != null && predicate.nbt.matches(tag)) {
+        if(tag != null && !predicate.nbt.matches(tag))
             return false;
-        }
         return predicate.properties.matches(state);
     }
 
