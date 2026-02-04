@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -97,5 +98,20 @@ public class BackpackDockBlock extends HorizontalDirectionalBlock implements Ent
             return local.x >= 0.1875 &&  local.x <= 0.8125;
 
         return false;
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean $$4)
+    {
+        if(!state.is(newState.getBlock()))
+        {
+            if(level.getBlockEntity(pos) instanceof BackpackDockBlockEntity entity)
+            {
+                ItemStack stack = entity.getBackpackWithContents();
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+                level.updateNeighbourForOutputSignal(pos, state.getBlock());
+            }
+        }
+        super.onRemove(state, level, pos, newState, $$4);
     }
 }

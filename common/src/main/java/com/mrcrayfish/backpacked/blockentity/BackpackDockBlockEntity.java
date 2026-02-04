@@ -70,10 +70,9 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
         {
             if(this.level instanceof ServerLevel)
             {
-                this.backpack = backpack.copy();
+                this.backpack = backpack.copyAndClear();
                 this.updateInventory();
                 this.setChanged();
-                backpack.setCount(0);
                 BlockEntityUtil.sendUpdatePacket(this);
                 this.playSound(SoundEvents.ITEM_FRAME_ADD_ITEM);
             }
@@ -115,7 +114,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
         return this.getBlockPos().getCenter().relative(this.getDirection(), 0.6875);
     }
 
-    private ItemStack getBackpackWithContents()
+    public ItemStack getBackpackWithContents()
     {
         ItemStack stack = this.backpack;
         if(!stack.isEmpty())
