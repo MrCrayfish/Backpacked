@@ -26,6 +26,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -74,10 +75,9 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
         {
             if(this.level instanceof ServerLevel)
             {
-                this.backpack = backpack.copy();
+                this.backpack = backpack.copyAndClear();
                 this.updateInventory();
                 this.setChanged();
-                backpack.setCount(0);
                 BlockEntityUtil.sendUpdatePacket(this);
                 this.playSound(SoundEvents.ITEM_FRAME_ADD_ITEM);
             }
@@ -239,6 +239,16 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
     public Packet<ClientGamePacketListener> getUpdatePacket()
     {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state)
+    {
+        ItemStack stack = this.getBackpackWithContents();
+        if(!stack.isEmpty() && this.level != null)
+        {
+            Containers.dropItemStack(this.level, pos.getX(), pos.getY(), pos.getZ(), stack);
+        }
     }
 
     public static class ItemStackContainer extends UnlockableContainer
