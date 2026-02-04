@@ -102,7 +102,7 @@ public class BackpackLayer<T extends Player, M extends PlayerModel<T>> extends R
 
         pose.popPose();
 
-        BakedModel straps = ClientServices.CLIENT.getBakedModel(backpack.getBaseModel());
+        BakedModel straps = ClientServices.CLIENT.getBakedModel(backpack.getStrapsModel());
         BakedModelRenderer.drawBakedModel(straps, pose, source, light, OverlayTexture.NO_OVERLAY);
 
         pose.popPose();
