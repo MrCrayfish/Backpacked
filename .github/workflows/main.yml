@@ -31,18 +31,9 @@ jobs:
         run: |
           set -euo pipefail
           tag="${{ github.ref_name }}"
-          expected_mc_version="${{ steps.mod_data.outputs.minecraft_version }}"
-          expected_mod_version="${{ steps.mod_data.outputs.mod_version }}"
-          mc_version="$(printf '%s\n' "${tag:1}" | cut -d'-' -f1)"
-          mod_version="$(printf '%s\n' "${tag:1}" | cut -d'-' -f2)"
-          if [[ "${tag:0:1}" != "v" ]]; then
-            echo "Tag must start with v"
-            exit 1
-          elif [[ "$mc_version" != "$expected_mc_version" ]]; then
-            echo "The minecraft version in the tag does not match the gradle property"
-            exit 1
-          elif [[ "$mod_version" != "$expected_mod_version" ]]; then
-            echo "The mod version in the tag does not match the gradle property"
+          expected_tag="v${{ steps.mod_data.outputs.minecraft_version }}-${{ steps.mod_data.outputs.mod_version }}"
+          if [[ "$tag" != "$expected_tag" ]]; then
+            echo "Tag did not match expected result"
             exit 1
           fi
           echo "Tag validation sucessful!"
