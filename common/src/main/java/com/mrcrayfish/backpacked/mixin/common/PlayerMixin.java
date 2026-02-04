@@ -228,10 +228,13 @@ public class PlayerMixin implements BackpackedInventoryAccess
             int slot = slotTag.getByte("Slot") & 255;
             if(slot == 200) // 200 is the index of the original backpack slot
             {
-                ItemStack backpack = ItemStack.of(slotTag);
-                ModSyncedDataKeys.BACKPACK.setValue((Player) (Object) this, backpack);
-                list.remove(i);
-                break;
+                ItemStack stack = ItemStack.of(slotTag);
+                if(stack.getItem() instanceof BackpackItem)
+                {
+                    ModSyncedDataKeys.BACKPACK.setValue((Player) (Object) this, stack);
+                    list.remove(i);
+                    break;
+                }
             }
         }
     }
