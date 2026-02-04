@@ -219,7 +219,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
     protected void saveAdditional(ValueOutput output)
     {
         super.saveAdditional(output);
-        output.store("Backpack", ItemStack.OPTIONAL_CODEC, this.backpack);
+        output.store("Backpack", ItemStack.OPTIONAL_CODEC, this.getBackpackWithContents());
     }
 
     @Override
