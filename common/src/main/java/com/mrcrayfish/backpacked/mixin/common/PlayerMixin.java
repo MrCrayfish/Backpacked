@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.common.MovementType;
+import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
 import com.mrcrayfish.backpacked.inventory.BackpackInventory;
@@ -9,6 +10,7 @@ import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -213,5 +215,24 @@ public class PlayerMixin implements BackpackedInventoryAccess
     private void backpacked$MovementVehicle(double dx, double dy, double dz, CallbackInfo ci)
     {
         this.backpacked$PlayerTravelEvent(dx, dy, dz, MovementType.VEHICLE);
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;load(Lnet/minecraft/nbt/ListTag;)V"))
+    private void backpacked$MigrateBackpackFix(CompoundTag tag, CallbackInfo ci)
+    {
+        // This Mixin will migrate the backpacks from the old slot into the new slot
+        ListTag list = tag.getList("Inventory", CompoundTag.TAG_COMPOUND);
+        for(int i = 0; i < list.size(); i++)
+        {
+            CompoundTag slotTag = list.getCompound(i);
+            int slot = slotTag.getByte("Slot") & 255;
+            if(slot == 200) // 200 is the index of the original backpack slot
+            {
+                ItemStack backpack = ItemStack.of(slotTag);
+                ModSyncedDataKeys.BACKPACK.setValue((Player) (Object) this, backpack);
+                list.remove(i);
+                break;
+            }
+        }
     }
 }
