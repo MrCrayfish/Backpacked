@@ -22,6 +22,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +123,13 @@ public class BackpackHelper
             stack = ModSyncedDataKeys.BACKPACK.getValue(player);
             if(!stack.isEmpty())
             {
-                setBackpackStack(player, stack, index);
+                if(!setBackpackStack(player, stack, index))
+                {
+                    ItemEntity entity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack.copy());
+                    entity.setThrower(player.getUUID());
+                    entity.setPickUpDelay(40);
+                    player.level().addFreshEntity(entity);
+                }
                 ModSyncedDataKeys.BACKPACK.setValue(player, ItemStack.EMPTY);
             }
         }
