@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.inventory.BackpackInventory;
 import com.mrcrayfish.backpacked.inventory.BackpackedInventoryAccess;
 import com.mrcrayfish.backpacked.inventory.ManagementInventory;
 import com.mrcrayfish.backpacked.item.BackpackItem;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -231,7 +233,15 @@ public class PlayerMixin implements BackpackedInventoryAccess
                 ItemStack stack = ItemStack.of(slotTag);
                 if(stack.getItem() instanceof BackpackItem)
                 {
-                    ModSyncedDataKeys.BACKPACK.setValue((Player) (Object) this, stack);
+                    Player player = (Player) (Object) this;
+                    ItemStack first = BackpackHelper.getBackpackStack(player, 0);
+                    if(!first.isEmpty() || !BackpackHelper.setBackpackStack(player, stack, 0))
+                    {
+                        ItemEntity entity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack);
+                        entity.setThrower(player.getUUID());
+                        entity.setPickUpDelay(40);
+                        player.level().addFreshEntity(entity);
+                    }
                     list.remove(i);
                     break;
                 }
