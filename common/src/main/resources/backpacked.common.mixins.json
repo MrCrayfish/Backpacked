@@ -28,8 +28,7 @@
         "common.ServerPlayerMixin"
     ],
     "client": [
-        "client.GuiMixin",
-        "client.ModelBakeryMixin"
+        "client.GuiMixin"
     ],
     "injectors": {
         "defaultRequire": 1,

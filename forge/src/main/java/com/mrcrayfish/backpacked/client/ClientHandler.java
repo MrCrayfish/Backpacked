@@ -13,6 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackL
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -22,12 +23,19 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.loading.FMLLoader;
+
+import java.util.Map;
 
 /**
  * Author: MrCrayfish
@@ -96,5 +104,15 @@ public class ClientHandler
         MultiBufferSource source = mc.renderBuffers().bufferSource();
         float partialTick = event.getPartialTick();
         FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);
+    }
+
+    public static void onRegisterAdditional(ModelEvent.RegisterAdditional event)
+    {
+        ResourceManager manager = Minecraft.getInstance().getResourceManager();
+        Map<ResourceLocation, Resource> models = manager.listResources("models/backpacked", location -> location.getPath().endsWith(".json"));
+        models.forEach((key, resource) -> {
+            String path = key.getPath().substring("models/".length(), key.getPath().length() - ".json".length());
+            event.register(new ResourceLocation(key.getNamespace(), path));
+        });
     }
 }
