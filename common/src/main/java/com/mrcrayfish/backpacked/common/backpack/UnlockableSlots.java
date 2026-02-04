@@ -59,7 +59,6 @@ public final class UnlockableSlots
 
     private UnlockableSlots(Set<Integer> slots, int maxSlots)
     {
-        assert maxSlots > 0;
         this.slots = slots;
         this.maxSlots = maxSlots;
         this.nextCount = calculateUnlockedCount(slots, maxSlots);
