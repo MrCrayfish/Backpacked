@@ -20,6 +20,8 @@
         "common.LivingEntityMixin",
         "common.MerchantResultSlotMixin",
         "common.MobMixin",
+        "common.PackDetectorMixin",
+        "common.PackMixin",
         "common.PlayerInteractTriggerMixin",
         "common.PlayerInventoryMixin",
         "common.PlayerMixin",

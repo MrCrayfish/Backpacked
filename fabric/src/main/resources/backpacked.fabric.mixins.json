@@ -10,7 +10,9 @@
         "common.FabricItemEntityMixin",
         "common.FabricLivingEntityMixin",
         "common.FabricPlayerMixin",
-        "common.PoiTypesAccessor"
+        "common.PackRepositoryMixin",
+        "common.PoiTypesAccessor",
+        "common.ServerPacksSourceMixin"
     ],
     "client": [
         "client.BlockEntityWithoutLevelRendererMixin",

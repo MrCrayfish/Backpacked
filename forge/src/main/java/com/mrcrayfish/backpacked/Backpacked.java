@@ -48,6 +48,7 @@ public class Backpacked
             bus.addListener(ClientHandler::onRegisterRenderers);
             bus.addListener(ClientHandler::onAddLayers);
             bus.addListener(ClientHandler::onRegisterAdditional);
+            bus.addListener(ClientHandler::onFindPacks);
             ClientBootstrap.earlyInit();
         });
         bus.addListener(this::onCommonSetup);

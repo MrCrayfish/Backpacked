@@ -16,9 +16,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
+import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Path;
 
 public class Backpacked implements ModInitializer
 {
+    public static @Nullable Path resourcepackDir;
+
     public Backpacked()
     {
         FrameworkSetup.run();

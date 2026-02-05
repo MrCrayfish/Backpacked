@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mrcrayfish.backpacked.Backpacked;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackManagementScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackShelfScreen;
@@ -37,6 +38,8 @@ public class ClientHandler implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
+        Backpacked.resourcepackDir = Minecraft.getInstance().getResourcePackDirectory();
+
         ClientBootstrap.earlyInit();
         ClientBootstrap.init();
         ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());

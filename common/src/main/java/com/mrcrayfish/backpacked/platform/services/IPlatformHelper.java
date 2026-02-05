@@ -2,6 +2,7 @@ package com.mrcrayfish.backpacked.platform.services;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,4 +26,6 @@ public interface IPlatformHelper
     boolean isRepairable(ItemStack stack);
 
     CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer);
+
+    boolean isBuiltinOrModResourcePack(String info, PackSource source);
 }

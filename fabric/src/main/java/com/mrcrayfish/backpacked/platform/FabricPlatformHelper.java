@@ -1,9 +1,12 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
+import net.fabricmc.fabric.impl.resource.loader.BuiltinModResourcePackSource;
+import net.fabricmc.fabric.impl.resource.loader.ModResourcePackCreator;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -60,5 +63,19 @@ public class FabricPlatformHelper implements IPlatformHelper
     public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
     {
         return (stack, visibility) -> consumer.accept(stack);
+    }
+
+    @Override
+    @SuppressWarnings("UnstableApiUsage")
+    public boolean isBuiltinOrModResourcePack(String info, PackSource source)
+    {
+        if(source == PackSource.BUILT_IN) return true;
+        if(info.equals("vanilla")) return true;
+        if(info.equals("bundle")) return true;
+        if(info.equals("fabric")) return true;
+        if(source == ModResourcePackCreator.RESOURCE_PACK_SOURCE) return true;
+        if(source instanceof BuiltinModResourcePackSource) return true;
+        //if(info.knownPackInfo().stream().anyMatch(pack -> pack.namespace().equals("minecraft"))) return true;
+        return false;
     }
 }

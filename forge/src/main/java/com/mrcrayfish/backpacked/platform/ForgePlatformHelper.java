@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -60,5 +61,17 @@ public class ForgePlatformHelper implements IPlatformHelper
     public CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer)
     {
         return (stack, visibility) -> consumer.accept(stack);
+    }
+
+    @Override
+    public boolean isBuiltinOrModResourcePack(String info, PackSource source)
+    {
+        if(source == PackSource.BUILT_IN) return true;
+        if(info.equals("vanilla")) return true;
+        if(info.equals("bundle")) return true;
+        if(info.equals("mod_resources")) return true;
+        if(info.equals("mod_data")) return true;
+        if(info.startsWith("mod:")) return true;
+        return false;
     }
 }

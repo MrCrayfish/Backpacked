@@ -13,7 +13,7 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackL
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModBlocks;
 import com.mrcrayfish.backpacked.core.ModContainers;
-import com.mrcrayfish.framework.api.client.FrameworkClientAPI;
+import com.mrcrayfish.backpacked.packs.AddonRepositorySource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -23,18 +23,23 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.validation.DirectoryValidator;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -114,5 +119,15 @@ public class ClientHandler
             String path = key.getPath().substring("models/".length(), key.getPath().length() - ".json".length());
             event.register(new ResourceLocation(key.getNamespace(), path));
         });
+    }
+
+    public static void onFindPacks(AddPackFindersEvent event)
+    {
+        // Search the resource packs folder for any backpacked addons. This makes it compatible with CurseForge modpacks.
+        if(event.getPackType() == PackType.SERVER_DATA)
+        {
+            Path addonDir = Minecraft.getInstance().getResourcePackDirectory();
+            event.addRepositorySource(new AddonRepositorySource(addonDir, PackType.SERVER_DATA, PackSource.FEATURE));
+        }
     }
 }
