@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public final class TextureDefinitions
 {
-    public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/widgets.png");
+    public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/backpack_assets.png");
 
     /* GUI Assets */
     public static final FrameworkTexture MISSING_TEXTURE = FrameworkTexture.subImage(MissingTextureAtlasSprite.getLocation(), 0, 0, 16, 16, 16, 16);
