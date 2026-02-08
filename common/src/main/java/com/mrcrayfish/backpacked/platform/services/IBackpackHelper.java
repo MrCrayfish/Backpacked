@@ -1,5 +1,6 @@
 package com.mrcrayfish.backpacked.platform.services;
 
+import com.mrcrayfish.backpacked.BackpackHelper;
 import com.mrcrayfish.backpacked.blockentity.ShelfBlockEntity;
 import com.mrcrayfish.backpacked.common.Pagination;
 import com.mrcrayfish.backpacked.common.augment.Augments;
@@ -20,6 +21,12 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public interface IBackpackHelper
 {
+    // Only here to restore compat with Legendary Tabs mod
+    default ItemStack getBackpackStack(Player player)
+    {
+        return BackpackHelper.getFirstBackpackStack(player);
+    }
+
     Item createBackpackItem(Item.Properties properties);
 
     boolean isBackpackVisible(Player player);
