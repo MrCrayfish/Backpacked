@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.common.augment.AugmentHandler;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import net.minecraft.core.NonNullList;
@@ -15,6 +16,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -33,6 +35,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Author: MrCrayfish
@@ -40,6 +45,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(Constants.MOD_ID)
 public class Backpacked
 {
+    private static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(ForgeRegistries.POI_TYPES, Constants.MOD_ID);
+    private static final RegistryObject<PoiType> SHELF_POI_TYPE = POI_TYPES.register("backpack_shelf", ModPointOfInterests.BACKPACK_SHELF::value);
+
     public Backpacked()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -51,6 +59,7 @@ public class Backpacked
             bus.addListener(ClientHandler::onFindPacks);
             ClientBootstrap.earlyInit();
         });
+        POI_TYPES.register(bus);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
         bus.addListener(this::onGatherData);
