@@ -5,11 +5,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrcrayfish.backpacked.common.PlaceSoundControls;
 import com.mrcrayfish.backpacked.common.UseItemOnBlockFaceContext;
+import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.datafix.DataFixTypes;
@@ -28,7 +30,7 @@ import java.util.function.Function;
 
 public final class Farmhand extends SavedData
 {
-    public static final String ID = "backpacked_farmhand";
+    public static final Identifier ID = Utils.id("farmhand");
     public static final int PLANT_TIME = 14;
     public static final int MAX_DISTANCE_SQR = 16 * 16;
     public static final Codec<Farmhand> CODEC = RecordCodecBuilder.create(instance -> instance.group(

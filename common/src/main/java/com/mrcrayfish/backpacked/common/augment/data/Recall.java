@@ -13,11 +13,13 @@ import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
+import com.mrcrayfish.backpacked.util.Utils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +37,7 @@ import java.util.function.BiConsumer;
 
 public final class Recall extends SavedData
 {
-    public static final String ID = "backpacked_recall";
+    public static final Identifier ID = Utils.id("recall");
     public static final int MAX_QUEUE_SIZE = 18;
     public static final Codec<Recall> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.unboundedMap(

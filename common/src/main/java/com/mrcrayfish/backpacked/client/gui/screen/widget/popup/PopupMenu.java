@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mrcrayfish.backpacked.client.gui.screen.layout.PaddedLayout;
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.DeferredWidgetDraw;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -117,20 +117,20 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
         this.cachedWidgets = null;
     }
 
-    protected void fillBackground(GuiGraphics graphics)
+    protected void fillBackground(GuiGraphicsExtractor extractor)
     {
         Minecraft minecraft = Minecraft.getInstance();
         Window window = minecraft.getWindow();
-        graphics.fill(0, 0, window.getWidth(), window.getHeight(), 0x50000000);
+        extractor.fill(0, 0, window.getWidth(), window.getHeight(), 0x50000000);
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float deltaTick)
     {
         // Draw the background of the popup if present
         if(this.background != null)
         {
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, this.background, this.getX(), this.getY(), this.getWidth(), this.getHeight());
         }
 
         // Draw all widgets from the layout
@@ -138,15 +138,15 @@ public abstract class PopupMenu implements Renderable, GuiEventListener, LayoutE
             if(widget instanceof DeferredWidgetDraw render && render.shouldDefer()) {
                 this.deferredDraws.add(widget);
             } else {
-                widget.render(graphics, mouseX, mouseY, deltaTick);
+                widget.extractRenderState(extractor, mouseX, mouseY, deltaTick);
             }
         });
 
         if(this.child != null)
         {
-            this.child.fillBackground(graphics);
-            this.deferredDraws.forEach(widget -> widget.render(graphics, mouseX, mouseY, deltaTick));
-            this.child.render(graphics, mouseX, mouseY, deltaTick);
+            this.child.fillBackground(extractor);
+            this.deferredDraws.forEach(widget -> widget.extractRenderState(extractor, mouseX, mouseY, deltaTick));
+            this.child.extractRenderState(extractor, mouseX, mouseY, deltaTick);
         }
     }
 

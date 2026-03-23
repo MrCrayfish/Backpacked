@@ -31,7 +31,8 @@
     ],
     "client": [
         "client.BitmapProviderDefinitionMixin",
-        "client.GuiMixin"
+        "client.GuiMixin",
+        "client.SpecialModelWrapperMixin"
     ],
     "injectors": {
         "defaultRequire": 1,

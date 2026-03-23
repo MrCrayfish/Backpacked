@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -44,19 +44,19 @@ public class Stepper extends AbstractWidget
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, this.getX() + this.getHeight(), this.getY() + 1, this.getWidth() - this.getHeight() * 2, this.getHeight() - 2);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, this.getX() + this.getHeight(), this.getY() + 1, this.getWidth() - this.getHeight() * 2, this.getHeight() - 2);
 
         boolean leftHovered = this.isDecrementHovered(mouseX, mouseY);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_SPRITES.get(true, leftHovered), this.getX(), this.getY(), this.getHeight(), this.getHeight());
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, DECREMENT_SPRITE, this.getX() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_SPRITES.get(true, leftHovered), this.getX(), this.getY(), this.getHeight(), this.getHeight());
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, DECREMENT_SPRITE, this.getX() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
 
         boolean rightHovered = this.isIncrementHovered(mouseX, mouseY);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_SPRITES.get(true, rightHovered), this.getX() + this.getWidth() - this.getHeight(), this.getY(), this.getHeight(), this.getHeight());
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INCREMENT_SPRITE, this.getX() + this.getWidth() - this.getHeight() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_SPRITES.get(true, rightHovered), this.getX() + this.getWidth() - this.getHeight(), this.getY(), this.getHeight(), this.getHeight());
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INCREMENT_SPRITE, this.getX() + this.getWidth() - this.getHeight() + (this.getHeight() - 4) / 2, this.getY() + (this.getHeight() - 6) / 2, 4, 6);
 
-        graphics.drawCenteredString(Minecraft.getInstance().font, Integer.toString(this.value), this.getX() + this.getWidth() / 2, this.getY() + (this.getHeight() - 10) / 2 + 1, 0xFFFFFFFF);
+        extractor.centeredText(Minecraft.getInstance().font, Integer.toString(this.value), this.getX() + this.getWidth() / 2, this.getY() + (this.getHeight() - 10) / 2 + 1, 0xFFFFFFFF);
     }
 
     @Override

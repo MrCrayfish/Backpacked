@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.client.gui;
 
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -34,13 +34,13 @@ public class ExperienceCostTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics)
+    public void extractImage(Font font, int x, int y, int w, int h, GuiGraphicsExtractor extractor)
     {
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_ORB, x, y, 9, 9);
-        graphics.drawString(font, this.label, x + 9 + 2, y + 1, 0xFF2B2203, false);
-        graphics.drawString(font, this.label, x + 9 + 4, y + 1, 0xFF2B2203, false);
-        graphics.drawString(font, this.label, x + 9 + 3, y, 0xFF2B2203, false);
-        graphics.drawString(font, this.label, x + 9 + 3, y + 2, 0xFF2B2203, false);
-        graphics.drawString(font, this.label, x + 9 + 3, y + 1, 0xFFB2E65C, false);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_ORB, x, y, 9, 9);
+        extractor.text(font, this.label, x + 9 + 2, y + 1, 0xFF2B2203, false);
+        extractor.text(font, this.label, x + 9 + 4, y + 1, 0xFF2B2203, false);
+        extractor.text(font, this.label, x + 9 + 3, y, 0xFF2B2203, false);
+        extractor.text(font, this.label, x + 9 + 3, y + 2, 0xFF2B2203, false);
+        extractor.text(font, this.label, x + 9 + 3, y + 1, 0xFFB2E65C, false);
     }
 }

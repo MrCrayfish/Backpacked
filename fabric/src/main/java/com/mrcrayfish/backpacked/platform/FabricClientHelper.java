@@ -7,15 +7,12 @@ import com.mrcrayfish.backpacked.client.ClientHandler;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.platform.services.IClientHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
@@ -41,7 +38,7 @@ import java.util.Optional;
  */
 public class FabricClientHelper implements IClientHelper
 {
-    private static final Method SETUP_ROTATIONS = findMethod(AvatarRenderer.class, "net.minecraft.class_1007", "method_4212", "(Lnet/minecraft/class_10055;Lnet/minecraft/class_4587;FF)V", AvatarRenderState.class, PoseStack.class, float.class, float.class);
+    private static final Method SETUP_ROTATIONS = findMethod(AvatarRenderer.class, "setupRotations", AvatarRenderState.class, PoseStack.class, float.class, float.class);
 
     @Override
     public void openConfigScreen()
@@ -55,7 +52,7 @@ public class FabricClientHelper implements IClientHelper
                     .withHoverEvent(new HoverEvent.ShowText(Component.translatable("backpacked.chat.open_curseforge_page")))
                     .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://www.curseforge.com/minecraft/mc-mods/configured-fabric"))));
             Component message = Component.translatable("backpacked.chat.install_configured", modName);
-            Optional.ofNullable(Minecraft.getInstance().player).ifPresent(player -> player.displayClientMessage(message, false));
+            Optional.ofNullable(Minecraft.getInstance().player).ifPresent(player -> player.sendSystemMessage(message));
             return;
         }
 
@@ -87,12 +84,11 @@ public class FabricClientHelper implements IClientHelper
         }
     }
 
-    private static Method findMethod(Class<?> targetClass, String className, String methodName, String methodDesc, Class<?>... types)
+    private static Method findMethod(Class<?> targetClass, String methodName, Class<?>... types)
     {
         try
         {
-            MappingResolver resolver = FabricLoader.getInstance().getMappingResolver();
-            Method method = targetClass.getDeclaredMethod(resolver.mapMethodName("intermediary", className, methodName, methodDesc), types);
+            Method method = targetClass.getDeclaredMethod(methodName, types);
             method.setAccessible(true);
             return method;
         }
@@ -103,9 +99,10 @@ public class FabricClientHelper implements IClientHelper
     }
 
     @Override
-    public void drawTooltip(GuiGraphics graphics, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner)
+    public void drawTooltip(GuiGraphicsExtractor extractor, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner)
     {
-        graphics.setTooltipForNextFrameInternal(font, list, mouseX, mouseY, positioner, null, false);
+        // TODO 26.1 test
+        extractor.tooltip(font, list, mouseX, mouseY, positioner, null);
     }
 
     @Override
@@ -119,15 +116,15 @@ public class FabricClientHelper implements IClientHelper
     }
 
     @Override
-    public void submitGuiElementRenderState(GuiGraphics graphics, GuiElementRenderState state)
+    public void submitGuiElementRenderState(GuiGraphicsExtractor extractor, net.minecraft.client.renderer.state.gui.GuiElementRenderState state)
     {
-        graphics.guiRenderState.submitGuiElement(state);
+        extractor.guiRenderState.addGuiElement(state);
     }
 
     @Override
-    public void submitGuiPipRenderState(GuiGraphics graphics, PictureInPictureRenderState state)
+    public void submitGuiPipRenderState(GuiGraphicsExtractor extractor, net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState state)
     {
-        graphics.guiRenderState.submitPicturesInPictureState(state);
+        extractor.guiRenderState.addPicturesInPictureState(state);
     }
 
     @Override

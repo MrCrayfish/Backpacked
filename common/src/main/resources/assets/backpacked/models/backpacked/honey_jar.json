@@ -2,7 +2,7 @@
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"texture_size": [32, 16],
 	"textures": {
-		"1": "backpacked:backpack/honey_jar"
+        "1": "backpacked:backpack/honey_jar"
 	},
 	"elements": [
 		{
@@ -38,9 +38,7 @@
 				"north": {"uv": [5, 8, 7.5, 15], "texture": "#1"},
 				"east": {"uv": [2.5, 8, 5, 15], "texture": "#1"},
 				"south": {"uv": [10, 8, 12.5, 15], "texture": "#1"},
-				"west": {"uv": [7.5, 8, 10, 15], "texture": "#1"},
-				"up": {"uv": [5, 25, 2.5, 20], "texture": "#1"},
-				"down": {"uv": [7.5, 20, 5, 25], "texture": "#1"}
+				"west": {"uv": [7.5, 8, 10, 15], "texture": "#1"}
 			}
 		}
 	]

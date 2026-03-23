@@ -14,27 +14,25 @@ import com.mrcrayfish.backpacked.client.renderer.entity.layers.BackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.layers.VillagerBackpackLayer;
 import com.mrcrayfish.backpacked.client.renderer.entity.state.BackpackRenderState;
 import com.mrcrayfish.backpacked.client.renderer.special.BackpackItemSpecialRenderer;
-import com.mrcrayfish.backpacked.core.*;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
+import com.mrcrayfish.backpacked.core.ModContainers;
+import com.mrcrayfish.backpacked.core.ModKeyMappings;
+import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleGroupRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.fabricmc.fabric.impl.client.rendering.SpecialGuiElementRegistryImpl;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -54,20 +52,20 @@ public class ClientHandler implements ClientModInitializer
     {
         ClientBootstrap.earlyInit();
         ClientBootstrap.init();
-        ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
+        //ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
         MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
         MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);
         BlockEntityRenderers.register(ModBlockEntities.BACKPACK_SHELF.get(), ShelfRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.BACKPACK_DOCK.get(), BackpackDockRenderer::new);
-        ParticleRendererRegistry.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
+        ParticleGroupRegistry.register(ModParticleRenderTypes.FARMHAND_PLANT, FarmhandPlantParticleGroup::new);
         SpecialModelRenderers.ID_MAPPER.put(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
-        BlockRenderLayerMap.putBlock(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
+        //BlockRenderLayerMap.putBlock(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
         KeyMapping.Category.register(ModKeyMappings.CATEGORY.id());
-        SpecialGuiElementRegistryImpl.register(ctx -> new GuiBackpackRenderer(ctx.vertexConsumers()));
+        PictureInPictureRendererRegistry.register(ctx -> new GuiBackpackRenderer(ctx.bufferSource()));
 
         // Add backpack layers for player and wandering trader
-        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
+        LivingEntityRenderLayerRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if(entityRenderer instanceof WanderingTraderRenderer renderer) {
                 registrationHelper.register(new VillagerBackpackLayer(renderer, context.getItemModelResolver()));
             } else if(entityType == EntityType.PLAYER) {
@@ -75,11 +73,11 @@ public class ClientHandler implements ClientModInitializer
             }
         });
 
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(ModelMetaLoader.ID, new ModelMetaLoader());
-        WorldRenderEvents.AFTER_ENTITIES.register(this::afterDrawEntities);
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(ModelMetaLoader.ID, new ModelMetaLoader());
+        LevelRenderEvents.AFTER_SOLID_FEATURES.register(this::afterSolidFeatures);
     }
 
-    private void afterDrawEntities(WorldRenderContext context)
+    private void afterSolidFeatures(LevelRenderContext context)
     {
         Minecraft mc = Minecraft.getInstance();
         if(mc.player == null || mc.level == null)
@@ -88,7 +86,7 @@ public class ClientHandler implements ClientModInitializer
         if(!mc.options.getCameraType().isFirstPerson())
             return;
 
-        PoseStack stack = context.matrices();
+        PoseStack stack = context.poseStack();
         MultiBufferSource source = mc.renderBuffers().bufferSource();
         boolean frozen = mc.level.tickRateManager().isEntityFrozen(mc.player);
         float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(!frozen);

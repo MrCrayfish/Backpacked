@@ -24,7 +24,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -67,7 +67,7 @@ public class BackpackDockRenderer implements BlockEntityRenderer<BackpackDockBlo
         if(level != null)
         {
             BlockPos lightPos = entity.getBlockPos().relative(entity.getDirection());
-            state.itemLight = LevelRenderer.getLightColor(level, lightPos);
+            state.itemLight = LevelRenderer.getLightCoords(level, lightPos);
         }
 
         // Easy solution could use a tick count on block entity in the future

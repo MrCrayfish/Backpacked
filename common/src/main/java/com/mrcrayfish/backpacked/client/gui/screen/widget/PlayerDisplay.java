@@ -6,17 +6,17 @@ import com.mrcrayfish.backpacked.core.ModSyncedDataKeys;
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix3x2fStack;
@@ -64,18 +64,18 @@ public class PlayerDisplay extends AbstractWidget
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         int widgetX = this.getX();
         int widgetY = this.getY();
         int widgetWidth = this.getWidth();
         int widgetHeight = this.getHeight();
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, FRAME, widgetX, widgetY, widgetWidth, widgetHeight);
-        Matrix3x2fStack pose = graphics.pose();
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, FRAME, widgetX, widgetY, widgetWidth, widgetHeight);
+        Matrix3x2fStack pose = extractor.pose();
         pose.pushMatrix();
-        graphics.enableScissor(widgetX + FRAME_OFFSET, widgetY + FRAME_OFFSET, widgetX + widgetWidth - FRAME_OFFSET, widgetY + widgetHeight - FRAME_OFFSET);
-        this.renderPlayerModel(graphics, widgetX, widgetY, widgetWidth, widgetHeight, mouseX, mouseY);
-        graphics.disableScissor();
+        extractor.enableScissor(widgetX + FRAME_OFFSET, widgetY + FRAME_OFFSET, widgetX + widgetWidth - FRAME_OFFSET, widgetY + widgetHeight - FRAME_OFFSET);
+        this.renderPlayerModel(extractor, widgetX, widgetY, widgetWidth, widgetHeight, mouseX, mouseY);
+        extractor.disableScissor();
         pose.popMatrix();
     }
 
@@ -114,7 +114,7 @@ public class PlayerDisplay extends AbstractWidget
         return false;
     }
 
-    private void renderPlayerModel(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
+    private void renderPlayerModel(GuiGraphicsExtractor extractor, int x, int y, int width, int height, int mouseX, int mouseY)
     {
         if(this.player == null)
             return;
@@ -128,7 +128,7 @@ public class PlayerDisplay extends AbstractWidget
         playerRotation.mul(cameraRotation);
         EntityRenderState state = createPlayerRenderState(this.player);
         Vector3f box = new Vector3f(0, state.boundingBoxHeight / 2.0F + 0.0625F, 0);
-        graphics.submitEntityRenderState(state, (float) 70, box, playerRotation, cameraRotation, x, y, x + width, y + height);
+        extractor.entity(state, (float) 70, box, playerRotation, cameraRotation, x, y, x + width, y + height);
         this.restoreValues();
     }
 
@@ -137,7 +137,7 @@ public class PlayerDisplay extends AbstractWidget
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         EntityRenderer<? super LivingEntity, ?> renderer = dispatcher.getRenderer(entity);
         EntityRenderState state = renderer.createRenderState(entity, 1.0F);
-        state.lightCoords = LightTexture.FULL_BRIGHT;
+        state.lightCoords = LightCoordsUtil.FULL_BRIGHT;
         state.shadowPieces.clear();
         state.outlineColor = 0;
         return state;

@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -23,15 +23,15 @@ public abstract class CustomScreen extends Screen implements PopupMenuHandler
     }
 
     @Override
-    public final void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         boolean dropdown = this.hasPopupMenu();
-        super.render(graphics, dropdown ? -1000 : mouseX, dropdown ? -1000 : mouseY, partialTick);
-        this.renderForeground(graphics, dropdown ? -1000 : mouseX, dropdown ? -1000 : mouseY, partialTick);
-        this.controller.render(graphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, dropdown ? -1000 : mouseX, dropdown ? -1000 : mouseY, partialTick);
+        this.extractForeground(extractor, dropdown ? -1000 : mouseX, dropdown ? -1000 : mouseY, partialTick);
+        this.controller.extract(extractor, mouseX, mouseY, partialTick);
     }
 
-    protected abstract void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick);
+    protected abstract void extractForeground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick);
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)

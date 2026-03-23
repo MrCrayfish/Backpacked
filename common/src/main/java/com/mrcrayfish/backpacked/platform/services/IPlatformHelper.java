@@ -5,7 +5,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -23,7 +22,7 @@ public interface IPlatformHelper
 
     boolean isRepairable(ItemStack stack);
 
-    CreativeModeTab.Output createCreativeTabOutput(Consumer<ItemStack> consumer);
+    void generateCreativeTabOutput(CreativeModeTab.DisplayItemsGenerator generator, CreativeModeTab.ItemDisplayParameters parameters, Consumer<ItemStack> consumer);
 
     TagKey<Item> getLeatherItemTag();
 
@@ -34,4 +33,6 @@ public interface IPlatformHelper
     TagKey<Item> getWoodenRodsTag();
 
     TagKey<Item> getCopperIngotItemTag();
+
+    void setupCreativeTabDisplayItems(CreativeModeTab.Builder builder);
 }

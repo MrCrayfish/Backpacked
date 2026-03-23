@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -125,7 +126,7 @@ public class PlayerMixin implements BackpackedInventoryAccess
     }
 
     @Inject(method = "interactOn", at = @At(value = "HEAD"))
-    public void backpacked$InteractHead(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir)
+    public void backpacked$InteractHead(Entity entity, InteractionHand hand, Vec3 location, CallbackInfoReturnable<InteractionResult> cir)
     {
         Player player = (Player) (Object) this;
         if(player instanceof ServerPlayer serverPlayer)

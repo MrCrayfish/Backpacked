@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client;
 
-import com.mrcrayfish.framework.api.client.model.FabricModelResource;
+/*import com.mrcrayfish.framework.api.client.model.FabricModelResource;
 import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -10,14 +10,14 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map;*/
 
 /**
  * Author: MrCrayfish
  */
-public class BackpackedModelLoadingPlugin implements ModelLoadingPlugin
+public class BackpackedModelLoadingPlugin //implements ModelLoadingPlugin
 {
-    @Override
+    /*@Override
     public void initialize(Context context)
     {
         Map<Identifier, FrameworkModelResource<FrameworkBakedModel>> loadedModels = new HashMap<>();
@@ -33,5 +33,5 @@ public class BackpackedModelLoadingPlugin implements ModelLoadingPlugin
             loadedModels.put(standaloneId, modelResource);
         });
         StandaloneModels.init(loadedModels);
-    }
+    }*/
 }

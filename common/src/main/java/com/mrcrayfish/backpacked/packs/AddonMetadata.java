@@ -41,6 +41,7 @@ public record AddonMetadata(Component name, Component description, Component aut
         {
             try(PackResources resources = resourcesSupplier.openPrimary(info))
             {
+                // TODO 26.1 test
                 Optional<Optional<AddonMetadataSection>> result = readAddonMetadata(info, resources);
                 if(result.isEmpty())
                     return Optional.empty();
@@ -73,19 +74,7 @@ public record AddonMetadata(Component name, Component description, Component aut
 
     private static Optional<Optional<AddonMetadataSection>> readAddonMetadata(PackLocationInfo info, PackResources resources) throws IOException
     {
-        IoSupplier<InputStream> supplier = resources.getRootResource("backpacked_addon.mcmeta");
-        if(supplier != null)
-        {
-            try(InputStream is = supplier.get())
-            {
-                // See: https://github.com/UnlikePaladin/paladins-furniture/issues/241
-                if(is != null)
-                {
-                    return Optional.of(Optional.ofNullable(AbstractPackResources.getMetadataFromStream(AddonMetadataSection.TYPE, is, info)));
-                }
-            }
-        }
-        return Optional.empty();
+        return Optional.of(Optional.ofNullable(resources.getMetadataSection(AddonMetadataSection.TYPE))); // TODO 26.1 test
     }
 
     private static PackCompatibility readPackCompatibility(AddonMetadataSection section, PackType type)

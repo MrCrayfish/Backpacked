@@ -31,7 +31,7 @@ import com.mrcrayfish.framework.api.client.screen.widget.element.Sound;
 import com.mrcrayfish.framework.api.client.screen.widget.input.Action;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -138,13 +138,15 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
 
     public BackpackScreen(BackpackContainerMenu menu, Inventory playerInventory, Component titleIn)
     {
-        super(menu, playerInventory, titleIn);
+        int cols = menu.getCols();
+        int rows = menu.getRows();
+        int imageWidth = BACKPACK_PADDING_SIDE + Math.max(cols, 9) * 18 + BACKPACK_PADDING_SIDE;
+        int imageHeight = BACKPACK_TOP + BACKPACK_PADDING_TOP + (rows * 18) + BACKPACK_PADDING_BOTTOM + GAP + INVENTORY_HEIGHT;
+        super(menu, playerInventory, titleIn, imageWidth, imageHeight);
+        this.cols = cols;
+        this.rows = rows;
         this.player = playerInventory.player;
-        this.cols = menu.getCols();
-        this.rows = menu.getRows();
         this.owner = menu.isOwner();
-        this.imageWidth = BACKPACK_PADDING_SIDE + Math.max(this.cols, 9) * 18 + BACKPACK_PADDING_SIDE;
-        this.imageHeight = BACKPACK_TOP + BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM + GAP + INVENTORY_HEIGHT;
         this.titleLabelX = 6;
         this.titleLabelY = 0;
         this.inventoryLabelX = this.imageWidth / 2 - 80;
@@ -492,7 +494,7 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
+    protected void extractTooltip(GuiGraphicsExtractor extractor, int mouseX, int mouseY)
     {
         // Draws the cost tooltip to unlock the augment bay
         for(var entry : this.augmentsButtons.entrySet())
@@ -500,11 +502,11 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
             if(!this.menu.getAugmentBayController().isSlotUnlocked(entry.getKey().ordinal()) && entry.getValue().isHovered())
             {
                 List<ClientTooltipComponent> components = this.createUnlockAugmentBayTooltip();
-                ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
+                ClientServices.CLIENT.drawTooltip(extractor, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
                 return;
             }
         }
-        super.renderTooltip(graphics, mouseX, mouseY);
+        super.extractTooltip(extractor, mouseX, mouseY);
     }
 
     protected List<ClientTooltipComponent> createUnlockAugmentBayTooltip()
@@ -531,15 +533,16 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
+    protected void extractLabels(GuiGraphicsExtractor extractor, int mouseX, int mouseY)
     {
-        graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
+        extractor.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
+    public void extractBackground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
-        this.drawBackgroundWindow(graphics, this.leftPos, this.topPos, this.imageWidth, this.imageHeight, mouseX, mouseY);
+        super.extractBackground(extractor, mouseX, mouseY, partialTick);
+        this.extractBackgroundWindow(extractor, this.leftPos, this.topPos, this.imageWidth, this.imageHeight, mouseX, mouseY);
     }
 
     private FormattedCharSequence getTrimmedTitle()
@@ -552,45 +555,45 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         return this.title.getVisualOrderText();
     }
 
-    private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height, int mouseX, int mouseY)
+    private void extractBackgroundWindow(GuiGraphicsExtractor extractor, int x, int y, int width, int height, int mouseX, int mouseY)
     {
         //graphics.fill(this.leftPos, this.topPos, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xFFFFFFFF);
 
         // Draw the background labels for the quick action buttons and augment
         this.layouts.forEach(layout -> {
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, layout.getX() - LABEL_PADDING, layout.getY() - LABEL_PADDING, LABEL_PADDING + layout.getWidth() + LABEL_PADDING, LABEL_PADDING + layout.getHeight() + LABEL_PADDING);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, layout.getX() - LABEL_PADDING, layout.getY() - LABEL_PADDING, LABEL_PADDING + layout.getWidth() + LABEL_PADDING, LABEL_PADDING + layout.getHeight() + LABEL_PADDING);
         });
 
         // Backpack Inventory
         int backpackHeight = BACKPACK_PADDING_TOP + (this.rows * 18) + BACKPACK_PADDING_BOTTOM;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + BACKPACK_TOP, width, backpackHeight);
 
         // Draw Backpack Slots
         int backpackSlotsWidth = this.cols * 18;
         int backpackSlotsHeight = this.rows * 18;
         int backpackSlotsX = (width - backpackSlotsWidth) / 2;
         int backpackSlotsY = 27;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_SLOT, x + backpackSlotsX, y + backpackSlotsY, backpackSlotsWidth, backpackSlotsHeight);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_SLOT, x + backpackSlotsX, y + backpackSlotsY, backpackSlotsWidth, backpackSlotsHeight);
 
         int backpackCheckersWidth = (width - 11 - 11 - backpackSlotsWidth) / 2 - 3;
         if(backpackCheckersWidth > 0)
         {
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, x + 11, y + 27, backpackCheckersWidth, backpackSlotsHeight);
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, x + backpackSlotsX + backpackSlotsWidth + 3, y + 27, backpackCheckersWidth, backpackSlotsHeight);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, x + 11, y + 27, backpackCheckersWidth, backpackSlotsHeight);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, x + backpackSlotsX + backpackSlotsWidth + 3, y + 27, backpackCheckersWidth, backpackSlotsHeight);
         }
 
         // Player Inventory
         int inventoryX = (width - INVENTORY_WIDTH) / 2;
         int inventoryY = BACKPACK_TOP + backpackHeight + GAP;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SPRITE, x + inventoryX, y + inventoryY, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SPRITE, x + inventoryX, y + inventoryY, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
         // Draw Player Inventory Slots
         int inventorySlotsWidth = 9 * 18;
         int inventorySlotsHeight = 3 * 18;
         int inventorySlotsX = (width - inventorySlotsWidth) / 2;
         int inventorySlotsY = inventoryY + 18;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY, inventorySlotsWidth, inventorySlotsHeight);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, x + inventorySlotsX, y + inventorySlotsY + inventorySlotsHeight + 4, 9 * 18, 18);
     }
 
     private void openConfigScreen()
@@ -694,23 +697,23 @@ public class BackpackScreen extends UnlockableContainerScreen<BackpackContainerM
         }
 
         @Override
-        public void draw(GuiGraphics graphics, int x, int y, int alpha, float partialTick)
+        public void draw(GuiGraphicsExtractor extractor, int x, int y, int alpha, float partialTick)
         {
             if(!this.menu.getAugmentBayController().isSlotUnlocked(this.position.ordinal()))
             {
                 if(this.button.isActive() && this.button.isHovered())
                 {
-                    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x, y, 12, 12, alpha);
+                    extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x, y, 12, 12, alpha);
                 }
                 else
                 {
-                    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x, y, 12, 12, alpha);
+                    extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x, y, 12, 12, alpha);
                 }
             }
             else
             {
                 Identifier sprite = this.menu.getAugments().getAugment(this.position).type().sprite();
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 12, 12, alpha);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 12, 12, alpha);
             }
         }
     }

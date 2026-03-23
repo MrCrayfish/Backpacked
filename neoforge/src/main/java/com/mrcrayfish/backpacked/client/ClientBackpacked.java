@@ -33,7 +33,6 @@ import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.NeoForgeModelResource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -117,7 +116,6 @@ public class ClientBackpacked
     {
         event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_SHELF.get(), ShelfRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BACKPACK_DOCK.get(), BackpackDockRenderer::new);
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
     }
 
     private void onAddLayers(EntityRenderersEvent.AddLayers event)
@@ -169,7 +167,8 @@ public class ClientBackpacked
         }
     }
 
-    private void onRenderLevelStage(RenderLevelStageEvent.AfterEntities event)
+    // TODO 26.1 test
+    private void onRenderLevelStage(RenderLevelStageEvent.AfterOpaqueBlocks event)
     {
         Minecraft mc = Minecraft.getInstance();
         if(mc.player == null || mc.level == null)

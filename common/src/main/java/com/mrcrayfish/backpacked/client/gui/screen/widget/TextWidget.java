@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonInfo;
@@ -44,9 +44,9 @@ public class TextWidget extends AbstractWidget
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
-        graphics.drawString(this.font, this.text.get(), this.getX(), this.getY() + 1, this.colour, this.shadow);
+        extractor.text(this.font, this.text.get(), this.getX(), this.getY() + 1, this.colour, this.shadow);
     }
 
     @Override

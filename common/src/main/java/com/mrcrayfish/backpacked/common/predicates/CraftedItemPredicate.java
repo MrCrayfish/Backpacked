@@ -41,7 +41,7 @@ public record CraftedItemPredicate(Optional<Set<String>> modIds, Optional<TagKey
         }
         if(this.items.isPresent())
         {
-            if(!this.items.get().contains(stack.getItemHolder()))
+            if(!this.items.get().contains(stack.typeHolder()))
             {
                 return false;
             }

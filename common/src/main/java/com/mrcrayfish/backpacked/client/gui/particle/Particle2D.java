@@ -6,7 +6,7 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mrcrayfish.backpacked.client.gui.ParticleRenderState;
 import com.mrcrayfish.backpacked.platform.ClientServices;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -249,14 +249,14 @@ public class Particle2D
     /**
      * Renders the particle onto the screen
      *
-     * @param graphics the current GuiGraphics instance
+     * @param extractor the current GuiGraphics instance
      * @param partialTick the current partial tick time
      */
-    public void render(GuiGraphics graphics, float partialTick)
+    public void render(GuiGraphicsExtractor extractor, float partialTick)
     {
         if(this.life <= 0)
             return;
-        Matrix3x2fStack pose = graphics.pose();
+        Matrix3x2fStack pose = extractor.pose();
         pose.pushMatrix();
         pose.translate((float) Mth.lerp(partialTick, this.prevX, this.x), (float) Mth.lerp(partialTick, this.prevY, this.y));
         pose.translate((float) (this.width / 2), (float) (this.height / 2));
@@ -279,7 +279,7 @@ public class Particle2D
             null,
             new ScreenRectangle((int) this.x, (int) this.y, Mth.ceil(this.width), Mth.ceil(this.height)).transformMaxBounds(matrix)
         );
-        ClientServices.CLIENT.submitGuiElementRenderState(graphics, state);
+        ClientServices.CLIENT.submitGuiElementRenderState(extractor, state);
         pose.popMatrix();
     }
 }

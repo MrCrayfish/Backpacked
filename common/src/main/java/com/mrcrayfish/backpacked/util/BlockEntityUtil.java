@@ -34,7 +34,7 @@ public class BlockEntityUtil
     {
         if(level instanceof ServerLevel serverLevel)
         {
-            List<ServerPlayer> players = serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false);
+            List<ServerPlayer> players = serverLevel.getChunkSource().chunkMap.getPlayers(ChunkPos.containing(pos), false);
             players.forEach(player -> player.connection.send(packet));
         }
     }

@@ -51,10 +51,9 @@ public final class CreativeCategorySort
             .forEach(tab -> {
                 var generator = ((CreativeModeTabAccess) tab).backpacked$displayItemsGenerator();
                 var params = new CreativeModeTab.ItemDisplayParameters(FeatureFlags.DEFAULT_FLAGS, false, access);
-                var output = Services.PLATFORM.createCreativeTabOutput(stack -> {
+                Services.PLATFORM.generateCreativeTabOutput(generator, params, stack -> {
                     CREATIVE_SORT_INDEX_MAP.computeIfAbsent(stack.getItem(), item -> sortIndex.getAndIncrement());
                 });
-                generator.accept(params, output);
             });
         needsSorting = false;
     }

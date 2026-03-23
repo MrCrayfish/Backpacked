@@ -2,7 +2,7 @@ import org.apache.commons.io.FilenameUtils
 
 plugins {
     id 'multiloader-loader'
-    id 'fabric-loom'
+    id 'net.fabricmc.fabric-loom'
 }
 
 repositories {
@@ -29,16 +29,15 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modImplementation "com.mrcrayfish:framework-fabric:${minecraft_version}-${framework_version}"
-    modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "com.mrcrayfish:framework-fabric:${framework_version}+${minecraft_version}"
+    //modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
     //modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
 
     // JEI
-    modCompileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
-    modRuntimeOnly "mezz.jei:jei-${jei_minecraft_version}-fabric-api:${jei_version}"
+    //modCompileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
+    //modRuntimeOnly "mezz.jei:jei-${jei_minecraft_version}-fabric-api:${jei_version}"
 
     // Integrations
     //modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684160"
@@ -77,24 +76,24 @@ loom {
 }
 
 tasks.register("signJar") {
-    dependsOn remapJar
+    dependsOn jar
     onlyIf {
         findProperty('keyStore') || System.getenv("KEYSTORE")
     }
     doLast {
-        def unsignedJar = tasks.remapJar.archiveFile.get().asFile
+        def unsignedJar = jar.archiveFile.get().asFile
         def name = FilenameUtils.removeExtension(unsignedJar.getName())
         def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get().asFile
         def signingKeyAlias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
         def signingKeystore = findProperty('keyStore') ?: System.getenv("KEYSTORE")
         def signingPassword = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
         ant.signjar(
-                jar: unsignedJar,
-                signedJar: signedJar,
-                alias: signingKeyAlias,
-                keyStore: signingKeystore,
-                storePass: signingPassword,
-                storetype: 'jks'
+            jar: unsignedJar,
+            signedJar: signedJar,
+            alias: signingKeyAlias,
+            keyStore: signingKeystore,
+            storePass: signingPassword,
+            storetype: 'jks'
         )
         println "Signed jar created at: $signedJar"
     }
@@ -117,13 +116,6 @@ sourceSets.configureEach {
             attributes {
                 attribute(loaderAttribute, 'fabric')
             }
-        }
-    }
-}
-loom.remapConfigurations.configureEach {
-    configurations.named(it.name) {
-        attributes {
-            attribute(loaderAttribute, 'fabric')
         }
     }
 }

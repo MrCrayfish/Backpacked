@@ -63,7 +63,7 @@ public class WanderingTraderEvents
             {
                 if(!data.isInitialized())
                 {
-                    boolean equipped = trader.level().random.nextInt(Config.WANDERING_TRADER.spawnWithBackpackChance.get()) == 0;
+                    boolean equipped = trader.level().getRandom().nextInt(Config.WANDERING_TRADER.spawnWithBackpackChance.get()) == 0;
                     data.setBackpackEquipped(equipped);
                     data.setInitialized();
                 }
@@ -217,7 +217,7 @@ public class WanderingTraderEvents
         {
             int size = trader.getInventory().getContainerSize();
             int reserved = size / 4; // Maybe eventually a config option
-            int count = trader.level().random.nextInt(Math.max(reserved, 1)) + (size - reserved);
+            int count = trader.level().getRandom().nextInt(Math.max(reserved, 1)) + (size - reserved);
             List<Integer> randomSlotIndexes = IntStream.range(0, size).boxed().collect(Collectors.toCollection(ArrayList::new));
             Collections.shuffle(randomSlotIndexes);
             MerchantOffers offers = trader.getOffers();
@@ -225,14 +225,14 @@ public class WanderingTraderEvents
             {
                 if(!Config.WANDERING_TRADER.challenge.generateEmeraldsOnly.get() && i < count)
                 {
-                    MerchantOffer offer = offers.get(trader.level().random.nextInt(offers.size()));
+                    MerchantOffer offer = offers.get(trader.level().getRandom().nextInt(offers.size()));
                     ItemStack loot = offer.getResult().copy();
-                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level().random.nextInt(Config.WANDERING_TRADER.challenge.maxLootMultiplier.get()) + 1), 0, loot.getMaxStackSize()));
+                    loot.setCount(Mth.clamp(loot.getCount() * (trader.level().getRandom().nextInt(Config.WANDERING_TRADER.challenge.maxLootMultiplier.get()) + 1), 0, loot.getMaxStackSize()));
                     trader.getInventory().setItem(randomSlotIndexes.get(i), loot);
                 }
                 else
                 {
-                    ItemStack stack = new ItemStack(Items.EMERALD, trader.level().random.nextInt(Config.WANDERING_TRADER.challenge.maxEmeraldStack.get()) + 1);
+                    ItemStack stack = new ItemStack(Items.EMERALD, trader.level().getRandom().nextInt(Config.WANDERING_TRADER.challenge.maxEmeraldStack.get()) + 1);
                     trader.getInventory().setItem(randomSlotIndexes.get(i), stack);
                 }
             }

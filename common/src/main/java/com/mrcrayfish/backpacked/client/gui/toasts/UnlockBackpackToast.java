@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.CustomiseBackpackScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -43,14 +43,14 @@ public class UnlockBackpackToast implements Toast
     }
 
     @Override
-    public void render(GuiGraphics graphics, Font font, long delta)
+    public void extractRenderState(GuiGraphicsExtractor extractor, Font font, long delta)
     {
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
-        graphics.drawString(font, TITLE, 35, 7, 0xFFFFFFFF, false);
-        graphics.drawString(font, this.name, 35, 18, 0xFFFFFFFF, false);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
+        extractor.text(font, TITLE, 35, 7, 0xFFFFFFFF, false);
+        extractor.text(font, this.name, 35, 18, 0xFFFFFFFF, false);
         int tickCount = Math.toIntExact(delta / 50L);
         float partialTick = (float) (delta % 50L) / 50F;
-        CustomiseBackpackScreen.drawBackpackInGui(Minecraft.getInstance(), graphics, this.backpack, 0, 0, SLOT_HEIGHT, SLOT_HEIGHT, partialTick, tickCount);
+        CustomiseBackpackScreen.extractBackpackPictureInPicture(Minecraft.getInstance(), extractor, this.backpack, 0, 0, SLOT_HEIGHT, SLOT_HEIGHT, partialTick, tickCount);
 
     }
 }

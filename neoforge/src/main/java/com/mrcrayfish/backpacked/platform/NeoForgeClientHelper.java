@@ -11,9 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
@@ -61,7 +59,7 @@ public class NeoForgeClientHelper implements IClientHelper
                         .withHoverEvent(new HoverEvent.ShowText(Component.translatable("backpacked.chat.open_curseforge_page")))
                         .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://www.curseforge.com/minecraft/mc-mods/configured"))));
                 Component message = Component.translatable("backpacked.chat.install_configured", modName);
-                minecraft.player.displayClientMessage(message, false);
+                minecraft.player.sendSystemMessage(message);
             }
         });
     }
@@ -73,9 +71,10 @@ public class NeoForgeClientHelper implements IClientHelper
     }
 
     @Override
-    public void drawTooltip(GuiGraphics graphics, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner)
+    public void drawTooltip(GuiGraphicsExtractor extractor, Font font, List<ClientTooltipComponent> list, int mouseX, int mouseY, ClientTooltipPositioner positioner)
     {
-        graphics.setTooltipForNextFrameInternal(font, list, mouseX, mouseY, positioner, null, false);
+        // TODO 26.1 test
+        extractor.tooltip(font, list, mouseX, mouseY, positioner, null);
     }
 
     @Override
@@ -89,15 +88,15 @@ public class NeoForgeClientHelper implements IClientHelper
     }
 
     @Override
-    public void submitGuiElementRenderState(GuiGraphics graphics, GuiElementRenderState state)
+    public void submitGuiElementRenderState(GuiGraphicsExtractor extractor, net.minecraft.client.renderer.state.gui.GuiElementRenderState state)
     {
-        graphics.submitGuiElementRenderState(state);
+        extractor.submitGuiElementRenderState(state);
     }
 
     @Override
-    public void submitGuiPipRenderState(GuiGraphics graphics, PictureInPictureRenderState state)
+    public void submitGuiPipRenderState(GuiGraphicsExtractor extractor, net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState state)
     {
-        graphics.submitPictureInPictureRenderState(state);
+        extractor.submitPictureInPictureRenderState(state);
     }
 
     @Override

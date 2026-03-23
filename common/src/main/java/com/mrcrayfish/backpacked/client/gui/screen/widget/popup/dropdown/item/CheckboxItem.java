@@ -4,7 +4,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuIte
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -33,13 +33,13 @@ public class CheckboxItem extends MenuItem
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float deltaTick)
     {
-        super.renderWidget(graphics, mouseX, mouseY, deltaTick);
+        super.extractWidgetRenderState(extractor, mouseX, mouseY, deltaTick);
         int yOffset = (this.getHeight() - CHECK_BOX_SIZE) / 2;
         int stateIconY = this.getY() + yOffset;
         int stateIconX = this.getX() + this.getWidth() - CHECK_BOX_SIZE - yOffset;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITES.get(this.holder.booleanValue(), this.isHovered()), stateIconX, stateIconY, CHECK_BOX_SIZE, CHECK_BOX_SIZE);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITES.get(this.holder.booleanValue(), this.isHovered()), stateIconX, stateIconY, CHECK_BOX_SIZE, CHECK_BOX_SIZE);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class Backpacked implements ModInitializer
             }
             return InteractionResult.PASS;
         });
-        DataResourceLoader.get().registerReloader(BackpackLoader.ID, BackpackLoader::new);
+        DataResourceLoader.get().registerReloadListener(BackpackLoader.ID, BackpackLoader::new);
 
         // Register shelf poi type and populate the poi state map
         Holder<PoiType> holder = Registry.registerForHolder(BuiltInRegistries.POINT_OF_INTEREST_TYPE, ModPointOfInterests.BACKPACK_SHELF.key(), ModPointOfInterests.BACKPACK_SHELF.value());

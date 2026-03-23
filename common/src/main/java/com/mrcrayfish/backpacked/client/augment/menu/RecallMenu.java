@@ -13,7 +13,7 @@ import com.mrcrayfish.backpacked.network.Network;
 import com.mrcrayfish.backpacked.network.message.MessageCheckShelfKey;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -123,12 +123,12 @@ public class RecallMenu extends AugmentSettingsMenu
         }
 
         @Override
-        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+        protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
         {
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getStatusSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, this.getStatusSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
             int textX = this.getX() + this.getWidth() / 2;
             int textY = this.getY() + (int) Math.ceil((this.getHeight() - 9) / 2.0);
-            graphics.drawCenteredString(Minecraft.getInstance().font, this.getLabel(), textX, textY, 0xFFFFFFFF);
+            extractor.centeredText(Minecraft.getInstance().font, this.getLabel(), textX, textY, 0xFFFFFFFF);
         }
 
         private Identifier getStatusSprite()

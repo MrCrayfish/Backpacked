@@ -154,7 +154,7 @@ public class ClientPlayHandler
 
         if(message.sound())
         {
-            float pitch = 0.7F + 0.3F * minecraft.level.random.nextFloat();
+            float pitch = 0.7F + 0.3F * minecraft.level.getRandom().nextFloat();
             SimpleSoundInstance sound = new SimpleSoundInstance(ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.BLOCKS, 1F, pitch, SoundInstance.createUnseededRandom(), pos.x, pos.y, pos.z);
             minecraft.getSoundManager().play(sound);
         }
@@ -233,10 +233,10 @@ public class ClientPlayHandler
         if(minecraft.player == null)
             return;
 
-        minecraft.player.displayClientMessage(Component.translatable("backpacked.gui.after_equipped_message",
+        minecraft.player.sendOverlayMessage(Component.translatable("backpacked.gui.after_equipped_message",
             Component.translatable("backpacked.gui.backpacked_equipped").withStyle(ChatFormatting.GOLD),
             ModKeyMappings.KEY_BACKPACK.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW),
             ModKeyMappings.KEY_MANAGEMENT.getTranslatedKeyMessage().plainCopy().withStyle(ChatFormatting.YELLOW)
-        ), true);
+        ));
     }
 }

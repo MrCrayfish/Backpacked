@@ -112,7 +112,7 @@ public class ShelfBlockEntity extends BlockEntity
             Vec3 center = this.getBlockState().getShape(this.level, this.worldPosition).bounds().getCenter().add(Vec3.atLowerCornerOf(this.worldPosition));
             level.sendParticles(ParticleTypes.REVERSE_PORTAL, center.x, center.y, center.z, 20, 0.25, 0.25, 0.25, 0.1);
 
-            float pitch = 0.7F + 0.1F * level.random.nextFloat();
+            float pitch = 0.7F + 0.1F * level.getRandom().nextFloat();
             level.playSound(null, center.x, center.y, center.z, SoundEvents.PLAYER_TELEPORT, SoundSource.BLOCKS, 1.0F, pitch);
         }
     }

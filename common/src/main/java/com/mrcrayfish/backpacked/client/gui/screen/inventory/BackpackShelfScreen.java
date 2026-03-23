@@ -3,7 +3,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.inventory;
 import com.mrcrayfish.backpacked.client.gui.MouseRestorer;
 import com.mrcrayfish.backpacked.inventory.container.BackpackShelfMenu;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -20,8 +20,8 @@ public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelf
 
     public BackpackShelfScreen(BackpackShelfMenu menu, Inventory playerInventory, Component title)
     {
-        super(menu, playerInventory, title);
-        this.imageHeight = 48 + 43 + 3 + 90 + 2;
+        int imageHeight = 48 + 43 + 3 + 90 + 2; // TODO make magic values readable
+        super(menu, playerInventory, title, DEFAULT_IMAGE_WIDTH, imageHeight);
     }
 
     @Override
@@ -32,31 +32,33 @@ public class BackpackShelfScreen extends UnlockableContainerScreen<BackpackShelf
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {}
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
+    public void extractBackground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
+        super.extractBackground(extractor, mouseX, mouseY, partialTick);
+
         // Draw the shelf image
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SHELF, this.leftPos + (this.imageWidth - 74) / 2, this.topPos + 12, 74, 33);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SHELF, this.leftPos + (this.imageWidth - 74) / 2, this.topPos + 12, 74, 33);
 
         // Draws a slightly transparent slot for the shelf
         Slot shelfSlot = this.getMenu().slots.getFirst();
-        graphics.fill(this.leftPos + shelfSlot.x, this.topPos + shelfSlot.y - 1, this.leftPos + shelfSlot.x + 16, this.topPos + shelfSlot.y, 0x11FFFFFF);
-        graphics.fill(this.leftPos + shelfSlot.x - 1, this.topPos + shelfSlot.y, this.leftPos + shelfSlot.x + 17, this.topPos + shelfSlot.y + 16, 0x11FFFFFF);
-        graphics.fill(this.leftPos + shelfSlot.x, this.topPos + shelfSlot.y + 16, this.leftPos + shelfSlot.x + 16, this.topPos + shelfSlot.y + 17, 0x11FFFFFF);
+        extractor.fill(this.leftPos + shelfSlot.x, this.topPos + shelfSlot.y - 1, this.leftPos + shelfSlot.x + 16, this.topPos + shelfSlot.y, 0x11FFFFFF);
+        extractor.fill(this.leftPos + shelfSlot.x - 1, this.topPos + shelfSlot.y, this.leftPos + shelfSlot.x + 17, this.topPos + shelfSlot.y + 16, 0x11FFFFFF);
+        extractor.fill(this.leftPos + shelfSlot.x, this.topPos + shelfSlot.y + 16, this.leftPos + shelfSlot.x + 16, this.topPos + shelfSlot.y + 17, 0x11FFFFFF);
 
         // Draws the backpack background
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, this.leftPos, this.topPos + 48, this.imageWidth, 43);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, this.leftPos, this.topPos + 48, this.imageWidth, 43);
 
         // Draws a slots for the backpacks
         Slot backpacksFirstSlot = this.getMenu().slots.get(1);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_SLOT, this.leftPos + backpacksFirstSlot.x - 1, this.topPos + backpacksFirstSlot.y - 1, this.menu.getManagementContainer().getContainerSize() * 18, 18);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_SLOT, this.leftPos + backpacksFirstSlot.x - 1, this.topPos + backpacksFirstSlot.y - 1, this.menu.getManagementContainer().getContainerSize() * 18, 18);
 
         // Draws the background for the player inventory
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_BACKGROUND, this.leftPos, this.topPos + 94, 176, 90);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 94 + 7, 162, 54);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 94 + 65, 162, 18);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_BACKGROUND, this.leftPos, this.topPos + 94, 176, 90);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 94 + 7, 162, 54);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT, this.leftPos + 1 + 6, this.topPos + 94 + 65, 162, 18);
     }
 
     @Override

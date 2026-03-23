@@ -6,7 +6,7 @@ public record LevelDataState(double timeOfDay, double gameTime, double rainLevel
 {
     public static LevelDataState create(Level level, float partialTick)
     {
-        double timeOfDay = level.getLevelData().getDayTime();
+        double timeOfDay = level.getOverworldClockTime();
         double gameTime = level.getLevelData().getGameTime();
         double rainLevels = level.getRainLevel(partialTick);
         double thunderLevels = level.getThunderLevel(partialTick);

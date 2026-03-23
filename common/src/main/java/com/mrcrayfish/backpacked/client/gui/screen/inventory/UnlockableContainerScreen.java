@@ -14,7 +14,7 @@ import com.mrcrayfish.backpacked.platform.ClientServices;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -64,6 +64,12 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
         this.player = inventory.player;
     }
 
+    public UnlockableContainerScreen(T menu, Inventory inventory, Component title, int imageWidth, int imageHeight)
+    {
+        super(menu, inventory, title, imageWidth, imageHeight);
+        this.player = inventory.player;
+    }
+
     public void setHideLockedSlots(boolean hideLockedSlots)
     {
         this.hideLockedSlots = hideLockedSlots;
@@ -99,15 +105,15 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
-    public void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
+    public void extractForeground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTicks)
     {
-        this.screenParticles.renderParticles(graphics);
+        this.screenParticles.extract(extractor);
     }
 
     @Override
-    protected void renderSlots(GuiGraphics graphics, int mouseX, int mouseY)
+    protected void extractSlots(GuiGraphicsExtractor extractor, int mouseX, int mouseY)
     {
-        super.renderSlots(graphics, mouseX, mouseY);
+        super.extractSlots(extractor, mouseX, mouseY);
 
         if(!this.selectedSlots.isEmpty())
         {
@@ -116,7 +122,7 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
             {
                 int progressX = slot.x;
                 int progressY = slot.y;
-                graphics.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
+                extractor.fill(progressX, progressY, progressX + progressWidth, progressY + 16, 0x88A7FF4C);
             }
         }
 
@@ -137,35 +143,35 @@ public abstract class UnlockableContainerScreen<T extends AbstractContainerMenu>
 
             if(this.selectedSlots.contains(slot))
             {
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK_OUTLINED, slot.x + 1, slot.y + 1, 14, 14);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK_OUTLINED, slot.x + 1, slot.y + 1, 14, 14);
             }
             else
             {
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, slot.x + 2, slot.y + 2, 12, 12);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, slot.x + 2, slot.y + 2, 12, 12);
 
                 if(this.hoveredLockedSlot != lockedSlot || this.hideLockedSlots)
                 {
-                    graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x88A89A8A);
+                    extractor.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x88A89A8A);
                 }
 
                 if(this.hideLockedSlots)
                 {
-                    graphics.fill(slot.x - 1, slot.y - 1, slot.x + 17, slot.y + 17, 0xAAEFDBC4);
+                    extractor.fill(slot.x - 1, slot.y - 1, slot.x + 17, slot.y + 17, 0xAAEFDBC4);
                 }
             }
         }
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY)
+    protected void extractTooltip(GuiGraphicsExtractor extractor, int mouseX, int mouseY)
     {
         if(this.hoveredLockedSlot != null && !this.hoveredLockedSlot.isUnlocked() && this.menu.getCarried().isEmpty() && (!this.hideLockedSlots || !this.selectedSlots.isEmpty()))
         {
             List<ClientTooltipComponent> components = this.createUnlockTooltip(this.hoveredLockedSlot);
-            ClientServices.CLIENT.drawTooltip(graphics, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
+            ClientServices.CLIENT.drawTooltip(extractor, this.font, components, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE);
             return;
         }
-        super.renderTooltip(graphics, mouseX, mouseY);
+        super.extractTooltip(extractor, mouseX, mouseY);
     }
 
     protected List<ClientTooltipComponent> createUnlockTooltip(UnlockableSlot slot)

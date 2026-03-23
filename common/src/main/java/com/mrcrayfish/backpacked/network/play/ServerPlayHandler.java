@@ -119,7 +119,7 @@ public class ServerPlayHandler
             int backpackIndex = BackpackHelper.firstAvailableBackpackIndex(targetPlayer);
             if(BackpackItem.openBackpack(targetPlayer, opener, backpackIndex))
             {
-                targetPlayer.displayClientMessage(Component.translatable("message.backpacked.player_opened"), true);
+                targetPlayer.sendSystemMessage(Component.translatable("message.backpacked.player_opened"), true);
                 player.level().playSound(player, targetPlayer.getX(), targetPlayer.getY() + 1.0, targetPlayer.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.75F, 1.0F);
             }
         }

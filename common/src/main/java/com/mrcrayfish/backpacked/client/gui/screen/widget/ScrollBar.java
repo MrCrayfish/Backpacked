@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.client.gui.screen.widget;
 
 import com.mrcrayfish.backpacked.util.ScreenUtil;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -39,12 +39,12 @@ public class ScrollBar extends AbstractWidget
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         int scroll = (this.active ? this.scroll.getValue() : 0);
         if(this.grabbed) scroll += mouseY - this.grabbedY;
         int scrollBarY = this.getY() + Mth.clamp(scroll, 0, this.getMaxScroll());
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLL_BAR_SPRITES.get(this.active, false), this.getX(), scrollBarY, SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLL_BAR_SPRITES.get(this.active, false), this.getX(), scrollBarY, SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT);
     }
 
     @Override

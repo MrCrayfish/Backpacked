@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -18,6 +18,11 @@ public abstract class CustomContainerScreen<T extends AbstractContainerMenu> ext
         super(menu, playerInventory, title);
     }
 
+    protected CustomContainerScreen(T menu, Inventory inventory, Component title, int imageWidth, int imageHeight)
+    {
+        super(menu, inventory, title, imageWidth, imageHeight);
+    }
+
     @Override
     public PopupMenuController getPopupMenuController()
     {
@@ -25,16 +30,16 @@ public abstract class CustomContainerScreen<T extends AbstractContainerMenu> ext
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         boolean hasPopup = this.hasPopupMenu();
-        super.render(graphics, hasPopup ? -1000 : mouseX, hasPopup ? -1000 : mouseY, partialTicks);
-        this.renderForeground(graphics, hasPopup ? -1000 : mouseX, hasPopup ? -1000 : mouseY, partialTicks);
-        this.controller.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
+        super.extractRenderState(extractor, hasPopup ? -1000 : mouseX, hasPopup ? -1000 : mouseY, partialTick);
+        this.extractForeground(extractor, hasPopup ? -1000 : mouseX, hasPopup ? -1000 : mouseY, partialTick);
+        this.controller.extract(extractor, mouseX, mouseY, partialTick);
+        this.extractTooltip(extractor, mouseX, mouseY);
     }
 
-    public abstract void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
+    public abstract void extractForeground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTicks);
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick)

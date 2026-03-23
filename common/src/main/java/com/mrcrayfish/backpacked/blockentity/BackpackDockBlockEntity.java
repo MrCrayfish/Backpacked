@@ -110,7 +110,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
 
     private void playSound(SoundEvent event)
     {
-        float pitch = this.level.random.nextFloat() * 0.2F + 0.9F;
+        float pitch = this.level.getRandom().nextFloat() * 0.2F + 0.9F;
         this.level.playSound(null, this.worldPosition, event, SoundSource.BLOCKS, pitch, 1.0F);
     }
 

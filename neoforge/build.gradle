@@ -16,11 +16,6 @@ neoForge {
         accessTransformers.from(at.absolutePath)
     }
 
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
-
     mods {
         "$mod_id" {
             sourceSet sourceSets.main
@@ -63,12 +58,12 @@ repositories {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
-    implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
+    implementation "com.mrcrayfish:framework-neoforge:${framework_version}+${minecraft_version}"
     //runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
 
     // JEI
-    compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
-    runtimeOnly "mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}"
+    //compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
+    //runtimeOnly "mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}"
 
     // Integrations
     //runtimeOnly "curse.maven:gravestone-mod-238551:5794085"

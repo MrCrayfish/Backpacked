@@ -32,12 +32,12 @@ public class HopperBlockEntityMixin
         if(players.isEmpty())
             return;
 
-        Player player = players.get(level.random.nextInt(players.size()));
+        Player player = players.get(level.getRandom().nextInt(players.size()));
         var snapshots = BackpackHelper.getBackpackInventoriesWithAugment(player, ModAugmentTypes.HOPPER_BRIDGE.get());
         if(snapshots.isEmpty())
             return;
 
-        var snapshot = snapshots.get(level.random.nextInt(snapshots.size()));
+        var snapshot = snapshots.get(level.getRandom().nextInt(snapshots.size()));
         cir.setReturnValue(snapshot.inventory());
     }
 

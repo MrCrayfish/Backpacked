@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 public class PickpocketDebugRenderer
 {
     @SubscribeEvent
-    public void onRenderWorldLastEvent(RenderLevelStageEvent.AfterEntities event)
+    public void onRenderWorldLastEvent(RenderLevelStageEvent.AfterLevel event)
     {
         // TODO restore this when necessary. only used when first developing pickpocketing
         /*Minecraft mc = Minecraft.getInstance();

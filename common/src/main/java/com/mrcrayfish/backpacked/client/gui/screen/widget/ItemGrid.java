@@ -9,10 +9,11 @@ import com.mrcrayfish.framework.api.client.screen.widget.FrameworkSelectionList;
 import com.mrcrayfish.framework.api.client.screen.widget.layout.Border;
 import com.mrcrayfish.framework.api.client.screen.widget.layout.Padding;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -94,7 +95,8 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
             if(item == Items.AIR)
                 return;
             if(!this.selectedOnly || this.supplier.get().isFilteringItem(item)) {
-                if(empty || item.getName().getString().toLowerCase(Locale.ROOT).contains(search)) {
+                String name = item.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString().toLowerCase(Locale.ROOT);
+                if(empty || name.contains(search)) {
                     visibleItems.add(item);
                 }
             }
@@ -104,18 +106,18 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         if(!empty)
         {
             visibleItems.sort(Comparator.<net.minecraft.world.item.Item>comparingInt(item -> {
-                String name = item.getName().getString().toLowerCase(Locale.ROOT);
+                String name = item.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString().toLowerCase(Locale.ROOT);
                 if(name.equals(search)) {
                     return 0;
                 } else if(name.startsWith(search)) {
                     return 1;
                 }
                 return 2;
-            }).thenComparing(item -> item.getName().getString()));
+            }).thenComparing(item -> item.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString()));
         }
         else
         {
-            visibleItems.sort(Comparator.comparing(item -> item.getName().getString()));
+            visibleItems.sort(Comparator.comparing(item -> item.components().getOrDefault(DataComponents.ITEM_NAME, CommonComponents.EMPTY).getString()));
         }
 
 
@@ -137,13 +139,13 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         this.hoveredStack = null;
-        super.renderWidget(graphics, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(extractor, mouseX, mouseY, partialTick);
         if(ScreenUtil.isPointInArea(mouseX, mouseY, this.getX(), this.getY() + this.listBorder.top(), this.getWidth(), this.getHeight() - this.listBorder.top() - this.listBorder.bottom()) && this.hoveredStack != null)
         {
-            graphics.setTooltipForNextFrame(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
+            extractor.setTooltipForNextFrame(Minecraft.getInstance().font, this.hoveredStack, mouseX, mouseY);
         }
     }
 
@@ -181,7 +183,7 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
         }
 
         @Override
-        protected void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, boolean selected, float partialTick)
+        protected void extractContent(GuiGraphicsExtractor extractor, int mouseX, int mouseY, boolean hovered, boolean selected, float partialTick)
         {
             int itemSize = this.parent.itemSize;
             int spacing = this.parent.spacing;
@@ -194,8 +196,8 @@ public final class ItemGrid<T extends FilterableItems<T>> extends FrameworkSelec
                 boolean itemSelected = this.supplier.get().isFilteringItem(stack.getItem());
                 boolean itemHovered = active && ScreenUtil.isPointInArea(mouseX, mouseY, this.getContentX() + offset - halfSpacing, this.getContentY() - halfSpacing, itemSize + spacing, itemSize + spacing);
                 int alpha = ARGB.white(active ? 1.0F : 0.5F);
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ITEM_SPRITES.get(itemSelected, itemHovered), this.getContentX() + offset, this.getContentY(), itemSize, itemSize, alpha);
-                graphics.renderFakeItem(stack, this.getContentX() + offset + (itemSize - 16) / 2, this.getContentY() + (itemSize - 16) / 2);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ITEM_SPRITES.get(itemSelected, itemHovered), this.getContentX() + offset, this.getContentY(), itemSize, itemSize, alpha);
+                extractor.fakeItem(stack, this.getContentX() + offset + (itemSize - 16) / 2, this.getContentY() + (itemSize - 16) / 2);
                 if(itemHovered)
                 {
                     this.parent.hoveredStack = stack;

@@ -101,7 +101,8 @@ public class BackpackDockBlock extends HorizontalDirectionalBlock implements Ent
             }
             if(!level.isClientSide())
             {
-                player.displayClientMessage(Component.translatable("backpacked.gui.missing_backpack"), true);
+                // TODO 26.1 test
+                player.sendOverlayMessage(Component.translatable("backpacked.gui.missing_backpack"));
             }
             return InteractionResult.SUCCESS;
         }

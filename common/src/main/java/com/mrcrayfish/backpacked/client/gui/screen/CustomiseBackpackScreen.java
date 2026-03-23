@@ -28,7 +28,7 @@ import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.client.screen.widget.FrameworkButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -223,41 +223,41 @@ public class CustomiseBackpackScreen extends CustomScreen
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void extractBackground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
-        super.renderTransparentBackground(graphics);
-        this.drawBackgroundWindow(graphics, this.windowLeft, this.windowTop, this.windowWidth, this.windowHeight);
-        this.renderWarning(graphics);
+        super.extractTransparentBackground(extractor);
+        this.extractBackgroundWindow(extractor, this.windowLeft, this.windowTop, this.windowWidth, this.windowHeight);
+        this.extractWarning(extractor);
 
         int scrollBarBgX = this.scrollBar.getX() - 2;
         int scrollBarBgY = this.scrollBar.getY() - 2;
         int scrollBarBgWidth = this.scrollBar.getWidth() + 4;
         int scrollBarBgHeight = this.scrollBar.getHeight() + 4;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ROUNDED_BOX, scrollBarBgX, scrollBarBgY, scrollBarBgWidth, scrollBarBgHeight);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ROUNDED_BOX, scrollBarBgX, scrollBarBgY, scrollBarBgWidth, scrollBarBgHeight);
 
         int itemBgX = this.playerDisplay.getRight() + 3;
         int itemBgWidth = (this.scrollBar.getX() - 2 - 2) - itemBgX;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ROUNDED_BOX, itemBgX, this.windowTop + 27, itemBgWidth, scrollBarBgHeight);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ROUNDED_BOX, itemBgX, this.windowTop + 27, itemBgWidth, scrollBarBgHeight);
 
         if(this.backButton.isHovered())
         {
             if(this.saveButton.active)
             {
-                graphics.setTooltipForNextFrame(List.of(BACK_TO_INVENTORY.getVisualOrderText(), UNSAVED_CHANGES.getVisualOrderText()), mouseX, mouseY);
+                extractor.setTooltipForNextFrame(List.of(BACK_TO_INVENTORY.getVisualOrderText(), UNSAVED_CHANGES.getVisualOrderText()), mouseX, mouseY);
             }
             else
             {
-                graphics.setTooltipForNextFrame(List.of(BACK_TO_INVENTORY.getVisualOrderText()), mouseX, mouseY);
+                extractor.setTooltipForNextFrame(List.of(BACK_TO_INVENTORY.getVisualOrderText()), mouseX, mouseY);
             }
         }
     }
 
     @Override
-    public void renderForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void extractForeground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         // Draw title
         int titleWidth = this.font.width(this.title);
-        graphics.drawString(this.font, this.title, this.windowLeft + (this.windowWidth - titleWidth) / 2, this.windowTop + 6, 0xFF61503D, false);
+        extractor.text(this.font, this.title, this.windowLeft + (this.windowWidth - titleWidth) / 2, this.windowTop + 6, 0xFF61503D, false);
 
         // Draw backpack items
         int startIndex = (int) (Math.max(0, this.items.size() - MAX_VISIBLE_ITEMS) * this.scrollBar.getScroll(mouseY));
@@ -265,9 +265,9 @@ public class CustomiseBackpackScreen extends CustomScreen
         {
             int itemX = this.windowLeft + ITEM_LIST_LEFT;
             int itemY = this.windowTop + ITEM_LIST_TOP + (i - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
-            graphics.enableScissor(itemX, itemY, itemX + ITEM_WIDTH, itemY + ITEM_HEIGHT);
-            this.items.get(i).draw(graphics, itemX, itemY, mouseX, mouseY, partialTick, this.minecraft);
-            graphics.disableScissor();
+            extractor.enableScissor(itemX, itemY, itemX + ITEM_WIDTH, itemY + ITEM_HEIGHT);
+            this.items.get(i).extract(extractor, itemX, itemY, mouseX, mouseY, partialTick, this.minecraft);
+            extractor.disableScissor();
         }
 
         if(this.hasPopupMenu())
@@ -279,11 +279,11 @@ public class CustomiseBackpackScreen extends CustomScreen
             int itemX = this.windowLeft + ITEM_LIST_LEFT;
             int itemY = this.windowTop + ITEM_LIST_TOP + (hoveredIndex - startIndex) * (ITEM_HEIGHT + ITEM_LIST_GAP);
             CosmeticItem item = this.items.get(hoveredIndex);
-            item.onMouseHover(graphics, this.minecraft, itemX, itemY, mouseX, mouseY);
+            item.onMouseHover(extractor, this.minecraft, itemX, itemY, mouseX, mouseY);
         }
     }
 
-    private void renderWarning(GuiGraphics graphics)
+    private void extractWarning(GuiGraphicsExtractor extractor)
     {
         if(!this.showCosmeticWarning)
             return;
@@ -291,35 +291,35 @@ public class CustomiseBackpackScreen extends CustomScreen
         int messageWidth = this.font.width(COSMETIC_WARNING);
         int messageBgWidth = 7 + messageWidth + 7;
         int messageY = 8;
-        graphics.fillGradient(0, 0, this.width, 50, 0xAA000000, 0x00000000);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
-        graphics.drawString(this.font, COSMETIC_WARNING, (this.width - messageWidth) / 2, messageY + 6, 0xFFFFFFFF);
+        extractor.fillGradient(0, 0, this.width, 50, 0xAA000000, 0x00000000);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_WARNING_BACKGROUND, (this.width - messageBgWidth) / 2, messageY, messageBgWidth, 20);
+        extractor.text(this.font, COSMETIC_WARNING, (this.width - messageWidth) / 2, messageY + 6, 0xFFFFFFFF);
     }
 
-    private void drawBackgroundWindow(GuiGraphics graphics, int x, int y, int width, int height)
+    private void extractBackgroundWindow(GuiGraphicsExtractor extractor, int x, int y, int width, int height)
     {
         int titleWidth = this.font.width(this.title);
         int labelWidth = 20 + titleWidth + 20;
         int labelX = x + (this.windowWidth - labelWidth) / 2;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, labelX, y, labelWidth, 21);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, labelX, y, labelWidth, 21);
 
         int titleX = x + (this.windowWidth - titleWidth) / 2;
         int checkersX = labelX + 5;
         int checkersWidth = titleX - checkersX - 2;
         if(checkersWidth > 0)
         {
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, checkersX, y + 7, checkersWidth, 5);
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, checkersX, y + 7, checkersWidth, 5);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKERS, titleX + titleWidth + 1, y + 7, checkersWidth, 5);
         }
 
         int backPanelX = this.backButton.getX() - 6;
         int backPanelY = this.backButton.getY() - 5;
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, backPanelX, backPanelY, 50, 26);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, LABEL_BACKGROUND, backPanelX, backPanelY, 50, 26);
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
+        extractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKPACK_BACKGROUND, x, y + 17, width, height - 17);
     }
 
-    public static void drawBackpackInGui(Minecraft mc, GuiGraphics graphics, ClientBackpack backpack, int windowX, int windowY, int windowWidth, int windowHeight, float partialTick, int tickCount)
+    public static void extractBackpackPictureInPicture(Minecraft mc, GuiGraphicsExtractor extractor, ClientBackpack backpack, int windowX, int windowY, int windowWidth, int windowHeight, float partialTick, int tickCount)
     {
         assert mc.player != null && mc.level != null;
         ModelMeta meta = ClientRegistry.instance().getModelMeta(backpack);
@@ -333,7 +333,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             mc.player.getId(),
             tickCount,
             partialTick,
-            new Matrix3x2f(graphics.pose()),
+            new Matrix3x2f(extractor.pose()),
             windowX,
             windowX + windowWidth,
             windowY,
@@ -341,7 +341,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             16,
             null
         );
-        ClientServices.CLIENT.submitGuiPipRenderState(graphics, state);
+        ClientServices.CLIENT.submitGuiPipRenderState(extractor, state);
     }
 
     private int getHoveredIndex(int mouseX, int mouseY)
@@ -407,14 +407,14 @@ public class CustomiseBackpackScreen extends CustomScreen
 
     private abstract static class CosmeticItem
     {
-        protected abstract void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc);
+        protected abstract void extract(GuiGraphicsExtractor extractor, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc);
 
         protected boolean onMouseClicked(MouseButtonEvent event, Minecraft mc)
         {
             return false;
         }
 
-        protected void onMouseHover(GuiGraphics graphics, Minecraft mc, int x, int y, int mouseX, int mouseY) {}
+        protected void onMouseHover(GuiGraphicsExtractor extractor, Minecraft mc, int x, int y, int mouseX, int mouseY) {}
     }
 
     private class BackpackModelItem extends CosmeticItem
@@ -443,7 +443,7 @@ public class CustomiseBackpackScreen extends CustomScreen
         }
 
         @Override
-        protected void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc)
+        protected void extract(GuiGraphicsExtractor extractor, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc)
         {
             boolean unlocked = this.backpack.isUnlocked(mc.player);
             boolean selected = unlocked && CustomiseBackpackScreen.this.displayBackpack.cosmetic().orElse(BackpackManager.getDefaultOrFallbackCosmetic()).equals(this.cosmeticId);
@@ -451,35 +451,35 @@ public class CustomiseBackpackScreen extends CustomScreen
 
             // Draw background for item
             Identifier itemTexture = this.getItemTexture(unlocked, selected, hovered);
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
+            extractor.blitSprite(RenderPipelines.GUI_TEXTURED, itemTexture, x, y, ITEM_WIDTH, ITEM_HEIGHT);
 
             if(!unlocked)
             {
                 int progressBarX = x + 24;
                 int progressBarY = y + ITEM_HEIGHT - 5 - 4;
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, UNLOCK_PROGRESS_BAR, progressBarX, progressBarY, 89, 5);
 
                 int progressWidth = (int) (87 * this.completionProgress);
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, UNLOCK_PROGRESS_BAR_INNER, progressBarX + 1, progressBarY + 1, progressWidth, 3);
 
-                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
+                extractor.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_LOCK, x + ITEM_WIDTH - 12 - 4, y + 6, 12, 12);
             }
 
             // Draw label
             int textColour = this.getItemTextColour(unlocked, selected);
             int textY = y + (unlocked ? 8 : 5);
-            graphics.drawString(mc.font, this.label, x + 24, textY, textColour, selected);
+            extractor.text(mc.font, this.label, x + 24, textY, textColour, selected);
 
             // Draw backpack cosmetic
-            drawBackpackInGui(mc, graphics, this.backpack, x, y, ITEM_HEIGHT, ITEM_HEIGHT, partialTick, CustomiseBackpackScreen.this.tickCount);
+            extractBackpackPictureInPicture(mc, extractor, this.backpack, x, y, ITEM_HEIGHT, ITEM_HEIGHT, partialTick, CustomiseBackpackScreen.this.tickCount);
         }
 
         @Override
-        protected void onMouseHover(GuiGraphics graphics, Minecraft mc, int x, int y, int mouseX, int mouseY)
+        protected void onMouseHover(GuiGraphicsExtractor extractor, Minecraft mc, int x, int y, int mouseX, int mouseY)
         {
             if(Minecraft.getInstance().hasControlDown())
             {
-                graphics.setTooltipForNextFrame(mc.font, Component.literal(this.backpack.getId().toString()), mouseX, mouseY);
+                extractor.setTooltipForNextFrame(mc.font, Component.literal(this.backpack.getId().toString()), mouseX, mouseY);
                 return;
             }
 
@@ -491,7 +491,7 @@ public class CustomiseBackpackScreen extends CustomScreen
                 int lockY = y + 6;
                 if(ScreenUtil.isPointInArea(mouseX, mouseY, progressBarX, progressBarY, 89, 5) || ScreenUtil.isPointInArea(mouseX, mouseY, lockX, lockY, 12, 12))
                 {
-                    graphics.setTooltipForNextFrame(mc.font, this.unlockTooltip, mouseX, mouseY);
+                    extractor.setTooltipForNextFrame(mc.font, this.unlockTooltip, mouseX, mouseY);
                 }
             }
         }
@@ -502,7 +502,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             if(Minecraft.getInstance().hasControlDown())
             {
                 Minecraft.getInstance().keyboardHandler.setClipboard(this.backpack.getId().toString());
-                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Copied " + this.backpack.getId() + " to the clipboard"));
+                Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("Copied " + this.backpack.getId() + " to the clipboard"));
                 return true;
             }
 
@@ -547,14 +547,14 @@ public class CustomiseBackpackScreen extends CustomScreen
                 }).build();
 
         @Override
-        protected void draw(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc)
+        protected void extract(GuiGraphicsExtractor extractor, int x, int y, int mouseX, int mouseY, float partialTick, Minecraft mc)
         {
             int width = mc.font.width(MESSAGE);
-            graphics.drawString(mc.font, MESSAGE, x + (ITEM_WIDTH - width) / 2, y + 1, UNLOCKED_ITEM_TEXT_COLOUR, false);
+            extractor.text(mc.font, MESSAGE, x + (ITEM_WIDTH - width) / 2, y + 1, UNLOCKED_ITEM_TEXT_COLOUR, false);
 
             this.button.setX(x + (ITEM_WIDTH - this.button.getWidth()) / 2);
             this.button.setY(y + ITEM_HEIGHT - this.button.getHeight());
-            this.button.render(graphics, mouseX, mouseY, partialTick);
+            this.button.extractRenderState(extractor, mouseX, mouseY, partialTick);
         }
 
         @Override

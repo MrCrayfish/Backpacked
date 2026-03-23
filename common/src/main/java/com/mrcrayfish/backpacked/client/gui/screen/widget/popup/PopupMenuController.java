@@ -1,6 +1,6 @@
 package com.mrcrayfish.backpacked.client.gui.screen.widget.popup;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.input.KeyEvent;
@@ -110,12 +110,12 @@ public final class PopupMenuController implements ContainerEventHandler
         return top;
     }
 
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    public void extract(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick)
     {
         if(this.base != null)
         {
-            this.base.fillBackground(graphics);
-            this.base.render(graphics, mouseX, mouseY, partialTick);
+            this.base.fillBackground(extractor);
+            this.base.extractRenderState(extractor, mouseX, mouseY, partialTick);
         }
     }
 

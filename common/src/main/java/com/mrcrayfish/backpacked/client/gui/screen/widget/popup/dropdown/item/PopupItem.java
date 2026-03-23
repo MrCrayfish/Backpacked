@@ -5,7 +5,7 @@ import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.Deferre
 import com.mrcrayfish.backpacked.client.gui.screen.widget.popup.dropdown.MenuItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
@@ -20,12 +20,12 @@ public class PopupItem extends MenuItem implements DeferredWidgetDraw
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTick)
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTick)
     {
-        super.renderWidget(graphics, mouseX, mouseY, deltaTick);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTick);
         Font font = Minecraft.getInstance().font;
         int top = this.getY() + (this.getHeight() - font.lineHeight) / 2 + 1;
-        graphics.drawString(Minecraft.getInstance().font, ">", this.getX() + this.getWidth() - 10, top, 0xFFFFFFFF);
+        graphics.text(Minecraft.getInstance().font, ">", this.getX() + this.getWidth() - 10, top, 0xFFFFFFFF);
     }
 
     @Override

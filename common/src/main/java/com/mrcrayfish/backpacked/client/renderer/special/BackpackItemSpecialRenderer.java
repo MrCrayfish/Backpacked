@@ -18,8 +18,8 @@ import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.renderer.StandaloneModelRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.client.resources.model.cuboid.ItemTransforms;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -33,14 +33,16 @@ public class BackpackItemSpecialRenderer implements SpecialModelRenderer<Backpac
 {
     private static final BackpackItemSpecialRenderer INSTANCE = new BackpackItemSpecialRenderer();
 
+    public static ItemDisplayContext contextWhenExtracting = ItemDisplayContext.NONE;
+
     @Override
-    public void submit(@Nullable CosmeticData data, ItemDisplayContext display, PoseStack pose, SubmitNodeCollector collector, int light, int overlay, boolean unknown1, int unknown2)
+    public void submit(@Nullable CosmeticData data, PoseStack pose, SubmitNodeCollector collector, int light, int overlay, boolean unknown1, int unknown2)
     {
         if(data == null)
             return;
 
         pose.translate(0.5, 0.5, 0.5);
-        data.display.getTransform(display).apply(false, pose.last());
+        data.display.getTransform(data.context).apply(false, pose.last());
         pose.translate(0.5, 0.5, 0.5);
 
         BackpackRenderer renderer = data.renderer;
@@ -108,23 +110,23 @@ public class BackpackItemSpecialRenderer implements SpecialModelRenderer<Backpac
 
         ModelMeta meta = backpack.getModelMeta();
         BackpackRenderer renderer = meta.renderer().orElse(null);
-        return new CosmeticData(renderer, backpack.getBaseModel(), backpack.getStrapsModel(), meta.display(), tickCount, partialTick);
+        return new CosmeticData(renderer, backpack.getBaseModel(), backpack.getStrapsModel(), meta.display(), contextWhenExtracting, tickCount, partialTick);
     }
 
-    public record CosmeticData(BackpackRenderer renderer, Identifier baseModel, Identifier strapsModel, ItemTransforms display, int tickCount, float partialTick) { }
+    public record CosmeticData(BackpackRenderer renderer, Identifier baseModel, Identifier strapsModel, ItemTransforms display, ItemDisplayContext context, int tickCount, float partialTick) { }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked
+    public record Unbaked() implements SpecialModelRenderer.Unbaked<BackpackItemSpecialRenderer.CosmeticData>
     {
         public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(new Unbaked());
 
         @Override
-        public SpecialModelRenderer<?> bake(BakingContext bakingContext)
+        public SpecialModelRenderer<BackpackItemSpecialRenderer.CosmeticData> bake(BakingContext bakingContext)
         {
             return INSTANCE;
         }
 
         @Override
-        public MapCodec<? extends SpecialModelRenderer.Unbaked> type()
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<BackpackItemSpecialRenderer.CosmeticData>> type()
         {
             return MAP_CODEC;
         }

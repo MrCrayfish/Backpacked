@@ -8,9 +8,7 @@
 			"from": [6.5, 10, 10.5],
 			"to": [9.5, 11, 11.5],
 			"faces": {
-				"north": {"uv": [2.5, 18, 4, 19], "texture": "#trash_can"},
 				"east": {"uv": [7.5, 12, 8, 13], "texture": "#trash_can"},
-				"south": {"uv": [9, 7, 10.5, 8], "texture": "#trash_can"},
 				"west": {"uv": [7, 12, 7.5, 13], "texture": "#trash_can"},
 				"up": {"uv": [8, 12, 6.5, 11], "texture": "#trash_can"},
 				"down": {"uv": [10.5, 8, 9, 9], "texture": "#trash_can"}

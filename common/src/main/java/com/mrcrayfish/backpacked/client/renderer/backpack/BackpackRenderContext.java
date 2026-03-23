@@ -1,7 +1,7 @@
 package com.mrcrayfish.backpacked.client.renderer.backpack;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,5 +22,5 @@ public record BackpackRenderContext(
         int light,
         int tickCount,
         float partialTick,
-        Consumer<BlockModelPart> modelRenderer
+        Consumer<BlockStateModelPart> modelRenderer
 ){}

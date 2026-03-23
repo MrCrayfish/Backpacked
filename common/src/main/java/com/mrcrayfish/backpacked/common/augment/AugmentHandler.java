@@ -555,7 +555,7 @@ public class AugmentHandler
                 if(!canUseBlockItemOnBlockPos(level, stack, pos, Direction.UP))
                     continue;
                 count++;
-                if(level.random.nextInt(count) == 0) {
+                if(level.getRandom().nextInt(count) == 0) {
                     result = stack;
                 }
             }
