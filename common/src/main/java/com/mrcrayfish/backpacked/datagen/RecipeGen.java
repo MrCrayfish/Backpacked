@@ -37,6 +37,7 @@ public class RecipeGen extends RecipeProvider
         this.backpackShelf(Items.CRIMSON_STEM, Items.CRIMSON_SLAB, ModBlocks.CRIMSON_BACKPACK_SHELF.get());
         this.backpackShelf(Items.WARPED_STEM, Items.WARPED_SLAB, ModBlocks.WARPED_BACKPACK_SHELF.get());
         this.backpackShelf(Items.CHERRY_LOG, Items.CHERRY_SLAB, ModBlocks.CHERRY_BACKPACK_SHELF.get());
+        this.backpackShelf(Items.PALE_OAK_LOG, Items.PALE_OAK_SLAB, ModBlocks.PALE_OAK_BACKPACK_SHELF.get());
         this.backpackDock();
     }
 
