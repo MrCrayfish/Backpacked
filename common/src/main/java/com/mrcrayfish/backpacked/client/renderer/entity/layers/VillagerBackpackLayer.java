@@ -34,13 +34,9 @@ public class VillagerBackpackLayer extends RenderLayer<VillagerRenderState, Vill
 {
     public static final Identifier WANDERING_BACKPACK = Utils.id("wandering_bag");
 
-    private final ItemStack displayStack = new ItemStack(ModItems.BACKPACK.get());
-    private final ItemModelResolver itemModelResolver;
-
     public VillagerBackpackLayer(RenderLayerParent<VillagerRenderState, VillagerModel> renderer, ItemModelResolver itemModelResolver)
     {
         super(renderer);
-        this.itemModelResolver = itemModelResolver;
     }
 
     private ModelPart getBody(VillagerModel model)
