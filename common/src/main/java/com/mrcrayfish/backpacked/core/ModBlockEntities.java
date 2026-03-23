@@ -27,7 +27,8 @@ public class ModBlockEntities
             ModBlocks.ACACIA_BACKPACK_SHELF.get(),
             ModBlocks.CRIMSON_BACKPACK_SHELF.get(),
             ModBlocks.WARPED_BACKPACK_SHELF.get(),
-            ModBlocks.CHERRY_BACKPACK_SHELF.get()
+            ModBlocks.CHERRY_BACKPACK_SHELF.get(),
+            ModBlocks.PALE_OAK_BACKPACK_SHELF.get(),
         });
     public static final RegistryEntry<BlockEntityType<BackpackDockBlockEntity>> BACKPACK_DOCK = RegistryEntry.blockEntity(
         Utils.id("backpack_dock"),

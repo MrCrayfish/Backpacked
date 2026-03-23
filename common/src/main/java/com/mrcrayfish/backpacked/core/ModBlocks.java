@@ -23,5 +23,6 @@ public final class ModBlocks
     public static final RegistryEntry<Block> CRIMSON_BACKPACK_SHELF = RegistryEntry.blockWithItem(Utils.id("crimson_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.CRIMSON_PLANKS));
     public static final RegistryEntry<Block> WARPED_BACKPACK_SHELF = RegistryEntry.blockWithItem(Utils.id("warped_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.WARPED_PLANKS));
     public static final RegistryEntry<Block> CHERRY_BACKPACK_SHELF = RegistryEntry.blockWithItem(Utils.id("cherry_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.CHERRY_PLANKS));
+    public static final RegistryEntry<Block> PALE_OAK_BACKPACK_SHELF = RegistryEntry.blockWithItem(Utils.id("pale_oak_backpack_shelf"), ShelfBlock::new, () -> Block.Properties.ofFullCopy(Blocks.PALE_OAK_PLANKS));
     public static final RegistryEntry<Block> BACKPACK_DOCK = RegistryEntry.blockWithItem(Utils.id("backpack_dock"), BackpackDockBlock::new, () -> Block.Properties.ofFullCopy(Blocks.OAK_PLANKS));
 }

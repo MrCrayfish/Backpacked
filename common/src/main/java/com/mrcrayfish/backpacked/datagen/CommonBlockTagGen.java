@@ -29,7 +29,8 @@ public class CommonBlockTagGen extends IntrinsicHolderTagsProvider<Block>
             ModBlocks.ACACIA_BACKPACK_SHELF.get(),
             ModBlocks.CRIMSON_BACKPACK_SHELF.get(),
             ModBlocks.WARPED_BACKPACK_SHELF.get(),
-            ModBlocks.CHERRY_BACKPACK_SHELF.get()
+            ModBlocks.CHERRY_BACKPACK_SHELF.get(),
+            ModBlocks.PALE_OAK_BACKPACK_SHELF.get()
         );
     }
 }
