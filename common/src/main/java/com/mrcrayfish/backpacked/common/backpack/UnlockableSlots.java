@@ -59,13 +59,11 @@ public sealed class UnlockableSlots extends SyncedObject
 
     protected Set<Integer> slots;
     protected int maxSlots;
-    protected int nextCount;
 
     private UnlockableSlots()
     {
         this.slots = new HashSet<>();
         this.maxSlots = -1;
-        this.nextCount = 0;
     }
 
     public UnlockableSlots(int maxSlots)
@@ -82,7 +80,6 @@ public sealed class UnlockableSlots extends SyncedObject
     {
         this.slots = slots;
         this.maxSlots = maxSlots;
-        this.recalculateUnlockedCount();
     }
 
     public int[] getSlotsArray()
@@ -135,7 +132,6 @@ public sealed class UnlockableSlots extends SyncedObject
         if(!this.isUnlockable(slot))
             return;
         this.slots.add(slot);
-        this.recalculateUnlockedCount();
         this.markDirty();
     }
 
@@ -157,7 +153,6 @@ public sealed class UnlockableSlots extends SyncedObject
                 this.slots.add(slot);
             }
         });
-        this.recalculateUnlockedCount();
         this.markDirty();
     }
 
@@ -174,7 +169,6 @@ public sealed class UnlockableSlots extends SyncedObject
         if(this.maxSlots == -1 || maxSlots < 0 || this.maxSlots == maxSlots)
             return;
         this.maxSlots = maxSlots;
-        this.recalculateUnlockedCount();
         this.markDirty();
     }
 
@@ -201,22 +195,23 @@ public sealed class UnlockableSlots extends SyncedObject
     public int nextUnlockCost(CostModel model, int numberOfSlots)
     {
         int totalCost = 0;
+        int unlockedCount = this.getUnlockedCount();
         for(int nextOffset = 0; nextOffset < numberOfSlots; nextOffset++)
         {
             if(model.useCustomCosts())
             {
-                totalCost += this.getNextCustomCost(model.getCustomCosts(), model.getCustomCostsSelectionFunction(), nextOffset);
+                totalCost += this.getNextCustomCost(model.getCustomCosts(), model.getCustomCostsSelectionFunction(), nextOffset, unlockedCount);
                 continue;
             }
             int minLevelCost = model.getMinCost();
             int maxLevelCost = model.getMaxCost();
-            float costNormal = this.nextCostNormal(maxLevelCost, model.getInterpolateFunction(), nextOffset);
+            float costNormal = this.nextCostNormal(maxLevelCost, model.getInterpolateFunction(), nextOffset, unlockedCount);
             totalCost += (int) Mth.lerp(costNormal, minLevelCost, maxLevelCost);
         }
         return totalCost;
     }
 
-    private int getNextCustomCost(List<Integer> costs, SelectionFunction selectionFunction, int countOffset)
+    private int getNextCustomCost(List<Integer> costs, SelectionFunction selectionFunction, int countOffset, int unlockedCount)
     {
         if(!costs.isEmpty())
         {
@@ -224,23 +219,23 @@ public sealed class UnlockableSlots extends SyncedObject
             {
                 case LINEAR_INTERPOLATION ->
                 {
-                    float normal = Mth.clamp((this.nextCount + countOffset) / (float) Math.max(1, this.getMaxSlots()), 0, 1);
+                    float normal = Mth.clamp((unlockedCount + countOffset) / (float) Math.max(1, this.getMaxSlots()), 0, 1);
                     int index = (int) (costs.size() * (normal - 0.001F));
                     index = Mth.clamp(index, 0, costs.size() - 1);
                     yield Math.max(1, costs.get(index));
                 }
                 case INDEX_WITH_CLAMP ->
                 {
-                    yield costs.get(Mth.clamp(this.nextCount + countOffset - 1, 0, costs.size() - 1));
+                    yield costs.get(Mth.clamp(unlockedCount + countOffset - 1, 0, costs.size() - 1));
                 }
             };
         }
         return 1;
     }
 
-    private float nextCostNormal(int maxLevelCost, InterpolateFunction scaling, int countOffset)
+    private float nextCostNormal(int maxLevelCost, InterpolateFunction scaling, int countOffset, int unlockedCount)
     {
-        int nextCount = this.nextCount + countOffset;
+        int nextCount = unlockedCount + countOffset;
         int totalSlots = Math.max(1, this.getMaxSlots());
         return switch(scaling)
         {
@@ -265,7 +260,7 @@ public sealed class UnlockableSlots extends SyncedObject
      * is greater than the maxSlots value. This can happen when a user changes the backpack size
      * in the config. The next unlocked count is used for calculating the experience cost.
      */
-    protected void recalculateUnlockedCount()
+    protected int getUnlockedCount()
     {
         int count = 1;
         for(int slot : this.slots)
@@ -275,8 +270,7 @@ public sealed class UnlockableSlots extends SyncedObject
                 count++;
             }
         }
-        this.nextCount = count;
-        this.markDirty();
+        return count;
     }
 
     public static UnlockableSlots get(ItemStack stack, String key)
@@ -412,7 +406,6 @@ public sealed class UnlockableSlots extends SyncedObject
             newSlots[slots.length] = slot;
             Arrays.sort(newSlots);
             tag.putIntArray("Slots", newSlots);
-            this.recalculateUnlockedCount();
             this.markDirty();
         }
 
@@ -430,7 +423,6 @@ public sealed class UnlockableSlots extends SyncedObject
             }
             Arrays.sort(newSlots);
             tag.putIntArray("Slots", newSlots);
-            this.recalculateUnlockedCount();
             this.markDirty();
         }
 
@@ -441,7 +433,6 @@ public sealed class UnlockableSlots extends SyncedObject
                 return;
             CompoundTag tag = this.getOrCreateTag();
             tag.putInt("MaxSlots", maxSlots);
-            this.recalculateUnlockedCount();
             this.markDirty();
         }
 
@@ -452,7 +443,7 @@ public sealed class UnlockableSlots extends SyncedObject
         }
 
         @Override
-        protected void recalculateUnlockedCount()
+        protected int getUnlockedCount()
         {
             int count = 1;
             CompoundTag tag = this.getTag();
@@ -469,8 +460,7 @@ public sealed class UnlockableSlots extends SyncedObject
                 }
 
             }
-            this.nextCount = count;
-            this.markDirty();
+            return count;
         }
     }
 }
