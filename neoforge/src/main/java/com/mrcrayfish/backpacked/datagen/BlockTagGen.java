@@ -29,7 +29,8 @@ public class BlockTagGen extends BlockTagsProvider
             ModBlocks.DARK_OAK_BACKPACK_SHELF.get(),
             ModBlocks.ACACIA_BACKPACK_SHELF.get(),
             ModBlocks.CRIMSON_BACKPACK_SHELF.get(),
-            ModBlocks.WARPED_BACKPACK_SHELF.get()
+            ModBlocks.WARPED_BACKPACK_SHELF.get(),
+            ModBlocks.BACKPACK_DOCK.get()
         );
     }
 }
