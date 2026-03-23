@@ -9,6 +9,7 @@ import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
+import com.mrcrayfish.backpacked.datagen.CommonBlockTagGen;
 import com.mrcrayfish.backpacked.datagen.LootTableGen;
 import com.mrcrayfish.backpacked.datagen.RecipeGen;
 import com.mrcrayfish.framework.api.Environment;
@@ -88,6 +89,7 @@ public class Backpacked
     {
         event.createProvider(LootTableGen::new);
         event.createProvider(RecipeGen.Runner::new);
+        event.createProvider(CommonBlockTagGen::new);
     }
 
     private void addReloadListener(AddServerReloadListenersEvent event)

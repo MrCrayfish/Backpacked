@@ -14,5 +14,6 @@ public class DataGeneration implements DataGeneratorEntrypoint
         FabricDataGenerator.Pack pack = generator.createPack();
         pack.addProvider(LootTableGen::new);
         pack.addProvider(RecipeGen.Runner::new);
+        pack.addProvider(CommonBlockTagGen::new);
     }
 }
