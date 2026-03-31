@@ -133,7 +133,7 @@ public class BackpackHelper
         if(!slots.isUnlocked(index))
             return false;
 
-        if(stack.is(ModItems.BACKPACK.get()))
+        if(stack.is(ModItems.BACKPACK.get()) || stack.isEmpty())
         {
             // Keep in mind that this will not trigger a sync
             getBackpacks(player).set(index, stack);
