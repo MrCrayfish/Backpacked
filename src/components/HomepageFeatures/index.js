@@ -38,6 +38,15 @@ const AddonDocumentationList = [
 
 const Addons = [
   {
+    name: 'Wet Backapacks',
+    author: 'wetstudios1',
+    author_avatar: 'https://cdn.modrinth.com/data/dmuv2wRE/5539955c12bd66a6bef51e285604774c6e2d998a_96.webp',
+    author_link: 'https://modrinth.com/user/wetstudios1',
+    description: 'A Backpacked addon, adding many different backpacks with their own themes and challenges to unlock!',
+    link: 'https://modrinth.com/datapack/wet-backapacks',
+    icon: 'https://cdn.modrinth.com/data/lgqEhwGc/4f01e270f9df9ad73054576224da4385fbc1e6c9_96.webp',
+  },
+  {
     name: 'Backpacked: World of Colours',
     author: 'Beast135',
     author_avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/11d756f3-a687-489a-a229-c39757625059-profile_image-150x150.png',
