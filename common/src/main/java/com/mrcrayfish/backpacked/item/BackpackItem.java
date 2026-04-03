@@ -68,7 +68,6 @@ public class BackpackItem extends Item
             }
             else
             {
-                // TODO 26.1 test
                 player.sendOverlayMessage(NO_MORE_BACKPACK_SLOTS_TRANSLATION);
             }
         }

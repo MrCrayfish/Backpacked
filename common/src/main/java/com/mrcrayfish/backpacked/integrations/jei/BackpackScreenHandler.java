@@ -1,14 +1,14 @@
 package com.mrcrayfish.backpacked.integrations.jei;
 
-/*import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
+import com.mrcrayfish.backpacked.client.gui.screen.inventory.BackpackScreen;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import net.minecraft.client.renderer.Rect2i;
 
-import java.util.List;*/
+import java.util.List;
 
-public class BackpackScreenHandler //implements IGuiContainerHandler<BackpackScreen>
+public class BackpackScreenHandler implements IGuiContainerHandler<BackpackScreen>
 {
-    /*@Override
+    @Override
     public List<Rect2i> getGuiExtraAreas(BackpackScreen screen)
     {
         return screen.getLayouts().stream().map(area -> {
@@ -18,5 +18,5 @@ public class BackpackScreenHandler //implements IGuiContainerHandler<BackpackScr
             int height = area.getHeight() + BackpackScreen.LABEL_PADDING * 2;
             return new Rect2i(x, y, width, height);
         }).toList();
-    }*/
+    }
 }

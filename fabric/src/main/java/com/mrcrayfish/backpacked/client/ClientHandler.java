@@ -20,6 +20,7 @@ import com.mrcrayfish.backpacked.core.ModKeyMappings;
 import com.mrcrayfish.backpacked.core.ModParticleRenderTypes;
 import com.mrcrayfish.backpacked.util.Utils;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleGroupRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
@@ -52,7 +53,7 @@ public class ClientHandler implements ClientModInitializer
     {
         ClientBootstrap.earlyInit();
         ClientBootstrap.init();
-        //ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
+        ModelLoadingPlugin.register(new BackpackedModelLoadingPlugin());
         MenuScreens.register(ModContainers.BACKPACK.get(), BackpackScreen::new);
         MenuScreens.register(ModContainers.MANAGEMENT.get(), BackpackManagementScreen::new);
         MenuScreens.register(ModContainers.BACKPACK_SHELF.get(), BackpackShelfScreen::new);

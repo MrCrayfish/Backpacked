@@ -59,11 +59,11 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     implementation "com.mrcrayfish:framework-neoforge:${framework_version}+${minecraft_version}"
-    //runtimeOnly "com.mrcrayfish:catalogue-neoforge:${minecraft_version}-${catalogue_version}"
+    runtimeOnly "com.mrcrayfish:catalogue-neoforge:${catalogue_version}+${minecraft_version}"
 
     // JEI
-    //compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
-    //runtimeOnly "mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}"
+    compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}"
 
     // Integrations
     //runtimeOnly "curse.maven:gravestone-mod-238551:5794085"

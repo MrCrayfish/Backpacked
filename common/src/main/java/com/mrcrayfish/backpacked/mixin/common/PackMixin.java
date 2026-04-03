@@ -18,7 +18,6 @@ public class PackMixin
     @Inject(method = "readMetaAndCreate", at = @At(value = "HEAD"), cancellable = true)
     private static void readMetaAndCreate(PackLocationInfo info, Pack.ResourcesSupplier supplier, PackType type, PackSelectionConfig config, CallbackInfoReturnable<Pack> cir)
     {
-        Optional<Optional<AddonPack>> result = AddonPack.tryAndReadAddonPack(info, supplier, type);
-        result.ifPresent(value -> cir.setReturnValue(value.orElse(null)));
+        AddonPack.tryAndReadAddonPack(info, supplier, type).ifPresent(cir::setReturnValue);
     }
 }

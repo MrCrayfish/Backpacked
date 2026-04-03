@@ -167,7 +167,6 @@ public class ClientBackpacked
         }
     }
 
-    // TODO 26.1 test
     private void onRenderLevelStage(RenderLevelStageEvent.AfterOpaqueBlocks event)
     {
         Minecraft mc = Minecraft.getInstance();

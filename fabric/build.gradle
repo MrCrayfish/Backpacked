@@ -32,12 +32,11 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation "com.mrcrayfish:framework-fabric:${framework_version}+${minecraft_version}"
-    //modCompileOnlyApi "com.terraformersmc:modmenu:${modmenu_version}"
-    //modRuntimeOnly "com.mrcrayfish:catalogue-fabric:${minecraft_version}-${catalogue_version}"
+    runtimeOnly "com.mrcrayfish:catalogue-fabric:${catalogue_version}+${minecraft_version}"
 
     // JEI
-    //modCompileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
-    //modRuntimeOnly "mezz.jei:jei-${jei_minecraft_version}-fabric-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${jei_minecraft_version}-fabric-api:${jei_version}"
 
     // Integrations
     //modCompileOnly "curse.maven:youre-in-grave-danger-544912:6684160"

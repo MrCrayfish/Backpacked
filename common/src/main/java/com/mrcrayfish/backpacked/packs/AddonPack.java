@@ -32,12 +32,12 @@ public class AddonPack extends Pack
         return this.metadata.author();
     }
 
-    public static Optional<Optional<AddonPack>> tryAndReadAddonPack(PackLocationInfo info, ResourcesSupplier resourcesSupplier, PackType type)
+    public static Optional<AddonPack> tryAndReadAddonPack(PackLocationInfo info, ResourcesSupplier resourcesSupplier, PackType type)
     {
         // Don't load builtin packs or mods as a Backpacked addon
         if(Services.PLATFORM.isBuiltinOrModResourcePack(info))
             return Optional.empty();
-        Optional<Optional<AddonMetadata>> result = AddonMetadata.readAddonMetadata(info, resourcesSupplier, type);
-        return result.map(optional -> optional.map(metadata -> new AddonPack(info, resourcesSupplier, metadata, SELECTION_CONFIG)));
+        Optional<AddonMetadata> result = AddonMetadata.readAddonMetadata(info, resourcesSupplier, type);
+        return result.map(metadata -> new AddonPack(info, resourcesSupplier, metadata, SELECTION_CONFIG));
     }
 }

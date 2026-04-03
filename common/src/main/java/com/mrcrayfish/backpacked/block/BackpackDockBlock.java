@@ -101,7 +101,6 @@ public class BackpackDockBlock extends HorizontalDirectionalBlock implements Ent
             }
             if(!level.isClientSide())
             {
-                // TODO 26.1 test
                 player.sendOverlayMessage(Component.translatable("backpacked.gui.missing_backpack"));
             }
             return InteractionResult.SUCCESS;
@@ -113,7 +112,7 @@ public class BackpackDockBlock extends HorizontalDirectionalBlock implements Ent
     {
         Direction hitFace = result.getDirection();
         Direction blockDirection = state.getValue(FACING);
-        if(hitFace != blockDirection.getOpposite()) // TODO test
+        if(hitFace != blockDirection.getOpposite())
             return false;
 
         BlockPos pos = result.getBlockPos();

@@ -6,7 +6,6 @@ import com.mrcrayfish.backpacked.Constants;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -15,6 +14,7 @@ import net.minecraft.server.packs.metadata.pack.PackFormat;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.resources.IoSupplier;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.world.flag.FeatureFlagSet;
 
 import java.io.IOException;
@@ -35,46 +35,51 @@ public record AddonMetadata(Component name, Component description, Component aut
         return new Pack.Metadata(this.description, compatibility, FeatureFlagSet.of(), List.of());
     }
 
-    public static Optional<Optional<AddonMetadata>> readAddonMetadata(PackLocationInfo info, Pack.ResourcesSupplier resourcesSupplier, PackType type)
+    public static Optional<AddonMetadata> readAddonMetadata(PackLocationInfo info, Pack.ResourcesSupplier resourcesSupplier, PackType type)
     {
         try
         {
             try(PackResources resources = resourcesSupplier.openPrimary(info))
             {
-                // TODO 26.1 test
-                Optional<Optional<AddonMetadataSection>> result = readAddonMetadata(info, resources);
-                if(result.isEmpty())
-                    return Optional.empty();
+                ResourceMetadata metadata = loadAddonMetadata(resources);
+                Optional<AddonMetadataSection> sectionOptional = metadata.getSection(AddonMetadataSection.TYPE);
 
-                Optional<AddonMetadataSection> value = result.get();
-                if(value.isEmpty())
+                if(sectionOptional.isEmpty())
                 {
                     Constants.LOG.error("Failed to read metadata for Backpacked addon '{}'. Skipping resource", info.id());
-                    return Optional.of(Optional.empty());
+                    return Optional.empty();
                 }
 
-                AddonMetadataSection section = value.get();
+                AddonMetadataSection section = sectionOptional.get();
                 if(section.addonFormat() > Constants.ADDON_FORMAT)
                 {
                     Constants.LOG.error("Skipping Backpacked addon '{}' as it was designed for a newer version of Backpacked. Expected addon_format {} or lower, found {}", info.id(), Constants.ADDON_FORMAT, section.addonFormat);
-                    return Optional.of(Optional.empty());
+                    return Optional.empty();
                 }
 
                 PackCompatibility assetsCompatibility = readPackCompatibility(section, PackType.CLIENT_RESOURCES);
                 PackCompatibility dataCompatibility = readPackCompatibility(section, PackType.SERVER_DATA);
-                return Optional.of(Optional.of(new AddonMetadata(section.name, section.description, section.author, assetsCompatibility, dataCompatibility, type)));
+                return Optional.of(new AddonMetadata(section.name, section.description, section.author, assetsCompatibility, dataCompatibility, type));
             }
         }
         catch(Exception exception)
         {
             Constants.LOG.warn("Failed to read addon {} metadata", info.id(), exception);
-            return Optional.of(Optional.empty());
+            return Optional.empty();
         }
     }
 
-    private static Optional<Optional<AddonMetadataSection>> readAddonMetadata(PackLocationInfo info, PackResources resources) throws IOException
+    public static ResourceMetadata loadAddonMetadata(PackResources packResources) throws IOException
     {
-        return Optional.of(Optional.ofNullable(resources.getMetadataSection(AddonMetadataSection.TYPE))); // TODO 26.1 test
+        IoSupplier<InputStream> metadata = packResources.getRootResource(FILE_NAME);
+        if(metadata != null)
+        {
+            try(InputStream resource = metadata.get())
+            {
+                return ResourceMetadata.fromJsonStream(resource);
+            }
+        }
+        return ResourceMetadata.EMPTY;
     }
 
     private static PackCompatibility readPackCompatibility(AddonMetadataSection section, PackType type)
