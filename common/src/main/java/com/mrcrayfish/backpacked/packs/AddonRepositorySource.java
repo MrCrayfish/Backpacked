@@ -16,21 +16,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class AddonRepositorySource implements RepositorySource
+public record AddonRepositorySource(Path path, PackType type, PackSource source, DirectoryValidator validator) implements RepositorySource
 {
-    private final Path path;
-    private final PackType type;
-    private final PackSource source;
-    private final DirectoryValidator validator;
-
-    public AddonRepositorySource(Path path, PackType type, PackSource source, DirectoryValidator validator)
-    {
-        this.path = path;
-        this.type = type;
-        this.source = source;
-        this.validator = validator;
-    }
-
     @Override
     public void loadPacks(Consumer<Pack> consumer)
     {
