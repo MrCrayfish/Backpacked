@@ -32,7 +32,6 @@ public class AddonRepositorySource implements RepositorySource
     }
 
     @Override
-    @SuppressWarnings("SimplifyOptionalCallChains")
     public void loadPacks(Consumer<Pack> consumer)
     {
         try
@@ -43,11 +42,11 @@ public class AddonRepositorySource implements RepositorySource
             FolderRepositorySource.discoverPacks(this.path, this.validator, (packPath, resourcesSupplier) -> {
                 String name = packPath.getFileName().toString();
                 PackLocationInfo info = new PackLocationInfo("file/" + name, Component.literal(name), this.source, Optional.empty());
-                Optional<Optional<AddonPack>> result = AddonPack.tryAndReadAddonPack(info, resourcesSupplier, this.type);
-                result.ifPresent(value -> value.ifPresent(pack -> {
+                Optional<AddonPack> result = AddonPack.tryAndReadAddonPack(info, resourcesSupplier, this.type);
+                result.ifPresent(pack -> {
                     consumer.accept(pack);
                     counter[0] = counter[0] + 1;
-                }));
+                });
             });
             Constants.LOG.info("Found {} Backpacked addons", counter[0]);
         }
