@@ -1,7 +1,8 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"textures": {
-		"cardboard_box": "backpacked:backpack/cardboard_box"
+		"cardboard_box": "backpacked:backpack/cardboard_box",
+		"particle": "#cardboard_box"
 	},
 	"elements": [
 		{

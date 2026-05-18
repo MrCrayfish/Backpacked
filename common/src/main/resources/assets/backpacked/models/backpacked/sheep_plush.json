@@ -3,7 +3,8 @@
     "loader": "framework:open_model",
     "fabric:type": "framework:open_model",
 	"textures": {
-		"sheep": "backpacked:backpack/sheep"
+		"sheep": "backpacked:backpack/sheep",
+		"particle": "#sheep"
 	},
 	"components": [
 		{

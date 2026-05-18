@@ -3,7 +3,8 @@
     "loader": "framework:open_model",
     "fabric:type": "framework:open_model",
 	"textures": {
-		"cogwheel": "backpacked:backpack/cogwheel"
+		"cogwheel": "backpacked:backpack/cogwheel",
+		"particle": "#cogwheel"
 	},
 	"components": [
 		{

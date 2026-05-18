@@ -1,7 +1,8 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"textures": {
-		"trash_can": "backpacked:backpack/trash_can"
+		"trash_can": "backpacked:backpack/trash_can",
+		"particle": "#trash_can"
 	},
 	"elements": [
 		{

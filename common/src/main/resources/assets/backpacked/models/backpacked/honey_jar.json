@@ -2,7 +2,8 @@
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"texture_size": [32, 16],
 	"textures": {
-        "1": "backpacked:backpack/honey_jar"
+        "1": "backpacked:backpack/honey_jar",
+		"particle": "#1"
 	},
 	"elements": [
 		{

@@ -1,7 +1,8 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"textures": {
-		"bamboo_basket": "backpacked:backpack/bamboo_basket"
+		"bamboo_basket": "backpacked:backpack/bamboo_basket",
+		"particle": "#bamboo_basket"
 	},
 	"elements": [
 		{

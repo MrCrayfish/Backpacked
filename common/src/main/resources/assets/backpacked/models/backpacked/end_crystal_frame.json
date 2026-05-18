@@ -4,7 +4,8 @@
     "fabric:type": "framework:open_model",
 	"texture_size": [32, 16],
 	"textures": {
-		"end_crystal": "backpacked:backpack/end_crystal"
+		"end_crystal": "backpacked:backpack/end_crystal",
+		"particle": "#end_crystal"
 	},
 	"components": [
 		{

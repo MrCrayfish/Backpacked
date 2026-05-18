@@ -3,7 +3,8 @@
     "loader": "framework:open_model",
     "fabric:type": "framework:open_model",
 	"textures": {
-		"standard": "backpacked:backpack/standard"
+		"standard": "backpacked:backpack/standard",
+		"particle": "#standard"
 	},
 	"components": [
 		{
