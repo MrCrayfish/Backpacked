@@ -1,7 +1,8 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"textures": {
-		"classic": "backpacked:backpack/classic"
+		"classic": "backpacked:backpack/classic",
+		"particle": "#classic"
 	},
 	"elements": [
 		{

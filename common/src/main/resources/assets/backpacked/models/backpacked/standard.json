@@ -4,7 +4,8 @@
     "fabric:type": "framework:open_model",
 	"texture_size": [32, 16],
 	"textures": {
-		"standard": "backpacked:backpack/standard"
+		"standard": "backpacked:backpack/standard",
+		"particle": "#standard"
 	},
 	"components": [
 		{

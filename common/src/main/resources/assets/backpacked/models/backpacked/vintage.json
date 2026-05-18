@@ -4,7 +4,8 @@
     "fabric:type": "framework:open_model",
 	"texture_size": [32, 32],
 	"textures": {
-		"vintage": "backpacked:backpack/vintage"
+		"vintage": "backpacked:backpack/vintage",
+		"particle": "#vintage"
 	},
 	"components": [
 		{

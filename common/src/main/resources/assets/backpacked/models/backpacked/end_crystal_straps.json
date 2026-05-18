@@ -3,7 +3,8 @@
     "loader": "framework:open_model",
     "fabric:type": "framework:open_model",
 	"textures": {
-		"end_crystal": "backpacked:backpack/end_crystal"
+		"end_crystal": "backpacked:backpack/end_crystal",
+		"particle": "#end_crystal"
 	},
 	"components": [
 		{

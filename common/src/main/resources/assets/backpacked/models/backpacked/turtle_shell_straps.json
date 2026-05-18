@@ -1,7 +1,8 @@
 {
 	"credit": "Model by MrCrayfish (https://x.com/MrCrayfish) using Blockbench. All Rights Reserved.",
 	"textures": {
-		"turtle_shell": "backpacked:backpack/turtle_shell"
+		"turtle_shell": "backpacked:backpack/turtle_shell",
+		"particle": "#turtle_shell"
 	},
 	"elements": [
 		{
