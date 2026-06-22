@@ -32,7 +32,8 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation "com.mrcrayfish:framework-fabric:${framework_version}+${minecraft_version}"
-    runtimeOnly "com.mrcrayfish:catalogue-fabric:${catalogue_version}+${minecraft_version}"
+    // Catalogue 26.2 isn't published anywhere reachable without GitHub Packages credentials; disabled for local builds.
+    // runtimeOnly "com.mrcrayfish:catalogue-fabric:${catalogue_version}+${minecraft_version}"
 
     // JEI
     compileOnly "mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"
@@ -102,7 +103,8 @@ build.dependsOn signJar
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
-['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+// 'includeInternal' configuration was removed in newer Fabric Loom versions
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'modCompileClasspath'].each { variant ->
     configurations.named("$variant") {
         attributes {
             attribute(loaderAttribute, 'fabric')

@@ -15,7 +15,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.resources.Identifier;
@@ -34,11 +34,11 @@ import java.util.Optional;
 public class FirstPersonEffectsRenderer
 {
     @SuppressWarnings({"NullableProblems", "unchecked"})
-    public static void draw(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, float partialTick)
+    public static void draw(AbstractClientPlayer player, PoseStack pose, SubmitNodeCollector source, float partialTick)
     {
         Minecraft mc = Minecraft.getInstance();
 
-        Camera camera = mc.gameRenderer.getMainCamera();
+        Camera camera = mc.gameRenderer.mainCamera();
         Vec3 cameraPos = camera.position();
         double playerX = Mth.lerp(partialTick, player.xOld, player.getX()) - cameraPos.x();
         double playerY = Mth.lerp(partialTick, player.yOld, player.getY()) - cameraPos.y();
@@ -108,7 +108,7 @@ public class FirstPersonEffectsRenderer
         body.translateAndRotate(pose);
     }
 
-    private static void renderBackpack(AbstractClientPlayer player, PoseStack pose, MultiBufferSource source, int light, float partialTick)
+    private static void renderBackpack(AbstractClientPlayer player, PoseStack pose, SubmitNodeCollector source, int light, float partialTick)
     {
         Optional<CosmeticProperties> propertiesOptional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player);
         if(propertiesOptional.isEmpty())

@@ -13,7 +13,7 @@ import com.mrcrayfish.framework.api.client.model.renderer.StandaloneModelRendere
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import net.minecraft.util.Brightness;
@@ -23,11 +23,6 @@ import java.util.Objects;
 
 public class GuiBackpackRenderer extends PictureInPictureRenderer<GuiBackpackRenderState>
 {
-    public GuiBackpackRenderer(MultiBufferSource.BufferSource source)
-    {
-        super(source);
-    }
-
     @Override
     public Class<GuiBackpackRenderState> getRenderStateClass()
     {
@@ -35,9 +30,9 @@ public class GuiBackpackRenderer extends PictureInPictureRenderer<GuiBackpackRen
     }
 
     @Override
-    protected void renderToTexture(GuiBackpackRenderState state, PoseStack pose)
+    protected void renderToTexture(GuiBackpackRenderState state, PoseStack pose, SubmitNodeCollector collector)
     {
-        Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+        Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D);
 
         pose.pushPose();
         pose.scale(1.0F, -1.0F, -1.0F);
@@ -59,7 +54,7 @@ public class GuiBackpackRenderer extends PictureInPictureRenderer<GuiBackpackRen
             BackpackRenderContext context = new BackpackRenderContext(Scene.CUSTOMISATION_MENU, RenderMode.MODELS_ONLY, pose, state.baseModel(), state.strapsModel(), state.entityData(), state.levelData(), state.entityId(), 0xFFF000F0, state.tickCount(), state.partialTick(), model -> {
                 pose.pushPose();
                 pose.translate(-0.5F, -0.5F, -0.5F);
-                StandaloneModelRenderer.draw(model, pose, this.bufferSource, 1.0F, 1.0F, 1.0F, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                StandaloneModelRenderer.submitDraw(collector, model, pose, 1.0F, 1.0F, 1.0F, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
                 pose.popPose();
             });
             renderer.render(context);
@@ -74,7 +69,7 @@ public class GuiBackpackRenderer extends PictureInPictureRenderer<GuiBackpackRen
                 {
                     pose.pushPose();
                     pose.translate(-0.5F, -0.5F, -0.5F);
-                    StandaloneModelRenderer.draw(model, pose, this.bufferSource, 1.0F, 1.0F, 1.0F, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                    StandaloneModelRenderer.submitDraw(collector, model, pose, 1.0F, 1.0F, 1.0F, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
                     pose.popPose();
                 }
             }

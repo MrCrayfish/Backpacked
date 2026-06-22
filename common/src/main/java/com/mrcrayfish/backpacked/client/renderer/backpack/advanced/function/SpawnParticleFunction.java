@@ -66,7 +66,7 @@ public class SpawnParticleFunction implements BaseFunction
         if(SPAWNED.contains(key))
             return;
 
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         Vector3f pos = context.pose().last().pose().getTranslation(new Vector3f());
         pos = camera.position().toVector3f().add(pos);
 

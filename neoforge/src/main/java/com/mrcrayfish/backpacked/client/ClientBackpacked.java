@@ -33,7 +33,7 @@ import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.NeoForgeModelResource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
@@ -45,6 +45,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -87,7 +88,7 @@ public class ClientBackpacked
         bus.addListener(this::onRegisterPipRenderers);
         bus.addListener(this::onRegisterSpecialRenderers);
         bus.addListener(this::onRegisterKeyMappings);
-        NeoForge.EVENT_BUS.addListener(this::onRenderLevelStage);
+        NeoForge.EVENT_BUS.addListener(this::onSubmitCustomGeometry);
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
@@ -123,7 +124,7 @@ public class ClientBackpacked
         addBackpackLayer(event.getPlayerRenderer(PlayerModelType.WIDE));
         addBackpackLayer(event.getPlayerRenderer(PlayerModelType.SLIM));
 
-        EntityRenderer<WanderingTrader, ?> renderer = event.getRenderer(EntityType.WANDERING_TRADER);
+        EntityRenderer<WanderingTrader, ?> renderer = event.getRenderer(EntityTypes.WANDERING_TRADER);
         if(renderer instanceof WanderingTraderRenderer traderRenderer)
         {
             traderRenderer.addLayer(new VillagerBackpackLayer(traderRenderer, event.getContext().getItemModelResolver()));
@@ -167,7 +168,7 @@ public class ClientBackpacked
         }
     }
 
-    private void onRenderLevelStage(RenderLevelStageEvent.AfterOpaqueBlocks event)
+    private void onSubmitCustomGeometry(SubmitCustomGeometryEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
         if(mc.player == null || mc.level == null)
@@ -177,7 +178,7 @@ public class ClientBackpacked
             return;
 
         PoseStack stack = event.getPoseStack();
-        MultiBufferSource source = mc.renderBuffers().bufferSource();
+        SubmitNodeCollector source = event.getSubmitNodeCollector();
         boolean frozen = mc.level.tickRateManager().isEntityFrozen(mc.player);
         float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(!frozen);
         FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);

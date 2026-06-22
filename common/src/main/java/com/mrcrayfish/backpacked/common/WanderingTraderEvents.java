@@ -20,11 +20,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.animal.equine.TraderLlama;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -74,7 +75,7 @@ public class WanderingTraderEvents
 
     private static void onStartTracking(Entity entity, Player player)
     {
-        if(entity.getType() != EntityType.WANDERING_TRADER)
+        if(entity.getType() != EntityTypes.WANDERING_TRADER)
             return;
 
         WanderingTrader trader = (WanderingTrader) entity;
@@ -90,7 +91,7 @@ public class WanderingTraderEvents
     private static void onTickLivingEntity(LivingEntity entity)
     {
         Level level = entity.level();
-        if(level.isClientSide() || entity.getType() != EntityType.WANDERING_TRADER)
+        if(level.isClientSide() || entity.getType() != EntityTypes.WANDERING_TRADER)
             return;
 
         WanderingTrader trader = (WanderingTrader) entity;
@@ -128,7 +129,7 @@ public class WanderingTraderEvents
 
     private static List<Player> findDetectedPlayers(LivingEntity entity)
     {
-        return entity.level().getEntities(EntityType.PLAYER, entity.getBoundingBox().inflate(getMaxDetectionDistance()), player -> {
+        return entity.level().<Player>getEntities(EntityTypes.PLAYER, entity.getBoundingBox().inflate(getMaxDetectionDistance()), player -> {
             return isPlayerInLivingEntityVision(entity, player) && isPlayerSeenByLivingEntity(entity, player, getMaxDetectionDistance()) || !player.isCrouching() && isPlayerMoving(player);
         });
     }
@@ -194,7 +195,7 @@ public class WanderingTraderEvents
                 trader.setUnhappyCounter(20);
                 trader.getLookControl().setLookAt(openingPlayer.getEyePosition(1.0F));
                 trader.level().playSound(null, trader, SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.0F, 1.5F);
-                trader.level().getEntities(EntityType.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.WANDERING_TRADER.challenge.maxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
+                trader.level().<TraderLlama>getEntities(EntityTypes.TRADER_LLAMA, trader.getBoundingBox().inflate(Config.WANDERING_TRADER.challenge.maxDetectionDistance.get()), entity -> true).forEach(llama -> llama.setTarget(openingPlayer));
                 ((ServerLevel) trader.level()).sendParticles(ParticleTypes.ANGRY_VILLAGER, trader.getX(), trader.getEyeY(), trader.getZ(), 1, 0, 0, 0, 0);
                 data.addDislikedPlayer(openingPlayer, trader.level().getGameTime());
                 return;

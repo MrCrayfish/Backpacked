@@ -48,7 +48,7 @@ public class NeoForgeClientHelper implements IClientHelper
             Screen screen = container.getCustomExtension(IConfigScreenFactory.class).map(function -> function.createScreen(container, null)).orElse(null);
             if(screen != null)
             {
-                minecraft.setScreen(screen);
+                minecraft.gui.setScreen(screen);
             }
             else if(minecraft.player != null)
             {

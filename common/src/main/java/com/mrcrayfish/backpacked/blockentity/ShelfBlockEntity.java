@@ -136,7 +136,7 @@ public class ShelfBlockEntity extends BlockEntity
         if(backpack.isEmpty())
             return;
 
-        Vec3 pos = this.worldPosition.getCenter().subtract(0, 0.25, 0);
+        Vec3 pos = Vec3.atCenterOf(this.worldPosition).subtract(0, 0.25, 0);
         UUID originalOwner = this.recallOwner;
         int originalIndex = this.recallIndex;
         this.setBackpack(ItemStack.EMPTY);

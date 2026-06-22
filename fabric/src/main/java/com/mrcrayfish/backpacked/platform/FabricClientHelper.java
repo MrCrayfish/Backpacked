@@ -62,7 +62,7 @@ public class FabricClientHelper implements IClientHelper
             {
                 Class<?> factoryClass = Class.forName("com.mrcrayfish.configured.integration.CatalogueConfigFactory");
                 Method createConfigScreen = factoryClass.getDeclaredMethod("createConfigScreen", Screen.class, ModContainer.class);
-                createConfigScreen.invoke(null, Minecraft.getInstance().screen, container);
+                createConfigScreen.invoke(null, Minecraft.getInstance().gui.screen(), container);
             }
             catch(Exception e)
             {

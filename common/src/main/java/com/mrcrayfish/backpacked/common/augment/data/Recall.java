@@ -179,7 +179,7 @@ public final class Recall extends SavedData
                 // Flush items of every player queue
                 queue.forEach((owner, items) -> items.forEach(item -> {
                     this.removeInvalidShelfFromItemStack(item.stack);
-                    this.flushItem(level, pos.getCenter(), item.stack);
+                    this.flushItem(level, Vec3.atCenterOf(pos), item.stack);
                 }));
 
                 // Clean up
@@ -242,7 +242,7 @@ public final class Recall extends SavedData
                     ShelfQueue queue = relativeEntry.getValue();
                     queue.forEach((owner, items) -> items.forEach(item -> {
                         this.removeInvalidShelfFromItemStack(item.stack);
-                        this.flushItem(level, pos.getCenter(), item.stack);
+                        this.flushItem(level, Vec3.atCenterOf(pos), item.stack);
                     }));
                     sectionIterator.remove();
                     this.setDirty();

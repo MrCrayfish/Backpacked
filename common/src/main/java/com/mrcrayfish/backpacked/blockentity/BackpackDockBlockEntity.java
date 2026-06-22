@@ -116,7 +116,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
 
     private Vec3 getPopPosition()
     {
-        return this.getBlockPos().getCenter().relative(this.getDirection(), 0.6875);
+        return Vec3.atCenterOf(this.getBlockPos()).relative(this.getDirection(), 0.6875);
     }
 
     private ItemStack getBackpackWithContents()

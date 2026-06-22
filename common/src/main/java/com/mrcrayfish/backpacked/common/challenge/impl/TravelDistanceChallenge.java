@@ -11,7 +11,7 @@ import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.util.Utils;
-import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 

@@ -192,7 +192,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity, Shel
         Minecraft mc = Minecraft.getInstance();
         if(mc.hitResult instanceof BlockHitResult result && result.getBlockPos().equals(state.blockPos))
         {
-            collector.submitNameTag(poseStack, null, 0, state.nameplate, true, state.lightCoords, 0, camera);
+            collector.submitNameTag(poseStack, Vec3.ZERO, 0, state.nameplate, true, state.lightCoords, camera);
             /*float halfWidth = mc.font.width(label) / 2F;
             mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, poseStack.last().pose(), source, Font.DisplayMode.SEE_THROUGH, 0x2A000000, light);
             mc.font.drawInBatch(label, -halfWidth, 0, -1, true, poseStack.last().pose(), source, Font.DisplayMode.NORMAL, 0, light);
@@ -204,7 +204,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfBlockEntity, Shel
         {
             poseStack.scale(1.1F, 1.1F, 1.1F);
             Component label = ScreenUtil.join(" ", RECALL_ICON, Component.literal(Integer.toString(recallCount)));
-            collector.submitNameTag(poseStack, null, 0, label, true, state.lightCoords, 0, camera);
+            collector.submitNameTag(poseStack, Vec3.ZERO, 0, label, true, state.lightCoords, camera);
             /*float halfWidth = mc.font.width(label) / 2F;
             mc.font.drawInBatch(label, -halfWidth, 0, 0x20FFFFFF, false, matrix, source, Font.DisplayMode.SEE_THROUGH, 0, light);
             mc.font.drawInBatch(label, -halfWidth, 0, -1, false, matrix, source, Font.DisplayMode.NORMAL, 0, light);*/

@@ -19,6 +19,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -85,7 +86,7 @@ public class EntityMixin implements LootCapture
     @Unique
     private boolean backpacked$CheckEntityForInvulnerability(Entity entity, DamageSource source)
     {
-        if(entity.getType() == EntityType.ITEM)
+        if(entity.getType() == EntityTypes.ITEM)
         {
             ItemEntity itemEntity = ((ItemEntity) entity);
             ItemStack stack = itemEntity.getItem();

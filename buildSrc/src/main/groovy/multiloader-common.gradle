@@ -30,6 +30,9 @@ def getPackagesRepo() {
 
 repositories {
     mavenCentral()
+    // Resolves the locally-published 26.2 Framework fork (com.mrcrayfish:framework-*)
+    // when GitHub Packages credentials for the upstream MrCrayfish repo aren't configured.
+    mavenLocal()
     // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
     exclusiveContent {
         forRepository {
