@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.3
+- `BitmapProviderDefinitionMixin` still crashed after 3.1.2's target-descriptor fix: `@ModifyArgs`'s generic `Args` wrapper has to box every constructor parameter generically, including the now-package-private `BitmapProvider$ImageDataHolder` type, which threw `IllegalAccessError` at runtime (synthetic Mixin helper class in a different package touching a package-private vanilla type). Switched to `@ModifyArg` (singular), which only generates a handler for the one `int` "advance" param (index 6) we actually modify — never needs to reference `ImageDataHolder` at all.
+
 ## 3.1.2
 - **Root cause of the launch hang reported by user (not `comforts` as previously suspected):** `BitmapProviderDefinitionMixin`'s `@ModifyArgs` on `BitmapProvider$Glyph`'s constructor failed to find its target — MC 26.2 wraps the `NativeImage` constructor param in a new `BitmapProvider$ImageDataHolder` type. Fixed the `@At` target descriptor; the "advance" param this mixin adjusts is still index 6, so the modification logic itself didn't need to change. This mixin's failure was crashing `BitmapProvider$Definition`'s static init, which cascades into the `FontManager`/`GlyphProviderDefinition` circular class-init failure seen in earlier logs.
 - `ServerPlayerGameModeMixin`: fixed two more `@At` target descriptors that still referenced the old `net.minecraft.advancements.criterion` package for `ItemUsedOnLocationTrigger`/`DefaultBlockInteractionTrigger` (moved to `advancements.triggers` in 3.1.0's port, but these were string-literal targets so the earlier import-based search missed them).
