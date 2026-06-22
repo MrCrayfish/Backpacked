@@ -26,7 +26,8 @@ public abstract class BitmapProviderDefinitionMixin
     }
 
     /* Thirdly, while init the glyph, remove the extra pixel space that is added to the real width */
-    @ModifyArgs(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/font/providers/BitmapProvider$Glyph;<init>(FLcom/mojang/blaze3d/platform/NativeImage;IIIIII)V"))
+    // MC 26.2: the Glyph constructor's NativeImage param is now wrapped in ImageDataHolder; "advance" (the param this targets) is still index 6.
+    @ModifyArgs(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/font/providers/BitmapProvider$Glyph;<init>(FLnet/minecraft/client/gui/font/providers/BitmapProvider$ImageDataHolder;IIIIII)V"))
     private void backpacked$RemoveExtraWidth(Args args)
     {
         if(this.backpacked$removeOnePixel)
