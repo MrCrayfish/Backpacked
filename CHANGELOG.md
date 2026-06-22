@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.1
+- Fixed `GuiMixin` crash on launch: `@Shadow private int overlayMessageTime` and the `setOverlayMessage` injection target `Gui.class`, but MC 26.2 moved both the field and method to the new `Hud` class. Retargeted the mixin to `Hud.class`.
+- Bumped Framework dependency to 0.14.1 (fixes a launch crash in Framework's own `GameRendererMixin` — see Framework's changelog)
+
 ## 3.1.0
 - Ported to Minecraft 26.2 (from 26.1.2)
 - Updated Framework dependency to 0.14.0+26.2
