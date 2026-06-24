@@ -26,14 +26,14 @@ public class UseItemOnBlockFaceContext extends UseOnContext
 
     public static UseItemOnBlockFaceContext create(ServerLevel level, ItemStack stack, BlockPos pos, Direction face)
     {
-        Vec3 hit = pos.getCenter().add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
+        Vec3 hit = Vec3.atCenterOf(pos).add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
         BlockHitResult result = new BlockHitResult(hit, face, pos, false);
         return new UseItemOnBlockFaceContext(level, stack, result);
     }
 
     public static UseItemOnBlockFaceContext create(ServerLevel level, ServerPlayer player, ItemStack stack, BlockPos pos, Direction face)
     {
-        Vec3 hit = pos.getCenter().add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
+        Vec3 hit = Vec3.atCenterOf(pos).add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
         BlockHitResult result = new BlockHitResult(hit, face, pos, false);
         return new UseItemOnBlockFaceContext(level, player, stack, result);
     }

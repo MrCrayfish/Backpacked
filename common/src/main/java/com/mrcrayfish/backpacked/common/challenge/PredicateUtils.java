@@ -2,9 +2,9 @@ package com.mrcrayfish.backpacked.common.challenge;
 
 import com.mrcrayfish.backpacked.common.BlockSnapshot;
 import com.mrcrayfish.backpacked.common.predicates.BlockSnapshotPredicate;
-import net.minecraft.advancements.criterion.BlockPredicate;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.predicates.BlockPredicate;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;

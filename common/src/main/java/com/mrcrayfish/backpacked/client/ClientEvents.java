@@ -22,6 +22,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -53,7 +54,7 @@ public class ClientEvents
     public static void onKeyInput(int action, KeyEvent event)
     {
         Minecraft mc = Minecraft.getInstance();
-        if(mc.player != null && mc.screen == null)
+        if(mc.player != null && mc.gui.screen() == null)
         {
             if(ModKeyMappings.KEY_BACKPACK.isDown() && ModKeyMappings.KEY_BACKPACK.consumeClick())
             {
@@ -88,12 +89,12 @@ public class ClientEvents
         double range = Config.PICKPOCKETING.maxReachDistance.get();
         List<LivingEntity> entities = new ArrayList<>();
         if(Config.PICKPOCKETING.enabled.get()) {
-            entities.addAll(mc.level.getEntities(EntityType.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
+            entities.addAll(mc.level.getEntities(EntityTypes.PLAYER, mc.player.getBoundingBox().inflate(range), player -> {
                 Optional<CosmeticProperties> optional = ModSyncedDataKeys.COSMETIC_PROPERTIES.getValue(player); // Just use properties to determine if backpack is equipped on client
                 return !player.equals(mc.player) && optional.isPresent() && PickpocketUtil.canPickpocketEntity(player, mc.player);
             }));
         }
-        entities.addAll(mc.level.getEntities(EntityType.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {
+        entities.addAll(mc.level.getEntities(EntityTypes.WANDERING_TRADER, mc.player.getBoundingBox().inflate(mc.player.entityInteractionRange()), entity -> {
             return TraderPickpocketing.get(entity).map(TraderPickpocketing::isBackpackEquipped).orElse(false) && PickpocketUtil.canPickpocketEntity(entity, mc.player, mc.player.entityInteractionRange());
         }));
 

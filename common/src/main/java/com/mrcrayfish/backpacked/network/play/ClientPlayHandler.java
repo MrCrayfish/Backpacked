@@ -59,7 +59,7 @@ public class ClientPlayHandler
                 // Suppress toast if the cosmetic is disabled
                 if(!BackpackHelper.isCosmeticDisabled(backpack.getId()))
                 {
-                    mc.getToastManager().addToast(new UnlockBackpackToast(backpack));
+                    mc.gui.toastManager().addToast(new UnlockBackpackToast(backpack));
                 }
             }
         });
@@ -83,7 +83,7 @@ public class ClientPlayHandler
         if(minecraft.player == null)
             return;
 
-        minecraft.setScreen(new CustomiseBackpackScreen(message.backpackIndex(), message.progressMap(), message.properties(), message.showCosmeticWarning(), message.completionProgressMap()));
+        minecraft.gui.setScreen(new CustomiseBackpackScreen(message.backpackIndex(), message.progressMap(), message.properties(), message.showCosmeticWarning(), message.completionProgressMap()));
     }
 
     public static void handleSyncVillagerBackpack(MessageSyncVillagerBackpack message)
@@ -127,7 +127,7 @@ public class ClientPlayHandler
             }
         }
 
-        if(changed && minecraft.screen instanceof UnlockableContainerScreen<?> screen)
+        if(changed && minecraft.gui.screen() instanceof UnlockableContainerScreen<?> screen)
         {
             screen.onSlotUnlocked(slotIndexes);
         }
@@ -163,7 +163,7 @@ public class ClientPlayHandler
     public static void handleSyncAugmentChange(MessageSyncAugmentChange message)
     {
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.screen instanceof BackpackScreen screen)
+        if(minecraft.gui.screen() instanceof BackpackScreen screen)
         {
             screen.updateAugment(message.position(), message.augment());
         }
@@ -185,7 +185,7 @@ public class ClientPlayHandler
 
         var dispatcher = minecraft.getEntityRenderDispatcher();
         var start = new Vec3(player.getX(), player.getY(0.65), player.getZ()).add(Vec3.directionFromRotation(0, player.yBodyRot + 180).scale(0.25));
-        var end = message.pos().getBottomCenter();
+        var end = Vec3.atBottomCenterOf(message.pos());
         EntityRenderState state = dispatcher.extractEntity(new ItemEntity(level, start.x, start.y, start.z, stack), 1.0F);
         minecraft.particleEngine.add(new FarmhandPlantParticle(state, level, start, end));
         minecraft.level.playSound(null, start.x, start.y, start.z, ModSounds.AUGMENT_LOOTBOUND_TAKE_ITEM.get(), SoundSource.PLAYERS, 1F, 0.5F);
@@ -221,7 +221,7 @@ public class ClientPlayHandler
         if(!menu.getAugmentBayController().unlockSlot(message.position().ordinal()))
             return;
 
-        if(minecraft.screen instanceof BackpackScreen screen)
+        if(minecraft.gui.screen() instanceof BackpackScreen screen)
         {
             screen.onAugmentBayUnlocked(message.position());
         }

@@ -502,7 +502,7 @@ public class CustomiseBackpackScreen extends CustomScreen
             if(Minecraft.getInstance().hasControlDown())
             {
                 Minecraft.getInstance().keyboardHandler.setClipboard(this.backpack.getId().toString());
-                Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("Copied " + this.backpack.getId() + " to the clipboard"));
+                Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal("Copied " + this.backpack.getId() + " to the clipboard"));
                 return true;
             }
 

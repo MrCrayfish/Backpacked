@@ -7,5 +7,6 @@ import net.minecraft.client.particle.ParticleRenderType;
 @RegistryContainer(clientOnly = true)
 public class ModParticleRenderTypes
 {
-    public static final ParticleRenderType FARMHAND_PLANT = new ParticleRenderType(Utils.id("backpacked_farmhand_plant").toString());
+    // ParticleRenderType now also requires a shorthand identifier alongside the name (MC 26.2).
+    public static final ParticleRenderType FARMHAND_PLANT = new ParticleRenderType(Utils.id("backpacked_farmhand_plant").toString(), "backpacked_farmhand_plant");
 }

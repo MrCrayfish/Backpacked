@@ -32,7 +32,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.player.PlayerModel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
@@ -40,6 +40,7 @@ import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 
 /**
  * Author: MrCrayfish
@@ -63,13 +64,13 @@ public class ClientHandler implements ClientModInitializer
         SpecialModelRenderers.ID_MAPPER.put(Utils.id("backpack"), BackpackItemSpecialRenderer.Unbaked.MAP_CODEC);
         //BlockRenderLayerMap.putBlock(ModBlocks.BACKPACK_DOCK.get(), ChunkSectionLayer.CUTOUT);
         KeyMapping.Category.register(ModKeyMappings.CATEGORY.id());
-        PictureInPictureRendererRegistry.register(ctx -> new GuiBackpackRenderer(ctx.bufferSource()));
+        PictureInPictureRendererRegistry.register(ctx -> new GuiBackpackRenderer());
 
         // Add backpack layers for player and wandering trader
         LivingEntityRenderLayerRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if(entityRenderer instanceof WanderingTraderRenderer renderer) {
                 registrationHelper.register(new VillagerBackpackLayer(renderer, context.getItemModelResolver()));
-            } else if(entityType == EntityType.PLAYER) {
+            } else if(entityType == EntityTypes.PLAYER) {
                 registrationHelper.register(new BackpackLayer((RenderLayerParent<AvatarRenderState, PlayerModel>) entityRenderer));
             }
         });
@@ -88,7 +89,7 @@ public class ClientHandler implements ClientModInitializer
             return;
 
         PoseStack stack = context.poseStack();
-        MultiBufferSource source = mc.renderBuffers().bufferSource();
+        SubmitNodeCollector source = context.submitNodeCollector();
         boolean frozen = mc.level.tickRateManager().isEntityFrozen(mc.player);
         float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(!frozen);
         FirstPersonEffectsRenderer.draw(mc.player, stack, source, partialTick);

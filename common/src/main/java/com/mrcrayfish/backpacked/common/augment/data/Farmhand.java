@@ -119,14 +119,14 @@ public final class Farmhand extends SavedData
                     if(result.consumesAction())
                     {
                         BlockState state = level.getBlockState(this.pos.below());
-                        Vec3 particle = this.pos.getBottomCenter();
+                        Vec3 particle = Vec3.atBottomCenterOf(this.pos);
                         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), particle.x, particle.y, particle.z, 10, 0.3F, 0.3F, 0.3F, 0.15F);
                         return;
                     }
                 }
             }
             // Fallback if fails
-            Vec3 spawn = this.pos.getBottomCenter().add(0, 1, 0);
+            Vec3 spawn = Vec3.atBottomCenterOf(this.pos).add(0, 1, 0);
             level.addFreshEntity(new ItemEntity(level, spawn.x, spawn.y, spawn.z, this.stack.copy()));
         }
     }

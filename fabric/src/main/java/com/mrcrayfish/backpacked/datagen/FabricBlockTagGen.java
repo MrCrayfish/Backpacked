@@ -1,22 +1,20 @@
 package com.mrcrayfish.backpacked.datagen;
 
 import com.mrcrayfish.backpacked.core.ModBlocks;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
 
 import java.util.concurrent.CompletableFuture;
 
-// IntrinsicHolderTagsProvider was removed in MC 26.2; use TagsProvider directly and pass
-// resource keys (via builtInRegistryHolder().key()) instead of raw Block instances.
-public class CommonBlockTagGen extends TagsProvider<Block>
+// Fabric's data generator mixes into vanilla TagsProvider and casts the instance to FabricTagsProvider,
+// so the shared CommonBlockTagGen (plain TagsProvider) can't be registered directly on Fabric.
+public class FabricBlockTagGen extends FabricTagsProvider.BlockTagsProvider
 {
-    public CommonBlockTagGen(PackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture)
+    public FabricBlockTagGen(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture)
     {
-        super(output, Registries.BLOCK, completableFuture);
+        super(output, completableFuture);
     }
 
     @Override

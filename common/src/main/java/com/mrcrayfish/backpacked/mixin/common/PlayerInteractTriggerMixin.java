@@ -2,7 +2,7 @@ package com.mrcrayfish.backpacked.mixin.common;
 
 import com.mrcrayfish.backpacked.event.BackpackedEvents;
 import com.mrcrayfish.backpacked.event.BackpackedInteractAccess;
-import net.minecraft.advancements.criterion.PlayerInteractTrigger;
+import net.minecraft.advancements.triggers.PlayerInteractTrigger;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;

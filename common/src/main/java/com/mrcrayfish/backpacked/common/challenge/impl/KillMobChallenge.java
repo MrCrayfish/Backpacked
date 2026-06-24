@@ -9,14 +9,15 @@ import com.mrcrayfish.backpacked.common.tracker.impl.CountProgressTracker;
 import com.mrcrayfish.backpacked.data.unlock.UnlockManager;
 import com.mrcrayfish.backpacked.util.Utils;
 import com.mrcrayfish.framework.api.event.FrameworkEntityEvents;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -86,7 +87,7 @@ public class KillMobChallenge extends Challenge
         public static void onLivingEntityDeath(LivingEntity entity, DamageSource source)
         {
             Entity cause = source.getEntity();
-            if(cause != null && cause.getType() == EntityType.PLAYER)
+            if(cause != null && cause.getType() == EntityTypes.PLAYER)
             {
                 ServerPlayer player = (ServerPlayer) cause;
                 UnlockManager.getIncompleteTrackers(player, Tracker.class).forEach(tracker -> {

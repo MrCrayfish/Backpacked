@@ -19,7 +19,6 @@ import com.mrcrayfish.framework.api.client.model.FrameworkBakedModel;
 import com.mrcrayfish.framework.api.client.model.FrameworkModelResource;
 import com.mrcrayfish.framework.api.client.model.renderer.StandaloneModelRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -28,6 +27,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
@@ -67,7 +67,7 @@ public class BackpackDockRenderer implements BlockEntityRenderer<BackpackDockBlo
         if(level != null)
         {
             BlockPos lightPos = entity.getBlockPos().relative(entity.getDirection());
-            state.itemLight = LevelRenderer.getLightCoords(level, lightPos);
+            state.itemLight = LightCoordsUtil.getLightCoords(level, lightPos);
         }
 
         // Easy solution could use a tick count on block entity in the future

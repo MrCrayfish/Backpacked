@@ -7,9 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(BitmapProvider.Definition.class)
 public abstract class BitmapProviderDefinitionMixin
@@ -26,17 +25,13 @@ public abstract class BitmapProviderDefinitionMixin
     }
 
     /* Thirdly, while init the glyph, remove the extra pixel space that is added to the real width */
-    @ModifyArgs(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/font/providers/BitmapProvider$Glyph;<init>(FLcom/mojang/blaze3d/platform/NativeImage;IIIIII)V"))
-    private void backpacked$RemoveExtraWidth(Args args)
+    // MC 26.2: the Glyph constructor's NativeImage param is now wrapped in a package-private ImageDataHolder type.
+    // @ModifyArgs's generic Args wrapper has to box every constructor param (including that inaccessible type),
+    // which throws IllegalAccessError at runtime. @ModifyArg only touches the one int param we care about (index 6,
+    // "advance"), so it never needs to reference ImageDataHolder at all.
+    @ModifyArg(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/font/providers/BitmapProvider$Glyph;<init>(FLnet/minecraft/client/gui/font/providers/BitmapProvider$ImageDataHolder;IIIIII)V"), index = 6)
+    private int backpacked$RemoveExtraWidth(int advance)
     {
-        if(this.backpacked$removeOnePixel)
-        {
-            Object arg = args.get(6); // 6 is the index for the width param
-            if(arg instanceof Integer)
-            {
-                // Remove the added pixel
-                args.set(6, (int) arg - 1);
-            }
-        }
+        return this.backpacked$removeOnePixel ? advance - 1 : advance;
     }
 }

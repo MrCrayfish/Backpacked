@@ -27,6 +27,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -177,7 +178,7 @@ public class Backpacked
         if(event.isInvulnerable())
             return;
 
-        if(event.getEntity().getType() == EntityType.ITEM)
+        if(event.getEntity().getType() == EntityTypes.ITEM)
         {
             ItemEntity entity = ((ItemEntity) event.getEntity());
             ItemStack stack = entity.getItem();
