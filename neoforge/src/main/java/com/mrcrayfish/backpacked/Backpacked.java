@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import com.mrcrayfish.backpacked.datagen.CommonBlockTagGen;
@@ -37,6 +38,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
@@ -47,6 +50,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
 // TODO clean up this class
 
@@ -64,6 +68,7 @@ public class Backpacked
         TaskRunner.runIf(Environment.CLIENT, () -> ClientBootstrap::earlyInit);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onGatherData);
+        bus.addListener(this::onRegisterCapabilities);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onEntityDropLoot);
         NeoForge.EVENT_BUS.addListener(this::onInteract);
         NeoForge.EVENT_BUS.addListener(this::onGetProjectile);
@@ -90,6 +95,13 @@ public class Backpacked
         event.createProvider(LootTableGen::new);
         event.createProvider(RecipeGen.Runner::new);
         event.createProvider(CommonBlockTagGen::new);
+    }
+
+    private void onRegisterCapabilities(RegisterCapabilitiesEvent event)
+    {
+        // Wraps the dock itself, so the handler always reflects the currently docked backpack.
+        // The wrapper caches its size, so the dock invalidates capabilities whenever its inventory changes.
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.BACKPACK_DOCK.get(), (dock, side) -> VanillaContainerWrapper.of(dock));
     }
 
     private void addReloadListener(AddServerReloadListenersEvent event)

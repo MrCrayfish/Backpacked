@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.fabric.impl.resource.pack.BuiltinModPackSource;
 import net.fabricmc.fabric.impl.resource.pack.ModResourcePackCreator;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -106,5 +108,11 @@ public class FabricPlatformHelper implements IPlatformHelper
                 output.accept((ItemLike) entry.get());
             });
         });
+    }
+
+    @Override
+    public void invalidateCapabilities(Level level, BlockPos pos)
+    {
+        // Fabric's transfer API updates the container wrapper on every lookup, so there is nothing to invalidate
     }
 }

@@ -96,6 +96,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
                 this.backpack = ItemStack.EMPTY;
                 this.inventory = null;
                 this.setChanged();
+                this.invalidateInventoryCapability();
                 Vec3 spawn = this.getPopPosition();
                 ItemEntity entity = new ItemEntity(this.level, spawn.x, spawn.y, spawn.z, stack);
                 entity.setDefaultPickUpDelay();
@@ -160,6 +161,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
                     this.inventory = new ItemStackContainer(this, this.getBackpackSize());
                     this.inventory.copyFrom(contents);
                     this.setChanged();
+                    this.invalidateInventoryCapability();
                     return;
                 }
                 this.resizeInventory();
@@ -167,6 +169,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             }
             this.inventory = null;
             this.setChanged();
+            this.invalidateInventoryCapability();
         }
     }
 
@@ -179,6 +182,16 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             this.inventory = new ItemStackContainer(this, backpackSize);
             InventoryHelper.mergeInventoryOrSpawnIntoLevel(oldInventory, this.inventory, this.level, this.getPopPosition());
             this.setChanged();
+            this.invalidateInventoryCapability();
+        }
+    }
+
+    private void invalidateInventoryCapability()
+    {
+        // Automation may hold a cached handler with the old slot count, so it needs to look up the dock again
+        if(this.level instanceof ServerLevel)
+        {
+            Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
         }
     }
 
