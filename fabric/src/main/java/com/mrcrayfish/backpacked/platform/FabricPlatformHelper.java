@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.fabric.impl.resource.pack.BuiltinModResourcePackSource;
 import net.fabricmc.fabric.impl.resource.pack.ModResourcePackCreator;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.tags.TagKey;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -89,5 +91,11 @@ public class FabricPlatformHelper implements IPlatformHelper
     public TagKey<Item> getCopperIngotItemTag()
     {
         return ConventionalItemTags.COPPER_INGOTS;
+    }
+
+    @Override
+    public void invalidateCapabilities(Level level, BlockPos pos)
+    {
+        // Not needed, Fabric's Container storage fallback reads the current size on every lookup
     }
 }

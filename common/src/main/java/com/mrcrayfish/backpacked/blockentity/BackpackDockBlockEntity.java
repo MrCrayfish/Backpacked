@@ -31,6 +31,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -96,6 +97,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
                 this.backpack = ItemStack.EMPTY;
                 this.inventory = null;
                 this.setChanged();
+                Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
                 Vec3 spawn = this.getPopPosition();
                 ItemEntity entity = new ItemEntity(this.level, spawn.x, spawn.y, spawn.z, stack);
                 entity.setDefaultPickUpDelay();
@@ -156,10 +158,9 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             {
                 if(this.inventory == null || stack != this.inventory.stack)
                 {
-                    ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-                    this.inventory = new ItemStackContainer(this, this.getBackpackSize());
-                    this.inventory.copyFrom(contents);
+                    this.inventory = this.createInventory();
                     this.setChanged();
+                    Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
                     return;
                 }
                 this.resizeInventory();
@@ -167,7 +168,16 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             }
             this.inventory = null;
             this.setChanged();
+            Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
         }
+    }
+
+    private ItemStackContainer createInventory()
+    {
+        ItemContainerContents contents = this.backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        ItemStackContainer inventory = new ItemStackContainer(this, this.getBackpackSize());
+        inventory.copyFrom(contents);
+        return inventory;
     }
 
     private void resizeInventory()
@@ -179,6 +189,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             this.inventory = new ItemStackContainer(this, backpackSize);
             InventoryHelper.mergeInventoryOrSpawnIntoLevel(oldInventory, this.inventory, this.level, this.getPopPosition());
             this.setChanged();
+            Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
         }
     }
 
@@ -213,6 +224,22 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
         super.loadAdditional(input);
         this.backpack = input.read("Backpack", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
         this.updateInventory();
+    }
+
+    @Override
+    public void setLevel(Level level)
+    {
+        super.setLevel(level);
+        // The level isn't set yet when loading from a chunk, so the inventory is created here instead.
+        // Skipped if the stored contents don't fit the current size, otherwise the overflow would be deleted.
+        if(this.inventory == null && level instanceof ServerLevel && this.backpack.getItem() instanceof BackpackItem)
+        {
+            ItemContainerContents contents = this.backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            if(contents.stream().count() <= this.getBackpackSize())
+            {
+                this.inventory = this.createInventory();
+            }
+        }
     }
 
     @Override
