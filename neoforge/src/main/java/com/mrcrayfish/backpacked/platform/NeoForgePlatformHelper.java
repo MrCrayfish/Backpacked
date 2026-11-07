@@ -1,6 +1,7 @@
 package com.mrcrayfish.backpacked.platform;
 
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.tags.TagKey;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 
@@ -85,5 +87,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper
     public TagKey<Item> getCopperIngotItemTag()
     {
         return Tags.Items.INGOTS_COPPER;
+    }
+
+    @Override
+    public void invalidateCapabilities(Level level, BlockPos pos)
+    {
+        level.invalidateCapabilities(pos);
     }
 }

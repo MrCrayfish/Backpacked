@@ -96,6 +96,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
                 this.backpack = ItemStack.EMPTY;
                 this.inventory = null;
                 this.setChanged();
+                Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
                 Vec3 spawn = this.getPopPosition();
                 ItemEntity entity = new ItemEntity(this.level, spawn.x, spawn.y, spawn.z, stack);
                 entity.setDefaultPickUpDelay();
@@ -160,6 +161,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
                     this.inventory = new ItemStackContainer(this, this.getBackpackSize());
                     this.inventory.copyFrom(contents);
                     this.setChanged();
+                    Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
                     return;
                 }
                 this.resizeInventory();
@@ -167,6 +169,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             }
             this.inventory = null;
             this.setChanged();
+            Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
         }
     }
 
@@ -179,6 +182,7 @@ public class BackpackDockBlockEntity extends BlockEntity implements IOptionalSto
             this.inventory = new ItemStackContainer(this, backpackSize);
             InventoryHelper.mergeInventoryOrSpawnIntoLevel(oldInventory, this.inventory, this.level, this.getPopPosition());
             this.setChanged();
+            Services.PLATFORM.invalidateCapabilities(this.level, this.worldPosition);
         }
     }
 
