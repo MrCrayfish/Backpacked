@@ -7,6 +7,7 @@ import com.mrcrayfish.backpacked.common.augment.impl.ImbuedHideAugment;
 import com.mrcrayfish.backpacked.common.augment.impl.RecallAugment;
 import com.mrcrayfish.backpacked.common.backpack.loader.BackpackLoader;
 import com.mrcrayfish.backpacked.core.ModAugmentTypes;
+import com.mrcrayfish.backpacked.core.ModBlockEntities;
 import com.mrcrayfish.backpacked.core.ModItems;
 import com.mrcrayfish.backpacked.core.ModPointOfInterests;
 import com.mrcrayfish.backpacked.datagen.BlockTagGen;
@@ -41,6 +42,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -50,6 +53,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -71,6 +75,7 @@ public class Backpacked
         TaskRunner.runIf(Environment.CLIENT, () -> ClientBootstrap::earlyInit);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onGatherData);
+        bus.addListener(this::onRegisterCapabilities);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onEntityDropLoot);
         NeoForge.EVENT_BUS.addListener(this::onInteract);
         NeoForge.EVENT_BUS.addListener(this::onGetProjectile);
@@ -99,6 +104,12 @@ public class Backpacked
         generator.addProvider(event.includeServer(), new LootTableGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new RecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new BlockTagGen(packOutput, lookupProvider, event.getExistingFileHelper()));
+    }
+
+    private void onRegisterCapabilities(RegisterCapabilitiesEvent event)
+    {
+        // Wraps the dock itself, so the handler always reflects the currently docked backpack
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.BACKPACK_DOCK.get(), (dock, side) -> new InvWrapper(dock));
     }
 
     private void addReloadListener(AddReloadListenerEvent event)
