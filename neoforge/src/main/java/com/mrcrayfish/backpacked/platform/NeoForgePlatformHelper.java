@@ -3,6 +3,7 @@ package com.mrcrayfish.backpacked.platform;
 import com.mrcrayfish.backpacked.Constants;
 import com.mrcrayfish.backpacked.platform.services.IPlatformHelper;
 import com.mrcrayfish.framework.Registration;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.repository.PackSource;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 
@@ -102,5 +104,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper
                 output.accept((ItemLike) entry.get());
             });
         });
+    }
+
+    @Override
+    public void invalidateCapabilities(Level level, BlockPos pos)
+    {
+        level.invalidateCapabilities(pos);
     }
 }
